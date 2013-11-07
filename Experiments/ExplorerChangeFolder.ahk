@@ -8,7 +8,7 @@ strLogFile := A_Temp . "\" . strLogFile . ".log"
 
 Info("The script will open ""Windows Explorer"".")
 run, Explorer
-Info("The script will now perform the same task (changing folders in Explorer) using 5 different methods.")
+Info("The script will now perform the same task (changing folders in Explorer) using 4 different methods.")
 
 if (A_OSVersion = "WIN_XP")
 {
@@ -38,6 +38,7 @@ Sleep, 500 ; long delay for safety
 Send, %strFolder%{Enter}
 CheckResult("Explorer_F4Esc", "Is your Explorer folder changed to """ . strFolder . """?")
 
+/*
 if (A_Language <> "0407")
 {
 	; Alt-D Method
@@ -50,23 +51,24 @@ if (A_Language <> "0407")
 }
 else
 	Info("Method 2)`nThis method is skipped for German language.")
-	
+*/
+
 ; ControlSend Method
 strFolder := A_ScriptDir
-Info("Method 4)`nIn this step, the folder in Explorer should change to your """ . strFolder . """ folder.")
+Info("Method 3`nIn this step, the folder in Explorer should change to your """ . strFolder . """ folder.")
 ControlSetText, Edit1, %strFolder%, A
 ControlSend, Edit1, {Enter}, A
 CheckResult("Explorer_CtrlSend", "Is your Explorer folder changed to """ . strFolder . """?")
 
 ; ControlSend Method
 strFolder := "C:\Windows"
-Info("Method 5)`nIn this last step, the folder in Explorer should change to your """ . strFolder . """ folder.")
+Info("Method 4)`nIn this last step, the folder in Explorer should change to your """ . strFolder . """ folder.")
 Explorer_Navigate(strFolder)
 CheckResult("Explorer_Shell", "Is your Explorer folder changed to """ . strFolder . """?")
 
 Send, !{F4}
 
-Info("One last test, please? We will test if changing folder in Dialog box works well on your system.`n`nThe script will run Notepad and open the ""Open"" dialog box.")
+Info("One last test? We will test if changing folder in Dialog box works well on your system.`n`nThe script will run Notepad and open the ""Open"" dialog box.")
 run, Notepad, , , strPID
 Sleep, 500 ; long delay for safety
 Send, ^o
