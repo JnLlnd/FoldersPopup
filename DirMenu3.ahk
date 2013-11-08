@@ -6,7 +6,8 @@ By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert R
 
 	Version 0.1 ALPHA
 	- init skeleton, read ini file and create arrays for folders menu and supported dialog boxes
-	- create language file, build gui, tray menu and popup menu, skeleton for front end buttons and commands
+	- create language file, build gui, tray menu and folder menu, skeleton for front end buttons and commands
+	- create AddThisDialog menu, MButton condition, CanOpenFavorite improvements with WindowIsAnExplorer, WindowIsDesktop and DialogIsSupported
 
 	Version:	DirMenu v2.2 (never released / not stable - base of a total rewrite to DirMenu3)
 	- manage (add, modify or delete) supported dialog box titles in the Gui
@@ -70,7 +71,8 @@ global strIniFile := A_ScriptDir . "\DirMenu3.ini"
 Gosub, LoadIniFile
 Gosub, BuildGUI
 Gosub, BuildTrayMenu
-Gosub, BuiltPopupMenu
+Gosub, BuildFoldersMenu
+Gosub, BuildAddDialogMenu
 
 return
 
@@ -91,15 +93,18 @@ IfNotExist, %strIniFile%
 			[Global]
 
 			[Dialogs]
-			Dialog1=Insert
-			Dialog2=Open
-			Dialog3=Save
-			Dialog4=Select
+			Dialog1=Export
+			Dialog2=Import
+			Dialog3=Insert
+			Dialog4=Open
+			Dialog5=Save
+			Dialog6=Select
+			Dialog7=Upload
 
 			[Folders]
 			Folder1=C:\|C:\
-			Folder2=Windows|C:\Windows
-			Folder3=Program Files|C:\Program Files
+			Folder2=Windows|%A_WinDir%
+			Folder3=Program Files|%A_Programs%
 		)
 		, %strIniFile%
 		
@@ -144,11 +149,10 @@ return
 ;------------------------------------------------------------
 +MButton::
 ;------------------------------------------------------------
-blnDebug := true
+blnDebug := false
 
-Menu, menuFavorites, Disable, &Add This Folder
-Menu, menuFavorites, Disable, Add This &Dialog
-Menu, menuFavorites, Show
+Menu, menuFolders, Disable, &Add This Folder
+Menu, menuFolders, Show
 
 blnDebug := false
 return
@@ -156,15 +160,18 @@ return
 
 
 ;------------------------------------------------------------
-#If, CanOpenFavorite(WinUnderMouseClass())
+#If, CanOpenFavorite(strWinId, strClass)
 MButton::
 ;------------------------------------------------------------
-blnDebug := true
+blnDebug := false
 
 if (blnDebug)
-	###_D("MButton::`nClass under mouse -> " . WinUnderMouseClass() . "`nWinID -> " . WinUnderMouseID())
-WinActivate, % "ahk_id " . WinUnderMouseID()
-Menu, menuFavorites, Show
+	###_D("Yes: " . strWinId .  " " . strClass)
+WinActivate, % "ahk_id " . strWinId
+if (WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or DialogIsSupported(strWinId))
+	Menu, menuFolders, Show
+else
+	Menu, menuAddDialog, Show
 
 blnDebug := false
 return
@@ -312,7 +319,7 @@ GuiSave:
 	Gui Cancel
 	LoadListViews()
 */
-Gosub, BuiltPopupMenu
+Gosub, BuildFoldersMenu
 Gui, Cancel
 return
 ;------------------------------------------------------------
@@ -396,29 +403,49 @@ return
 
 
 ;------------------------------------------------------------
-BuiltPopupMenu:
+BuildFoldersMenu:
 ;------------------------------------------------------------
 blnDebug := False
 
-Menu, menuFavorites, Add
-Menu, menuFavorites, DeleteAll
+Menu, menuFolders, Add
+Menu, menuFolders, DeleteAll
 Loop, % arrFolders.MaxIndex()
 {
 	if (blnDebug)
 		###_D(arrFolders[A_Index].Name)
 	if (arrFolders[A_Index].Name = lMenuSeparator)
-		Menu menuFavorites, Add
+		Menu, menuFolders, Add
 	else
-		Menu menuFavorites, Add, % arrFolders[A_Index].Name, OpenFavorite
+		Menu, menuFolders, Add, % arrFolders[A_Index].Name, OpenFavorite
 }
-Menu menuFavorites, Add
-Menu menuFavorites, Add, &Edit This Menu, ShowGui
-Menu menuFavorites, Default, &Edit This Menu
-Menu menuFavorites, Add, &Add This Folder, AddThisFolder
-Menu menuFavorites, Add, Add This &Dialog, AddThisDialog
+; Add Special folders (see Explorer_Navigate(FullPath, hwnd="") {  ; by Learning one -> in C:\Dropbox\AutoHotkey\DirMenu3\Experiments\LearningOne.ahk
+Menu, menuFolders, Add
+Menu, menuFolders, Add, &Edit This Menu, ShowGui
+Menu, menuFolders, Default, &Edit This Menu
+Menu, menuFolders, Add, &Add This Folder, AddThisFolder
 
 if (blnDebug)
-	Menu menuFavorites, Show
+	Menu, menuFolders, Show
+
+blnDebug := False
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+BuildAddDialogMenu:
+;------------------------------------------------------------
+blnDebug := False
+
+Menu, menuAddDialog, Add, This dialog box type is not supported yet, AddThisDialog
+Menu, menuAddDialog, Disable, This dialog box type is not supported yet
+Menu, menuAddDialog, Add, &Add This Dialog box to the supported list, AddThisDialog
+Menu, menuAddDialog, Add
+Menu, menuAddDialog, Add, &Edit the Folders Menu, ShowGui
+Menu, menuAddDialog, Default, &Add This Dialog box to the supported list
+
+if (blnDebug)
+	Menu, menuAddDialog, Show
 
 blnDebug := False
 return
@@ -500,7 +527,7 @@ CanAddFolder(strClass)
 
 
 ;------------------------------------------------------------
-CanOpenFavorite(strClass)
+CanOpenFavorite(ByRef strWinId, ByRef strClass)
 ;------------------------------------------------------------
 ; "CabinetWClass" -> Explorer
 ; "ProgMan" -> Desktop
@@ -509,15 +536,70 @@ CanOpenFavorite(strClass)
 ; "#32770" -> Dialog
 {
 	blnDebug := false
+	
+	MouseGetPos, , , strWinId
+	WinGetClass strClass, % "ahk_id " . strWinId
+
 	if (blnDebug)
-		if strClass in CabinetWClass,ProgMan,WorkerW,ConsoleWindowClass,#32770
+		if WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or (strClass = "#32770")
 			###_D(strClass . " is OK")
 		else
 			###_D(strClass . " is NOT OK")
-	if strClass in CabinetWClass,ProgMan,WorkerW,ConsoleWindowClass,#32770
+		
+	if WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or (strClass = "#32770")
 		return true
 	else
-		return false
+	{
+		if (blnDebug)
+			###_D("Check if dialog title supported: " . strWindowTitle)
+		return DialogIsSupported(strWinId)
+	}
 	blnDebug := false
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+WindowIsAnExplorer(strClass)
+;------------------------------------------------------------
+{
+	blnDebug := false
+	if strClass in CabinetWClass,ConsoleWindowClass
+		return True
+	else
+		return False
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+WindowIsDesktop(strClass)
+;------------------------------------------------------------
+{
+	blnDebug := false
+	if strClass in ProgMan,WorkerW
+		return True
+	else
+		return False
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+DialogIsSupported(strWinId)
+;------------------------------------------------------------
+{
+	blnDebug := false
+	
+	global arrDialogs
+	
+	WinGetTitle, strDialogTitle, ahk_id %strWinId%
+	if (blnDebug)
+		loop, % arrDialogs.MaxIndex()
+			###_D("DialogIsSupported? " . strDialogTitle . " " . arrDialogs[A_Index] . " " InStr(strDialogTitle, arrDialogs[A_Index]))
+	loop, % arrDialogs.MaxIndex()
+		if InStr(strDialogTitle, arrDialogs[A_Index])
+			return True
+	return False
 }
 ;------------------------------------------------------------
