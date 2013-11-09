@@ -1,10 +1,13 @@
 ;===============================================
 /*
-DirMenu3
-Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
-By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
+	PopupFolders
+	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
+	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version 0.1 ALPHA
+	Version: PopupFolders v0.2 ALPHA
+	- renamed app PopupFolders, isolate text into language variables
+
+	Version: DirMenu3 v0.1 ALPHA
 	- init skeleton, read ini file and create arrays for folders menu and supported dialog boxes
 	- create language file, build gui, tray menu and folder menu, skeleton for front end buttons and commands
 	- create AddThisDialog menu, MButton condition, CanOpenFavorite improvements with WindowIsAnExplorer, WindowIsDesktop and DialogIsSupported
@@ -12,7 +15,7 @@ By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert R
 	- support MS Office dialog boxes on WinXP (bosa_sdm_), open special folders in explorers
 	- NavigateDialog, add Desktop, Document and Pictures special folders, open these special menus in dialog boxes, enabling/disabling the appropriate menus in dialog boxes or explorers
 
-	Version:	DirMenu v2.2 (never released / not stable - base of a total rewrite to DirMenu3)
+	Version: DirMenu v2.2 (never released / not stable - base of a total rewrite to DirMenu3)
 	- manage (add, modify or delete) supported dialog box titles in the Gui
 	- suggest current dialog box when adding a name
 	- save the supported dialog box names on the first line of the settings file (dirmenu.txt)
@@ -25,7 +28,7 @@ By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert R
 	- ask confirmation before discarding changes with Revert or Cancel buttons
 	- replaces RegEx on strDialogNames with DialogIsSupported() function on the ListView
 	
-	Version:	DirMenu v2.1
+	Version: DirMenu v2.1
 	- make it work with any locale (still working with English)
 	- put supported dialog box titles in a variable (strDialogNames) at the top of the script for easy editing
 	- put DirMenu data file name in a variable (strDirMenuFile) at the top of the script for easy editing
@@ -54,7 +57,7 @@ By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert R
 
 #NoEnv
 #SingleInstance force
-#Include %A_ScriptDir%\DirMenu3_LANG.ahk
+#Include %A_ScriptDir%\PopupFolders_LANG.ahk
 SetWorkingDir %A_ScriptDir%
 
 global arrGlobalFolders := Object()
@@ -156,7 +159,7 @@ return
 #If, CanOpenFavorite(strGlobalWinId, strGlobalClass)
 MButton::
 ;------------------------------------------------------------
-blnDebug := true
+blnDebug := false
 
 if (blnDebug)
 	###_D("Yes: " . strGlobalWinId .  " " . strGlobalClass)
@@ -164,18 +167,18 @@ if (blnDebug)
 ; Can't find how to open a dialog box in My Computer or Network Neighborhood... need help ???
 Menu, menuSpecialFolders
 	, % ((strGlobalClass = "#32770") or InStr(strGlobalClass, "bosa_sdm_")) ? "Disable" : "Enable"
-	, My Computer
+	, %lMenuMyComputer%
 Menu, menuSpecialFolders
 	, % ((strGlobalClass = "#32770") or InStr(strGlobalClass, "bosa_sdm_")) ? "Disable" : "Enable"
-	, Network Neighborhood
+	, %lMenuNetworkNeighborhood%
 
 ; There is no reason to open a dialog box in Control Panel or Recycle Bin
 Menu, menuSpecialFolders
 	, % ((strGlobalClass = "#32770") or InStr(strGlobalClass, "bosa_sdm_")) ? "Disable" : "Enable"
-	, Control Panel
+	, %lMenuControlPanel%
 Menu, menuSpecialFolders
 	, % ((strGlobalClass = "#32770") or InStr(strGlobalClass, "bosa_sdm_")) ? "Disable" : "Enable"
-	, Recycle Bin
+	, %lMenuRecycleBin%
 
 WinActivate, % "ahk_id " . strGlobalWinId
 if (WindowIsAnExplorer(strGlobalClass) or WindowIsDesktop(strGlobalClass) or DialogIsSupported(strGlobalWinId))
@@ -198,13 +201,13 @@ MouseGetPos, , , strGlobalWinId
 WinGetClass strGlobalClass, % "ahk_id " . strGlobalWinId
 
 ; In case it was disabled while in a dialog box
-Menu, menuSpecialFolders, Enable, My Computer
-Menu, menuSpecialFolders, Enable, Network Neighborhood
-Menu, menuSpecialFolders, Enable, Control Panel
-Menu, menuSpecialFolders, Enable, Recycle Bin
+Menu, menuSpecialFolders, Enable, %lMenuMyComputer%
+Menu, menuSpecialFolders, Enable, %lMenuNetworkNeighborhood%
+Menu, menuSpecialFolders, Enable, %lMenuControlPanel%
+Menu, menuSpecialFolders, Enable, %lMenuRecycleBin%
 
 ; We won't detect the current folder, so we can't add it
-Menu, menuFolders, Disable, &Add This Folder
+Menu, menuFolders, Disable, %lMenuAddThisFolder%
 Menu, menuFolders, Show
 
 blnDebug := false
@@ -216,9 +219,9 @@ return
 BuildTrayMenu:
 ;------------------------------------------------------------
 Menu, Tray, Add
-Menu, Tray, Add, A&bout, GuiAbout
-Menu, Tray, Add, &Edit Folders Menu, ShowGui
-Menu, Tray, Default, &Edit Folders Menu
+Menu, Tray, Add, %lMenuAbout%, GuiAbout
+Menu, Tray, Add, %lMenuEditFoldersMenu%, ShowGui
+Menu, Tray, Default, %lMenuEditFoldersMenu%
 return
 ;------------------------------------------------------------
 
@@ -226,15 +229,66 @@ return
 ;------------------------------------------------------------
 BuildSpecialFoldersMenu:
 ;------------------------------------------------------------
-Menu, menuSpecialFolders, Add, Desktop, OpenSpecialFolder
-Menu, menuSpecialFolders, Add, Documents, OpenSpecialFolder
-Menu, menuSpecialFolders, Add, Pictures, OpenSpecialFolder
+Menu, menuSpecialFolders, Add, %lMenuDesktop%, OpenSpecialFolder
+Menu, menuSpecialFolders, Add, %lMenuDocuments%, OpenSpecialFolder
+Menu, menuSpecialFolders, Add, %lMenuPictures%, OpenSpecialFolder
 Menu, menuSpecialFolders, Add
-Menu, menuSpecialFolders, Add, My Computer, OpenSpecialFolder
-Menu, menuSpecialFolders, Add, Network Neighborhood, OpenSpecialFolder
+Menu, menuSpecialFolders, Add, %lMenuMyComputer%, OpenSpecialFolder
+Menu, menuSpecialFolders, Add, %lMenuNetworkNeighborhood%, OpenSpecialFolder
 Menu, menuSpecialFolders, Add
-Menu, menuSpecialFolders, Add, Control Panel, OpenSpecialFolder
-Menu, menuSpecialFolders, Add, Recycle Bin, OpenSpecialFolder
+Menu, menuSpecialFolders, Add, %lMenuControlPanel%, OpenSpecialFolder
+Menu, menuSpecialFolders, Add, %lMenuRecycleBin%, OpenSpecialFolder
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+BuildFoldersMenu:
+;------------------------------------------------------------
+blnDebug := False
+
+Menu, menuFolders, Add
+Menu, menuFolders, DeleteAll
+Loop, % arrGlobalFolders.MaxIndex()
+{
+	if (blnDebug)
+		###_D(arrGlobalFolders[A_Index].Name)
+	if (arrGlobalFolders[A_Index].Name = lMenuSeparator)
+		Menu, menuFolders, Add
+	else
+		Menu, menuFolders, Add, % arrGlobalFolders[A_Index].Name, OpenFavorite
+}
+Menu, menuFolders, Add
+Menu, menuFolders, Add, %lMenuSpecialFolders%, :menuSpecialFolders
+Menu, menuFolders, Add
+Menu, menuFolders, Add, %lMenuEditThisMenu%, ShowGui
+Menu, menuFolders, Default, %lMenuEditThisMenu%
+Menu, menuFolders, Add, %lMenuAddThisFolder%, AddThisFolder
+
+if (blnDebug)
+	Menu, menuFolders, Show
+
+blnDebug := False
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+BuildAddDialogMenu:
+;------------------------------------------------------------
+blnDebug := False
+
+Menu, menuAddDialog, Add, %lMenuDialogNotSupported%, AddThisDialog ; % lMenuDialogNotSupported
+Menu, menuAddDialog, Disable, %lMenuDialogNotSupported%
+Menu, menuAddDialog, Add, %lMenuAddThisDialog%, AddThisDialog
+Menu, menuAddDialog, Add
+Menu, menuAddDialog, Add, %lMenuEditFoldersMenu%, ShowGui
+Menu, menuAddDialog, Default, %lMenuAddThisDialog%
+
+if (blnDebug)
+	Menu, menuAddDialog, Show
+
+blnDebug := False
 return
 ;------------------------------------------------------------
 
@@ -267,7 +321,7 @@ Gui, Add, Button, x+40 w75 r1 gGuiCancel, %lGuiCancel%
 Gui, Add, Button, x+80 w75 r1 gGuiAbout, %lGuiAbout%
 
 if (blnDebug)
-	Gui, Show, w455 h455, %lAppName% %lAppVersionLong% - Settings
+	Gui, Show, w455 h455, % L(lGuiTitle, lAppName, lAppVersionLong)
 
 blnDebug := false
 return
@@ -277,6 +331,7 @@ return
 ;------------------------------------------------------------
 GuiLvFoldersEvent:
 ;------------------------------------------------------------
+; REMOVE IF NOT USED
 return
 ;------------------------------------------------------------
 
@@ -308,7 +363,7 @@ return
 ;------------------------------------------------------------
 GuiAddSeparator:
 ;------------------------------------------------------------
-###_D("Not implement yet`n" . lMenuSeparator)
+###_D(lNotImplementedYet . "`n" . lMenuSeparator)
 return
 ;------------------------------------------------------------
 
@@ -395,7 +450,7 @@ return
 ShowGui:
 ;------------------------------------------------------------
 Gosub, LoadSettingsToGui
-Gui, Show, w455 h455, %lAppName% %lAppVersionLong% - Settings
+Gui, Show, w455 h455, % L(lGuiTitle, lAppName, lAppVersionLong)
 return
 ;------------------------------------------------------------
 
@@ -444,60 +499,9 @@ return
 
 
 ;------------------------------------------------------------
-BuildFoldersMenu:
-;------------------------------------------------------------
-blnDebug := False
-
-Menu, menuFolders, Add
-Menu, menuFolders, DeleteAll
-Loop, % arrGlobalFolders.MaxIndex()
-{
-	if (blnDebug)
-		###_D(arrGlobalFolders[A_Index].Name)
-	if (arrGlobalFolders[A_Index].Name = lMenuSeparator)
-		Menu, menuFolders, Add
-	else
-		Menu, menuFolders, Add, % arrGlobalFolders[A_Index].Name, OpenFavorite
-}
-Menu, menuFolders, Add
-Menu, menuFolders, Add, &Special Folders, :menuSpecialFolders
-Menu, menuFolders, Add
-Menu, menuFolders, Add, &Edit This Menu, ShowGui
-Menu, menuFolders, Default, &Edit This Menu
-Menu, menuFolders, Add, &Add This Folder, AddThisFolder
-
-if (blnDebug)
-	Menu, menuFolders, Show
-
-blnDebug := False
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-BuildAddDialogMenu:
-;------------------------------------------------------------
-blnDebug := False
-
-Menu, menuAddDialog, Add, This dialog box type is not supported yet, AddThisDialog
-Menu, menuAddDialog, Disable, This dialog box type is not supported yet
-Menu, menuAddDialog, Add, &Add This Dialog box to the supported list, AddThisDialog
-Menu, menuAddDialog, Add
-Menu, menuAddDialog, Add, &Edit the Folders Menu, ShowGui
-Menu, menuAddDialog, Default, &Add This Dialog box to the supported list
-
-if (blnDebug)
-	Menu, menuAddDialog, Show
-
-blnDebug := False
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
 OpenFavorite:
 ;------------------------------------------------------------
-blnDebug := true
+blnDebug := false
 
 strPath := GetPahtFor(A_ThisMenuItem)
 if (blnDebug)
@@ -519,23 +523,23 @@ return
 OpenSpecialFolder:
 ;------------------------------------------------------------
 
-blnDebug := true
+blnDebug := false
 if (blnDebug)
 	###_D("strGlobalWinId: " . strGlobalWinId . "`nstrGlobalClass: " . strGlobalClass . "`nA_ThisMenuItem: " . A_ThisMenuItem)
 ; ShellSpecialFolderConstants: http://msdn.microsoft.com/en-us/library/windows/desktop/bb774096%28v=vs.85%29.aspx
-if (A_ThisMenuItem = "Desktop")
+if (A_ThisMenuItem = lMenuDesktop)
 	intSpecialFolder := 0
-else if (A_ThisMenuItem = "Control Panel")
+else if (A_ThisMenuItem = lMenuControlPanel)
 	intSpecialFolder := 3
-else if (A_ThisMenuItem = "Documents")
+else if (A_ThisMenuItem = lMenuDocuments)
 	intSpecialFolder := 5
-else if (A_ThisMenuItem = "Recycle Bin")
+else if (A_ThisMenuItem = lMenuRecycleBin)
 	intSpecialFolder := 10
-else if (A_ThisMenuItem = "My Computer")
+else if (A_ThisMenuItem = lMenuMyComputer)
 	intSpecialFolder := 17
-else if (A_ThisMenuItem = "Network Neighborhood")
+else if (A_ThisMenuItem = lMenuNetworkNeighborhood)
 	intSpecialFolder := 18
-else if (A_ThisMenuItem = "Pictures")
+else if (A_ThisMenuItem = lMenuPictures)
 	intSpecialFolder := 39
 
 if (A_ThisHotkey = "+MButton") or WindowIsDesktop(strGlobalClass)
@@ -563,7 +567,7 @@ return
 ;------------------------------------------------------------
 AddThisFolder:
 ;------------------------------------------------------------
-blnDebug := true
+blnDebug := false
 ###_D(lNotImplementedYet)
 blnDebug := False
 return
@@ -573,7 +577,7 @@ return
 ;------------------------------------------------------------
 AddThisDialog:
 ;------------------------------------------------------------
-blnDebug := true
+blnDebug := false
 ###_D(lNotImplementedYet)
 blnDebug := False
 return
@@ -610,16 +614,16 @@ WinUnderMouseID()
 
 
 ;------------------------------------------------------------
-GetPahtFor(strMenu)
+GetPahtFor(strName)
 ;------------------------------------------------------------
 {
 	blnDebug := false
 
 	if (blnDebug)
 		Loop, % arrGlobalFolders.MaxIndex()
-			###_D(strMenu . " = " . arrGlobalFolders[A_Index].Name)
+			###_D(strName . " = " . arrGlobalFolders[A_Index].Name)
 	Loop, % arrGlobalFolders.MaxIndex()
-		if (strMenu = arrGlobalFolders[A_Index].Name)
+		if (strName = arrGlobalFolders[A_Index].Name)
 			return arrGlobalFolders[A_Index].Path
 
 	blnDebug := false
@@ -731,11 +735,11 @@ http://msdn.microsoft.com/en-us/library/aa752094
 NavigateDialog(strPath, strWinId, strClass)
 ;------------------------------------------------------------
 /*
-Excerpt from RMApp_Explorer_Navigate(FullPath, strWinId="") by Learning One
+Excerpt from RMApp_Explorer_Navigate(FullPath, hwnd="") by Learning One
 http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 */
 {
-	blnDebug := true
+	blnDebug := false
 	if (blnDebug)
 		###_D("Dialog: " . strPath)
 	
@@ -783,7 +787,7 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 	
 	ControlSetTextR(strControl, strPath, "ahk_id " . strWinId) ; set control's text to strPath
 	ControlSetFocusR(strControl, "ahk_id " . strWinId) ; focus control
-	if (WinExist("A") != strWinId) ; in case that some window just popped out, and initialy active window lost focus
+	if (WinExist("A") <> strWinId) ; in case that some window just popped out, and initialy active window lost focus
 		WinActivate, ahk_id %strWinId% ; we'll activate initialy active window
 	
 	;=== Avoid accidental hotkey & hotstring triggereing while doing SendInput - can be done simply by #UseHook, but do it if user doesn't have #UseHook in the script ===
@@ -791,11 +795,11 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 		blnWasSuspended := True
 	if (!blnWasSuspended)
 		Suspend, On
-	SendInput, {End}{Space}{Backspace}{enter} ; silly but necessary part - go to end of control, send dummy space, delete it, and then send enter
+	SendInput, {End}{Space}{Backspace}{Enter} ; silly but necessary part - go to end of control, send dummy space, delete it, and then send enter
 	if (!blnWasSuspended)
 		Suspend, Off
 
-	Sleep, 70 ; give some time to control after sending {enter} to it
+	Sleep, 70 ; give some time to control after sending {Enter} to it
 	ControlGetText, strControlTextAfterNavigation, %strControl%, ahk_id %strWinId% ; sometimes controls automatically restore their initial text
 	if (strControlTextAfterNavigation <> strPrevControlText) ; if not
 		ControlSetTextR(strControl, strPrevControlText, "ahk_id " . strWinId) ; we'll set control's text to its initial text
@@ -805,45 +809,47 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 }
 
 
-ControlIsVisible(WinTitle,ControlClass)
+ControlIsVisible(strWinTitle, strControlClass)
 /*
 Adapted from ControlIsVisible(WinTitle,ControlClass) by Learning One
 http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 */
 { ; used in Navigator
-	ControlGet, IsControlVisible, Visible,, %ControlClass%, %WinTitle%
-	return IsControlVisible
+	ControlGet, blnIsControlVisible, Visible, , %strControlClass%, %strWinTitle%
+	return blnIsControlVisible
 }
 
-ControlSetFocusR(Control, WinTitle="", Tries=3)
+
+ControlSetFocusR(strControl, strWinTitle = "", intTries = 3)
 /*
 Adapted from RMApp_ControlSetFocusR(Control, WinTitle="", Tries=3) by Learning One
 http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 */
 { ; used in Navigator. More reliable ControlSetFocus
-	Loop, %Tries%
+	Loop, %intTries%
 	{
-		ControlFocus, %Control%, %WinTitle%			 ; focus control
+		ControlFocus, %strControl%, %strWinTitle% ; focus control
 		Sleep, 50
-		ControlGetFocus, FocusedControl, %WinTitle%	 ; check
-		if (FocusedControl = Control)				   ; if OK
-			return 1
+		ControlGetFocus, strFocusedControl, %strWinTitle% ; check
+		if (strFocusedControl = strControl) ; if OK
+			return True
 	}
 }
 
-ControlSetTextR(Control, NewText="", WinTitle="", Tries=3)
+
+ControlSetTextR(strControl, strNewText = "", strWinTitle = "", intTries = 3)
 /*
 Adapted from from RMApp_ControlSetTextR(Control, NewText="", WinTitle="", Tries=3) by Learning One
 http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 */
 {  ; used in Navigator. More reliable ControlSetText
-	Loop, %Tries%
+	Loop, %intTries%
 	{
-		ControlSetText, %Control%, %NewText%, %WinTitle%			; set
+		ControlSetText, %strControl%, %strNewText%, %strWinTitle% ; set
 		Sleep, 50
-		ControlGetText, CurControlText, %Control%, %WinTitle%	   ; check
-		if (CurControlText = NewText)							   ; if OK
-			return 1
+		ControlGetText, strCurControlText, %strControl%, %strWinTitle% ; check
+		if (strCurControlText = strNewText) ; if OK
+			return True
 	}
 }
 
@@ -853,6 +859,7 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 ; TOOLS
 ;============================================================
 
+; ### DELETE UNUSED FUNCTIONS
 
 ; ------------------------------------------------
 Help(strMessage, objVariables*)
