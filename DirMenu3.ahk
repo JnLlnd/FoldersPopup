@@ -9,7 +9,8 @@ By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert R
 	- create language file, build gui, tray menu and folder menu, skeleton for front end buttons and commands
 	- create AddThisDialog menu, MButton condition, CanOpenFavorite improvements with WindowIsAnExplorer, WindowIsDesktop and DialogIsSupported
 	- add SpecialFolders menu, OpenFavorite for Explorer and Desktop, NavigateExplorer
-	- support MS Office dialog boxes on WinXP (bosa_sdm_), open special folders from desktop, NavigateDialog in progress
+	- support MS Office dialog boxes on WinXP (bosa_sdm_), open special folders in explorers
+	- NavigateDialog, add Desktop, Document and Pictures special folders, open these special menus in dialog boxes, enabling/disabling the appropriate menus in dialog boxes or explorers
 
 	Version:	DirMenu v2.2 (never released / not stable - base of a total rewrite to DirMenu3)
 	- manage (add, modify or delete) supported dialog box titles in the Gui
@@ -56,9 +57,8 @@ By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert R
 #Include %A_ScriptDir%\DirMenu3_LANG.ahk
 SetWorkingDir %A_ScriptDir%
 
-global bln###Debug := False
-global strAppName := "DirMenu3"
-global strAppVersion := "0.1 ALPHA"
+global arrGlobalFolders := Object()
+global arrGlogalDialogs := Object()
 global strIniFile := A_ScriptDir . "\DirMenu3.ini"
 
 ;@Ahk2Exe-IgnoreBegin
@@ -111,7 +111,6 @@ IfNotExist, %strIniFile%
 		)
 		, %strIniFile%
 		
-arrFolders := Object()
 Loop
 {
 	IniRead, strIniLine, %strIniFile%, Folders, Folder%A_Index%
@@ -121,22 +120,21 @@ Loop
 	objFolder := Object()
 	objFolder.Name := arrThisObject1
 	objFolder.Path := arrThisObject2
-	arrFolders.Insert(objFolder)
+	arrGlobalFolders.Insert(objFolder)
 }
 if (blnDebug)
-	Loop, % arrFolders.MaxIndex()
-		###_D("Folder" . A_Index . ": " . arrFolders[A_Index].Name . " -> " . arrFolders[A_Index].Path)
-arrDialogs := Object()
+	Loop, % arrGlobalFolders.MaxIndex()
+		###_D("Folder" . A_Index . ": " . arrGlobalFolders[A_Index].Name . " -> " . arrGlobalFolders[A_Index].Path)
 Loop
 {
 	IniRead, strIniLine, %strIniFile%, Dialogs, Dialog%A_Index%
 	if (strIniLine = "ERROR")
 		Break
-	arrDialogs.Insert(strIniLine)
+	arrGlogalDialogs.Insert(strIniLine)
 }
 if (blnDebug)
-	Loop, % arrDialogs.MaxIndex()
-		###_D("Dialog" . A_Index . ": " . arrDialogs[A_Index])
+	Loop, % arrGlogalDialogs.MaxIndex()
+		###_D("Dialog" . A_Index . ": " . arrGlogalDialogs[A_Index])
 
 blnDebug := False
 return
@@ -154,6 +152,16 @@ return
 ;------------------------------------------------------------
 blnDebug := false
 
+MouseGetPos, , , strGlobalWinId
+WinGetClass strGlobalClass, % "ahk_id " . strGlobalWinId
+
+; In case it was disabled while in a dialog box
+Menu, menuSpecialFolders, Enable, My Computer
+Menu, menuSpecialFolders, Enable, Network Neighborhood
+Menu, menuSpecialFolders, Enable, Control Panel
+Menu, menuSpecialFolders, Enable, Recycle Bin
+
+; We won't detect the current folder, so we can't add it
 Menu, menuFolders, Disable, &Add This Folder
 Menu, menuFolders, Show
 
@@ -163,22 +171,43 @@ return
 
 
 ;------------------------------------------------------------
-#If, CanOpenFavorite(strWinId, strClass)
+#If, CanOpenFavorite(strGlobalWinId, strGlobalClass)
 MButton::
 ;------------------------------------------------------------
 blnDebug := true
 
 if (blnDebug)
-	###_D("Yes: " . strWinId .  " " . strClass)
+	###_D("Yes: " . strGlobalWinId .  " " . strGlobalClass)
 
-if ((strClass = "#32770") or InStr(strClass, "bosa_sdm_"))
+; Can't find how to open a dialog box in My Computer or Network Neighborhood... need help ???
+Menu, menuSpecialFolders
+	, % ((strGlobalClass = "#32770") or InStr(strGlobalClass, "bosa_sdm_")) ? "Disable" : "Enable"
+	, My Computer
+Menu, menuSpecialFolders
+	, % ((strGlobalClass = "#32770") or InStr(strGlobalClass, "bosa_sdm_")) ? "Disable" : "Enable"
+	, Network Neighborhood
+
+; There is no reason to open a dialog box in Control Panel or Recycle Bin
+Menu, menuSpecialFolders
+	, % ((strGlobalClass = "#32770") or InStr(strGlobalClass, "bosa_sdm_")) ? "Disable" : "Enable"
+	, Control Panel
+Menu, menuSpecialFolders
+	, % ((strGlobalClass = "#32770") or InStr(strGlobalClass, "bosa_sdm_")) ? "Disable" : "Enable"
+	, Recycle Bin
+/*
+if ((strGlobalClass = "#32770") or InStr(strGlobalClass, "bosa_sdm_"))
 {
+	; can't find how to open a dialog box in My Computer or Network Neighborhood... need help ???
+	Menu, menuSpecialFolders, Disable, My Computer
+	Menu, menuSpecialFolders, Disable, Network Neighborhood
+	; there is no reason to open a dialog box in Control Panel or Recycle Bin
 	Menu, menuSpecialFolders, Disable, Control Panel
 	Menu, menuSpecialFolders, Disable, Recycle Bin
 }
+*/
 
-WinActivate, % "ahk_id " . strWinId
-if (WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or DialogIsSupported(strWinId))
+WinActivate, % "ahk_id " . strGlobalWinId
+if (WindowIsAnExplorer(strGlobalClass) or WindowIsDesktop(strGlobalClass) or DialogIsSupported(strGlobalWinId))
 	Menu, menuFolders, Show
 else
 	Menu, menuAddDialog, Show
@@ -203,7 +232,13 @@ return
 ;------------------------------------------------------------
 BuildSpecialFoldersMenu:
 ;------------------------------------------------------------
+Menu, menuSpecialFolders, Add, Desktop, OpenSpecialFolder
+Menu, menuSpecialFolders, Add, Documents, OpenSpecialFolder
+Menu, menuSpecialFolders, Add, Pictures, OpenSpecialFolder
+Menu, menuSpecialFolders, Add
 Menu, menuSpecialFolders, Add, My Computer, OpenSpecialFolder
+Menu, menuSpecialFolders, Add, Network Neighborhood, OpenSpecialFolder
+Menu, menuSpecialFolders, Add
 Menu, menuSpecialFolders, Add, Control Panel, OpenSpecialFolder
 Menu, menuSpecialFolders, Add, Recycle Bin, OpenSpecialFolder
 return
@@ -379,21 +414,21 @@ LoadSettingsToGui:
 blnDebug := false
 
 Gui, ListView, lvFoldersList
-Loop, % arrFolders.MaxIndex()
+Loop, % arrGlobalFolders.MaxIndex()
 {
 	if (blnDebug)
-		###_D(arrFolders[A_Index].Name . " " . arrFolders[A_Index].Path)
-	LV_Add(, arrFolders[A_Index].Name, arrFolders[A_Index].Path)
+		###_D(arrGlobalFolders[A_Index].Name . " " . arrGlobalFolders[A_Index].Path)
+	LV_Add(, arrGlobalFolders[A_Index].Name, arrGlobalFolders[A_Index].Path)
 }
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
 
 Gui, ListView, lvDialogsList
-Loop, % arrDialogs.MaxIndex()
+Loop, % arrGlogalDialogs.MaxIndex()
 {
 	if (blnDebug)
-		###_D(arrDialogs[A_Index])
-	LV_Add(, arrDialogs[A_Index])
+		###_D(arrGlogalDialogs[A_Index])
+	LV_Add(, arrGlogalDialogs[A_Index])
 }
 LV_ModifyCol(1, "AutoHdr")
 
@@ -409,14 +444,14 @@ blnDebug := False
 
 Menu, menuFolders, Add
 Menu, menuFolders, DeleteAll
-Loop, % arrFolders.MaxIndex()
+Loop, % arrGlobalFolders.MaxIndex()
 {
 	if (blnDebug)
-		###_D(arrFolders[A_Index].Name)
-	if (arrFolders[A_Index].Name = lMenuSeparator)
+		###_D(arrGlobalFolders[A_Index].Name)
+	if (arrGlobalFolders[A_Index].Name = lMenuSeparator)
 		Menu, menuFolders, Add
 	else
-		Menu, menuFolders, Add, % arrFolders[A_Index].Name, OpenFavorite
+		Menu, menuFolders, Add, % arrGlobalFolders[A_Index].Name, OpenFavorite
 }
 Menu, menuFolders, Add
 Menu, menuFolders, Add, &Special Folders, :menuSpecialFolders
@@ -460,18 +495,15 @@ blnDebug := true
 
 strPath := GetPahtFor(A_ThisMenuItem)
 if (blnDebug)
-	###_D("strWinId: " . strWinId . "`nstrClass: " . strClass . "`nstrPath: " . strPath)
+	###_D("strGlobalWinId: " . strGlobalWinId . "`nstrGlobalClass: " . strGlobalClass . "`nstrPath: " . strPath)
 
-if (A_ThisHotkey = "+MButton")
-	Run, Explorer.exe /n`,%strPath%
-else if WindowIsDesktop(strClass)
+if (A_ThisHotkey = "+MButton") or WindowIsDesktop(strGlobalClass)
 	ComObjCreate("Shell.Application").Explore(strPath)
 	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
-else if WindowIsAnExplorer(strClass)
-	NavigateExplorer(strPath, strWinId)
+else if WindowIsAnExplorer(strGlobalClass)
+	NavigateExplorer(strPath, strGlobalWinId)
 else
-	NavigateDialog(strPath, strWinId)
-
+	NavigateDialog(strPath, strGlobalWinId, strGlobalClass)
 blnDebug := false
 return
 ;------------------------------------------------------------
@@ -481,22 +513,42 @@ return
 OpenSpecialFolder:
 ;------------------------------------------------------------
 
-
 blnDebug := true
 if (blnDebug)
-	###_D("strWinId: " . strWinId . "`nstrClass: " . strClass . "`nA_ThisMenuItem: " . A_ThisMenuItem)
-if (A_ThisMenuItem = "Control Panel")
+	###_D("strGlobalWinId: " . strGlobalWinId . "`nstrGlobalClass: " . strGlobalClass . "`nA_ThisMenuItem: " . A_ThisMenuItem)
+; ShellSpecialFolderConstants: http://msdn.microsoft.com/en-us/library/windows/desktop/bb774096%28v=vs.85%29.aspx
+if (A_ThisMenuItem = "Desktop")
+	intSpecialFolder := 0
+else if (A_ThisMenuItem = "Control Panel")
 	intSpecialFolder := 3
+else if (A_ThisMenuItem = "Documents")
+	intSpecialFolder := 5
 else if (A_ThisMenuItem = "Recycle Bin")
 	intSpecialFolder := 10
-else if(A_ThisMenuItem = "My Computer")
+else if (A_ThisMenuItem = "My Computer")
 	intSpecialFolder := 17
+else if (A_ThisMenuItem = "Network Neighborhood")
+	intSpecialFolder := 18
+else if (A_ThisMenuItem = "Pictures")
+	intSpecialFolder := 39
 
-if WindowIsDesktop(strClass)
+if (A_ThisHotkey = "+MButton") or WindowIsDesktop(strGlobalClass)
 	ComObjCreate("Shell.Application").Explore(intSpecialFolder)
 	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
-else 
-	NavigateExplorer(intSpecialFolder, strWinId)
+else if WindowIsAnExplorer(strGlobalClass)
+	NavigateExplorer(intSpecialFolder, strGlobalWinId)
+else ; this is a dialog box
+{
+	if (intSpecialFolder = 0)
+		strPath := A_Desktop
+	else if (intSpecialFolder = 5)
+		strPath := A_MyDocuments
+	else if (intSpecialFolder = 39)
+		StringReplace, strPath, A_MyDocuments, Documents, Pictures
+	else ; we do not support this special folder
+		return
+	NavigateDialog(strPath, strGlobalWinId, strGlobalClass)
+}
 blnDebug := false
 return
 ;------------------------------------------------------------
@@ -554,14 +606,13 @@ GetPahtFor(strMenu)
 ;------------------------------------------------------------
 {
 	blnDebug := false
-	global arrFolders
 
 	if (blnDebug)
-		Loop, % arrFolders.MaxIndex()
-			###_D(strMenu . " = " . arrFolders[A_Index].Name)
-	Loop, % arrFolders.MaxIndex()
-		if (strMenu = arrFolders[A_Index].Name)
-			return arrFolders[A_Index].Path
+		Loop, % arrGlobalFolders.MaxIndex()
+			###_D(strMenu . " = " . arrGlobalFolders[A_Index].Name)
+	Loop, % arrGlobalFolders.MaxIndex()
+		if (strMenu = arrGlobalFolders[A_Index].Name)
+			return arrGlobalFolders[A_Index].Path
 
 	blnDebug := false
 	return
@@ -634,15 +685,13 @@ DialogIsSupported(strWinId)
 ;------------------------------------------------------------
 {
 	blnDebug := false
-	
-	global arrDialogs
-	
+
 	WinGetTitle, strDialogTitle, ahk_id %strWinId%
 	if (blnDebug)
-		loop, % arrDialogs.MaxIndex()
-			###_D("DialogIsSupported? " . strDialogTitle . " " . arrDialogs[A_Index] . " " InStr(strDialogTitle, arrDialogs[A_Index]))
-	loop, % arrDialogs.MaxIndex()
-		if InStr(strDialogTitle, arrDialogs[A_Index])
+		loop, % arrGlogalDialogs.MaxIndex()
+			###_D("DialogIsSupported? " . strDialogTitle . " " . arrGlogalDialogs[A_Index] . " " InStr(strDialogTitle, arrGlogalDialogs[A_Index]))
+	loop, % arrGlogalDialogs.MaxIndex()
+		if InStr(strDialogTitle, arrGlogalDialogs[A_Index])
 			return True
 	return False
 }
@@ -671,88 +720,80 @@ http://msdn.microsoft.com/en-us/library/aa752094
 
 
 ;------------------------------------------------------------
-NavigateDialog(strPath, strWinId)
+NavigateDialog(strPath, strWinId, strClass)
 ;------------------------------------------------------------
 /*
 Excerpt from RMApp_Explorer_Navigate(FullPath, strWinId="") by Learning One
 http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 */
 {
-    if (strClass = "#32770")
+	blnDebug := true
+	if (blnDebug)
+		###_D("Dialog: " . strPath)
+	
+	if (strClass = "#32770")
 	{
-        if ControlIsVisible("ahk_id " . strWinId, "Edit1")
-            Control := "Edit1" ; in standard dialog windows, "Edit1" control is the right choice
-        Else if ControlIsVisible("ahk_id " . strWinId, "Edit2")
-            Control := "Edit2" ; but sometimes in MS office, if condition above fails, "Edit2" control is the right choice 
-        Else ; if above fails - just return and do nothing.
-            ###_D("strClass is #32770 but no valid control is visible")
-    }
-    Else if InStr(strClass, "bosa_sdm_") ; for some MS office dialog windows, which are not #32770 class.
-    {
-        if ControlIsVisible("ahk_id " . strWinId, "Edit1")
-            Control := "Edit1" ; if "Edit1" control exists, it is the right choice
-        Else if ControlIsVisible("ahk_id " . strWinId, "RichEdit20W2")
-            Control := "RichEdit20W2" ; some MS office dialogs don't have "Edit1" control, but they have "RichEdit20W2" control, which is then the right choice.
-        Else                            ; if above fails - just return and do nothing.
-            Return
-    }
-    Else {  ; in all other cases, we'll explore FolderPath, and return from this function
-        ComObjCreate("Shell.Application").Explore(FolderPath)   ; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
-        Return
-    }
+		if ControlIsVisible("ahk_id " . strWinId, "Edit1")
+			strControl := "Edit1"
+			; in standard dialog windows, "Edit1" control is the right choice
+		Else if ControlIsVisible("ahk_id " . strWinId, "Edit2")
+			strControl := "Edit2"
+			; but sometimes in MS office, if condition above fails, "Edit2" control is the right choice 
+		Else ; if above fails - just return and do nothing.
+		{
+			if (blnDebug)
+				###_D("strClass is #32770 but no valid control is visible.")
+			Return
+		}
+	}
+	Else if InStr(strClass, "bosa_sdm_") ; for some MS office dialog windows, which are not #32770 class.
+	{
+		if ControlIsVisible("ahk_id " . strWinId, "Edit1")
+			strControl := "Edit1"
+			; if "Edit1" control exists, it is the right choice
+		Else if ControlIsVisible("ahk_id " . strWinId, "RichEdit20W2")
+			strControl := "RichEdit20W2"
+			; some MS office dialogs don't have "Edit1" control, but they have "RichEdit20W2" control, which is then the right choice.
+		Else ; if above fails, just return and do nothing.
+		{
+			if (blnDebug)
+				###_D("strClass is bosa_sdm_ but no valid control is visible.")
+			Return
+		}
+	}
+	Else ; in all other cases, open a new Explorer and return from this function
+	{
+		if (blnDebug)
+			###_D("Dialog box strClass is not in #32770 or bosa_sdm_. Open a new Explorer.")
+		ComObjCreate("Shell.Application").Explore(strPath)
+		; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
+		Return
+	}
 
-    ;=== Refine ShellSpecialFolderConstant ===
-    if FolderPath is integer
-    {
-        if (FolderPath = 17)            ; My Computer --> 17 or 0x11
-            FolderPath := "::{20d04fe0-3aea-1069-a2d8-08002b30309d}"    ; because you can't navigate to "17" but you can navigate to "::{20d04fe0-3aea-1069-a2d8-08002b30309d}"
-        else                            ; don't allow other ShellSpecialFolderConstants. For example - you can't navigate to Control panel while you're in standard "Open File" dialog box window.
-            return
-    }
+	;===In this part (if we reached it), we'll send strPath to control and restore control's initial text after navigating to specified folder===  
+	ControlGetText, strPrevControlText, %strControl%, ahk_id %strWinId% ; we'll get and store control's initial text first
+	
+	ControlSetTextR(strControl, strPath, "ahk_id " . strWinId) ; set control's text to strPath
+	ControlSetFocusR(strControl, "ahk_id " . strWinId) ; focus control
+	if (WinExist("A") != strWinId) ; in case that some window just popped out, and initialy active window lost focus
+		WinActivate, ahk_id %strWinId% ; we'll activate initialy active window
+	
+	;=== Avoid accidental hotkey & hotstring triggereing while doing SendInput - can be done simply by #UseHook, but do it if user doesn't have #UseHook in the script ===
+	If (A_IsSuspended)
+		blnWasSuspended := True
+	if (!blnWasSuspended)
+		Suspend, On
+	SendInput, {End}{Space}{Backspace}{enter} ; silly but necessary part - go to end of control, send dummy space, delete it, and then send enter
+	if (!blnWasSuspended)
+		Suspend, Off
 
-    /*
-    ShellSpecialFolderConstants:    http://msdn.microsoft.com/en-us/library/windows/desktop/bb774096%28v=vs.85%29.aspx
-    CSIDL:                          http://msdn.microsoft.com/en-us/library/windows/desktop/bb762494%28v=vs.85%29.aspx
-    KNOWNFOLDERID:                  http://msdn.microsoft.com/en-us/library/windows/desktop/dd378457%28v=vs.85%29.aspx
-    */
-
-    
-    ;===In this part (if we reached it), we'll send FolderPath to control and optionaly restore control's initial text after navigating to specified folder===  
-    if (RestoreInitText = 1)    ; if we want to restore control's initial text after navigating to specified folder
-        ControlGetText, InitControlText, %Control%, ahk_id %strWinId%   ; we'll get and store control's initial text first
-    
-    RMApp_ControlSetTextR(Control, FolderPath, "ahk_id " strWinId)  ; set control's text to FolderPath
-    RMApp_ControlSetFocusR(Control, "ahk_id " strWinId)             ; focus control
-    if (WinExist("A") != strWinId)          ; in case that some window just popped out, and initialy active window lost focus
-        WinActivate, ahk_id %strWinId%      ; we'll activate initialy active window
-    
-    ;=== Avoid accidental hotkey & hotstring triggereing while doing SendInput - can be done simply by #UseHook, but do it if user doesn't have #UseHook in the script ===
-    If (A_IsSuspended = 1)
-        WasSuspended := 1
-    if (WasSuspended != 1)
-        Suspend, On
-    SendInput, {End}{Space}{Backspace}{enter}   ; silly but necessary part - go to end of control, send dummy space, delete it, and then send enter
-    if (WasSuspended != 1)
-        Suspend, Off
-
-    /*
-    Question: Why not use ControlSetText, and then send enter to control via ControlSend, %Control%, {enter}, ahk_id %strWinId% ?
-    Because in some "Save as"  dialogs in some programs, this causes auto saving file instead of navigating to specified folder! After a lot of testing, I concluded that most reliable method, which works and prevents this, is the one that looks weird & silly; after setting text via ControlSetText, control must be focused, then some dummy text must be sent to it via SendInput (in this case space, and then backspace which deletes it), and then enter, which causes navigation to specified folder.
-    Question: Ok, but is "SendInput, {End}{Space}{Backspace}{enter}" really necessary? Isn't "SendInput, {enter}" sufficient?
-    No. Sending "{End}{Space}{Backspace}{enter}" is definitely more reliable then just "{enter}". Sounds silly but tests showed that it's true.
-    */
-    
-    if (RestoreInitText = 1) {  ; if we want to restore control's initial text after we navigated to specified folder
-        Sleep, 70               ; give some time to control after sending {enter} to it
-        ControlGetText, ControlTextAfterNavigation, %Control%, ahk_id %strWinId%    ; sometimes controls automatically restore their initial text
-        if (ControlTextAfterNavigation != InitControlText)                      ; if not
-            RMApp_ControlSetTextR(Control, InitControlText, "ahk_id " strWinId)     ; we'll set control's text to its initial text
-    }
-    if (WinExist("A") != strWinId)  ; sometimes initialy active window loses focus, so we'll activate it again
-        WinActivate, ahk_id %strWinId%
-    
-    if (FocusedControl != "" and ControlIsVisible("ahk_id " strWinId, FocusedControl) = 1)
-        RMApp_ControlSetFocusR(FocusedControl, "ahk_id " strWinId)              ; focus initialy focused control
+	Sleep, 70 ; give some time to control after sending {enter} to it
+	ControlGetText, strControlTextAfterNavigation, %strControl%, ahk_id %strWinId% ; sometimes controls automatically restore their initial text
+	if (strControlTextAfterNavigation <> strPrevControlText) ; if not
+		ControlSetTextR(strControl, strPrevControlText, "ahk_id " . strWinId) ; we'll set control's text to its initial text
+	
+	if (WinExist("A") <> strWinId) ; sometimes initialy active window loses focus, so we'll activate it again
+		WinActivate, ahk_id %strWinId%
 }
 
 
@@ -762,39 +803,38 @@ Adapted from ControlIsVisible(WinTitle,ControlClass) by Learning One
 http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 */
 { ; used in Navigator
-    ControlGet, IsControlVisible, Visible,, %ControlClass%, %WinTitle%
-    return IsControlVisible
+	ControlGet, IsControlVisible, Visible,, %ControlClass%, %WinTitle%
+	return IsControlVisible
 }
 
-RMApp_ControlSetFocusR(Control, WinTitle="", Tries=3)
+ControlSetFocusR(Control, WinTitle="", Tries=3)
 /*
 Adapted from RMApp_ControlSetFocusR(Control, WinTitle="", Tries=3) by Learning One
 http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 */
 { ; used in Navigator. More reliable ControlSetFocus
-    Loop, %Tries%
-    {
-        ControlFocus, %Control%, %WinTitle%             ; focus control
-        Sleep, 50
-        ControlGetFocus, FocusedControl, %WinTitle%     ; check
-        if (FocusedControl = Control)                   ; if OK
-            return 1
-    }
+	Loop, %Tries%
+	{
+		ControlFocus, %Control%, %WinTitle%			 ; focus control
+		Sleep, 50
+		ControlGetFocus, FocusedControl, %WinTitle%	 ; check
+		if (FocusedControl = Control)				   ; if OK
+			return 1
+	}
 }
 
-RMApp_ControlSetTextR(Control, NewText="", WinTitle="", Tries=3)
+ControlSetTextR(Control, NewText="", WinTitle="", Tries=3)
 /*
 Adapted from from RMApp_ControlSetTextR(Control, NewText="", WinTitle="", Tries=3) by Learning One
 http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 */
 {  ; used in Navigator. More reliable ControlSetText
-    Loop, %Tries%
-    {
-        ControlSetText, %Control%, %NewText%, %WinTitle%            ; set
-        Sleep, 50
-        ControlGetText, CurControlText, %Control%, %WinTitle%       ; check
-        if (CurControlText = NewText)                               ; if OK
-            return 1
-    }
+	Loop, %Tries%
+	{
+		ControlSetText, %Control%, %NewText%, %WinTitle%			; set
+		Sleep, 50
+		ControlGetText, CurControlText, %Control%, %WinTitle%	   ; check
+		if (CurControlText = NewText)							   ; if OK
+			return 1
+	}
 }
- 
