@@ -9,6 +9,7 @@ By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert R
 	- create language file, build gui, tray menu and folder menu, skeleton for front end buttons and commands
 	- create AddThisDialog menu, MButton condition, CanOpenFavorite improvements with WindowIsAnExplorer, WindowIsDesktop and DialogIsSupported
 	- add SpecialFolders menu, OpenFavorite for Explorer and Desktop, NavigateExplorer
+	- support MS Office dialog boxes on WinXP (bosa_sdm_), open special folders from desktop, NavigateDialog in progress
 
 	Version:	DirMenu v2.2 (never released / not stable - base of a total rewrite to DirMenu3)
 	- manage (add, modify or delete) supported dialog box titles in the Gui
@@ -165,12 +166,12 @@ return
 #If, CanOpenFavorite(strWinId, strClass)
 MButton::
 ;------------------------------------------------------------
-blnDebug := false
+blnDebug := true
 
 if (blnDebug)
 	###_D("Yes: " . strWinId .  " " . strClass)
 
-if ((strClass = "#32770") or DialogIsSupported(strWinId))
+if ((strClass = "#32770") or InStr(strClass, "bosa_sdm_"))
 {
 	Menu, menuSpecialFolders, Disable, Control Panel
 	Menu, menuSpecialFolders, Disable, Recycle Bin
@@ -469,9 +470,8 @@ else if WindowIsDesktop(strClass)
 else if WindowIsAnExplorer(strClass)
 	NavigateExplorer(strPath, strWinId)
 else
-{
-	###_D("Dialog")
-}
+	NavigateDialog(strPath, strWinId)
+
 blnDebug := false
 return
 ;------------------------------------------------------------
@@ -480,15 +480,23 @@ return
 ;------------------------------------------------------------
 OpenSpecialFolder:
 ;------------------------------------------------------------
+
+
 blnDebug := true
 if (blnDebug)
 	###_D("strWinId: " . strWinId . "`nstrClass: " . strClass . "`nA_ThisMenuItem: " . A_ThisMenuItem)
 if (A_ThisMenuItem = "Control Panel")
-	NavigateExplorer(3, strWinId)
+	intSpecialFolder := 3
 else if (A_ThisMenuItem = "Recycle Bin")
-	NavigateExplorer(10, strWinId)
+	intSpecialFolder := 10
 else if(A_ThisMenuItem = "My Computer")
-	NavigateExplorer(17, strWinId)
+	intSpecialFolder := 17
+
+if WindowIsDesktop(strClass)
+	ComObjCreate("Shell.Application").Explore(intSpecialFolder)
+	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
+else 
+	NavigateExplorer(intSpecialFolder, strWinId)
 blnDebug := false
 return
 ;------------------------------------------------------------
@@ -584,19 +592,12 @@ CanOpenFavorite(ByRef strWinId, ByRef strClass)
 	WinGetClass strClass, % "ahk_id " . strWinId
 
 	if (blnDebug)
-		if WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or (strClass = "#32770")
+		if WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or (strClass = "#32770") or InStr(strClass, "bosa_sdm_")
 			###_D(strClass . " is OK")
 		else
 			###_D(strClass . " is NOT OK")
 		
-	if WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or (strClass = "#32770")
-		return true
-	else
-	{
-		if (blnDebug)
-			###_D("Check if dialog title supported: " . strWindowTitle)
-		return DialogIsSupported(strWinId)
-	}
+	return WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or (strClass = "#32770") or InStr(strClass, "bosa_sdm_")
 	blnDebug := false
 }
 ;------------------------------------------------------------
@@ -669,3 +670,131 @@ http://msdn.microsoft.com/en-us/library/aa752094
 ;------------------------------------------------------------
 
 
+;------------------------------------------------------------
+NavigateDialog(strPath, strWinId)
+;------------------------------------------------------------
+/*
+Excerpt from RMApp_Explorer_Navigate(FullPath, strWinId="") by Learning One
+http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
+*/
+{
+    if (strClass = "#32770")
+	{
+        if ControlIsVisible("ahk_id " . strWinId, "Edit1")
+            Control := "Edit1" ; in standard dialog windows, "Edit1" control is the right choice
+        Else if ControlIsVisible("ahk_id " . strWinId, "Edit2")
+            Control := "Edit2" ; but sometimes in MS office, if condition above fails, "Edit2" control is the right choice 
+        Else ; if above fails - just return and do nothing.
+            ###_D("strClass is #32770 but no valid control is visible")
+    }
+    Else if InStr(strClass, "bosa_sdm_") ; for some MS office dialog windows, which are not #32770 class.
+    {
+        if ControlIsVisible("ahk_id " . strWinId, "Edit1")
+            Control := "Edit1" ; if "Edit1" control exists, it is the right choice
+        Else if ControlIsVisible("ahk_id " . strWinId, "RichEdit20W2")
+            Control := "RichEdit20W2" ; some MS office dialogs don't have "Edit1" control, but they have "RichEdit20W2" control, which is then the right choice.
+        Else                            ; if above fails - just return and do nothing.
+            Return
+    }
+    Else {  ; in all other cases, we'll explore FolderPath, and return from this function
+        ComObjCreate("Shell.Application").Explore(FolderPath)   ; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
+        Return
+    }
+
+    ;=== Refine ShellSpecialFolderConstant ===
+    if FolderPath is integer
+    {
+        if (FolderPath = 17)            ; My Computer --> 17 or 0x11
+            FolderPath := "::{20d04fe0-3aea-1069-a2d8-08002b30309d}"    ; because you can't navigate to "17" but you can navigate to "::{20d04fe0-3aea-1069-a2d8-08002b30309d}"
+        else                            ; don't allow other ShellSpecialFolderConstants. For example - you can't navigate to Control panel while you're in standard "Open File" dialog box window.
+            return
+    }
+
+    /*
+    ShellSpecialFolderConstants:    http://msdn.microsoft.com/en-us/library/windows/desktop/bb774096%28v=vs.85%29.aspx
+    CSIDL:                          http://msdn.microsoft.com/en-us/library/windows/desktop/bb762494%28v=vs.85%29.aspx
+    KNOWNFOLDERID:                  http://msdn.microsoft.com/en-us/library/windows/desktop/dd378457%28v=vs.85%29.aspx
+    */
+
+    
+    ;===In this part (if we reached it), we'll send FolderPath to control and optionaly restore control's initial text after navigating to specified folder===  
+    if (RestoreInitText = 1)    ; if we want to restore control's initial text after navigating to specified folder
+        ControlGetText, InitControlText, %Control%, ahk_id %strWinId%   ; we'll get and store control's initial text first
+    
+    RMApp_ControlSetTextR(Control, FolderPath, "ahk_id " strWinId)  ; set control's text to FolderPath
+    RMApp_ControlSetFocusR(Control, "ahk_id " strWinId)             ; focus control
+    if (WinExist("A") != strWinId)          ; in case that some window just popped out, and initialy active window lost focus
+        WinActivate, ahk_id %strWinId%      ; we'll activate initialy active window
+    
+    ;=== Avoid accidental hotkey & hotstring triggereing while doing SendInput - can be done simply by #UseHook, but do it if user doesn't have #UseHook in the script ===
+    If (A_IsSuspended = 1)
+        WasSuspended := 1
+    if (WasSuspended != 1)
+        Suspend, On
+    SendInput, {End}{Space}{Backspace}{enter}   ; silly but necessary part - go to end of control, send dummy space, delete it, and then send enter
+    if (WasSuspended != 1)
+        Suspend, Off
+
+    /*
+    Question: Why not use ControlSetText, and then send enter to control via ControlSend, %Control%, {enter}, ahk_id %strWinId% ?
+    Because in some "Save as"  dialogs in some programs, this causes auto saving file instead of navigating to specified folder! After a lot of testing, I concluded that most reliable method, which works and prevents this, is the one that looks weird & silly; after setting text via ControlSetText, control must be focused, then some dummy text must be sent to it via SendInput (in this case space, and then backspace which deletes it), and then enter, which causes navigation to specified folder.
+    Question: Ok, but is "SendInput, {End}{Space}{Backspace}{enter}" really necessary? Isn't "SendInput, {enter}" sufficient?
+    No. Sending "{End}{Space}{Backspace}{enter}" is definitely more reliable then just "{enter}". Sounds silly but tests showed that it's true.
+    */
+    
+    if (RestoreInitText = 1) {  ; if we want to restore control's initial text after we navigated to specified folder
+        Sleep, 70               ; give some time to control after sending {enter} to it
+        ControlGetText, ControlTextAfterNavigation, %Control%, ahk_id %strWinId%    ; sometimes controls automatically restore their initial text
+        if (ControlTextAfterNavigation != InitControlText)                      ; if not
+            RMApp_ControlSetTextR(Control, InitControlText, "ahk_id " strWinId)     ; we'll set control's text to its initial text
+    }
+    if (WinExist("A") != strWinId)  ; sometimes initialy active window loses focus, so we'll activate it again
+        WinActivate, ahk_id %strWinId%
+    
+    if (FocusedControl != "" and ControlIsVisible("ahk_id " strWinId, FocusedControl) = 1)
+        RMApp_ControlSetFocusR(FocusedControl, "ahk_id " strWinId)              ; focus initialy focused control
+}
+
+
+ControlIsVisible(WinTitle,ControlClass)
+/*
+Adapted from ControlIsVisible(WinTitle,ControlClass) by Learning One
+http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
+*/
+{ ; used in Navigator
+    ControlGet, IsControlVisible, Visible,, %ControlClass%, %WinTitle%
+    return IsControlVisible
+}
+
+RMApp_ControlSetFocusR(Control, WinTitle="", Tries=3)
+/*
+Adapted from RMApp_ControlSetFocusR(Control, WinTitle="", Tries=3) by Learning One
+http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
+*/
+{ ; used in Navigator. More reliable ControlSetFocus
+    Loop, %Tries%
+    {
+        ControlFocus, %Control%, %WinTitle%             ; focus control
+        Sleep, 50
+        ControlGetFocus, FocusedControl, %WinTitle%     ; check
+        if (FocusedControl = Control)                   ; if OK
+            return 1
+    }
+}
+
+RMApp_ControlSetTextR(Control, NewText="", WinTitle="", Tries=3)
+/*
+Adapted from from RMApp_ControlSetTextR(Control, NewText="", WinTitle="", Tries=3) by Learning One
+http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
+*/
+{  ; used in Navigator. More reliable ControlSetText
+    Loop, %Tries%
+    {
+        ControlSetText, %Control%, %NewText%, %WinTitle%            ; set
+        Sleep, 50
+        ControlGetText, CurControlText, %Control%, %WinTitle%       ; check
+        if (CurControlText = NewText)                               ; if OK
+            return 1
+    }
+}
+ 
