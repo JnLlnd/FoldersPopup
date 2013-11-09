@@ -8,6 +8,7 @@ By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert R
 	- init skeleton, read ini file and create arrays for folders menu and supported dialog boxes
 	- create language file, build gui, tray menu and folder menu, skeleton for front end buttons and commands
 	- create AddThisDialog menu, MButton condition, CanOpenFavorite improvements with WindowIsAnExplorer, WindowIsDesktop and DialogIsSupported
+	- add SpecialFolders menu, OpenFavorite for Explorer and Desktop, NavigateExplorer
 
 	Version:	DirMenu v2.2 (never released / not stable - base of a total rewrite to DirMenu3)
 	- manage (add, modify or delete) supported dialog box titles in the Gui
@@ -71,6 +72,7 @@ global strIniFile := A_ScriptDir . "\DirMenu3.ini"
 Gosub, LoadIniFile
 Gosub, BuildGUI
 Gosub, BuildTrayMenu
+Gosub, BuildSpecialFoldersMenu
 Gosub, BuildFoldersMenu
 Gosub, BuildAddDialogMenu
 
@@ -167,6 +169,13 @@ blnDebug := false
 
 if (blnDebug)
 	###_D("Yes: " . strWinId .  " " . strClass)
+
+if ((strClass = "#32770") or DialogIsSupported(strWinId))
+{
+	Menu, menuSpecialFolders, Disable, Control Panel
+	Menu, menuSpecialFolders, Disable, Recycle Bin
+}
+
 WinActivate, % "ahk_id " . strWinId
 if (WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or DialogIsSupported(strWinId))
 	Menu, menuFolders, Show
@@ -180,23 +189,24 @@ return
 
 
 ;------------------------------------------------------------
-OpenFavorite:
+BuildTrayMenu:
 ;------------------------------------------------------------
-blnDebug := true
-
-strPath := GetPahtFor(A_ThisMenu)
-
-if (A_ThisHotkey = "+MButton")
-	Run Explorer.exe /n`,%strPath%
-else
-{
-	WinWaitActive, ahk_id %WinId%
-	; Call[WinGetClass("A")].(Path)
-}
-blnDebug := false
+Menu, Tray, Add
+Menu, Tray, Add, A&bout, GuiAbout
+Menu, Tray, Add, &Edit Folders Menu, ShowGui
+Menu, Tray, Default, &Edit Folders Menu
 return
 ;------------------------------------------------------------
 
+
+;------------------------------------------------------------
+BuildSpecialFoldersMenu:
+;------------------------------------------------------------
+Menu, menuSpecialFolders, Add, My Computer, OpenSpecialFolder
+Menu, menuSpecialFolders, Add, Control Panel, OpenSpecialFolder
+Menu, menuSpecialFolders, Add, Recycle Bin, OpenSpecialFolder
+return
+;------------------------------------------------------------
 
 
 ;------------------------------------------------------------
@@ -340,20 +350,9 @@ return
 
 
 ;------------------------------------------------------------
-BuildTrayMenu:
-;------------------------------------------------------------
-Menu, Tray, Add
-Menu, Tray, Add, A&bout, GuiAbout
-Menu, Tray, Add, &Edit Folders Menu, ShowGui
-Menu, Tray, Default, &Edit Folders Menu
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
 ShowGui:
 ;------------------------------------------------------------
-Gosub, LoadSettings
+Gosub, LoadSettingsToGui
 Gui, Show, w455 h455, %lAppName% %lAppVersionLong% - Settings
 return
 ;------------------------------------------------------------
@@ -374,7 +373,7 @@ return
 
 
 ;------------------------------------------------------------
-LoadSettings:
+LoadSettingsToGui:
 ;------------------------------------------------------------
 blnDebug := false
 
@@ -418,7 +417,8 @@ Loop, % arrFolders.MaxIndex()
 	else
 		Menu, menuFolders, Add, % arrFolders[A_Index].Name, OpenFavorite
 }
-; Add Special folders (see Explorer_Navigate(FullPath, hwnd="") {  ; by Learning one -> in C:\Dropbox\AutoHotkey\DirMenu3\Experiments\LearningOne.ahk
+Menu, menuFolders, Add
+Menu, menuFolders, Add, &Special Folders, :menuSpecialFolders
 Menu, menuFolders, Add
 Menu, menuFolders, Add, &Edit This Menu, ShowGui
 Menu, menuFolders, Default, &Edit This Menu
@@ -448,6 +448,48 @@ if (blnDebug)
 	Menu, menuAddDialog, Show
 
 blnDebug := False
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+OpenFavorite:
+;------------------------------------------------------------
+blnDebug := true
+
+strPath := GetPahtFor(A_ThisMenuItem)
+if (blnDebug)
+	###_D("strWinId: " . strWinId . "`nstrClass: " . strClass . "`nstrPath: " . strPath)
+
+if (A_ThisHotkey = "+MButton")
+	Run, Explorer.exe /n`,%strPath%
+else if WindowIsDesktop(strClass)
+	ComObjCreate("Shell.Application").Explore(strPath)
+	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
+else if WindowIsAnExplorer(strClass)
+	NavigateExplorer(strPath, strWinId)
+else
+{
+	###_D("Dialog")
+}
+blnDebug := false
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+OpenSpecialFolder:
+;------------------------------------------------------------
+blnDebug := true
+if (blnDebug)
+	###_D("strWinId: " . strWinId . "`nstrClass: " . strClass . "`nA_ThisMenuItem: " . A_ThisMenuItem)
+if (A_ThisMenuItem = "Control Panel")
+	NavigateExplorer(3, strWinId)
+else if (A_ThisMenuItem = "Recycle Bin")
+	NavigateExplorer(10, strWinId)
+else if(A_ThisMenuItem = "My Computer")
+	NavigateExplorer(17, strWinId)
+blnDebug := false
 return
 ;------------------------------------------------------------
 
@@ -503,8 +545,9 @@ WinUnderMouseID()
 GetPahtFor(strMenu)
 ;------------------------------------------------------------
 {
-	blnDebug := true
-	
+	blnDebug := false
+	global arrFolders
+
 	if (blnDebug)
 		Loop, % arrFolders.MaxIndex()
 			###_D(strMenu . " = " . arrFolders[A_Index].Name)
@@ -603,3 +646,26 @@ DialogIsSupported(strWinId)
 	return False
 }
 ;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+NavigateExplorer(strPath, strWinId)
+;------------------------------------------------------------
+/*
+Excerpt from RMApp_Explorer_Navigate(FullPath, hwnd="") by Learning One
+http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
+http://msdn.microsoft.com/en-us/library/windows/desktop/bb774096%28v=vs.85%29.aspx
+http://msdn.microsoft.com/en-us/library/aa752094
+*/
+{
+    For pExp in ComObjCreate("Shell.Application").Windows
+        if (pExp.hwnd = strWinId) ; matching window found
+            if strPath is integer  ; ShellSpecialFolderConstant
+                pExp.Navigate2(strPath)
+            else
+                pExp.Navigate("file:///" . strPath)
+            return
+}
+;------------------------------------------------------------
+
+
