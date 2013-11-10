@@ -4,6 +4,9 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: PopupFolders v0.3 ALPHA
+	- add NavigateConsole for console support (command prompt CMD)
+
 	Version: PopupFolders v0.2 ALPHA
 	- renamed app PopupFolders, isolate text into language variables
 
@@ -62,14 +65,14 @@ SetWorkingDir %A_ScriptDir%
 
 global arrGlobalFolders := Object()
 global arrGlogalDialogs := Object()
-global strIniFile := A_ScriptDir . "\DirMenu3.ini"
+global strIniFile := A_ScriptDir . "\" . lAppName . ".ini"
 
 ;@Ahk2Exe-IgnoreBegin
 	; Piece of code for developement phase only - won't be compiled
 	if (A_ComputerName = "JEAN-PC") ; for my home PC
-		strIniFile := A_ScriptDir . "\DirMenu3-HOME.ini"
+		strIniFile := A_ScriptDir . "\" . lAppName . "-HOME.ini"
 	else if InStr(A_ComputerName, "STIC") ; for my work hotkeys
-		strIniFile := A_ScriptDir . "\DirMenu3-WORK.ini"
+		strIniFile := A_ScriptDir . "\" . lAppName . "-WORK.ini"
 	; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
 
@@ -114,7 +117,7 @@ IfNotExist, %strIniFile%
 			[Folders]
 			Folder1=C:\|C:\
 			Folder2=Windows|%A_WinDir%
-			Folder3=Program Files|%A_Programs%
+			Folder3=Program Files|%A_ProgramFiles%
 		)
 		, %strIniFile%
 		
@@ -164,24 +167,24 @@ blnDebug := false
 if (blnDebug)
 	###_D("Yes: " . strGlobalWinId .  " " . strGlobalClass)
 
-; Can't find how to open a dialog box in My Computer or Network Neighborhood... need help ???
+; Can't find how to navigate a dialog box to My Computer or Network Neighborhood... need help ???
 Menu, menuSpecialFolders
-	, % ((strGlobalClass = "#32770") or InStr(strGlobalClass, "bosa_sdm_")) ? "Disable" : "Enable"
+	, % WindowIsConsole(strGlobalClass) or WindowIsDialog(strGlobalClass) ? "Disable" : "Enable"
 	, %lMenuMyComputer%
 Menu, menuSpecialFolders
-	, % ((strGlobalClass = "#32770") or InStr(strGlobalClass, "bosa_sdm_")) ? "Disable" : "Enable"
+	, % WindowIsConsole(strGlobalClass) or WindowIsDialog(strGlobalClass) ? "Disable" : "Enable"
 	, %lMenuNetworkNeighborhood%
 
-; There is no reason to open a dialog box in Control Panel or Recycle Bin
+; There is no point to navigate a dialog box or console to Control Panel or Recycle Bin
 Menu, menuSpecialFolders
-	, % ((strGlobalClass = "#32770") or InStr(strGlobalClass, "bosa_sdm_")) ? "Disable" : "Enable"
+	, % WindowIsConsole(strGlobalClass) or WindowIsDialog(strGlobalClass) ? "Disable" : "Enable"
 	, %lMenuControlPanel%
 Menu, menuSpecialFolders
-	, % ((strGlobalClass = "#32770") or InStr(strGlobalClass, "bosa_sdm_")) ? "Disable" : "Enable"
+	, % WindowIsConsole(strGlobalClass) or WindowIsDialog(strGlobalClass) ? "Disable" : "Enable"
 	, %lMenuRecycleBin%
 
 WinActivate, % "ahk_id " . strGlobalWinId
-if (WindowIsAnExplorer(strGlobalClass) or WindowIsDesktop(strGlobalClass) or DialogIsSupported(strGlobalWinId))
+if (WindowIsAnExplorer(strGlobalClass) or WindowIsDesktop(strGlobalClass) or WindowIsConsole(strGlobalClass) or DialogIsSupported(strGlobalWinId))
 	Menu, menuFolders, Show
 else
 	Menu, menuAddDialog, Show
@@ -339,7 +342,7 @@ return
 ;------------------------------------------------------------
 GuiAddFolder:
 ;------------------------------------------------------------
-###_D(lNotImplementedYet)
+Help(lNotImplementedYet)
 return
 ;------------------------------------------------------------
 
@@ -347,7 +350,7 @@ return
 ;------------------------------------------------------------
 GuiRemoveFolder:
 ;------------------------------------------------------------
-###_D(lNotImplementedYet)
+Help(lNotImplementedYet)
 return
 ;------------------------------------------------------------
 
@@ -355,7 +358,7 @@ return
 ;------------------------------------------------------------
 GuiEditFolder:
 ;------------------------------------------------------------
-###_D(lNotImplementedYet)
+Help(lNotImplementedYet)
 return
 ;------------------------------------------------------------
 
@@ -371,7 +374,7 @@ return
 ;------------------------------------------------------------
 GuiMoveFolderUp:
 ;------------------------------------------------------------
-###_D(lNotImplementedYet)
+Help(lNotImplementedYet)
 return
 ;------------------------------------------------------------
 
@@ -379,7 +382,7 @@ return
 ;------------------------------------------------------------
 GuiMoveFolderDown:
 ;------------------------------------------------------------
-###_D(lNotImplementedYet)
+Help(lNotImplementedYet)
 return
 ;------------------------------------------------------------
 
@@ -387,7 +390,7 @@ return
 ;------------------------------------------------------------
 GuiAddDialog:
 ;------------------------------------------------------------
-###_D(lNotImplementedYet)
+Help(lNotImplementedYet)
 return
 ;------------------------------------------------------------
 
@@ -395,7 +398,7 @@ return
 ;------------------------------------------------------------
 GuiRemoveDialog:
 ;------------------------------------------------------------
-###_D(lNotImplementedYet)
+Help(lNotImplementedYet)
 return
 ;------------------------------------------------------------
 
@@ -403,7 +406,7 @@ return
 ;------------------------------------------------------------
 GuiEditDialog:
 ;------------------------------------------------------------
-###_D(lNotImplementedYet)
+Help(lNotImplementedYet)
 return
 ;------------------------------------------------------------
 
@@ -411,7 +414,7 @@ return
 ;------------------------------------------------------------
 GuiSave:
 ;------------------------------------------------------------
-###_D(lNotImplementedYet)
+Help(lNotImplementedYet)
 /*
 	GuiControlGet, blnRevertEnabled, Enabled,  Re&vert
 	if (blnRevertEnabled)
@@ -432,7 +435,7 @@ return
 ;------------------------------------------------------------
 GuiCancel:
 ;------------------------------------------------------------
-###_D(lNotImplementedYet)
+Help(lNotImplementedYet)
 Gui, Cancel
 return
 ;------------------------------------------------------------
@@ -441,7 +444,7 @@ return
 ;------------------------------------------------------------
 GuiAbout:
 ;------------------------------------------------------------
-###_D(lNotImplementedYet)
+Help(lNotImplementedYet)
 return
 ;------------------------------------------------------------
 
@@ -512,6 +515,8 @@ if (A_ThisHotkey = "+MButton") or WindowIsDesktop(strGlobalClass)
 	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 else if WindowIsAnExplorer(strGlobalClass)
 	NavigateExplorer(strPath, strGlobalWinId)
+else if WindowIsConsole(strGlobalClass)
+	NavigateConsole(strPath, strGlobalWinId)
 else
 	NavigateDialog(strPath, strGlobalWinId, strGlobalClass)
 blnDebug := false
@@ -547,7 +552,7 @@ if (A_ThisHotkey = "+MButton") or WindowIsDesktop(strGlobalClass)
 	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 else if WindowIsAnExplorer(strGlobalClass)
 	NavigateExplorer(intSpecialFolder, strGlobalWinId)
-else ; this is a dialog box
+else ; this is the console or a dialog box
 {
 	if (intSpecialFolder = 0)
 		strPath := A_Desktop
@@ -557,7 +562,11 @@ else ; this is a dialog box
 		StringReplace, strPath, A_MyDocuments, Documents, Pictures
 	else ; we do not support this special folder
 		return
-	NavigateDialog(strPath, strGlobalWinId, strGlobalClass)
+
+	if WindowIsConsole(strGlobalClass)
+		NavigateConsole(strPath, strGlobalWinId)
+	else
+		NavigateDialog(strPath, strGlobalWinId, strGlobalClass)
 }
 blnDebug := false
 return
@@ -568,7 +577,7 @@ return
 AddThisFolder:
 ;------------------------------------------------------------
 blnDebug := false
-###_D(lNotImplementedYet)
+Help(lNotImplementedYet)
 blnDebug := False
 return
 ;------------------------------------------------------------
@@ -578,7 +587,7 @@ return
 AddThisDialog:
 ;------------------------------------------------------------
 blnDebug := false
-###_D(lNotImplementedYet)
+Help(lNotImplementedYet)
 blnDebug := False
 return
 ;------------------------------------------------------------
@@ -646,7 +655,7 @@ CanOpenFavorite(ByRef strWinId, ByRef strClass)
 ; "CabinetWClass" -> Explorer
 ; "ProgMan" -> Desktop
 ; "WorkerW" -> Desktop
-; "ConsoleWindowClass" -> Console
+; "ConsoleWindowClass" -> Console (CMD)
 ; "#32770" -> Dialog
 {
 	blnDebug := false
@@ -655,12 +664,12 @@ CanOpenFavorite(ByRef strWinId, ByRef strClass)
 	WinGetClass strClass, % "ahk_id " . strWinId
 
 	if (blnDebug)
-		if WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or (strClass = "#32770") or InStr(strClass, "bosa_sdm_")
+		if WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or WindowIsConsole(strClass) or WindowIsDialog(strClass)
 			###_D(strClass . " is OK")
 		else
 			###_D(strClass . " is NOT OK")
 		
-	return WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or (strClass = "#32770") or InStr(strClass, "bosa_sdm_")
+	return WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or WindowIsConsole(strClass) or WindowIsDialog(strClass)
 	blnDebug := false
 }
 ;------------------------------------------------------------
@@ -670,11 +679,7 @@ CanOpenFavorite(ByRef strWinId, ByRef strClass)
 WindowIsAnExplorer(strClass)
 ;------------------------------------------------------------
 {
-	blnDebug := false
-	if strClass in CabinetWClass,ConsoleWindowClass
-		return True
-	else
-		return False
+	return (strClass = "CabinetWClass")
 }
 ;------------------------------------------------------------
 
@@ -683,11 +688,25 @@ WindowIsAnExplorer(strClass)
 WindowIsDesktop(strClass)
 ;------------------------------------------------------------
 {
-	blnDebug := false
-	if strClass in ProgMan,WorkerW
-		return True
-	else
-		return False
+	return (strClass = "ProgMan") or (strClass = "WorkerW")
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+WindowIsConsole(strClass)
+;------------------------------------------------------------
+{
+	return (strClass = "ConsoleWindowClass")
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+WindowIsDialog(strClass)
+;------------------------------------------------------------
+{
+	return (strClass = "#32770") or InStr(strClass, "bosa_sdm_")
 }
 ;------------------------------------------------------------
 
@@ -732,6 +751,21 @@ http://msdn.microsoft.com/en-us/library/aa752094
 
 
 ;------------------------------------------------------------
+NavigateConsole(strPath, strWinId)
+;------------------------------------------------------------
+{
+	blnDebug := false
+	if (blnDebug)
+		###_D("strPath: " . strPath . ";nstrWinId: " . strWinId)
+
+	if (WinExist("A") <> strWinId) ; in case that some window just popped out, and initialy active window lost focus
+		WinActivate, ahk_id %strWinId% ; we'll activate initialy active window
+	SendInput, CD /D %strPath%{Enter}
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 NavigateDialog(strPath, strWinId, strClass)
 ;------------------------------------------------------------
 /*
@@ -758,7 +792,7 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 			Return
 		}
 	}
-	Else if InStr(strClass, "bosa_sdm_") ; for some MS office dialog windows, which are not #32770 class.
+	Else if InStr(strClass, "bosa_sdm_") ; for some MS office dialog windows, which are not #32770 class
 	{
 		if ControlIsVisible("ahk_id " . strWinId, "Edit1")
 			strControl := "Edit1"
@@ -859,7 +893,7 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 ; TOOLS
 ;============================================================
 
-; ### DELETE UNUSED FUNCTIONS
+; ### DELETE UNUSED FUNCTIONS BEDORE FINAL RELEASE
 
 ; ------------------------------------------------
 Help(strMessage, objVariables*)
