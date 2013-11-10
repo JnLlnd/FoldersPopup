@@ -7,6 +7,7 @@
 	Version: PopupFolders v0.3 ALPHA
 	- add NavigateConsole for console support (command prompt CMD)
 	- change .ini filename to new app name
+	- 
 
 	Version: PopupFolders v0.2 ALPHA
 	- renamed app PopupFolders, isolate text into language variables
@@ -55,7 +56,7 @@
 
 
 ;============================================================
-; INITIALISATION
+; INITIALIZATION
 ;============================================================
 
 
@@ -100,10 +101,13 @@ LoadIniFile:
 ; -----------------------------------------------------------
 blnDebug := False
 
+strSettingsHotkeyDefault := "^#f"
+
 IfNotExist, %strIniFile%
 	FileAppend,
 		(LTrim Join`r`n
 			[Global]
+			SettingsHotkey=%strSettingsHotkeyDefault%
 			DisplayTrayTip=1
 
 			[Dialogs]
@@ -121,8 +125,16 @@ IfNotExist, %strIniFile%
 			Folder3=Program Files|%A_ProgramFiles%
 		)
 		, %strIniFile%
-		
+	
 IniRead, blnDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip
+IniRead, strSettingsHotkey, %strIniFile%, Global, SettingsHotkey
+if (strSettingsHotkey = "ERROR")
+{
+	IniWrite, %strSettingsHotkeyDefault%, %strIniFile%, Global, SettingsHotkey
+	strSettingsHotkey := strSettingsHotkeyDefault
+}
+Hotkey, %strSettingsHotkey%, ShowGui
+
 Loop
 {
 	IniRead, strIniLine, %strIniFile%, Folders, Folder%A_Index%
@@ -186,7 +198,14 @@ Menu, menuSpecialFolders
 
 WinActivate, % "ahk_id " . strGlobalWinId
 if (WindowIsAnExplorer(strGlobalClass) or WindowIsDesktop(strGlobalClass) or WindowIsConsole(strGlobalClass) or DialogIsSupported(strGlobalWinId))
+{
+	; Enable Add This Folder only if the mouse is over an Explorer (tested on WIN_XP and WIN_7) or a dialog box (works on WIN_7, not on WIN_XP)
+	; Other tests shown that WIN_8 behaves like WIN_7. So, I assume WIN_8 to work. If someone could confirm (until I can test it myself)?
+	Menu, menuFolders
+		, % WindowIsAnExplorer(strGlobalClass) or (WindowIsDialog(strGlobalClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
+		, %lMenuAddThisFolder%
 	Menu, menuFolders, Show
+}
 else
 	Menu, menuAddDialog, Show
 
@@ -210,8 +229,11 @@ Menu, menuSpecialFolders, Enable, %lMenuNetworkNeighborhood%
 Menu, menuSpecialFolders, Enable, %lMenuControlPanel%
 Menu, menuSpecialFolders, Enable, %lMenuRecycleBin%
 
-; We won't detect the current folder, so we can't add it
-Menu, menuFolders, Disable, %lMenuAddThisFolder%
+; Enable Add This Folder only if the mouse is over an Explorer (tested on WIN_XP and WIN_7) or a dialog box (works on WIN_7, not on WIN_XP)
+; Other tests shown that WIN_8 behaves like WIN_7. So, I assume WIN_8 to work. If someone could confirm (until I can test it myself)?
+Menu, menuFolders
+	, % WindowIsAnExplorer(strGlobalClass) or (WindowIsDialog(strGlobalClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
+	, %lMenuAddThisFolder%
 Menu, menuFolders, Show
 
 blnDebug := false
@@ -282,7 +304,7 @@ BuildAddDialogMenu:
 ;------------------------------------------------------------
 blnDebug := False
 
-Menu, menuAddDialog, Add, %lMenuDialogNotSupported%, AddThisDialog ; % lMenuDialogNotSupported
+Menu, menuAddDialog, Add, %lMenuDialogNotSupported%, AddThisDialog
 Menu, menuAddDialog, Disable, %lMenuDialogNotSupported%
 Menu, menuAddDialog, Add, %lMenuAddThisDialog%, AddThisDialog
 Menu, menuAddDialog, Add
@@ -320,7 +342,7 @@ Gui, Add, Button, x+10 w75 r1 gGuiAddDialog, %lGuiAddDialog%
 Gui, Add, Button, w75 r1 gGuiRemoveDialog, %lGuiRemoveDialog%
 Gui, Add, Button, w75 r1 gGuiEditDialog, %lGuiEditDialog%
 
-Gui, Add, Button, x100 w75 r1 gGuiSave Default, %lGuiSave%
+Gui, Add, Button, x100 w75 r1 Disabled Default gGuiSave, %lGuiSave%
 Gui, Add, Button, x+40 w75 r1 gGuiCancel, %lGuiCancel%
 Gui, Add, Button, x+80 w75 r1 gGuiAbout, %lGuiAbout%
 
@@ -335,6 +357,10 @@ return
 ;------------------------------------------------------------
 GuiLvFoldersEvent:
 ;------------------------------------------------------------
+blnDebug := false
+if (BlnDebug)
+	###_D(A_GuiEvent)
+
 ; REMOVE IF NOT USED
 return
 ;------------------------------------------------------------
@@ -343,7 +369,10 @@ return
 ;------------------------------------------------------------
 GuiAddFolder:
 ;------------------------------------------------------------
-Help(lNotImplementedYet)
+FileSelectFolder strNewPath, *C:\
+if (strNewPath = "")
+	return
+AddFolder(strNewPath)
 return
 ;------------------------------------------------------------
 
@@ -391,7 +420,7 @@ return
 ;------------------------------------------------------------
 GuiAddDialog:
 ;------------------------------------------------------------
-Help(lNotImplementedYet)
+AddDialog("")
 return
 ;------------------------------------------------------------
 
@@ -437,6 +466,11 @@ return
 GuiCancel:
 ;------------------------------------------------------------
 Help(lNotImplementedYet)
+; EMPTY 2 LVs
+Gui, ListView, lvFoldersList
+LV_Delete()
+Gui, ListView, lvDialogsList
+LV_Delete()
 Gui, Cancel
 return
 ;------------------------------------------------------------
@@ -462,8 +496,147 @@ return
 ;------------------------------------------------------------
 GuiClose:
 ;------------------------------------------------------------
-GoSub, GuiSave
+GoSub, GuiCancel
 return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+AddThisFolder:
+;------------------------------------------------------------
+blnDebug := false
+
+objPrevClipboard := ClipboardAll ; Save the entire clipboard
+ClipBoard := ""
+
+; Add This folder menu is active only if we are in Explorer (WIN_XP, WIN_7 or WIN_8) or in a Dialog box (WIN_7 or WIN_8).
+; In all these OS, the key sequence {F4}{Esc} selects the current location of the window.
+Loop, 3
+{
+	Sleep, 100 * A_Index
+	Send {F4}{Esc} ; F4 move the caret the "Go To A Different Folder box" and {Esc} select it content ({Esc} could be replaced by ^a to Select All)
+	Sleep, 100 * A_Index
+	Send ^c ; Copy
+	Sleep, 100 * A_Index
+} Until (StrLen(ClipBoard))
+
+strCurrentFolder := ClipBoard
+
+If StrLen(strCurrentFolder)
+{
+	Gosub, ShowGui
+	AddFolder(strCurrentFolder)
+}
+else
+	Oops(lDialogCouldDetectCurrentFolder)
+
+Clipboard := objPrevClipboard ; Restore the original clipboard
+objPrevClipboard := "" ; Free the memory in case the clipboard was very large
+
+blnDebug := False
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+AddFolder(strPath)
+;------------------------------------------------------------
+{
+	blnDebug := false
+	Gui +OwnDialogs
+
+	; suggest the deepest folder's name as default name for the added folder
+	SplitPath, strPath, strDefaultName, , , , strDrive
+	if (blnDebug)
+		###_D("strPath: " . strPath . "`nstrDefaultName: " . strDefaultName . "`nstrDrive: " . strDrive)
+	if !StrLen(strDefaultName) ; we are probably at the root of a drive
+		strDefaultName := strDrive
+
+	Loop
+	{
+		InputBox strName, % L(lDialogTitle, lAppName, lAppVersionLong) . lDialogFolderNameTitle, %lDialogFolderNamePrompt%, , 250, 120, , , , , %strDefaultName%
+		if (ErrorLevel) or !StrLen(strName)
+			return
+	} until FolderNameIsNew(strName)
+	
+	Gui, ListView, lvFoldersList
+	if (blnDebug)
+		###_D("LV_GetCount: " . LV_GetCount() . "`nLV_GetNext: " . LV_GetNext() . "`nResult: " . LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 1) : 1)
+	LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 1) : 1, "Select Focus", strName, strPath)
+	LV_ModifyCol(1, "AutoHdr")
+	LV_ModifyCol(2, "AutoHdr")
+	GuiControl, Enable, %lGuiSave%
+	GuiControl, Enable, %lGuiRemoveFolder%
+	GuiControl, Enable, %lGuiEditFolder%
+
+	blnDebug := false
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+FolderNameIsNew(strCandidateName)
+;------------------------------------------------------------
+{
+	Gui, ListView, lvFoldersList
+	Loop, % LV_GetCount()
+	{
+		LV_GetText(strThisName, A_Index, 1)
+		if (strCandidateName = strThisName)
+		{
+			Oops(lDialogFolderNameNotNew, strCandidateName)
+			return False
+		}
+	}
+	return True
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+AddThisDialog:
+;------------------------------------------------------------
+blnDebug := false
+
+WinGetTitle, strDialogTitle, ahk_id %strGlobalWinId%
+Gosub, ShowGui
+AddDialog(strDialogTitle)
+
+
+blnDebug := False
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+AddDialog(strCurrentDialogTitle)
+;------------------------------------------------------------
+{
+	Gui +OwnDialogs
+	strDialog := strCurrentDialogTitle
+
+	InputBox, strDialog, % L(lDialogAddDialogTitle, lAppName, lAppVersionLong), %lDialogAddDialogPrompt%, , 250, 150, , , , , %strDialog%
+	if (ErrorLevel) or !StrLen(strDialog)
+		return
+	
+	Gui, ListView, lvDialogsList
+	Loop, % LV_GetCount()
+	{
+		LV_GetText(strThisName, A_Index, 1)
+		if (strDialog = strThisName)
+		{
+			Oops(lDialogAddDialogAlready)
+			return
+		}
+	}
+
+	LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 1) : 1, "Select Focus", strDialog)
+	LV_ModifyCol(1, "AutoHdr")
+	GuiControl, Enable, %lGuiSave%
+	GuiControl, Enable, %lGuiRemoveDialog%
+	GuiControl, Enable, %lGuiEditDialog%
+}
+
 ;------------------------------------------------------------
 
 
@@ -570,26 +743,6 @@ else ; this is the console or a dialog box
 		NavigateDialog(strPath, strGlobalWinId, strGlobalClass)
 }
 blnDebug := false
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-AddThisFolder:
-;------------------------------------------------------------
-blnDebug := false
-Help(lNotImplementedYet)
-blnDebug := False
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-AddThisDialog:
-;------------------------------------------------------------
-blnDebug := false
-Help(lNotImplementedYet)
-blnDebug := False
 return
 ;------------------------------------------------------------
 

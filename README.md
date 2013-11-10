@@ -16,6 +16,15 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### 2013-11-11 v0.4
+* Add settings hotkey to ini file (default Ctrl-Windows-F)
+* Enable Add This Window menu only in WIN_7/WIN_8 dialog boxes (not working in WIN_XP) and in Explorer windows (all versions)
+* Add GuiAddFolder and GuiAddDialog buttons commands, add AddThisFolder and AddThisDialog menus commands
+	
+### 2013-11-10 v0.3
+* Add NavigateConsole for console support (command prompt CMD)
+* Change .ini filename to new app name
+	
 ### 2013-11-09 v0.2
 
 * Create language file, build gui, tray menu, popup folder menu and skeleton for front end buttons and commands
