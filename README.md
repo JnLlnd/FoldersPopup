@@ -1,10 +1,10 @@
 # PopupFolders (ALPHA) - Read me
 
-Popup menu to jump from one folder to another. Freeware.
+Popup menu to jump from folders to folders. Freeware.
 
 Written using AHKScript v1.1.09.03+ (http://www.ahkscript.org)  
 By JnLlnd on [AHKScript forum](http://ahkscript.org/boards/memberlist.php?mode=viewprofile&u=66), based on DirMenu v2 by Robert Ryan 2012 (rbrtryn on [AutoHotkey.com forum](http://www.autohotkey.com/board/user/15020-rbrtryn/))  
-Thanks to LearningOne for sharing his code and to others who helped în [this thread on AHKScript.org forum](http://ahkscript.org/boards/viewtopic.php?f=5&t=526).
+Thanks to LearningOne for sharing his code and to others who helped ï¿½n [this thread on AHKScript.org forum](http://ahkscript.org/boards/viewtopic.php?f=5&t=526).
 
 <!---
 ## Links
