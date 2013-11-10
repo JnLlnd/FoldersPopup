@@ -6,6 +6,7 @@
 
 	Version: PopupFolders v0.3 ALPHA
 	- add NavigateConsole for console support (command prompt CMD)
+	- change .ini filename to new app name
 
 	Version: PopupFolders v0.2 ALPHA
 	- renamed app PopupFolders, isolate text into language variables
