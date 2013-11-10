@@ -1,10 +1,10 @@
-# DirMenu3 (ALPHA) - Read me
+# PopupFolders (ALPHA) - Read me
 
 Popup menu to jump from one folder to another. Freeware.
 
-By JnLlnd on [AHKScript forum](http://ahkscript.org/boards/memberlist.php?mode=viewprofile&u=66), based on DirMenu v2 by Robert Ryan 2012 (rbrtryn on [AutoHotkey.com forum](http://www.autohotkey.com/board/user/15020-rbrtryn/) )  
 Written using AHKScript v1.1.09.03+ (http://www.ahkscript.org)  
-
+By JnLlnd on [AHKScript forum](http://ahkscript.org/boards/memberlist.php?mode=viewprofile&u=66), based on DirMenu v2 by Robert Ryan 2012 (rbrtryn on [AutoHotkey.com forum](http://www.autohotkey.com/board/user/15020-rbrtryn/))  
+Thanks to LearningOne for sharing his code and to others who helped în [this thread on AHKScript.org forum](http://ahkscript.org/boards/viewtopic.php?f=5&t=526).
 
 <!---
 ## Links
@@ -16,10 +16,19 @@ Written using AHKScript v1.1.09.03+ (http://www.ahkscript.org)
 
 ## History
 
+### 2013-11-09 v0.2
+
+* Create language file, build gui, tray menu, popup folder menu and skeleton for front end buttons and commands
+* Create CanOpenFavorite condition for MButton with WindowIsAnExplorer, WindowIsDesktop and DialogIsSupported, AddThisDialog menu
+* Add SpecialFolders menu, OpenFavorite for Explorer and Desktop, NavigateExplorer
+* Add support for MS Office dialog boxes on WinXP (bosa_sdm_), open special folders in Explorer and Desktop
+* Implement NavigateDialog, add Desktop/Document/Pictures special folders, open it in dialog boxes, enable appropriate menus in popup menu
+* Renamed the app PopupFolders, isolate text into language variables, update GitHub and ReadMe.md with v0.2
 
 ### 2013-11-05 v0.1
 
 * First release of ALPHA version
+* Initialize script, read ini file and create arrays for folders menu and supported dialog boxes
 
 
 ## <a name="copyright"></a>Copyright
