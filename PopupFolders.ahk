@@ -180,7 +180,7 @@ MButton::
 blnDebug := false
 
 if (blnDebug)
-	###_D("Yes: " . strGlobalWinId .  " " . strGlobalClass)
+	###_D("Yes: " . strGlobalWinId . " " . strGlobalClass)
 
 ; Can't find how to navigate a dialog box to My Computer or Network Neighborhood... need help ???
 Menu, menuSpecialFolders
@@ -390,7 +390,7 @@ if (blnDebug)
 }
 LV_Modify(intItemToRemove, "Select Focus")
 LV_ModifyCol(1, "AutoHdr")
-LV_ModifyCol(2, "AutoHdr")    
+LV_ModifyCol(2, "AutoHdr")
 GuiControl, Enable, %lGuiSave%
 blnDebug := False
 return
@@ -419,14 +419,14 @@ if (strNewPath = "")
 Loop
 {
 	InputBox strNewName, % L(lDialogEditFolderTitle, lAppName, lAppVersionLong)
-		   , %lDialogEditFolderPrompt%, , 250, 120, , , , , %strCurrentName%
+		, %lDialogEditFolderPrompt%, , 250, 120, , , , , %strCurrentName%
 	if (ErrorLevel)
 		return
 } until (strNewName = strCurrentName) or FolderNameIsNew(strNewName)
 
 LV_Modify(intRowToEdit, "Select Focus", strNewName, strNewPath)
 LV_ModifyCol(1, "AutoHdr")
-LV_ModifyCol(2, "AutoHdr")    
+LV_ModifyCol(2, "AutoHdr")
 GuiControl, Enable, %lGuiSave%
 return
 ;------------------------------------------------------------
@@ -459,7 +459,8 @@ LV_GetText(PriorName, intSelectedRow - 1, 1)
 LV_GetText(PriorPath, intSelectedRow - 1, 2)
 
 LV_Modify(intSelectedRow, "", PriorName, PriorPath)
-LV_Modify(intSelectedRow - 1, "Select Focus", strThisName, strThisPath)
+LV_Modify(intSelectedRow - 1, "Select Focus Vis", strThisName, strThisPath)
+
 GuiControl, Enable, %lGuiSave%
 return
 ;------------------------------------------------------------
@@ -481,7 +482,7 @@ LV_GetText(NextName, intSelectedRow + 1, 1)
 LV_GetText(NextPath, intSelectedRow + 1, 2)
 	
 LV_Modify(intSelectedRow, "", NextName, NextPath)
-LV_Modify(intSelectedRow + 1, "Select Focus", strThisName, strThisPath)
+LV_Modify(intSelectedRow + 1, "Select Focus Vis", strThisName, strThisPath)
 
 GuiControl, Enable, %lGuiSave%
 return
@@ -533,7 +534,7 @@ intRowToEdit := LV_GetNext()
 LV_GetText(strCurrentDialog, intRowToEdit, 1)
 
 InputBox strNewDialog, % L(lDialogEditDialogTitle, lAppName, lAppVersionLong)
-	   , %lDialogEditDialogPrompt%, , 250, 120, , , , , %strCurrentDialog%
+	, %lDialogEditDialogPrompt%, , 250, 120, , , , , %strCurrentDialog%
 if (ErrorLevel) or !StrLen(strNewDialog) or (strNewDialog = strCurrentDialog)
 	return
 
@@ -838,7 +839,7 @@ if (A_ThisHotkey = "+MButton") or WindowIsDesktop(strGlobalClass)
 	if InStr(strPath, "\\") = 1 ; This must be = 1 (not true). For UNC (e.g. \\my.server.com@SSL\DavWWWRoot\Folder\Subfolder)
 	{
 		Oops(L(lMButtonUNCError, strPath, lAppName))
-	    Run Explorer.exe /n`
+		Run Explorer.exe /n`
 	}
 	else
 		ComObjCreate("Shell.Application").Explore(strPath)
@@ -1053,24 +1054,25 @@ http://msdn.microsoft.com/en-us/library/aa752094
 	blnDebug := false
 	if (blnDebug)
 		###_D(varPath . " " . strWinId)
-    For pExp in ComObjCreate("Shell.Application").Windows
+	For pExp in ComObjCreate("Shell.Application").Windows
 	{
 		if (blnDebug)
 		{
 			SetFormat, IntegerFast, D
 			strTemp := strWinId + 0
-			###_D(A_Index . " " . pExp.hwnd . " " . strTemp)
+			###_D(A_Index . " hndw: " . pExp.hwnd . " strWinId: " . strTemp)
 		}
-		if varPath is integer  ; ShellSpecialFolderConstant
-	            pExp.Navigate2(varPath)
-	        else if InStr(varPath, "\\") = 1 ; This must be = 1 (not true). For UNC (e.g. \\my.server.com@SSL\DavWWWRoot\Folder\Subfolder)
+		if (pExp.hwnd = strWinId)
+			if varPath is integer ; ShellSpecialFolderConstant
+				pExp.Navigate2(varPath)
+			else if InStr(varPath, "\\") = 1 ; This must be = 1 (not true). For UNC (e.g. \\my.server.com@SSL\DavWWWRoot\Folder\Subfolder)
 			{
-	            try pExp.Navigate(varPath)
+				try pExp.Navigate(varPath)
 				catch, objErr
 					Oops(lNavigateError, varPath, lAppName)
 			}
-	        else
-	            pExp.Navigate("file:///" . varPath)
+			else
+				pExp.Navigate("file:///" . varPath)
 	}
 }
 ;------------------------------------------------------------
@@ -1142,7 +1144,7 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 		Return
 	}
 
-	;===In this part (if we reached it), we'll send strPath to control and restore control's initial text after navigating to specified folder===  
+	;===In this part (if we reached it), we'll send strPath to control and restore control's initial text after navigating to specified folder===
 	ControlGetText, strPrevControlText, %strControl%, ahk_id %strWinId% ; we'll get and store control's initial text first
 	
 	ControlSetTextR(strControl, strPath, "ahk_id " . strWinId) ; set control's text to strPath
@@ -1202,7 +1204,7 @@ ControlSetTextR(strControl, strNewText = "", strWinTitle = "", intTries = 3)
 Adapted from from RMApp_ControlSetTextR(Control, NewText="", WinTitle="", Tries=3) by Learning One
 http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 */
-{  ; used in Navigator. More reliable ControlSetText
+{ ; used in Navigator. More reliable ControlSetText
 	Loop, %intTries%
 	{
 		ControlSetText, %strControl%, %strNewText%, %strWinTitle% ; set
@@ -1263,18 +1265,18 @@ L(strMessage, objVariables*)
 
 ###_D(str, blnAgain := 0)
 {
-   static blnSkip### := false
-   if (blnSkip###)
-      if (blnAgain)
-         blnSkip### := false
-      else
-         return
-   intOption := 6 + 512 ; 6 Cancel/Try Again/Continue + 512 Makes the 2nd button the default
-   MsgBox, % intOption, ###_D(ébug), %str%
-   IfMsgBox TryAgain
-      ExitApp
-   else IfMsgBox Cancel
-      blnSkip### := true
-   else
-      return
+	static blnSkip### := false
+	if (blnSkip###)
+	if (blnAgain)
+		blnSkip### := false
+	else
+		return
+	intOption := 6 + 512 ; 6 Cancel/Try Again/Continue + 512 Makes the 2nd button the default
+	MsgBox, % intOption, ###_D(ébug), %str%
+	IfMsgBox TryAgain
+		ExitApp
+	else IfMsgBox Cancel
+		blnSkip### := true
+	else
+		return
 }
