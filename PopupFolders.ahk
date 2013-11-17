@@ -4,9 +4,13 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: PopupFolders v0.5 ALPHA (last alpha version)
+	- implemented GuiAbout and GuiHelp, added About and Help to tray menu, tray tip displayed only 5 times
+	- removed file:/// protocol prefix, added support for ExploreWClass, implemented try/catch to Explore shell method, offer to add manualy when add folder failed
+
 	Version: PopupFolders v0.4 ALPHA
 	- add settings hotkey to ini file (default Crtl-Windows-F), enable AddThisFolder in all version Explorer and only in WIN_7/Win_8 dialog boxes (not working in WIN_XP)
-	- add GuiSave, GuiCancel, RemoveFolder, EditFolder, AddSeparatoe, MoveFolderUp/Down, RemoveDialog, EditDialog, fix bug in GuiShow, add tray icon
+	- add GuiSave, GuiCancel, RemoveFolder, EditFolder, AddSeparator, MoveFolderUp/Down, RemoveDialog, EditDialog, fix bug in GuiShow, add tray icon
 
 	Version: PopupFolders v0.3 ALPHA
 	- add NavigateConsole for console support (command prompt CMD)
@@ -112,7 +116,7 @@ IfNotExist, %strIniFile%
 		(LTrim Join`r`n
 			[Global]
 			SettingsHotkey=%strSettingsHotkeyDefault%
-			DisplayTrayTip=1
+			DisplayTrayTip=5
 			[Folders]
 			Folder1=C:\|C:\
 			Folder2=Windows|%A_WinDir%
@@ -129,6 +133,8 @@ IfNotExist, %strIniFile%
 		, %strIniFile%
 	
 IniRead, blnDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip
+if (blnDisplayTrayTip)
+	IniWrite, % (blnDisplayTrayTip - 1), %strIniFile%, Global, DisplayTrayTip
 IniRead, strSettingsHotkey, %strIniFile%, Global, SettingsHotkey
 if (strSettingsHotkey = "ERROR")
 {
@@ -199,6 +205,7 @@ Menu, menuSpecialFolders
 	, %lMenuRecycleBin%
 
 WinActivate, % "ahk_id " . strGlobalWinId
+
 if (WindowIsAnExplorer(strGlobalClass) or WindowIsDesktop(strGlobalClass) or WindowIsConsole(strGlobalClass) or DialogIsSupported(strGlobalWinId))
 {
 	; Enable Add This Folder only if the mouse is over an Explorer (tested on WIN_XP and WIN_7) or a dialog box (works on WIN_7, not on WIN_XP)
@@ -248,8 +255,9 @@ BuildTrayMenu:
 ;------------------------------------------------------------
 Menu, Tray, Icon, %A_ScriptDir%\ico\Visualpharm-Icons8-Metro-Style-Folders-Likes.ico, 1
 Menu, Tray, Add
-Menu, Tray, Add, %lMenuAbout%, GuiAbout
 Menu, Tray, Add, %lMenuEditFoldersMenu%, GuiShow
+Menu, Tray, Add, %lMenuHelp%, GuiHelp
+Menu, Tray, Add, %lMenuAbout%, GuiAbout
 Menu, Tray, Default, %lMenuEditFoldersMenu%
 return
 ;------------------------------------------------------------
@@ -282,7 +290,7 @@ Loop, % arrGlobalFolders.MaxIndex()
 {
 	if (blnDebug)
 		###_D(arrGlobalFolders[A_Index].Name)
-	if !StrLen(arrGlobalFolders[A_Index].Name)
+	if (arrGlobalFolders[A_Index].Name = lMenuSeparator)
 		Menu, menuFolders, Add
 	else
 		Menu, menuFolders, Add, % arrGlobalFolders[A_Index].Name, OpenFavorite
@@ -290,8 +298,8 @@ Loop, % arrGlobalFolders.MaxIndex()
 Menu, menuFolders, Add
 Menu, menuFolders, Add, %lMenuSpecialFolders%, :menuSpecialFolders
 Menu, menuFolders, Add
-Menu, menuFolders, Add, %lMenuEditThisMenu%, GuiShow
-Menu, menuFolders, Default, %lMenuEditThisMenu%
+Menu, menuFolders, Add, %lMenuSettings%, GuiShow
+Menu, menuFolders, Default, %lMenuSettings%
 Menu, menuFolders, Add, %lMenuAddThisFolder%, AddThisFolder
 
 if (blnDebug)
@@ -327,14 +335,17 @@ BuildGui:
 ;------------------------------------------------------------
 blnDebug := false
 
-Gui, 1:Font, s12 w700, Verdana
-Gui, 1:Add, Picture, x10 y10, %A_ScriptDir%\ico\Folders-Likes-icon-48.png
-Gui, 1:Add, Text, y20 w490 h25, %lAppName%
+Gui, Font, s12 w700, Verdana
+Gui, Add, Picture, x10 y5, %A_ScriptDir%\ico\Folders-Likes-icon-48.png
+Gui, Add, Text, y25 w490 h25, %lAppName%
+Gui, 1:Font, s8 w400, Arial
+Gui, Add, Button, y10 x400 w45 h22 gGuiAbout, % L(lGuiAbout)
+
 Gui, 1:Font, s8 w400, Verdana
 Gui, Add, ListView, x10 w350 h220 Count32 -Multi NoSortHdr LV0x10 vlvFoldersList, %lGuiLvFoldersHeader%
 Gui, Add, Button, x+10 w75 r1 gGuiAddFolder, %lGuiAddFolder%
 Gui, Add, Button, w75 r1 gGuiRemoveFolder, %lGuiRemoveFolder%
-Gui, Add, Button, W75 r1 gGuiEditFolder, %lGuiEditFolder%
+Gui, Add, Button, w75 r1 gGuiEditFolder, %lGuiEditFolder%
 Gui, Add, Button, w75 r1 gGuiAddSeparator, %lGuiSeparator%
 Gui, Add, Button, w75 r1 gGuiMoveFolderUp, %lGuiMoveFolderUp%
 Gui, Add, Button, w75 r1 gGuiMoveFolderDown, %lGuiMoveFolderDown%
@@ -347,7 +358,7 @@ Gui, Add, Button, w75 r1 gGuiEditDialog, %lGuiEditDialog%
 
 Gui, Add, Button, x100 w75 r1 Disabled Default gGuiSave, %lGuiSave%
 Gui, Add, Button, x+40 w75 r1 gGuiCancel, %lGuiCancel%
-Gui, Add, Button, x+80 w75 r1 gGuiAbout, %lGuiAbout%
+Gui, Add, Button, x+80 w75 r1 gGuiHelp, %lGuiHelp%
 
 if (blnDebug)
 	Gui, Show, w455 h455, % L(lGuiTitle, lAppName, lAppVersionLong)
@@ -437,7 +448,7 @@ GuiAddSeparator:
 ;------------------------------------------------------------
 GuiControl, Focus, lvFoldersList
 Gui, ListView, lvFoldersList
-LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus BackgroundGray")
+LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", lMenuSeparator, lMenuSeparator)
 GuiControl, Enable, %lGuiSave%
 return
 ;------------------------------------------------------------
@@ -590,6 +601,15 @@ return
 
 
 ;------------------------------------------------------------
+GuiShow:
+;------------------------------------------------------------
+Gosub, LoadSettingsToGui
+Gui, Show, w455 h455, % L(lGuiTitle, lAppName, lAppVersionLong)
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 GuiCancel:
 ;------------------------------------------------------------
 blnDebug := False
@@ -612,27 +632,70 @@ return
 
 
 ;------------------------------------------------------------
-GuiAbout:
-;------------------------------------------------------------
-Gui, +OwnDialogs
-Help(lNotImplementedYet)
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiShow:
-;------------------------------------------------------------
-Gosub, LoadSettingsToGui
-Gui, Show, w455 h455, % L(lGuiTitle, lAppName, lAppVersionLong)
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
 GuiClose:
 ;------------------------------------------------------------
 GoSub, GuiCancel
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiAbout:
+;------------------------------------------------------------
+intGui1WinID := WinExist("A")
+Gui, 1:Submit, NoHide
+Gui, 2:New, , % L(lAboutTitle, lAppName, lAppVersionLong)
+Gui, 2:+Owner1
+Gui, Add, Picture, x10 y5, %A_ScriptDir%\ico\Folders-Likes-icon-192.png
+str32or64 := A_PtrSize  * 8
+Gui, Font, s12 w700, Verdana
+Gui, Add, Link, y10 vlblAboutText1, % L(lAboutText1, lAppName, lAppVersionLong, str32or64)
+Gui, Font, s8 w400, Verdana
+Gui, Add, Link, , % L(lAboutText2)
+Gui, Add, Link, , % L(lAboutText3)
+Gui, Font, s10 w400, Verdana
+Gui, Add, Link, , % L(lAboutText4)
+Gui, Font, s8 w400, Verdana
+Gui, 2:Add, Button, y+20 g2GuiClose, %lGui2Close%
+Gui, 2:Show, AutoSize Center
+Gui, 1:+Disabled
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiHelp:
+;------------------------------------------------------------
+intGui1WinID := WinExist("A")
+Gui, 1:Submit, NoHide
+Gui, 2:New, , % L(lHelpTitle, lAppName, lAppVersionLong)
+Gui, 2:+Owner1
+Gui, Add, Picture, x10 y5, %A_ScriptDir%\ico\Folders-Likes-icon-256.png
+intWidth := 450
+Gui, Font, s10 w400, Verdana
+Gui, 2:Add, Link, y10 w%intWidth%, %lHelpText1%
+Gui, Font, s8 w400, Verdana
+Gui, 2:Add, Link, w%intWidth%, %lHelpText2%
+Gui, 2:Add, Link, w%intWidth%, %lHelpText3%
+Gui, 2:Add, Link, w%intWidth%, %lHelpText4%
+Gui, 2:Add, Link, w%intWidth%, %lHelpText5%
+Gui, 2:Add, Link, w%intWidth%, %lHelpText6%
+Gui, 2:Add, Link, w%intWidth%, %lHelpText7%
+Gui, 2:Add, Link, w%intWidth%, %lHelpText8%
+Gui, 2:Add, Button, y+20 g2GuiClose, %lGui2Close%
+Gui, 2:Show, AutoSize Center
+Gui, 1:+Disabled
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+2GuiClose:
+2GuiEscape:
+;------------------------------------------------------------
+Gui, 1:-Disabled
+Gui, 2:Destroy
+WinActivate, ahk_id %intGui1WinID%
 return
 ;------------------------------------------------------------
 
@@ -647,13 +710,15 @@ ClipBoard := ""
 
 ; Add This folder menu is active only if we are in Explorer (WIN_XP, WIN_7 or WIN_8) or in a Dialog box (WIN_7 or WIN_8).
 ; In all these OS, the key sequence {F4}{Esc} selects the current location of the window.
-Loop, 3
+intWaitTimeIncrement := 150 ; time required on an XP average machine
+intTries := 3
+Loop, %intTries%
 {
-	Sleep, 100 * A_Index
+	Sleep, intWaitTimeIncrement * A_Index
 	Send {F4}{Esc} ; F4 move the caret the "Go To A Different Folder box" and {Esc} select it content ({Esc} could be replaced by ^a to Select All)
-	Sleep, 100 * A_Index
+	Sleep, intWaitTimeIncrement * A_Index
 	Send ^c ; Copy
-	Sleep, 100 * A_Index
+	Sleep, intWaitTimeIncrement * A_Index
 } Until (StrLen(ClipBoard))
 
 strCurrentFolder := ClipBoard
@@ -664,7 +729,15 @@ If StrLen(strCurrentFolder)
 	AddFolder(strCurrentFolder)
 }
 else
-	Oops(lDialogCouldDetectCurrentFolder)
+{
+	Gui, +OwnDialogs 
+	MsgBox, 52, % L(lDialogAddFolderManuallyTitle, lAppName, lAppVersionLong), %lDialogAddFolderManuallyPrompt%
+	IfMsgBox, Yes
+	{
+		Gosub, GuiShow
+		Gosub, GuiAddFolder
+	}
+}
 
 Clipboard := objPrevClipboard ; Restore the original clipboard
 objPrevClipboard := "" ; Free the memory in case the clipboard was very large
@@ -835,16 +908,8 @@ if (blnDebug)
 	###_D("strGlobalWinId: " . strGlobalWinId . "`nstrGlobalClass: " . strGlobalClass . "`nstrPath: " . strPath)
 
 if (A_ThisHotkey = "+MButton") or WindowIsDesktop(strGlobalClass)
-{
-	if InStr(strPath, "\\") = 1 ; This must be = 1 (not true). For UNC (e.g. \\my.server.com@SSL\DavWWWRoot\Folder\Subfolder)
-	{
-		Oops(L(lMButtonUNCError, strPath, lAppName))
-		Run Explorer.exe /n`
-	}
-	else
-		ComObjCreate("Shell.Application").Explore(strPath)
-		; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
-}
+	ComObjCreate("Shell.Application").Explore(strPath)
+	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 else if WindowIsAnExplorer(strGlobalClass)
 	NavigateExplorer(strPath, strGlobalWinId)
 else if WindowIsConsole(strGlobalClass)
@@ -891,7 +956,12 @@ else ; this is the console or a dialog box
 	else if (intSpecialFolder = 5)
 		strPath := A_MyDocuments
 	else if (intSpecialFolder = 39)
-		StringReplace, strPath, A_MyDocuments, Documents, Pictures
+	{
+		; do not use: StringReplace, strPath, A_MyDocuments, Documents, Pictures
+		; because A_MyDocument could contain a "Documents" string before the final folder
+		StringLeft, strPath, A_MyDocuments, % StrLen(A_MyDocuments) - StrLen("Documents")
+		strPath := strPath . "Pictures"
+	}	
 	else ; we do not support this special folder
 		return
 
@@ -991,7 +1061,7 @@ CanOpenFavorite(ByRef strWinId, ByRef strClass)
 WindowIsAnExplorer(strClass)
 ;------------------------------------------------------------
 {
-	return (strClass = "CabinetWClass")
+	return (strClass = "CabinetWClass") or (strClass = "ExploreWClass")
 }
 ;------------------------------------------------------------
 
@@ -1064,15 +1134,26 @@ http://msdn.microsoft.com/en-us/library/aa752094
 		}
 		if (pExp.hwnd = strWinId)
 			if varPath is integer ; ShellSpecialFolderConstant
-				pExp.Navigate2(varPath)
+			{
+				try pExp.Navigate2(varPath)
+				catch, objErr
+					Oops(lNavigateSpecialError, varPath)
+			}
+/*
 			else if InStr(varPath, "\\") = 1 ; This must be = 1 (not true). For UNC (e.g. \\my.server.com@SSL\DavWWWRoot\Folder\Subfolder)
 			{
 				try pExp.Navigate(varPath)
 				catch, objErr
-					Oops(lNavigateError, varPath, lAppName)
+					Oops(lNavigateUNCError, varPath, lAppName)
 			}
+*/
 			else
-				pExp.Navigate("file:///" . varPath)
+			{
+				; try pExp.Navigate("file:///" . varPath)
+				try pExp.Navigate(varPath)
+				catch, objErr
+					Oops(lNavigateFileError, varPath)
+			}
 	}
 }
 ;------------------------------------------------------------
