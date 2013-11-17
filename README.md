@@ -11,10 +11,14 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 * [Application home]() (not published yet)
 * [Download 32-bits / 64-bits]() (not published yet)
-* [Description and documentation]() (not published yet)
 -->
 
 ## History
+
+### 2013-11-11 v0.5 (last alpha version)
+* Implemented GuiAbout and GuiHelp, added About and Help to tray menu, tray tip displayed only 5 times
+* Removed file:/// protocol prefix, added support for ExploreWClass, implemented try/catch to Explore shell method, offer to add manually when add folder failed
+
 
 ### 2013-11-11 v0.4
 * Add settings hotkey to ini file (default Ctrl-Windows-F)
