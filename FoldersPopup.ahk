@@ -78,7 +78,7 @@
 ListLines, Off
 
 global strCurrentVersion := "0.9"
-#Include %A_ScriptDir%\PopupFolders_LANG.ahk
+#Include %A_ScriptDir%\FoldersPopup_LANG.ahk
 SetWorkingDir %A_ScriptDir%
 
 global strIniFile := A_ScriptDir . "\" . lAppName . ".ini"
