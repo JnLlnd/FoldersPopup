@@ -1,4 +1,4 @@
-# PopupFolders (ALPHA) - Read me
+# FoldersPopup (ALPHA) - Read me
 
 Popup menu to jump from folders to folders. Freeware.
 
@@ -6,19 +6,20 @@ Written using AHKScript v1.1.09.03+ (http://www.ahkscript.org)
 By JnLlnd on [AHKScript forum](http://ahkscript.org/boards/memberlist.php?mode=viewprofile&u=66), based on DirMenu v2 by Robert Ryan 2012 (rbrtryn on [AutoHotkey.com forum](http://www.autohotkey.com/board/user/15020-rbrtryn/))  
 Thanks to LearningOne for sharing his code and to others who helped in [this thread on AHKScript.org forum](http://ahkscript.org/boards/viewtopic.php?f=5&t=526).
 
-<!---
 ## Links
 
-* [Application home]() (not published yet)
-* [Download 32-bits / 64-bits]() (not published yet)
--->
+* [Application home](http://code.jeanlalonde.ca/folderspopup/)
+* [Download 32-bits / 64-bits](http://code.jeanlalonde.ca/ahk/folderspopup/folderspopup.zip)
 
 ## History
+
+### 2013-11-11 v0.9 (beta version)
+* Implemented startup option in tray and check4update, standardize dialog box titles, various text fixes
+* Renamed the app FoldersPopup, removed debugging code, prepare for compiler, removed external pictures
 
 ### 2013-11-11 v0.5 (last alpha version)
 * Implemented GuiAbout and GuiHelp, added About and Help to tray menu, tray tip displayed only 5 times
 * Removed file:/// protocol prefix, added support for ExploreWClass, implemented try/catch to Explore shell method, offer to add manually when add folder failed
-
 
 ### 2013-11-11 v0.4
 * Add settings hotkey to ini file (default Ctrl-Windows-F)
