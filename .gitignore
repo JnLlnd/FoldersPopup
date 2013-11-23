@@ -1,1 +1,3 @@
 *.ini
+img/
+*.session
