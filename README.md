@@ -1,4 +1,4 @@
-# FoldersPopup (ALPHA) - Read me
+# FoldersPopup - Read me
 
 Popup menu to jump from folders to folders. Freeware.
 
