@@ -75,7 +75,7 @@
 #NoEnv
 #SingleInstance force
 #KeyHistory 0
-ListLines, Off
+; ListLines, Off
 
 global strCurrentVersion := "0.9"
 #Include %A_ScriptDir%\FoldersPopup_LANG.ahk
@@ -132,6 +132,9 @@ IfNotExist, %strIniFile%
 		(LTrim Join`r`n
 			[Global]
 			SettingsHotkey=%strSettingsHotkeyDefault%
+			PopupHotkeyMouse=
+			PopupHotkeyNewMouse=
+			PopupHotkeyNewKeyboard=
 			DisplayTrayTip=5
 			[Folders]
 			Folder1=C:\|C:\
@@ -145,7 +148,8 @@ IfNotExist, %strIniFile%
 			Dialog5=Save
 			Dialog6=Select
 			Dialog7=Upload
-		)
+
+)
 		, %strIniFile%
 	
 IniRead, blnDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip
@@ -158,6 +162,9 @@ if (strSettingsHotkey = "ERROR")
 	strSettingsHotkey := strSettingsHotkeyDefault
 }
 Hotkey, %strSettingsHotkey%, GuiShow
+
+Hotkey, $MButton, PopupMenuMouse
+Hotkey, $^f, PopupMenuKeyboard
 
 Loop
 {
@@ -188,9 +195,43 @@ return
 ;============================================================
 
 
+PopupMenuMouse:
+If CanOpenFavoriteMouse(strGlobalWinId, strGlobalClass)
+{
+	###_T("strGlobalWinId: " . strGlobalWinId, "strGlobalClass: " . strGlobalClass, true)
+	WinActivate, % "ahk_id " . strGlobalWinId
+	intMenuPosX :=
+	intMenuPosY :=
+	gosub, PopupMenu
+}
+else
+	Send, {%A_ThisHotkey%} ; {MButton}
+; TrayTip, %A_ThisHotkey%, PopupMenuM ; ###
+return
+
+
+PopupMenuKeyboard:
+CoordMode, Menu, Client ; could be moved to init if this is the only used option
+If CanOpenFavoriteKeyboard(strGlobalWinId, strGlobalClass)
+{
+	###_T("strGlobalWinId: " . strGlobalWinId, "strGlobalClass: " . strGlobalClass, true)
+	intMenuPosX := 20
+	intMenuPosY := 20
+	gosub, PopupMenu
+}
+else
+{
+	StringReplace, strThisMouseHotkey, A_ThisHotkey, $
+	Send, %strThisMouseHotkey% ; remove $
+}
+; TrayTip, %A_ThisHotkey%, PopupMenuK ; ###
+return
+
+
+
 ;------------------------------------------------------------
-#If, CanOpenFavorite(strGlobalWinId, strGlobalClass)
-MButton::
+; #If, CanOpenFavorite(strGlobalWinId, strGlobalClass)
+PopupMenu:
 ;------------------------------------------------------------
 
 ; Can't find how to navigate a dialog box to My Computer or Network Neighborhood... need help ???
@@ -209,7 +250,8 @@ Menu, menuSpecialFolders
 	, % WindowIsConsole(strGlobalClass) or WindowIsDialog(strGlobalClass) ? "Disable" : "Enable"
 	, %lMenuRecycleBin%
 
-WinActivate, % "ahk_id " . strGlobalWinId
+; ONLY IF MOUSE HOTKEY -> moved to PopupMenuMouse
+; WinActivate, % "ahk_id " . strGlobalWinId
 
 if (WindowIsAnExplorer(strGlobalClass) or WindowIsDesktop(strGlobalClass) or WindowIsConsole(strGlobalClass) or DialogIsSupported(strGlobalWinId))
 {
@@ -218,13 +260,14 @@ if (WindowIsAnExplorer(strGlobalClass) or WindowIsDesktop(strGlobalClass) or Win
 	Menu, menuFolders
 		, % WindowIsAnExplorer(strGlobalClass) or (WindowIsDialog(strGlobalClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 		, %lMenuAddThisFolder%
-	Menu, menuFolders, Show
+	Menu, menuFolders, Show, %intMenuPosX%, %intMenuPosY%
+
 }
 else
 	Menu, menuAddDialog, Show
 
 return
-#If
+; #If
 ;------------------------------------------------------------
 
 
@@ -258,7 +301,7 @@ BuildTrayMenu:
 
 ;@Ahk2Exe-IgnoreBegin
 ; Piece of code for developement phase only - won't be compiled
-Menu, Tray, Icon, %A_ScriptDir%\ico\Visualpharm-Icons8-Metro-Style-Folders-Likes.ico, 1
+Menu, Tray, Icon, %A_ScriptDir%\Folders-Likes-icon-256-light-center.ico, 1
 ; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
 Menu, Tray, Add
@@ -1119,7 +1162,7 @@ GetPathFor(strName)
 
 
 ;------------------------------------------------------------
-CanOpenFavorite(ByRef strWinId, ByRef strClass)
+CanOpenFavoriteMouse(ByRef strWinId, ByRef strClass)
 ;------------------------------------------------------------
 ; "CabinetWClass" and "ExploreWClass" -> Explorer
 ; "ProgMan" -> Desktop
@@ -1129,7 +1172,24 @@ CanOpenFavorite(ByRef strWinId, ByRef strClass)
 {
 	MouseGetPos, , , strWinId
 	WinGetClass strClass, % "ahk_id " . strWinId
+	TrayTip, Can...M, %strClass% ; ###
+	return WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or WindowIsConsole(strClass) or WindowIsDialog(strClass)
+}
+;------------------------------------------------------------
 
+
+;------------------------------------------------------------
+CanOpenFavoriteKeyboard(ByRef strWinId, ByRef strClass)
+;------------------------------------------------------------
+; "CabinetWClass" and "ExploreWClass" -> Explorer
+; "ProgMan" -> Desktop
+; "WorkerW" -> Desktop
+; "ConsoleWindowClass" -> Console (CMD)
+; "#32770" -> Dialog
+{
+	strWinId := WinExist("A")
+	WinGetClass strClass, A
+	TrayTip, Can...K, %strClass% ; ###
 	return WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or WindowIsConsole(strClass) or WindowIsDialog(strClass)
 }
 ;------------------------------------------------------------
