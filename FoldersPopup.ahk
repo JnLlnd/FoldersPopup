@@ -75,13 +75,16 @@
 #NoEnv
 #SingleInstance force
 #KeyHistory 0
-; ListLines, Off
+ListLines, Off
 
-global strCurrentVersion := "0.9"
+global strCurrentVersion := "1.0 beta"
 #Include %A_ScriptDir%\FoldersPopup_LANG.ahk
-SetWorkingDir %A_ScriptDir%
+SetWorkingDir, %A_ScriptDir%
 
 global strIniFile := A_ScriptDir . "\" . lAppName . ".ini"
+
+strMouseButtons := " |LButton|MButton|RButton|XButton1|XButton2|WheelUp|WheelDown|WheelLeft|WheelRight|"
+; leave last | to enable default value on the last item
 
 ;@Ahk2Exe-IgnoreBegin
 ; Piece of code for developement phase only - won't be compiled
@@ -109,7 +112,8 @@ IfExist, %A_Startup%/%lAppName%.lnk
 
 if (blnDisplayTrayTip)
 	TrayTip, % L(lTrayTipInstalledTitle, lAppName, lAppVersion)
-	, % L(lTrayTipInstalledDetail, lAppName), , 1
+		, % L(lTrayTipInstalledDetail, lAppName), , 1
+	; ### adapt to current hotkeys
 return
 
 
@@ -125,16 +129,22 @@ LoadIniFile:
 
 global arrGlobalFolders := Object()
 global arrGlogalDialogs := Object()
-strSettingsHotkeyDefault := "^#f"
+
+strPopupHotkeyMouseDefault := "MButton"
+strPopupHotkeyMouseNewDefault := "+MButton"
+strPopupHotkeyKeyboardDefault := "#k"
+strPopupHotkeyKeyboardNewDefault := "+#k"
+strSettingsHotkeyDefault := "+#f"
 
 IfNotExist, %strIniFile%
 	FileAppend,
 		(LTrim Join`r`n
 			[Global]
+			PopupHotkeyMouse=%strPopupHotkeyMouseDefault%
+			PopupHotkeyNewMouse=%strPopupHotkeyMouseNewDefault%
+			PopupHotkeyKeyboard=%strPopupHotkeyKeyboardDefault%
+			PopupHotkeyNewKeyboard=%strPopupHotkeyKeyboardNewDefault%
 			SettingsHotkey=%strSettingsHotkeyDefault%
-			PopupHotkeyMouse=
-			PopupHotkeyNewMouse=
-			PopupHotkeyNewKeyboard=
 			DisplayTrayTip=5
 			[Folders]
 			Folder1=C:\|C:\
@@ -152,19 +162,31 @@ IfNotExist, %strIniFile%
 )
 		, %strIniFile%
 	
+; Hotkeys: ini names, hotkey variables name, default values and gosub label
+strIniKeyNames := "PopupHotkeyMouse|PopupHotkeyNewMouse|PopupHotkeyKeyboard|PopupHotkeyNewKeyboard|SettingsHotkey"
+StringSplit, arrIniKeyNames, strIniKeyNames, |
+strHotkeyVarNames := "strPopupHotkeyMouse|strPopupHotkeyMouseNew|strPopupHotkeyKeyboard|strPopupHotkeyKeyboardNew|strSettingsHotkey"
+StringSplit, arrHotkeyVarNames, strHotkeyVarNames, |
+strHotkeyDefaults := "MButton|+MButton|#k|+#k|+#f"
+StringSplit, arrHotkeyDefaults, strHotkeyDefaults, |
+strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|GuiShow"
+StringSplit, arrHotkeyLabels, strHotkeyLabels, |
+; Read the values and set hotkey shortcuts
+loop, % arrIniKeyNames%0%
+{
+	IniRead, arrHotkeyVarNames%A_Index%, %strIniFile%, Global, % arrIniKeyNames%A_Index%, % arrHotkeyDefaults%A_Index%
+	; example: Hotkey, $MButton, PopupMenuMouse
+	Hotkey, % "$" . arrHotkeyVarNames%A_Index%, % arrHotkeyLabels%A_Index%
+	; Prepare global arrays used by GuiHotkey function
+	SplitHotkey(arrHotkeyVarNames%A_Index%, strMouseButtons
+		, strModifiers%A_Index%, strOptionsKey%A_Index%, strMouseButton%A_Index%, strMouseButtonsWithDefault%A_Index%)
+}
+
 IniRead, blnDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip
 if (blnDisplayTrayTip)
 	IniWrite, % (blnDisplayTrayTip - 1), %strIniFile%, Global, DisplayTrayTip
-IniRead, strSettingsHotkey, %strIniFile%, Global, SettingsHotkey
-if (strSettingsHotkey = "ERROR")
-{
-	IniWrite, %strSettingsHotkeyDefault%, %strIniFile%, Global, SettingsHotkey
-	strSettingsHotkey := strSettingsHotkeyDefault
-}
-Hotkey, %strSettingsHotkey%, GuiShow
 
-Hotkey, $MButton, PopupMenuMouse
-Hotkey, $^f, PopupMenuKeyboard
+IniRead, strLatestSkipped, %strIniFile%, Global, LatestVersionSkipped, 0.0
 
 Loop
 {
@@ -195,44 +217,36 @@ return
 ;============================================================
 
 
-PopupMenuMouse:
-If CanOpenFavoriteMouse(strGlobalWinId, strGlobalClass)
+;------------------------------------------------------------
+PopupMenuMouse: ; default MButton
+PopupMenuKeyboard: ; default #k
+;------------------------------------------------------------
+
+If !CanOpenFavorite(A_ThisLabel, strGlobalWinId, strGlobalClass)
 {
-	###_T("strGlobalWinId: " . strGlobalWinId, "strGlobalClass: " . strGlobalClass, true)
+	if (A_ThisLabel = "PopupMenuMouse")
+		strThisHotkey := A_ThisHotkey
+	else
+		StringReplace, strThisHotkey, A_ThisHotkey, $ ; remove $ from hotkey
+	Send, {%strThisHotkey%} ; for example {MButton} or #k
+	###_T(A_ThisLabel, strThisHotkey)
+	return
+}
+
+if (A_ThisLabel = "PopupMenuMouse")
+{
 	WinActivate, % "ahk_id " . strGlobalWinId
+	; display menu at mouse pointer location
 	intMenuPosX :=
 	intMenuPosY :=
-	gosub, PopupMenu
 }
 else
-	Send, {%A_ThisHotkey%} ; {MButton}
-; TrayTip, %A_ThisHotkey%, PopupMenuM ; ###
-return
-
-
-PopupMenuKeyboard:
-CoordMode, Menu, Client ; could be moved to init if this is the only used option
-If CanOpenFavoriteKeyboard(strGlobalWinId, strGlobalClass)
 {
-	###_T("strGlobalWinId: " . strGlobalWinId, "strGlobalClass: " . strGlobalClass, true)
+	; display menu at an offset of 20x20 pixel from top-left client area
 	intMenuPosX := 20
 	intMenuPosY := 20
-	gosub, PopupMenu
 }
-else
-{
-	StringReplace, strThisMouseHotkey, A_ThisHotkey, $
-	Send, %strThisMouseHotkey% ; remove $
-}
-; TrayTip, %A_ThisHotkey%, PopupMenuK ; ###
-return
-
-
-
-;------------------------------------------------------------
-; #If, CanOpenFavorite(strGlobalWinId, strGlobalClass)
-PopupMenu:
-;------------------------------------------------------------
+###_T(A_ThisLabel , "strGlobalWinId: " . strGlobalWinId . "`nstrGlobalClass: " . strGlobalClass)
 
 ; Can't find how to navigate a dialog box to My Computer or Network Neighborhood... need help ???
 Menu, menuSpecialFolders
@@ -260,23 +274,36 @@ if (WindowIsAnExplorer(strGlobalClass) or WindowIsDesktop(strGlobalClass) or Win
 	Menu, menuFolders
 		, % WindowIsAnExplorer(strGlobalClass) or (WindowIsDialog(strGlobalClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 		, %lMenuAddThisFolder%
-	Menu, menuFolders, Show, %intMenuPosX%, %intMenuPosY%
+	Menu, menuFolders, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
 
 }
 else
 	Menu, menuAddDialog, Show
 
 return
-; #If
 ;------------------------------------------------------------
 
 
 ;------------------------------------------------------------
-+MButton::
+PopupMenuNewWindowMouse: ; default +MButton::
+PopupMenuNewWindowKeyboard: ; default +#k
 ;------------------------------------------------------------
-
-MouseGetPos, , , strGlobalWinId
+if (A_ThisLabel = "PopupMenuNewWindowMouse")
+{
+	MouseGetPos, , , strGlobalWinId
+	; display menu at mouse pointer location
+	intMenuPosX :=
+	intMenuPosY :=
+}
+else
+{
+	strGlobalWinId := WinExist("A")
+	; display menu at an offset of 20x20 pixel from top-left client area
+	intMenuPosX := 20
+	intMenuPosY := 20
+}
 WinGetClass strGlobalClass, % "ahk_id " . strGlobalWinId
+###_T(A_ThisLabel , "strGlobalWinId: " . strGlobalWinId . "`nstrGlobalClass: " . strGlobalClass)
 
 ; In case it was disabled while in a dialog box
 Menu, menuSpecialFolders, Enable, %lMenuMyComputer%
@@ -284,12 +311,13 @@ Menu, menuSpecialFolders, Enable, %lMenuNetworkNeighborhood%
 Menu, menuSpecialFolders, Enable, %lMenuControlPanel%
 Menu, menuSpecialFolders, Enable, %lMenuRecycleBin%
 
-; Enable Add This Folder only if the mouse is over an Explorer (tested on WIN_XP and WIN_7) or a dialog box (works on WIN_7, not on WIN_XP)
-; Other tests shown that WIN_8 behaves like WIN_7. So, I assume WIN_8 to work. If someone could confirm (until I can test it myself)?
+; Enable "Add This Folder" only if the target window is an Explorer (tested on WIN_XP and WIN_7)
+; or a dialog box under WIN_7 (does not work under WIN_XP).
+; Other tests shown that WIN_8 behaves like WIN_7.
 Menu, menuFolders
 	, % WindowIsAnExplorer(strGlobalClass) or (WindowIsDialog(strGlobalClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 	, %lMenuAddThisFolder%
-Menu, menuFolders, Show
+Menu, menuFolders, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
 
 return
 ;------------------------------------------------------------
@@ -382,28 +410,29 @@ BuildGui:
 Gui, Font, s12 w700, Verdana
 Gui, Add, Text, x10 y10 w490 h25, %lAppName%
 Gui, 1:Font, s8 w400, Arial
-Gui, Add, Button, y10 x400 w45 h22 gGuiAbout, % L(lGuiAbout)
+Gui, Add, Button, y10 x315 w45 h22 gGuiAbout, % L(lGuiAbout)
 Gui, 1:Font, s8 w400, Verdana
+Gui, Add, Button, x+10 w75 gGuiHelp, %lGuiHelp%
 Gui, Add, Text, x10 y30, %lAppTagline%
 
 Gui, 1:Font, s8 w400, Verdana
 Gui, Add, ListView, x10 w350 h220 Count32 -Multi NoSortHdr LV0x10 vlvFoldersList, %lGuiLvFoldersHeader%
-Gui, Add, Button, x+10 w75 r1 gGuiAddFolder, %lGuiAddFolder%
-Gui, Add, Button, w75 r1 gGuiRemoveFolder, %lGuiRemoveFolder%
-Gui, Add, Button, w75 r1 gGuiEditFolder, %lGuiEditFolder%
-Gui, Add, Button, w75 r1 gGuiAddSeparator, %lGuiSeparator%
-Gui, Add, Button, w75 r1 gGuiMoveFolderUp, %lGuiMoveFolderUp%
-Gui, Add, Button, w75 r1 gGuiMoveFolderDown, %lGuiMoveFolderDown%
+Gui, Add, Button, x+10 w75 gGuiAddFolder, %lGuiAddFolder%
+Gui, Add, Button, w75 gGuiRemoveFolder, %lGuiRemoveFolder%
+Gui, Add, Button, w75 gGuiEditFolder, %lGuiEditFolder%
+Gui, Add, Button, w75 gGuiAddSeparator, %lGuiSeparator%
+Gui, Add, Button, w75 gGuiMoveFolderUp, %lGuiMoveFolderUp%
+Gui, Add, Button, w75 gGuiMoveFolderDown, %lGuiMoveFolderDown%
 
 Gui, Add, ListView
 	, x10 w350 h120 Count16 -Multi NoSortHdr +0x10 LV0x10 vlvDialogsList, %lGuiLvDialogsHeader%
-Gui, Add, Button, x+10 w75 r1 gGuiAddDialog, %lGuiAddDialog%
-Gui, Add, Button, w75 r1 gGuiRemoveDialog, %lGuiRemoveDialog%
-Gui, Add, Button, w75 r1 gGuiEditDialog, %lGuiEditDialog%
+Gui, Add, Button, x+10 w75 gGuiAddDialog, %lGuiAddDialog%
+Gui, Add, Button, w75 gGuiRemoveDialog, %lGuiRemoveDialog%
+Gui, Add, Button, w75 gGuiEditDialog, %lGuiEditDialog%
 
 Gui, Add, Button, x100 w75 r1 Disabled Default gGuiSave, %lGuiSave%
 Gui, Add, Button, x+40 w75 r1 gGuiCancel, %lGuiCancel%
-Gui, Add, Button, x+80 w75 r1 gGuiHelp, %lGuiHelp%
+Gui, Add, Button, x+80 w75 gGuiOptions, %lGuiOptions%
 
 return
 ;------------------------------------------------------------
@@ -683,74 +712,6 @@ return
 
 
 ;------------------------------------------------------------
-GuiAbout:
-;------------------------------------------------------------
-
-intGui1WinID := WinExist("A")
-Gui, 1:Submit, NoHide
-Gui, 2:New, , % L(lAboutTitle, lAppName, lAppVersion)
-Gui, 2:+Owner1
-str32or64 := A_PtrSize  * 8
-Gui, 2:Font, s12 w700, Verdana
-Gui, 2:Add, Link, y10 vlblAboutText1, % L(lAboutText1, lAppName, lAppVersion, str32or64)
-Gui, 2:Font, s8 w400, Verdana
-Gui, 2:Add, Link, , % L(lAboutText2)
-Gui, 2:Add, Link, , % L(lAboutText3)
-Gui, 2:Font, s10 w400, Verdana
-Gui, 2:Add, Link, , % L(lAboutText4)
-Gui, 2:Font, s8 w400, Verdana
-Gui, 2:Add, Button, x150 y+20 g2GuiClose, %lGui2Close%
-Gui, 2:Show, AutoSize Center
-Gui, 1:+Disabled
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiHelp:
-;------------------------------------------------------------
-
-intGui1WinID := WinExist("A")
-Gui, 1:Submit, NoHide
-Gui, 2:New, , % L(lHelpTitle, lAppName, lAppVersion)
-Gui, 2:+Owner1
-intWidth := 450
-Gui, 2:Font, s12 w700, Verdana
-Gui, 2:Add, Text, x10 y10, %lAppName%
-Gui, 2:Font, s10 w400, Verdana
-Gui, 2:Add, Link, x10 w%intWidth%, %lHelpText1%
-Gui, 2:Font, s8 w400, Verdana
-Gui, 2:Add, Link, w%intWidth%, %lHelpText2%
-Gui, 2:Add, Link, w%intWidth%, %lHelpText3%
-Gui, 2:Add, Link, w%intWidth%, %lHelpText4%
-Gui, 2:Add, Link, w%intWidth%, %lHelpText5%
-Gui, 2:Add, Link, w%intWidth%, %lHelpText6%
-Gui, 2:Add, Link, w%intWidth%, %lHelpText7%
-Gui, 2:Add, Link, w%intWidth%, %lHelpText8%
-Gui, 2:Add, Link, w%intWidth%, %lHelpText9%
-Gui, 2:Add, Button, x220 y+20 g2GuiClose, %lGui2Close%
-Gui, 2:Show, AutoSize Center
-Gui, 1:+Disabled
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-2GuiClose:
-2GuiEscape:
-;------------------------------------------------------------
-
-Gui, 1:-Disabled
-Gui, 2:Destroy
-WinActivate, ahk_id %intGui1WinID%
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
 AddThisFolder:
 ;------------------------------------------------------------
 
@@ -904,11 +865,10 @@ return
 Check4Update:
 ;------------------------------------------------------------
 
-IniRead, strLatestSkipped, %strIniFile%, Global, LatestVersionSkipped, 0.0
 strLatestVersion := Url2Var("https://raw.github.com/JnLlnd/FoldersPopup/master/latest-version.txt")
 
 if RegExMatch(strCurrentVersion, "(alpha|beta)")
-	or (FirstVsSecondIs(strLatestSkipped, strLatestVersion) = 0 and (A_ThisMenuItem <> lMenuUpdate))
+	or (FirstVsSecondIs(strLatestSkipped, strLatestVersion) >= 0 and (A_ThisMenuItem <> lMenuUpdate))
 	return
 
 if FirstVsSecondIs(strLatestVersion, strCurrentVersion) = 1
@@ -1006,6 +966,257 @@ Url2Var(strUrl)
 }
 ;------------------------------------------------------------
 
+
+
+;------------------------------------------------------------
+; GUI2 About, Help and Options
+;------------------------------------------------------------
+
+;------------------------------------------------------------
+GuiAbout:
+;------------------------------------------------------------
+
+intGui1WinID := WinExist("A")
+Gui, 1:Submit, NoHide
+Gui, 2:New, , % L(lAboutTitle, lAppName, lAppVersion)
+Gui, 2:+Owner1
+str32or64 := A_PtrSize  * 8
+Gui, 2:Font, s12 w700, Verdana
+Gui, 2:Add, Link, y10 vlblAboutText1, % L(lAboutText1, lAppName, lAppVersion, str32or64)
+Gui, 2:Font, s8 w400, Verdana
+Gui, 2:Add, Link, , % L(lAboutText2)
+Gui, 2:Add, Link, , % L(lAboutText3)
+Gui, 2:Font, s10 w400, Verdana
+Gui, 2:Add, Link, , % L(lAboutText4)
+Gui, 2:Font, s8 w400, Verdana
+Gui, 2:Add, Button, x150 y+20 g2GuiClose, %lGui2Close%
+Gui, 2:Show, AutoSize Center
+Gui, 1:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiHelp:
+;------------------------------------------------------------
+
+intGui1WinID := WinExist("A")
+Gui, 1:Submit, NoHide
+Gui, 2:New, , % L(lHelpTitle, lAppName, lAppVersion)
+Gui, 2:+Owner1
+intWidth := 450
+Gui, 2:Font, s12 w700, Verdana
+Gui, 2:Add, Text, x10 y10, %lAppName%
+Gui, 2:Font, s10 w400, Verdana
+Gui, 2:Add, Link, x10 w%intWidth%, %lHelpText1%
+Gui, 2:Font, s8 w400, Verdana
+; #### adapt hotkey
+Gui, 2:Add, Link, w%intWidth%, %lHelpText2%
+Gui, 2:Add, Link, w%intWidth%, %lHelpText3%
+; #### adapt hotkey
+Gui, 2:Add, Link, w%intWidth%, %lHelpText4%
+; #### adapt hotkey
+Gui, 2:Add, Link, w%intWidth%, %lHelpText5%
+Gui, 2:Add, Link, w%intWidth%, %lHelpText6%
+Gui, 2:Add, Link, w%intWidth%, %lHelpText7%
+Gui, 2:Add, Link, w%intWidth%, %lHelpText8%
+Gui, 2:Add, Link, w%intWidth%, %lHelpText9%
+Gui, 2:Add, Button, x220 y+20 g2GuiClose, %lGui2Close%
+Gui, 2:Show, AutoSize Center
+Gui, 1:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiOptions:
+;------------------------------------------------------------
+
+intGui1WinID := WinExist("A")
+
+strMouseButtons := " |LButton|MButton|RButton|XButton1|XButton2|WheelUp|WheelDown|WheelLeft|WheelRight|"
+; leave last | to enable default value on the last item
+
+;---------------------------------------
+; Gui hotkey titles
+StringSplit, arrOptionsTitles, lOptionsTitles, |
+
+;---------------------------------------
+; Build Gui header
+Gui, 1:Submit, NoHide
+Gui, 2:New, , % L(lOptionsGuiTitle, lAppName)
+Gui, 2:+Owner1
+Gui, 2:Font, s10 w700, Verdana
+Gui, 2:Add, Text, x5 y10, % L(lOptionsGuiTitle, lAppName)
+Gui, 2:Font
+
+; Build Hotkey Gui lines
+loop, % arrIniKeyNames%0%
+	GuiOptionsHotkey(A_Index)
+
+; Build other options
+Gui, 2:Add, Text, x10 y+5 w440 center, _________________________________________________________________________
+Gui, 2:Add, Text, x10 y+5 w440 center, %lOptionsRunAtStartup%
+Gui, 2:Add, Text, x10 y+5 w440 center, %lOptionsAlwaysTrayTip%
+
+; Build Gui footer
+Gui, 2:Add, Button, y+20 x170 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
+Gui, 2:Add, Button, yp x+20 vbtnOptionsCancel gButtonOptionsCancel, %lGuiCancel%
+Gui, 2:Add, Text
+GuiControl, Focus, btnOptionsSave
+
+;---------------------------------------
+; Show until user click Save
+Gui, 2:Show, AutoSize Center
+Gui, 1:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiOptionsHotkey(intIndex)
+;------------------------------------------------------------
+{
+	global
+	
+	intType := 3
+	if InStr(arrIniKeyNames%intIndex%, "Mouse")
+		intType := 1
+	if InStr(arrIniKeyNames%intIndex%, "Keyboard")
+		intType := 2
+
+	; Hotkey Header
+	Gui, 2:Add, Text, % (intType = 3 ? "y+20 x5 w100 center" : "y+20 x5 w200 center"), %lOptionsTrigger%
+	Gui, 2:Add, Text, % (intType = 3 ? "yp x108 w25 center" : "yp x+5 w25 center"), %lOptionsShift%
+	Gui, 2:Add, Text, yp x+11 w25 center, %lOptionsCtrl%
+	Gui, 2:Add, Text, yp x+10 w25 center, %lOptionsAlt%
+	Gui, 2:Add, Text, yp x+10 w25 center, %lOptionsWin%
+	if (intType <> 1)
+		Gui, 2:Add, Text, yp x+10 w100 center, %lOptionsKeyboard%
+	if (intType <> 2)
+		Gui, 2:Add, Text, yp x+15 w80 center, %lOptionsMouse%
+
+	Gui, 2:Font, s8 w700
+	Gui, 2:Add, Text, % (intType = 3 ? "x5 y+5 w100 center" : "x5 y+5 w200 center"), % arrOptionsTitles%intIndex%
+	Gui, 2:Font
+	Gui, 2:Add, CheckBox, yp x+10 vblnOptionsShift%intIndex%, %A_Space%
+		; if we have no text to put at the right of the ckeckbox
+		; would it be possible to eliminate the dotted area ?
+		; intIndex put a space becauyse this is what intIndex found the less visible.
+	GuiControl, , blnOptionsShift%intIndex%, % InStr(strModifiers%intIndex%, "+") ? 1 : 0
+	Gui, 2:Add, CheckBox, yp x+10 vblnOptionsCtrl%intIndex%, %A_Space%
+	GuiControl, , blnOptionsCtrl%intIndex%, % InStr(strModifiers%intIndex%, "^") ? 1 : 0
+	Gui, 2:Add, CheckBox, yp x+10 vblnOptionsAlt%intIndex%, %A_Space%
+	GuiControl, , blnOptionsAlt%intIndex%, % InStr(strModifiers%intIndex%, "!") ? 1 : 0
+	Gui, 2:Add, CheckBox, yp x+10 vblnOptionsWin%intIndex%, %A_Space%
+	GuiControl, , blnOptionsWin%intIndex%, % InStr(strModifiers%intIndex%, "#") ? 1 : 0
+	if (intType <> 1)
+	{
+		Gui, 2:Add, Hotkey, yp x+10 w90 vstrOptionsKey%intIndex% gOptionsHotkeyChanged
+		GuiControl, , strOptionsKey%intIndex%, % strOptionsKey%intIndex%
+	}
+;	if (intType = 3)
+;		Gui, 2:Add, Text, yp x+5, %A_Space%%A_Space%or
+	if (intType <> 2)
+		Gui, 2:Add, DropDownList, yp x+10 w90 vstrOptionsMouse%intIndex% gOptionsMouseChanged, % strMouseButtonsWithDefault%intIndex%
+	Gui, 2:Add, Text, x10 y+5 w440, % lOptionsArrDescriptions%intIndex%
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ButtonOptionsSave:
+;------------------------------------------------------------
+Gui, 2:Submit
+
+StringSplit, arrIniVarNames, strIniKeyNames, |
+
+Loop, % arrIniVarNames%0%
+{
+	strHotkey%A_Index% := Trim(strOptionsKey%A_Index% . strOptionsMouse%A_Index%)
+	if StrLen(strHotkey%A_Index%)
+	{
+		if (blnOptionsWin%A_Index%)
+			strHotkey%A_Index% := "#" . strHotkey%A_Index%
+		if (blnOptionsAlt%A_Index%)
+			strHotkey%A_Index% := "!" . strHotkey%A_Index%
+		if (blnOptionsShift%A_Index%)
+			strHotkey%A_Index% := "+" . strHotkey%A_Index%
+		if (blnOptionsCtrl%A_Index%)
+			strHotkey%A_Index% := "^" . strHotkey%A_Index%
+		IniWrite, % strHotkey%A_Index%, %strIniFile%, Global, % arrIniVarNames%A_Index%
+	}
+	else
+		Oops(L(lOptionsNoKeyOrMouseSpecified, arrIniVarNames%A_Index%))
+}
+
+Goto, 2GuiClose
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ButtonOptionsCancel:
+;------------------------------------------------------------
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+OptionsHotkeyChanged:
+;------------------------------------------------------------
+strOptionsHotkeyControl := A_GuiControl ; hotkey var name
+strOptionsHotkeyChanged := %strOptionsHotkeyControl% ; hotkey content
+
+if !StrLen(strOptionsHotkeyChanged)
+	return
+
+SplitModifiersFromKey(strOptionsHotkeyChanged, strOptionsHotkeyChangedModifiers, strOptionsHotkeyChangedKey)
+
+if StrLen(strOptionsHotkeyChangedModifiers) ; we have a modifier and we don't want it, reset keyboard to none and return
+	GuiControl, , %A_GuiControl%, None
+else ; we have a valid key, empty the mouse dropdown and return
+{
+	StringReplace, strOptionsMouseControl, strOptionsHotkeyControl, Key, Mouse ; get the matching mouse dropdown var
+	GuiControl, ChooseString, %strOptionsMouseControl%, %A_Space%
+}
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+OptionsMouseChanged:
+;------------------------------------------------------------
+strOptionsMouseControl := A_GuiControl ; mouse dropdown var name
+StringReplace, strOptionsHotkeyControl, strOptionsMouseControl, Mouse, Key ; get the hotkey var
+
+; we have a mouse button, empty the hotkey control
+GuiControl, , %strOptionsHotkeyControl%, % ""
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+2GuiClose:
+2GuiEscape:
+;------------------------------------------------------------
+
+Gui, 1:-Disabled
+Gui, 2:Destroy
+WinActivate, ahk_id %intGui1WinID%
+
+return
+;------------------------------------------------------------
+
+
+
 ;============================================================
 ; MIDDLESTUFF
 ;============================================================
@@ -1056,8 +1267,9 @@ OpenFavorite:
 
 strPath := GetPathFor(A_ThisMenuItem)
 
-if (A_ThisHotkey = "+MButton") or WindowIsDesktop(strGlobalClass)
-	ComObjCreate("Shell.Application").Explore(strPath)
+if (A_ThisHotkey = "$+MButton") or WindowIsDesktop(strGlobalClass) ;#### adapt to configurable triggers
+	ComObjCreate("Shell.Application").Explore(strPath . " /n")
+	; ComObjCreate("Shell.Application").Open(strPath)
 	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 else if WindowIsAnExplorer(strGlobalClass)
 	NavigateExplorer(strPath, strGlobalWinId)
@@ -1162,34 +1374,21 @@ GetPathFor(strName)
 
 
 ;------------------------------------------------------------
-CanOpenFavoriteMouse(ByRef strWinId, ByRef strClass)
+CanOpenFavorite(strMouseOrKeyboard, ByRef strWinId, ByRef strClass)
 ;------------------------------------------------------------
 ; "CabinetWClass" and "ExploreWClass" -> Explorer
 ; "ProgMan" -> Desktop
 ; "WorkerW" -> Desktop
 ; "ConsoleWindowClass" -> Console (CMD)
 ; "#32770" -> Dialog
+; "bosa_sdm_" (...) -> Dialog MS Office under WinXP
 {
-	MouseGetPos, , , strWinId
+	if (strMouseOrKeyboard = "PopupMenuMouse")
+		MouseGetPos, , , strWinId
+	else
+		strWinId := WinExist("A")
 	WinGetClass strClass, % "ahk_id " . strWinId
-	TrayTip, Can...M, %strClass% ; ###
-	return WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or WindowIsConsole(strClass) or WindowIsDialog(strClass)
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-CanOpenFavoriteKeyboard(ByRef strWinId, ByRef strClass)
-;------------------------------------------------------------
-; "CabinetWClass" and "ExploreWClass" -> Explorer
-; "ProgMan" -> Desktop
-; "WorkerW" -> Desktop
-; "ConsoleWindowClass" -> Console (CMD)
-; "#32770" -> Dialog
-{
-	strWinId := WinExist("A")
-	WinGetClass strClass, A
-	TrayTip, Can...K, %strClass% ; ###
+	###_T(strMouseOrKeyboard, strClass)
 	return WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or WindowIsConsole(strClass) or WindowIsDialog(strClass)
 }
 ;------------------------------------------------------------
@@ -1347,23 +1546,28 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 }
 
 
+;------------------------------------------------------------
 ControlIsVisible(strWinTitle, strControlClass)
 /*
 Adapted from ControlIsVisible(WinTitle,ControlClass) by Learning One
 http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 */
+;------------------------------------------------------------
 { ; used in Navigator
 	ControlGet, blnIsControlVisible, Visible, , %strControlClass%, %strWinTitle%
 
 	return blnIsControlVisible
 }
+;------------------------------------------------------------
 
 
+;------------------------------------------------------------
 ControlSetFocusR(strControl, strWinTitle = "", intTries = 3)
 /*
 Adapted from RMApp_ControlSetFocusR(Control, WinTitle="", Tries=3) by Learning One
 http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 */
+;------------------------------------------------------------
 { ; used in Navigator. More reliable ControlSetFocus
 	Loop, %intTries%
 	{
@@ -1374,13 +1578,16 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 			return True
 	}
 }
+;------------------------------------------------------------
 
 
+;------------------------------------------------------------
 ControlSetTextR(strControl, strNewText = "", strWinTitle = "", intTries = 3)
 /*
 Adapted from from RMApp_ControlSetTextR(Control, NewText="", WinTitle="", Tries=3) by Learning One
 http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 */
+;------------------------------------------------------------
 { ; used in Navigator. More reliable ControlSetText
 	Loop, %intTries%
 	{
@@ -1391,6 +1598,52 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 			return True
 	}
 }
+;------------------------------------------------------------
+
+
+
+;------------------------------------------------------------
+SplitHotkey(strHotkey, strMouseButtons, ByRef strModifiers, ByRef strKey, ByRef strMouseButton, ByRef strMouseButtonsWithDefault)
+;------------------------------------------------------------
+{
+	SplitModifiersFromKey(strHotkey, strModifiers, strKey)
+
+	if InStr(strMouseButtons, "|" . strKey . "|") ;  we have a mouse button
+	{
+		strMouseButton := strKey
+		strKey := ""
+		StringReplace, strMouseButtonsWithDefault, strMouseButtons, %strMouseButton%|, %strMouseButton%|| ; with default value
+	}
+	else ; we have a key
+		strMouseButtonsWithDefault := strMouseButtons ; no default value
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+SplitModifiersFromKey(strHotkey, ByRef strModifiers, ByRef strKey)
+;------------------------------------------------------------
+{
+	intModifiersEnd := GetFirstNotModifier(strHotkey)
+	StringLeft, strModifiers, strHotkey, %intModifiersEnd%
+	StringMid, strKey, strHotkey, % (intModifiersEnd + 1)
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GetFirstNotModifier(strHotkey)
+;------------------------------------------------------------
+{
+	intPos := 0
+	loop, Parse, strHotkey
+		if (A_LoopField = "^") or (A_LoopField = "!") or (A_LoopField = "+") or (A_LoopField = "#")
+			intPos := intPos + 1
+		else
+			return intPos
+	return intPos
+}
+;------------------------------------------------------------
 
 
 
