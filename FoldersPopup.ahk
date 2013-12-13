@@ -83,9 +83,6 @@ SetWorkingDir, %A_ScriptDir%
 
 global strIniFile := A_ScriptDir . "\" . lAppName . ".ini"
 
-strMouseButtons := " |LButton|MButton|RButton|XButton1|XButton2|WheelUp|WheelDown|WheelLeft|WheelRight|"
-; leave last | to enable default value on the last item
-
 ;@Ahk2Exe-IgnoreBegin
 ; Piece of code for developement phase only - won't be compiled
 if (A_ComputerName = "JEAN-PC") ; for my home PC
@@ -95,6 +92,7 @@ else if InStr(A_ComputerName, "STIC") ; for my work hotkeys
 ; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
 
+Gosub, InitArrays
 Gosub, BuildSpecialFoldersMenu
 Gosub, LoadIniFile
 Gosub, BuildFoldersMenu
@@ -110,10 +108,13 @@ IfExist, %A_Startup%\%lAppName%.lnk
 	Menu, Tray, Check, %lMenuRunAtStartup%
 }
 
+strTrayTipMessage := L(lTrayTipInstalledDetail, lAppName)
+loop, %arrOptionsTitlesLong0%
+	strTrayTipMessage := strTrayTipMessage . Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%) . " > " . arrOptionsTitlesLong%A_Index% . "`n"
+
 if (intDisplayTrayTip <> 0)
 	TrayTip, % L(lTrayTipInstalledTitle, lAppName, lAppVersion)
-		, % L(lTrayTipInstalledDetail, lAppName), , 1
-	; ### adapt to current hotkeys
+		, %strTrayTipMessage%, , 1
 return
 
 
@@ -121,6 +122,33 @@ return
 ;============================================================
 ; BACK END FUNCTIONS AND COMMANDS
 ;============================================================
+
+
+;-----------------------------------------------------------
+InitArrays:
+;-----------------------------------------------------------
+
+; Hotkeys: ini names, hotkey variables name, default values, gosub label and Gui hotkey titles
+strIniKeyNames := "PopupHotkeyMouse|PopupHotkeyNewMouse|PopupHotkeyKeyboard|PopupHotkeyNewKeyboard|SettingsHotkey"
+StringSplit, arrIniKeyNames, strIniKeyNames, |
+strHotkeyVarNames := "strPopupHotkeyMouse|strPopupHotkeyMouseNew|strPopupHotkeyKeyboard|strPopupHotkeyKeyboardNew|strSettingsHotkey"
+StringSplit, arrHotkeyVarNames, strHotkeyVarNames, |
+strHotkeyDefaults := "MButton|+MButton|#k|+#k|+#f"
+StringSplit, arrHotkeyDefaults, strHotkeyDefaults, |
+strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|GuiShow"
+StringSplit, arrHotkeyLabels, strHotkeyLabels, |
+StringSplit, arrOptionsTitles, lOptionsTitles, |
+StringSplit, arrOptionsTitlesLong, lOptionsTitlesLong, |
+
+strMouseButtons := " |LButton|MButton|RButton|XButton1|XButton2|WheelUp|WheelDown|WheelLeft|WheelRight|"
+; leave last | to enable default value on the last item
+StringSplit, arrMouseButtons, strMouseButtons, |
+strMouseButtonsText := " |Left mouse Button|Middle mouse Button|Right mouse Button|X Button1|X Button2|Wheel Up|Wheel Down|Wheel Left|Wheel Right|"
+
+StringSplit, arrMouseButtonsText, strMouseButtonsText, |
+
+return
+;-----------------------------------------------------------
 
 
 ;-----------------------------------------------------------
@@ -162,16 +190,6 @@ IfNotExist, %strIniFile%
 )
 		, %strIniFile%
 	
-; Hotkeys: ini names, hotkey variables name, default values and gosub label
-strIniKeyNames := "PopupHotkeyMouse|PopupHotkeyNewMouse|PopupHotkeyKeyboard|PopupHotkeyNewKeyboard|SettingsHotkey"
-StringSplit, arrIniKeyNames, strIniKeyNames, |
-strHotkeyVarNames := "strPopupHotkeyMouse|strPopupHotkeyMouseNew|strPopupHotkeyKeyboard|strPopupHotkeyKeyboardNew|strSettingsHotkey"
-StringSplit, arrHotkeyVarNames, strHotkeyVarNames, |
-strHotkeyDefaults := "MButton|+MButton|#k|+#k|+#f"
-StringSplit, arrHotkeyDefaults, strHotkeyDefaults, |
-strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|GuiShow"
-StringSplit, arrHotkeyLabels, strHotkeyLabels, |
-
 Gosub, LoadIniHotkeys
 
 IniRead, intDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip
@@ -240,6 +258,7 @@ If !CanOpenFavorite(A_ThisLabel, strGlobalWinId, strGlobalClass)
 		StringReplace, strThisHotkey, A_ThisHotkey, $ ; remove $ from hotkey
 	Send, {%strThisHotkey%} ; for example {MButton} or #k
 	###_T(A_ThisLabel, strThisHotkey)
+
 	return
 }
 
@@ -1051,10 +1070,6 @@ strMouseButtons := " |LButton|MButton|RButton|XButton1|XButton2|WheelUp|WheelDow
 ; leave last | to enable default value on the last item
 
 ;---------------------------------------
-; Gui hotkey titles
-StringSplit, arrOptionsTitles, lOptionsTitles, |
-
-;---------------------------------------
 ; Build Gui header
 Gui, 1:Submit, NoHide
 Gui, 2:New, , % L(lOptionsGuiTitle, lAppName, lAppVersion)
@@ -1681,6 +1696,48 @@ GetFirstNotModifier(strHotkey)
 ;------------------------------------------------------------
 
 
+;------------------------------------------------------------
+Hotkey2Text(strModifiers, strMouseButton, strOptionKey)
+;------------------------------------------------------------
+{
+	global
+	str := ""
+	
+	loop, parse, strModifiers
+	{
+		if (A_LoopField = "!")
+			str := str . lOptionsAlt . "+"
+		if (A_LoopField = "^")
+			str := str . lOptionsCtrl . "+"
+		if (A_LoopField = "+")
+			str := str . lOptionsShift . "+"
+		if (A_LoopField = "#")
+			str := str . lOptionsWin . "+"
+	}
+	if StrLen(strMouseButton)
+		str := str . TranslateMouseButton(strMouseButton)
+	if StrLen(strOptionKey)
+		str := str . strOptionKey
+
+	return str
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+TranslateMouseButton(strSource)
+; Returns the string in arrMouseButtonsText at the same position of strSource in arrMouseButtons
+;------------------------------------------------------------
+{
+	global
+	
+	loop, %arrMouseButtons0%
+		if (strSource = arrMouseButtons%A_Index%)
+			return arrMouseButtonsText%A_Index%
+}
+;------------------------------------------------------------
+
+
 
 ;============================================================
 ; TOOLS
@@ -1713,3 +1770,6 @@ L(strMessage, objVariables*)
 	return strMessage
 }
 ; ------------------------------------------------
+
+
+
