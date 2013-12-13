@@ -103,14 +103,14 @@ Gosub, BuildAddDialogMenu
 Gosub, Check4Update
 Gosub, BuildTrayMenu
 
-IfExist, %A_Startup%/%lAppName%.lnk
+IfExist, %A_Startup%\%lAppName%.lnk
 {
-	FileDelete, %A_Startup%/%lAppName%.lnk
-	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%/%lAppName%.lnk
+	FileDelete, %A_Startup%\%lAppName%.lnk
+	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%lAppName%.lnk
 	Menu, Tray, Check, %lMenuRunAtStartup%
 }
 
-if (blnDisplayTrayTip)
+if (intDisplayTrayTip <> 0)
 	TrayTip, % L(lTrayTipInstalledTitle, lAppName, lAppVersion)
 		, % L(lTrayTipInstalledDetail, lAppName), , 1
 	; ### adapt to current hotkeys
@@ -171,20 +171,12 @@ strHotkeyDefaults := "MButton|+MButton|#k|+#k|+#f"
 StringSplit, arrHotkeyDefaults, strHotkeyDefaults, |
 strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|GuiShow"
 StringSplit, arrHotkeyLabels, strHotkeyLabels, |
-; Read the values and set hotkey shortcuts
-loop, % arrIniKeyNames%0%
-{
-	IniRead, arrHotkeyVarNames%A_Index%, %strIniFile%, Global, % arrIniKeyNames%A_Index%, % arrHotkeyDefaults%A_Index%
-	; example: Hotkey, $MButton, PopupMenuMouse
-	Hotkey, % "$" . arrHotkeyVarNames%A_Index%, % arrHotkeyLabels%A_Index%
-	; Prepare global arrays used by GuiHotkey function
-	SplitHotkey(arrHotkeyVarNames%A_Index%, strMouseButtons
-		, strModifiers%A_Index%, strOptionsKey%A_Index%, strMouseButton%A_Index%, strMouseButtonsWithDefault%A_Index%)
-}
 
-IniRead, blnDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip
-if (blnDisplayTrayTip)
-	IniWrite, % (blnDisplayTrayTip - 1), %strIniFile%, Global, DisplayTrayTip
+Gosub, LoadIniHotkeys
+
+IniRead, intDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip
+if (intDisplayTrayTip > 0)
+	IniWrite, % (intDisplayTrayTip - 1), %strIniFile%, Global, DisplayTrayTip
 
 IniRead, strLatestSkipped, %strIniFile%, Global, LatestVersionSkipped, 0.0
 
@@ -205,6 +197,24 @@ Loop
 	if (strIniLine = "ERROR")
 		Break
 	arrGlogalDialogs.Insert(strIniLine)
+}
+
+return
+;------------------------------------------------------------
+
+
+;-----------------------------------------------------------
+LoadIniHotkeys:
+;-----------------------------------------------------------
+; Read the values and set hotkey shortcuts
+loop, % arrIniKeyNames%0%
+{
+	IniRead, arrHotkeyVarNames%A_Index%, %strIniFile%, Global, % arrIniKeyNames%A_Index%, % arrHotkeyDefaults%A_Index%
+	; example: Hotkey, $MButton, PopupMenuMouse
+	Hotkey, % "$" . arrHotkeyVarNames%A_Index%, % arrHotkeyLabels%A_Index%, On
+	; Prepare global arrays used by GuiHotkey function
+	SplitHotkey(arrHotkeyVarNames%A_Index%, strMouseButtons
+		, strModifiers%A_Index%, strOptionsKey%A_Index%, strMouseButton%A_Index%, strMouseButtonsWithDefault%A_Index%)
 }
 
 return
@@ -407,32 +417,33 @@ return
 BuildGui:
 ;------------------------------------------------------------
 
-Gui, Font, s12 w700, Verdana
-Gui, Add, Text, x10 y10 w490 h25, %lAppName%
+Gui, 1:New, , % L(lGuiTitle, lAppName, lAppVersion)
+Gui, 1:Font, s12 w700, Verdana
+Gui, 1:Add, Text, x10 y10 w490 h25, %lAppName%
 Gui, 1:Font, s8 w400, Arial
-Gui, Add, Button, y10 x315 w45 h22 gGuiAbout, % L(lGuiAbout)
+Gui, 1:Add, Button, y10 x315 w45 h22 gGuiAbout, % L(lGuiAbout)
 Gui, 1:Font, s8 w400, Verdana
-Gui, Add, Button, x+10 w75 gGuiHelp, %lGuiHelp%
-Gui, Add, Text, x10 y30, %lAppTagline%
+Gui, 1:Add, Button, x+10 w75 gGuiHelp, %lGuiHelp%
+Gui, 1:Add, Text, x10 y30, %lAppTagline%
 
 Gui, 1:Font, s8 w400, Verdana
-Gui, Add, ListView, x10 w350 h220 Count32 -Multi NoSortHdr LV0x10 vlvFoldersList, %lGuiLvFoldersHeader%
-Gui, Add, Button, x+10 w75 gGuiAddFolder, %lGuiAddFolder%
-Gui, Add, Button, w75 gGuiRemoveFolder, %lGuiRemoveFolder%
-Gui, Add, Button, w75 gGuiEditFolder, %lGuiEditFolder%
-Gui, Add, Button, w75 gGuiAddSeparator, %lGuiSeparator%
-Gui, Add, Button, w75 gGuiMoveFolderUp, %lGuiMoveFolderUp%
-Gui, Add, Button, w75 gGuiMoveFolderDown, %lGuiMoveFolderDown%
+Gui, 1:Add, ListView, x10 w350 h220 Count32 -Multi NoSortHdr LV0x10 vlvFoldersList, %lGuiLvFoldersHeader%
+Gui, 1:Add, Button, x+10 w75 gGuiAddFolder, %lGuiAddFolder%
+Gui, 1:Add, Button, w75 gGuiRemoveFolder, %lGuiRemoveFolder%
+Gui, 1:Add, Button, w75 gGuiEditFolder, %lGuiEditFolder%
+Gui, 1:Add, Button, w75 gGuiAddSeparator, %lGuiSeparator%
+Gui, 1:Add, Button, w75 gGuiMoveFolderUp, %lGuiMoveFolderUp%
+Gui, 1:Add, Button, w75 gGuiMoveFolderDown, %lGuiMoveFolderDown%
 
-Gui, Add, ListView
+Gui, 1:Add, ListView
 	, x10 w350 h120 Count16 -Multi NoSortHdr +0x10 LV0x10 vlvDialogsList, %lGuiLvDialogsHeader%
-Gui, Add, Button, x+10 w75 gGuiAddDialog, %lGuiAddDialog%
-Gui, Add, Button, w75 gGuiRemoveDialog, %lGuiRemoveDialog%
-Gui, Add, Button, w75 gGuiEditDialog, %lGuiEditDialog%
+Gui, 1:Add, Button, x+10 w75 gGuiAddDialog, %lGuiAddDialog%
+Gui, 1:Add, Button, w75 gGuiRemoveDialog, %lGuiRemoveDialog%
+Gui, 1:Add, Button, w75 gGuiEditDialog, %lGuiEditDialog%
 
-Gui, Add, Button, x100 w75 r1 Disabled Default gGuiSave, %lGuiSave%
-Gui, Add, Button, x+40 w75 r1 gGuiCancel, %lGuiCancel%
-Gui, Add, Button, x+80 w75 gGuiOptions, %lGuiOptions%
+Gui, 1:Add, Button, x100 w75 r1 Disabled Default gGuiSave, %lGuiSave%
+Gui, 1:Add, Button, x+40 w75 r1 gGuiCancel, %lGuiCancel%
+Gui, 1:Add, Button, x+80 w75 gGuiOptions, %lGuiOptions%
 
 return
 ;------------------------------------------------------------
@@ -456,7 +467,7 @@ GuiRemoveFolder:
 ;------------------------------------------------------------
 
 GuiControl, Focus, lvFoldersList
-Gui, ListView, lvFoldersList
+Gui, 1:ListView, lvFoldersList
 intItemToRemove := LV_GetNext()
 if !(intItemToRemove)
 {
@@ -477,10 +488,10 @@ return
 GuiEditFolder:
 ;------------------------------------------------------------
 
-Gui, +OwnDialogs
+Gui, 1:+OwnDialogs
 GuiControl, Focus, lvFoldersList
 
-Gui, ListView, lvFoldersList
+Gui, 1:ListView, lvFoldersList
 intRowToEdit := LV_GetNext()
 LV_GetText(strCurrentName, intRowToEdit, 1)
 if !StrLen(strCurrentName)
@@ -516,7 +527,7 @@ GuiAddSeparator:
 ;------------------------------------------------------------
 
 GuiControl, Focus, lvFoldersList
-Gui, ListView, lvFoldersList
+Gui, 1:ListView, lvFoldersList
 LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", lMenuSeparator, lMenuSeparator . lMenuSeparator)
 GuiControl, Enable, %lGuiSave%
 
@@ -529,7 +540,7 @@ GuiMoveFolderUp:
 ;------------------------------------------------------------
 
 GuiControl, Focus, lvFoldersList
-Gui, ListView, lvFoldersList
+Gui, 1:ListView, lvFoldersList
 intSelectedRow := LV_GetNext()
 if (intSelectedRow = 1)
 	return
@@ -554,7 +565,7 @@ GuiMoveFolderDown:
 ;------------------------------------------------------------
 
 GuiControl, Focus, lvFoldersList
-Gui, ListView, lvFoldersList
+Gui, 1:ListView, lvFoldersList
 intSelectedRow := LV_GetNext()
 if (intSelectedRow = LV_GetCount())
 	return
@@ -589,7 +600,7 @@ GuiRemoveDialog:
 ;------------------------------------------------------------
 
 GuiControl, Focus, lvDialogsList
-Gui, ListView, lvDialogssList
+Gui, 1:ListView, lvDialogssList
 intItemToRemove := LV_GetNext()
 if !(intItemToRemove)
 {
@@ -608,9 +619,9 @@ return
 GuiEditDialog:
 ;------------------------------------------------------------
 
-Gui, +OwnDialogs
+Gui, 1:+OwnDialogs
 GuiControl, Focus, lvDialogsList
-Gui, ListView, lvDialogsList
+Gui, 1:ListView, lvDialogsList
 intRowToEdit := LV_GetNext()
 LV_GetText(strCurrentDialog, intRowToEdit, 1)
 
@@ -619,7 +630,7 @@ InputBox strNewDialog, % L(lDialogEditDialogTitle, lAppName, lAppVersion)
 if (ErrorLevel) or !StrLen(strNewDialog) or (strNewDialog = strCurrentDialog)
 	return
 
-Gui, ListView, lvDialogsList
+Gui, 1:ListView, lvDialogsList
 Loop, % LV_GetCount()
 {
 	LV_GetText(strThisDialog, A_Index, 1)
@@ -645,7 +656,7 @@ GuiSave:
 ;------------------------------------------------------------
 
 IniDelete, %strIniFile%, Folders
-Gui, ListView, lvFoldersList
+Gui, 1:ListView, lvFoldersList
 Loop % LV_GetCount()
 {
 	LV_GetText(strName, A_Index, 1)
@@ -654,7 +665,7 @@ Loop % LV_GetCount()
 }
 
 IniDelete, %strIniFile%, Dialogs
-Gui, ListView, lvDialogsList
+Gui, 1:ListView, lvDialogsList
 Loop % LV_GetCount()
 {
 	LV_GetText(strDialog, A_Index, 1)
@@ -675,7 +686,7 @@ GuiShow:
 ;------------------------------------------------------------
 
 Gosub, LoadSettingsToGui
-Gui, Show, w455 h455, % L(lGuiTitle, lAppName, lAppVersion)
+Gui, 1:Show, w455 h455
 
 return
 ;------------------------------------------------------------
@@ -688,14 +699,14 @@ GuiCancel:
 GuiControlGet, blnSaveEnabled, Enabled, %lGuiSave%
 if (blnSaveEnabled)
 {
-	Gui, +OwnDialogs
+	Gui, 1:+OwnDialogs
 	MsgBox, 36, % L(lDialogCancelTitle, lAppName, lAppVersion), %lDialogCancelPrompt%
 	IfMsgBox, Yes
 		GuiControl, Disable, %lGuiSave%
 	IfMsgBox, No
 		return
 }
-Gui, Cancel
+Gui, 1:Cancel
 
 return
 ;------------------------------------------------------------
@@ -740,7 +751,7 @@ If StrLen(strCurrentFolder)
 }
 else
 {
-	Gui, +OwnDialogs 
+	Gui, 1:+OwnDialogs 
 	MsgBox, 52, % L(lDialogAddFolderManuallyTitle, lAppName, lAppVersion), %lDialogAddFolderManuallyPrompt%
 	IfMsgBox, Yes
 	{
@@ -761,7 +772,7 @@ AddFolder(strPath)
 ;------------------------------------------------------------
 {
 	GuiControl, Focus, lvFoldersList
-	Gui, +OwnDialogs
+	Gui, 1:+OwnDialogs
 
 	; suggest the deepest folder's name as default name for the added folder
 	SplitPath, strPath, strDefaultName, , , , strDrive
@@ -775,7 +786,7 @@ AddFolder(strPath)
 			return
 	} until FolderNameIsNew(strName)
 	
-	Gui, ListView, lvFoldersList
+	Gui, 1:ListView, lvFoldersList
 	LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", strName, strPath)
 	LV_Modify(LV_GetNext(), "Vis")
 	LV_ModifyCol(1, "AutoHdr")
@@ -789,7 +800,7 @@ AddFolder(strPath)
 FolderNameIsNew(strCandidateName)
 ;------------------------------------------------------------
 {
-	Gui, ListView, lvFoldersList
+	Gui, 1:ListView, lvFoldersList
 	Loop, % LV_GetCount()
 	{
 		LV_GetText(strThisName, A_Index, 1)
@@ -820,14 +831,14 @@ return
 AddDialog(strCurrentDialogTitle)
 ;------------------------------------------------------------
 {
-	Gui, +OwnDialogs
+	Gui, 1:+OwnDialogs
 	GuiControl, Focus, lvDialogsList
 
 	InputBox, strNewDialog, % L(lDialogAddDialogTitle, lAppName, lAppVersion), %lDialogAddDialogPrompt%, , 250, 150, , , , , %strCurrentDialogTitle%
 	if (ErrorLevel) or !StrLen(strNewDialog)
 		return
 	
-	Gui, ListView, lvDialogsList
+	Gui, 1:ListView, lvDialogsList
 	Loop, % LV_GetCount()
 	{
 		LV_GetText(strThisDialog, A_Index, 1)
@@ -852,10 +863,10 @@ RunAtStartup:
 ; Startup code adapted from Avi Aryan Ryan in Clipjump
 
 Menu, Tray, Togglecheck, %lMenuRunAtStartup%
-IfExist, %A_Startup%/%lAppName%.lnk
-	FileDelete, %A_Startup%/%lAppName%.lnk
+IfExist, %A_Startup%\%lAppName%.lnk
+	FileDelete, %A_Startup%\%lAppName%.lnk
 else
-	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%/%lAppName%.lnk
+	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%lAppName%.lnk
 
 return
 ;------------------------------------------------------------
@@ -873,7 +884,7 @@ if RegExMatch(strCurrentVersion, "(alpha|beta)")
 
 if FirstVsSecondIs(strLatestVersion, strCurrentVersion) = 1
 {
-	Gui, +OwnDialogs
+	Gui, 1:+OwnDialogs
 	SetTimer, ChangeButtonNames, 50
 
 	MsgBox, 3, % l(lUpdateTitle, lAppName), % l(lUpdatePrompt, lAppName, strCurrentVersion, strLatestVersion), 30
@@ -1046,20 +1057,29 @@ StringSplit, arrOptionsTitles, lOptionsTitles, |
 ;---------------------------------------
 ; Build Gui header
 Gui, 1:Submit, NoHide
-Gui, 2:New, , % L(lOptionsGuiTitle, lAppName)
+Gui, 2:New, , % L(lOptionsGuiTitle, lAppName, lAppVersion)
 Gui, 2:+Owner1
 Gui, 2:Font, s10 w700, Verdana
-Gui, 2:Add, Text, x5 y10, % L(lOptionsGuiTitle, lAppName)
+Gui, 2:Add, Text, x10 y10 w440 center, % L(lOptionsGuiTitle, lAppName)
 Gui, 2:Font
+Gui, 2:Add, Text, x10 y+10 w440 center, % L(lOptionsGuiIntro, lAppName)
 
 ; Build Hotkey Gui lines
 loop, % arrIniKeyNames%0%
 	GuiOptionsHotkey(A_Index)
 
 ; Build other options
-Gui, 2:Add, Text, x10 y+5 w440 center, _________________________________________________________________________
-Gui, 2:Add, Text, x10 y+5 w440 center, %lOptionsRunAtStartup%
-Gui, 2:Add, Text, x10 y+5 w440 center, %lOptionsAlwaysTrayTip%
+Gui, 2:Add, Text, x10 y+5 w440 center, _______________________________________________________________
+
+Gui, 2:Font, s8 w700
+Gui, 2:Add, Text, x10 y+5 w440 center, %lOptionsOtherOptions%
+Gui, 2:Font
+
+Gui, 2:Add, CheckBox, y+20 x60 vblnOptionsRunAtStartup, %lOptionsRunAtStartup%
+GuiControl, , blnOptionsRunAtStartup, % FileExist(A_Startup . "\" . lAppName . ".lnk") ? 1 : 0
+
+Gui, 2:Add, CheckBox, yp x+60 vblnOptionsAlwaysTrayTip, %lOptionsAlwaysTrayTip%
+GuiControl, , blnOptionsAlwaysTrayTip, % (intDisplayTrayTip < 0) ? 1 : 0
 
 ; Build Gui footer
 Gui, 2:Add, Button, y+20 x170 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
@@ -1089,7 +1109,7 @@ GuiOptionsHotkey(intIndex)
 		intType := 2
 
 	; Hotkey Header
-	Gui, 2:Add, Text, % (intType = 3 ? "y+20 x5 w100 center" : "y+20 x5 w200 center"), %lOptionsTrigger%
+	Gui, 2:Add, Text, % (intType = 3 ? "y+20 x5 w100 center" : "y+20 x5 w200 center"), %lOptionsTriggerFor%
 	Gui, 2:Add, Text, % (intType = 3 ? "yp x108 w25 center" : "yp x+5 w25 center"), %lOptionsShift%
 	Gui, 2:Add, Text, yp x+11 w25 center, %lOptionsCtrl%
 	Gui, 2:Add, Text, yp x+10 w25 center, %lOptionsAlt%
@@ -1139,6 +1159,8 @@ Loop, % arrIniVarNames%0%
 	strHotkey%A_Index% := Trim(strOptionsKey%A_Index% . strOptionsMouse%A_Index%)
 	if StrLen(strHotkey%A_Index%)
 	{
+		Hotkey, % "$" . arrHotkeyVarNames%A_Index%, Off
+
 		if (blnOptionsWin%A_Index%)
 			strHotkey%A_Index% := "#" . strHotkey%A_Index%
 		if (blnOptionsAlt%A_Index%)
@@ -1152,7 +1174,16 @@ Loop, % arrIniVarNames%0%
 	else
 		Oops(L(lOptionsNoKeyOrMouseSpecified, arrIniVarNames%A_Index%))
 }
+Gosub, LoadIniHotkeys ;  reload ini variables and reset hotkeys
 
+IfExist, %A_Startup%\%lAppName%.lnk
+	FileDelete, %A_Startup%\%lAppName%.lnk
+if (blnOptionsRunAtStartup)
+	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%lAppName%.lnk
+Menu, Tray, % blnOptionsRunAtStartup ? "Check" : "Uncheck", %lMenuRunAtStartup%
+
+IniWrite, % blnOptionsAlwaysTrayTip ? -1 : 0, %strIniFile%, Global, DisplayTrayTip
+	
 Goto, 2GuiClose
 
 return
@@ -1162,6 +1193,7 @@ return
 ;------------------------------------------------------------
 ButtonOptionsCancel:
 ;------------------------------------------------------------
+Gosub, 2GuiClose
 
 return
 ;------------------------------------------------------------
@@ -1230,12 +1262,12 @@ GuiControlGet, blnSaveEnabled, Enabled, %lGuiSave%
 if (blnSaveEnabled)
 	return
 
-Gui, ListView, lvFoldersList
+Gui, 1:ListView, lvFoldersList
 LV_Delete()
-Gui, ListView, lvDialogsList
+Gui, 1:ListView, lvDialogsList
 LV_Delete()
 
-Gui, ListView, lvFoldersList
+Gui, 1:ListView, lvFoldersList
 Loop, % arrGlobalFolders.MaxIndex()
 {
 	If !StrLen(arrGlobalFolders[A_Index].Name)
@@ -1247,7 +1279,7 @@ LV_Modify(1, "Select Focus")
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
 
-Gui, ListView, lvDialogsList
+Gui, 1:ListView, lvDialogsList
 Loop, % arrGlogalDialogs.MaxIndex()
 {
 	LV_Add(, arrGlogalDialogs[A_Index])
@@ -1268,7 +1300,10 @@ OpenFavorite:
 strPath := GetPathFor(A_ThisMenuItem)
 
 if (A_ThisHotkey = "$+MButton") or WindowIsDesktop(strGlobalClass) ;#### adapt to configurable triggers
-	ComObjCreate("Shell.Application").Explore(strPath . " /n")
+	ComObjCreate("WScript.Shell").Exec("Explorer.exe /e /select," . strPath) ; ### TEST ON WIN XP - test when open the same folder in a new window
+	; http://msdn.microsoft.com/en-us/library/bb774094http://msdn.microsoft.com/en-us/library/bb774094
+	; ComObjCreate("Shell.Application").Explore(strPath)
+	; ComObjCreate("WScript.Shell").Exec("Explorer.exe /e /select," . strPath)
 	; ComObjCreate("Shell.Application").Open(strPath)
 	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 else if WindowIsAnExplorer(strGlobalClass)
@@ -1656,7 +1691,7 @@ GetFirstNotModifier(strHotkey)
 Oops(strMessage, objVariables*)
 ; ------------------------------------------------
 {
-	Gui, +OwnDialogs
+	Gui, 1:+OwnDialogs
 	MsgBox, 48, % L(lFuncOopsTitle, lAppName, lAppVersion), % L(strMessage, objVariables*)
 }
 ; ------------------------------------------------
