@@ -108,13 +108,14 @@ IfExist, %A_Startup%\%lAppName%.lnk
 	Menu, Tray, Check, %lMenuRunAtStartup%
 }
 
-strTrayTipMessage := L(lTrayTipInstalledDetail, lAppName)
-loop, %arrOptionsTitlesLong0%
-	strTrayTipMessage := strTrayTipMessage . Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%) . " > " . arrOptionsTitlesLong%A_Index% . "`n"
-
 if (intDisplayTrayTip <> 0)
 	TrayTip, % L(lTrayTipInstalledTitle, lAppName, lAppVersion)
-		, %strTrayTipMessage%, , 1
+		, % L(lTrayTipInstalledDetail, lAppName
+			, Hotkey2Text(strModifiers1, strMouseButton1, strOptionsKey1)
+			, Hotkey2Text(strModifiers3, strMouseButton3, strOptionsKey3)
+			, Hotkey2Text(strModifiers2, strMouseButton2, strOptionsKey2)
+			, Hotkey2Text(strModifiers4, strMouseButton4, strOptionsKey4))
+		, , 1
 return
 
 
@@ -948,26 +949,6 @@ FirstVsSecondIs(strFirstVersion, strSecondVersion)
 }
 ;------------------------------------------------------------
 
-/*
-####
-
-
-IsLatestRelease(prog_ver, cur_ver, exclude_keys="beta|alpha")
-{
-
-	if RegExMatch(prog_ver, "(" exclude_keys ")")
-		return 1
-
-	StringSplit, prog_ver_array, prog_ver,`.
-	StringSplit, cur_ver_array, cur_ver  ,`.
-
-	Loop % cur_ver_array0
-		if !( prog_ver_array%A_index% >= cur_ver_array%A_index% )
-			return 0
-	return 1
-}
-*/
-
 
 ;------------------------------------------------------------
 ChangeButtonNames: 
@@ -1041,17 +1022,13 @@ Gui, 2:Add, Text, x10 y10, %lAppName%
 Gui, 2:Font, s10 w400, Verdana
 Gui, 2:Add, Link, x10 w%intWidth%, %lHelpText1%
 Gui, 2:Font, s8 w400, Verdana
-; #### adapt hotkey
 Gui, 2:Add, Link, w%intWidth%, %lHelpText2%
 Gui, 2:Add, Link, w%intWidth%, %lHelpText3%
-; #### adapt hotkey
 Gui, 2:Add, Link, w%intWidth%, %lHelpText4%
-; #### adapt hotkey
 Gui, 2:Add, Link, w%intWidth%, %lHelpText5%
 Gui, 2:Add, Link, w%intWidth%, %lHelpText6%
 Gui, 2:Add, Link, w%intWidth%, %lHelpText7%
 Gui, 2:Add, Link, w%intWidth%, %lHelpText8%
-Gui, 2:Add, Link, w%intWidth%, %lHelpText9%
 Gui, 2:Add, Button, x220 y+20 g2GuiClose, %lGui2Close%
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
