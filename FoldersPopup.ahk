@@ -77,12 +77,11 @@
 #KeyHistory 0
 ListLines, Off
 
-global strCurrentVersion := "1.0 beta"
+strCurrentVersion := "1.0 beta"
 #Include %A_ScriptDir%\FoldersPopup_LANG.ahk
 SetWorkingDir, %A_ScriptDir%
 
-global strIniFile := A_ScriptDir . "\" . lAppName . ".ini"
-
+strIniFile := A_ScriptDir . "\" . lAppName . ".ini"
 ;@Ahk2Exe-IgnoreBegin
 ; Piece of code for developement phase only - won't be compiled
 if (A_ComputerName = "JEAN-PC") ; for my home PC
@@ -156,14 +155,14 @@ return
 LoadIniFile:
 ;-----------------------------------------------------------
 
-global arrGlobalFolders := Object()
-global arrGlogalDialogs := Object()
+arrFolders := Object() ; reinit if already exist
+arrDialogs := Object() ; reinit if already exist
 
-strPopupHotkeyMouseDefault := "MButton"
-strPopupHotkeyMouseNewDefault := "+MButton"
-strPopupHotkeyKeyboardDefault := "#k"
-strPopupHotkeyKeyboardNewDefault := "+#k"
-strSettingsHotkeyDefault := "+#f"
+strPopupHotkeyMouseDefault := arrHotkeyDefaults1 ; "MButton"
+strPopupHotkeyMouseNewDefault := arrHotkeyDefaults2 ; "+MButton"
+strPopupHotkeyKeyboardDefault := arrHotkeyDefaults3 ; "#k"
+strPopupHotkeyKeyboardNewDefault := arrHotkeyDefaults4 ; "+#k"
+strSettingsHotkeyDefault := arrHotkeyDefaults5 ; "+#f"
 
 IfNotExist, %strIniFile%
 	FileAppend,
@@ -208,14 +207,14 @@ Loop
 	objFolder := Object()
 	objFolder.Name := arrThisObject1
 	objFolder.Path := arrThisObject2
-	arrGlobalFolders.Insert(objFolder)
+	arrFolders.Insert(objFolder)
 }
 Loop
 {
 	IniRead, strIniLine, %strIniFile%, Dialogs, Dialog%A_Index%
 	if (strIniLine = "ERROR")
 		Break
-	arrGlogalDialogs.Insert(strIniLine)
+	arrDialogs.Insert(strIniLine)
 }
 
 return
@@ -251,7 +250,7 @@ PopupMenuMouse: ; default MButton
 PopupMenuKeyboard: ; default #k
 ;------------------------------------------------------------
 
-If !CanOpenFavorite(A_ThisLabel, strGlobalWinId, strGlobalClass)
+If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass)
 {
 	if (A_ThisLabel = "PopupMenuMouse")
 		strThisHotkey := A_ThisHotkey
@@ -265,7 +264,7 @@ If !CanOpenFavorite(A_ThisLabel, strGlobalWinId, strGlobalClass)
 
 if (A_ThisLabel = "PopupMenuMouse")
 {
-	WinActivate, % "ahk_id " . strGlobalWinId
+	WinActivate, % "ahk_id " . strTargetWinId
 	; display menu at mouse pointer location
 	intMenuPosX :=
 	intMenuPosY :=
@@ -276,33 +275,33 @@ else
 	intMenuPosX := 20
 	intMenuPosY := 20
 }
-###_T(A_ThisLabel , "strGlobalWinId: " . strGlobalWinId . "`nstrGlobalClass: " . strGlobalClass)
+###_T(A_ThisLabel , "strTargetWinId: " . strTargetWinId . "`nstrTargetClass: " . strTargetClass)
 
 ; Can't find how to navigate a dialog box to My Computer or Network Neighborhood... need help ???
 Menu, menuSpecialFolders
-	, % WindowIsConsole(strGlobalClass) or WindowIsDialog(strGlobalClass) ? "Disable" : "Enable"
+	, % WindowIsConsole(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
 	, %lMenuMyComputer%
 Menu, menuSpecialFolders
-	, % WindowIsConsole(strGlobalClass) or WindowIsDialog(strGlobalClass) ? "Disable" : "Enable"
+	, % WindowIsConsole(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
 	, %lMenuNetworkNeighborhood%
 
 ; There is no point to navigate a dialog box or console to Control Panel or Recycle Bin
 Menu, menuSpecialFolders
-	, % WindowIsConsole(strGlobalClass) or WindowIsDialog(strGlobalClass) ? "Disable" : "Enable"
+	, % WindowIsConsole(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
 	, %lMenuControlPanel%
 Menu, menuSpecialFolders
-	, % WindowIsConsole(strGlobalClass) or WindowIsDialog(strGlobalClass) ? "Disable" : "Enable"
+	, % WindowIsConsole(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
 	, %lMenuRecycleBin%
 
 ; ONLY IF MOUSE HOTKEY -> moved to PopupMenuMouse
-; WinActivate, % "ahk_id " . strGlobalWinId
+; WinActivate, % "ahk_id " . strTargetWinId
 
-if (WindowIsAnExplorer(strGlobalClass) or WindowIsDesktop(strGlobalClass) or WindowIsConsole(strGlobalClass) or DialogIsSupported(strGlobalWinId))
+if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass) or DialogIsSupported(strTargetWinId))
 {
 	; Enable Add This Folder only if the mouse is over an Explorer (tested on WIN_XP and WIN_7) or a dialog box (works on WIN_7, not on WIN_XP)
 	; Other tests shown that WIN_8 behaves like WIN_7. So, I assume WIN_8 to work. If someone could confirm (until I can test it myself)?
 	Menu, menuFolders
-		, % WindowIsAnExplorer(strGlobalClass) or (WindowIsDialog(strGlobalClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
+		, % WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 		, %lMenuAddThisFolder%
 	Menu, menuFolders, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
 
@@ -320,20 +319,20 @@ PopupMenuNewWindowKeyboard: ; default +#k
 ;------------------------------------------------------------
 if (A_ThisLabel = "PopupMenuNewWindowMouse")
 {
-	MouseGetPos, , , strGlobalWinId
+	MouseGetPos, , , strTargetWinId
 	; display menu at mouse pointer location
 	intMenuPosX :=
 	intMenuPosY :=
 }
 else
 {
-	strGlobalWinId := WinExist("A")
+	strTargetWinId := WinExist("A")
 	; display menu at an offset of 20x20 pixel from top-left client area
 	intMenuPosX := 20
 	intMenuPosY := 20
 }
-WinGetClass strGlobalClass, % "ahk_id " . strGlobalWinId
-###_T(A_ThisLabel , "strGlobalWinId: " . strGlobalWinId . "`nstrGlobalClass: " . strGlobalClass)
+WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
+###_T(A_ThisLabel , "strTargetWinId: " . strTargetWinId . "`nstrTargetClass: " . strTargetClass)
 
 ; In case it was disabled while in a dialog box
 Menu, menuSpecialFolders, Enable, %lMenuMyComputer%
@@ -345,7 +344,7 @@ Menu, menuSpecialFolders, Enable, %lMenuRecycleBin%
 ; or a dialog box under WIN_7 (does not work under WIN_XP).
 ; Other tests shown that WIN_8 behaves like WIN_7.
 Menu, menuFolders
-	, % WindowIsAnExplorer(strGlobalClass) or (WindowIsDialog(strGlobalClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
+	, % WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 	, %lMenuAddThisFolder%
 Menu, menuFolders, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
 
@@ -400,12 +399,12 @@ BuildFoldersMenu:
 
 Menu, menuFolders, Add
 Menu, menuFolders, DeleteAll
-Loop, % arrGlobalFolders.MaxIndex()
+Loop, % arrFolders.MaxIndex()
 {
-	if (arrGlobalFolders[A_Index].Name = lMenuSeparator)
+	if (arrFolders[A_Index].Name = lMenuSeparator)
 		Menu, menuFolders, Add
 	else
-		Menu, menuFolders, Add, % arrGlobalFolders[A_Index].Name, OpenFavorite
+		Menu, menuFolders, Add, % arrFolders[A_Index].Name, OpenFavorite
 }
 Menu, menuFolders, Add
 Menu, menuFolders, Add, %lMenuSpecialFolders%, :menuSpecialFolders
@@ -839,7 +838,7 @@ FolderNameIsNew(strCandidateName)
 AddThisDialog:
 ;------------------------------------------------------------
 
-WinGetTitle, strDialogTitle, ahk_id %strGlobalWinId%
+WinGetTitle, strDialogTitle, ahk_id %strTargetWinId%
 Gosub, GuiShow
 AddDialog(strDialogTitle)
 
@@ -1255,21 +1254,21 @@ Gui, 1:ListView, lvDialogsList
 LV_Delete()
 
 Gui, 1:ListView, lvFoldersList
-Loop, % arrGlobalFolders.MaxIndex()
+Loop, % arrFolders.MaxIndex()
 {
-	If !StrLen(arrGlobalFolders[A_Index].Name)
+	If !StrLen(arrFolders[A_Index].Name)
 		LV_Add()
 	else
-		LV_Add(, arrGlobalFolders[A_Index].Name, arrGlobalFolders[A_Index].Path)
+		LV_Add(, arrFolders[A_Index].Name, arrFolders[A_Index].Path)
 }
 LV_Modify(1, "Select Focus")
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
 
 Gui, 1:ListView, lvDialogsList
-Loop, % arrGlogalDialogs.MaxIndex()
+Loop, % arrDialogs.MaxIndex()
 {
-	LV_Add(, arrGlogalDialogs[A_Index])
+	LV_Add(, arrDialogs[A_Index])
 }
 LV_Modify(1, "Select Focus")
 LV_ModifyCol(1, "AutoHdr")
@@ -1286,20 +1285,19 @@ OpenFavorite:
 
 strPath := GetPathFor(A_ThisMenuItem)
 
-if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strGlobalClass)
+if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
 	ComObjCreate("Shell.Application").Explore(strPath)
-	; ComObjCreate("WScript.Shell").Exec("Explorer.exe /e /select," . strPath) ; ### TEST ON WIN XP - test when open the same folder in a new window
 	; http://msdn.microsoft.com/en-us/library/bb774094http://msdn.microsoft.com/en-us/library/bb774094
 	; ComObjCreate("Shell.Application").Explore(strPath)
-	; ComObjCreate("WScript.Shell").Exec("Explorer.exe /e /select," . strPath)
+	; ComObjCreate("WScript.Shell").Exec("Explorer.exe /e /select," . strPath) ; not tested on XP
 	; ComObjCreate("Shell.Application").Open(strPath)
 	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
-else if WindowIsAnExplorer(strGlobalClass)
-	NavigateExplorer(strPath, strGlobalWinId)
-else if WindowIsConsole(strGlobalClass)
-	NavigateConsole(strPath, strGlobalWinId)
+else if WindowIsAnExplorer(strTargetClass)
+	NavigateExplorer(strPath, strTargetWinId)
+else if WindowIsConsole(strTargetClass)
+	NavigateConsole(strPath, strTargetWinId)
 else
-	NavigateDialog(strPath, strGlobalWinId, strGlobalClass)
+	NavigateDialog(strPath, strTargetWinId, strTargetClass)
 
 return
 ;------------------------------------------------------------
@@ -1325,11 +1323,11 @@ else if (A_ThisMenuItem = lMenuNetworkNeighborhood)
 else if (A_ThisMenuItem = lMenuPictures)
 	intSpecialFolder := 39
 
-if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strGlobalClass)
+if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
 	ComObjCreate("Shell.Application").Explore(intSpecialFolder)
 	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
-else if WindowIsAnExplorer(strGlobalClass)
-	NavigateExplorer(intSpecialFolder, strGlobalWinId)
+else if WindowIsAnExplorer(strTargetClass)
+	NavigateExplorer(intSpecialFolder, strTargetWinId)
 else ; this is the console or a dialog box
 {
 	if (intSpecialFolder = 0)
@@ -1346,10 +1344,10 @@ else ; this is the console or a dialog box
 	else ; we do not support this special folder
 		return
 
-	if WindowIsConsole(strGlobalClass)
-		NavigateConsole(strPath, strGlobalWinId)
+	if WindowIsConsole(strTargetClass)
+		NavigateConsole(strPath, strTargetWinId)
 	else
-		NavigateDialog(strPath, strGlobalWinId, strGlobalClass)
+		NavigateDialog(strPath, strTargetWinId, strTargetClass)
 }
 
 return
@@ -1389,9 +1387,11 @@ WinUnderMouseID()
 GetPathFor(strName)
 ;------------------------------------------------------------
 {
-	Loop, % arrGlobalFolders.MaxIndex()
-		if (strName = arrGlobalFolders[A_Index].Name)
-			return arrGlobalFolders[A_Index].Path
+	global
+	
+	Loop, % arrFolders.MaxIndex()
+		if (strName = arrFolders[A_Index].Name)
+			return arrFolders[A_Index].Path
 }
 ;------------------------------------------------------------
 
@@ -1458,8 +1458,8 @@ DialogIsSupported(strWinId)
 ;------------------------------------------------------------
 {
 	WinGetTitle, strDialogTitle, ahk_id %strWinId%
-	loop, % arrGlogalDialogs.MaxIndex()
-		if InStr(strDialogTitle, arrGlogalDialogs[A_Index])
+	loop, % arrDialogs.MaxIndex()
+		if InStr(strDialogTitle, arrDialogs[A_Index])
 			return True
 
 	return False
@@ -1674,8 +1674,8 @@ Hotkey2Text(strModifiers, strMouseButton, strOptionKey)
 ;------------------------------------------------------------
 {
 	global
+
 	str := ""
-	
 	loop, parse, strModifiers
 	{
 		if (A_LoopField = "!")
