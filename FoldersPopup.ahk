@@ -1020,15 +1020,10 @@ intWidth := 450
 Gui, 2:Font, s12 w700, Verdana
 Gui, 2:Add, Text, x10 y10, %lAppName%
 Gui, 2:Font, s10 w400, Verdana
-Gui, 2:Add, Link, x10 w%intWidth%, %lHelpText1%
+Gui, 2:Add, Link, x10 w%intWidth%, %lHelpTextLead%
 Gui, 2:Font, s8 w400, Verdana
-Gui, 2:Add, Link, w%intWidth%, %lHelpText2%
-Gui, 2:Add, Link, w%intWidth%, %lHelpText3%
-Gui, 2:Add, Link, w%intWidth%, %lHelpText4%
-Gui, 2:Add, Link, w%intWidth%, %lHelpText5%
-Gui, 2:Add, Link, w%intWidth%, %lHelpText6%
-Gui, 2:Add, Link, w%intWidth%, %lHelpText7%
-Gui, 2:Add, Link, w%intWidth%, %lHelpText8%
+loop, 7
+	Gui, 2:Add, Link, w%intWidth%, % lHelpText%A_Index%
 Gui, 2:Add, Button, x220 y+20 g2GuiClose, %lGui2Close%
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
@@ -1291,8 +1286,9 @@ OpenFavorite:
 
 strPath := GetPathFor(A_ThisMenuItem)
 
-if (A_ThisHotkey = "$+MButton") or WindowIsDesktop(strGlobalClass) ;#### adapt to configurable triggers
-	ComObjCreate("WScript.Shell").Exec("Explorer.exe /e /select," . strPath) ; ### TEST ON WIN XP - test when open the same folder in a new window
+if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strGlobalClass)
+	ComObjCreate("Shell.Application").Explore(strPath)
+	; ComObjCreate("WScript.Shell").Exec("Explorer.exe /e /select," . strPath) ; ### TEST ON WIN XP - test when open the same folder in a new window
 	; http://msdn.microsoft.com/en-us/library/bb774094http://msdn.microsoft.com/en-us/library/bb774094
 	; ComObjCreate("Shell.Application").Explore(strPath)
 	; ComObjCreate("WScript.Shell").Exec("Explorer.exe /e /select," . strPath)
@@ -1329,7 +1325,7 @@ else if (A_ThisMenuItem = lMenuNetworkNeighborhood)
 else if (A_ThisMenuItem = lMenuPictures)
 	intSpecialFolder := 39
 
-if (A_ThisHotkey = "+MButton") or WindowIsDesktop(strGlobalClass)
+if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strGlobalClass)
 	ComObjCreate("Shell.Application").Explore(intSpecialFolder)
 	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 else if WindowIsAnExplorer(strGlobalClass)
@@ -1692,7 +1688,7 @@ Hotkey2Text(strModifiers, strMouseButton, strOptionKey)
 			str := str . lOptionsWin . "+"
 	}
 	if StrLen(strMouseButton)
-		str := str . TranslateMouseButton(strMouseButton)
+		str := str . GetText4MouseButton(strMouseButton)
 	if StrLen(strOptionKey)
 		str := str . strOptionKey
 
@@ -1702,7 +1698,7 @@ Hotkey2Text(strModifiers, strMouseButton, strOptionKey)
 
 
 ;------------------------------------------------------------
-TranslateMouseButton(strSource)
+GetText4MouseButton(strSource)
 ; Returns the string in arrMouseButtonsText at the same position of strSource in arrMouseButtons
 ;------------------------------------------------------------
 {
@@ -1711,6 +1707,20 @@ TranslateMouseButton(strSource)
 	loop, %arrMouseButtons0%
 		if (strSource = arrMouseButtons%A_Index%)
 			return arrMouseButtonsText%A_Index%
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GetIniName4Hotkey(strSource)
+; Returns the string in arrIniKeyNames at the same position of strSource in arrHotkeyVarNames content
+;------------------------------------------------------------
+{
+	global
+
+	loop, %arrHotkeyVarNames0%
+		if (strSource = "$" . arrHotkeyVarNames%A_Index%)
+			return arrIniKeyNames%A_Index%
 }
 ;------------------------------------------------------------
 
