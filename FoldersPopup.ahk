@@ -144,7 +144,6 @@ strMouseButtons := " |LButton|MButton|RButton|XButton1|XButton2|WheelUp|WheelDow
 ; leave last | to enable default value on the last item
 StringSplit, arrMouseButtons, strMouseButtons, |
 strMouseButtonsText := " |Left mouse Button|Middle mouse Button|Right mouse Button|X Button1|X Button2|Wheel Up|Wheel Down|Wheel Left|Wheel Right|"
-
 StringSplit, arrMouseButtonsText, strMouseButtonsText, |
 
 return
@@ -1036,9 +1035,6 @@ GuiOptions:
 ;------------------------------------------------------------
 
 intGui1WinID := WinExist("A")
-
-strMouseButtons := " |LButton|MButton|RButton|XButton1|XButton2|WheelUp|WheelDown|WheelLeft|WheelRight|"
-; leave last | to enable default value on the last item
 
 ;---------------------------------------
 ; Build Gui header
