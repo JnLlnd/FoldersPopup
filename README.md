@@ -13,6 +13,16 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### (date of release) v1.0 (First Official Release)
+* configurable mouse button and keyboard triggers in a new "Options" dialog box
+* new keyboard triggers (by default, Windows-K and Shift-Windows-K) in addition to mouse button triggers (by default, Middle mouse and Shift-Middle mouse buttons)
+* add "Run at startup" checkbox to "Options" dialog box to launch Folders Popup automatically at Windows startup
+* add "Always display the startup tray tip" checkbox to "Options" dialog box to always display or hide the Folders popup's tray tip
+* add "Display Special Folders" checkbox to "Options" dialog box to enable/disable navigation to special folders (My Computer, Network, Recycle bion, etc.) in popup menu
+* better formated startup help tray tip
+* close "Settings" dialog box with Escape key
+
+
 ### 2013-11-11 v0.9 (beta version)
 * Implemented startup option in tray and check4update, standardize dialog box titles, various text fixes
 * Renamed the app FoldersPopup, removed debugging code, prepare for compiler, removed external pictures

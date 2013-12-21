@@ -4,6 +4,15 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: FoldersPopup v1.0 (First official release)
+	- configurable mouse button and keyboard triggers in a new "Options" dialog box
+	- new keyboard triggers (by default, Windows-K and Shift-Windows-K) in addition to mouse button triggers (by default, Middle mouse and Shift-Middle mouse buttons)
+	- add "Run at startup" checkbox to "Options" dialog box to launch Folders Popup automatically at Windows startup
+	- add "Always display the startup tray tip" checkbox to "Options" dialog box to always display or hide the Folders popup's tray tip
+	- add "Display Special Folders" checkbox to "Options" dialog box to enable/disable navigation to special folders (My Computer, Network, Recycle bion, etc.) in popup menu
+	- better formated startup help tray tip
+	- close "Settings" dialog box with Escape key
+
 	Version: FoldersPopup v0.9 BETA
 	- implemented startup option in tray and check4update
 	- removed debugging code, prepare for compiler, removed external pictures
@@ -92,8 +101,8 @@ else if InStr(A_ComputerName, "STIC") ; for my work hotkeys
 ;@Ahk2Exe-IgnoreEnd
 
 Gosub, InitArrays
-Gosub, BuildSpecialFoldersMenu
 Gosub, LoadIniFile
+Gosub, BuildSpecialFoldersMenu ; build even if blnDisplaySpecialFolders is false because it could become true
 Gosub, BuildFoldersMenu
 Gosub, BuildGUI
 Gosub, BuildAddDialogMenu
@@ -172,7 +181,8 @@ IfNotExist, %strIniFile%
 			PopupHotkeyKeyboard=%strPopupHotkeyKeyboardDefault%
 			PopupHotkeyNewKeyboard=%strPopupHotkeyKeyboardNewDefault%
 			SettingsHotkey=%strSettingsHotkeyDefault%
-			DisplayTrayTip=5
+			DisplayTrayTip=10
+			DisplaySpecialFolders=1
 			[Folders]
 			Folder1=C:\|C:\
 			Folder2=Windows|%A_WinDir%
@@ -194,6 +204,8 @@ Gosub, LoadIniHotkeys
 IniRead, intDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip
 if (intDisplayTrayTip > 0)
 	IniWrite, % (intDisplayTrayTip - 1), %strIniFile%, Global, DisplayTrayTip
+
+IniRead, blnDisplaySpecialFolders, %strIniFile%, Global, DisplaySpecialFolders, 1
 
 IniRead, strLatestSkipped, %strIniFile%, Global, LatestVersionSkipped, 0.0
 
@@ -256,7 +268,6 @@ If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass)
 	else
 		StringReplace, strThisHotkey, A_ThisHotkey, $ ; remove $ from hotkey
 	Send, {%strThisHotkey%} ; for example {MButton} or #k
-	###_T(A_ThisLabel, strThisHotkey)
 
 	return
 }
@@ -274,23 +285,25 @@ else
 	intMenuPosX := 20
 	intMenuPosY := 20
 }
-###_T(A_ThisLabel , "strTargetWinId: " . strTargetWinId . "`nstrTargetClass: " . strTargetClass)
 
-; Can't find how to navigate a dialog box to My Computer or Network Neighborhood... need help ???
-Menu, menuSpecialFolders
-	, % WindowIsConsole(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
-	, %lMenuMyComputer%
-Menu, menuSpecialFolders
-	, % WindowIsConsole(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
-	, %lMenuNetworkNeighborhood%
+; Can't find how to navigate a dialog box to My Computer or Network Neighborhood... is this is feasible?
+if (blnDisplaySpecialFolders)
+{
+	Menu, menuSpecialFolders
+		, % WindowIsConsole(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
+		, %lMenuMyComputer%
+	Menu, menuSpecialFolders
+		, % WindowIsConsole(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
+		, %lMenuNetworkNeighborhood%
 
-; There is no point to navigate a dialog box or console to Control Panel or Recycle Bin
-Menu, menuSpecialFolders
-	, % WindowIsConsole(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
-	, %lMenuControlPanel%
-Menu, menuSpecialFolders
-	, % WindowIsConsole(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
-	, %lMenuRecycleBin%
+	; There is no point to navigate a dialog box or console to Control Panel or Recycle Bin
+	Menu, menuSpecialFolders
+		, % WindowIsConsole(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
+		, %lMenuControlPanel%
+	Menu, menuSpecialFolders
+		, % WindowIsConsole(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
+		, %lMenuRecycleBin%
+}
 
 ; ONLY IF MOUSE HOTKEY -> moved to PopupMenuMouse
 ; WinActivate, % "ahk_id " . strTargetWinId
@@ -331,13 +344,15 @@ else
 	intMenuPosY := 20
 }
 WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
-###_T(A_ThisLabel , "strTargetWinId: " . strTargetWinId . "`nstrTargetClass: " . strTargetClass)
 
-; In case it was disabled while in a dialog box
-Menu, menuSpecialFolders, Enable, %lMenuMyComputer%
-Menu, menuSpecialFolders, Enable, %lMenuNetworkNeighborhood%
-Menu, menuSpecialFolders, Enable, %lMenuControlPanel%
-Menu, menuSpecialFolders, Enable, %lMenuRecycleBin%
+if (blnDisplaySpecialFolders)
+{
+	; In case it was disabled while in a dialog box
+	Menu, menuSpecialFolders, Enable, %lMenuMyComputer%
+	Menu, menuSpecialFolders, Enable, %lMenuNetworkNeighborhood%
+	Menu, menuSpecialFolders, Enable, %lMenuControlPanel%
+	Menu, menuSpecialFolders, Enable, %lMenuRecycleBin%
+}
 
 ; Enable "Add This Folder" only if the target window is an Explorer (tested on WIN_XP and WIN_7)
 ; or a dialog box under WIN_7 (does not work under WIN_XP).
@@ -405,8 +420,11 @@ Loop, % arrFolders.MaxIndex()
 	else
 		Menu, menuFolders, Add, % arrFolders[A_Index].Name, OpenFavorite
 }
-Menu, menuFolders, Add
-Menu, menuFolders, Add, %lMenuSpecialFolders%, :menuSpecialFolders
+if (blnDisplaySpecialFolders)
+{
+	Menu, menuFolders, Add
+	Menu, menuFolders, Add, %lMenuSpecialFolders%, :menuSpecialFolders
+}
 Menu, menuFolders, Add
 Menu, menuFolders, Add, %lMenuSettings%, GuiShow
 Menu, menuFolders, Default, %lMenuSettings%
@@ -460,7 +478,7 @@ Gui, 1:Add, Button, w75 gGuiRemoveDialog, %lGuiRemoveDialog%
 Gui, 1:Add, Button, w75 gGuiEditDialog, %lGuiEditDialog%
 
 Gui, 1:Add, Button, x100 w75 r1 Disabled Default gGuiSave, %lGuiSave%
-Gui, 1:Add, Button, x+40 w75 r1 gGuiCancel, %lGuiCancel%
+Gui, 1:Add, Button, x+40 w75 r1 gGuiCancel, %lGuiClose% ; Close until changes occur
 Gui, 1:Add, Button, x+80 w75 gGuiOptions, %lGuiOptions%
 
 return
@@ -497,6 +515,7 @@ LV_Modify(intItemToRemove, "Select Focus")
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
 GuiControl, Enable, %lGuiSave%
+GuiControl, , %lGuiClose%, %lGuiCancel%
 
 return
 ;------------------------------------------------------------
@@ -535,6 +554,7 @@ LV_Modify(intRowToEdit, "Select Focus", strNewName, strNewPath)
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
 GuiControl, Enable, %lGuiSave%
+GuiControl, , %lGuiClose%, %lGuiCancel%
 
 return
 ;------------------------------------------------------------
@@ -548,6 +568,7 @@ GuiControl, Focus, lvFoldersList
 Gui, 1:ListView, lvFoldersList
 LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", lMenuSeparator, lMenuSeparator . lMenuSeparator)
 GuiControl, Enable, %lGuiSave%
+GuiControl, , %lGuiClose%, %lGuiCancel%
 
 return
 ;------------------------------------------------------------
@@ -573,6 +594,7 @@ LV_Modify(intSelectedRow, "", PriorName, PriorPath)
 LV_Modify(intSelectedRow - 1, "Select Focus Vis", strThisName, strThisPath)
 
 GuiControl, Enable, %lGuiSave%
+GuiControl, , %lGuiClose%, %lGuiCancel%
 
 return
 ;------------------------------------------------------------
@@ -598,6 +620,7 @@ LV_Modify(intSelectedRow, "", NextName, NextPath)
 LV_Modify(intSelectedRow + 1, "Select Focus Vis", strThisName, strThisPath)
 
 GuiControl, Enable, %lGuiSave%
+GuiControl, , %lGuiClose%, %lGuiCancel%
 
 return
 ;------------------------------------------------------------
@@ -628,6 +651,7 @@ if !(intItemToRemove)
 LV_Delete(intItemToRemove)
 LV_Modify(intItemToRemove, "Select Focus")
 GuiControl, Enable, %lGuiSave%
+GuiControl, , %lGuiClose%, %lGuiCancel%
 
 return
 ;------------------------------------------------------------
@@ -664,6 +688,7 @@ LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(1, "Sort")
 LV_Modify(LV_GetNext(), "Vis")
 GuiControl, Enable, %lGuiSave%
+GuiControl, , %lGuiClose%, %lGuiCancel%
 
 return
 ;------------------------------------------------------------
@@ -693,6 +718,7 @@ Loop % LV_GetCount()
 Gosub, LoadIniFile
 Gosub, BuildFoldersMenu
 GuiControl, Disable, %lGuiSave%
+GuiControl, , %lGuiCancel%, %lGuiClose%
 Gosub, GuiCancel
 
 return
@@ -720,7 +746,10 @@ if (blnSaveEnabled)
 	Gui, 1:+OwnDialogs
 	MsgBox, 36, % L(lDialogCancelTitle, lAppName, lAppVersion), %lDialogCancelPrompt%
 	IfMsgBox, Yes
+	{
 		GuiControl, Disable, %lGuiSave%
+		GuiControl, , %lGuiCancel%	, %lGuiClose%
+	}
 	IfMsgBox, No
 		return
 }
@@ -732,6 +761,7 @@ return
 
 ;------------------------------------------------------------
 GuiClose:
+GuiEscape:
 ;------------------------------------------------------------
 
 GoSub, GuiCancel
@@ -810,6 +840,7 @@ AddFolder(strPath)
 	LV_ModifyCol(1, "AutoHdr")
 	LV_ModifyCol(2, "AutoHdr")
 	GuiControl, Enable, %lGuiSave%
+	GuiControl, , %lGuiClose%, %lGuiCancel%
 }
 ;------------------------------------------------------------
 
@@ -871,6 +902,7 @@ AddDialog(strCurrentDialogTitle)
 	LV_Modify(LV_GetNext(), "Vis")
 	LV_ModifyCol(1, "AutoHdr")
 	GuiControl, Enable, %lGuiSave%
+	GuiControl, , %lGuiClose%, %lGuiCancel%
 }
 ;------------------------------------------------------------
 
@@ -998,7 +1030,9 @@ Gui, 2:Add, Link, , % L(lAboutText3)
 Gui, 2:Font, s10 w400, Verdana
 Gui, 2:Add, Link, , % L(lAboutText4)
 Gui, 2:Font, s8 w400, Verdana
-Gui, 2:Add, Button, x150 y+20 g2GuiClose, %lGui2Close%
+Gui, 2:Add, Button, x115 y+20 gButtonOptionsDonate, %lAboutDonate%
+Gui, 2:Add, Button, x150 y+20 g2GuiClose vbtnAboutClose, %lGui2Close%
+GuiControl, Focus, btnAboutClose
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
 
@@ -1022,7 +1056,9 @@ Gui, 2:Add, Link, x10 w%intWidth%, %lHelpTextLead%
 Gui, 2:Font, s8 w400, Verdana
 loop, 7
 	Gui, 2:Add, Link, w%intWidth%, % lHelpText%A_Index%
-Gui, 2:Add, Button, x220 y+20 g2GuiClose, %lGui2Close%
+Gui, 2:Add, Button, x100 y+20 gButtonOptionsDonate, %lAboutDonate%
+Gui, 2:Add, Button, x320 yp g2GuiClose vbtnHelpClose, %lGui2Close%
+GuiControl, Focus, btnHelpClose
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
 
@@ -1057,15 +1093,22 @@ Gui, 2:Font, s8 w700
 Gui, 2:Add, Text, x10 y+5 w440 center, %lOptionsOtherOptions%
 Gui, 2:Font
 
-Gui, 2:Add, CheckBox, y+20 x60 vblnOptionsRunAtStartup, %lOptionsRunAtStartup%
+Gui, 2:Add, CheckBox, y+20 x10 vblnOptionsRunAtStartup, %lOptionsRunAtStartup%
 GuiControl, , blnOptionsRunAtStartup, % FileExist(A_Startup . "\" . lAppName . ".lnk") ? 1 : 0
 
-Gui, 2:Add, CheckBox, yp x+60 vblnOptionsAlwaysTrayTip, %lOptionsAlwaysTrayTip%
-GuiControl, , blnOptionsAlwaysTrayTip, % (intDisplayTrayTip < 0) ? 1 : 0
+Gui, 2:Add, CheckBox, yp x+20 vblnOptionsAlwaysTrayTip, %lOptionsAlwaysTrayTip%
+if (intDisplayTrayTip > 0)
+	GuiControl, , blnOptionsAlwaysTrayTip, -1 ; -1 for grey checkmark
+else
+	GuiControl, , blnOptionsAlwaysTrayTip, % (intDisplayTrayTip = -1) ? 1 : 0
+
+Gui, 2:Add, CheckBox, yp x+20 vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
+GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
 
 ; Build Gui footer
-Gui, 2:Add, Button, y+20 x170 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
-Gui, 2:Add, Button, yp x+20 vbtnOptionsCancel gButtonOptionsCancel, %lGuiCancel%
+Gui, 2:Add, Button, y+20 x100 gButtonOptionsDonate, %lAboutDonate%
+Gui, 2:Add, Button, yp x+80 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
+Gui, 2:Add, Button, yp x+15 vbtnOptionsCancel gButtonOptionsCancel, %lGuiCancel%
 Gui, 2:Add, Text
 GuiControl, Focus, btnOptionsSave
 
@@ -1164,10 +1207,27 @@ if (blnOptionsRunAtStartup)
 	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%lAppName%.lnk
 Menu, Tray, % blnOptionsRunAtStartup ? "Check" : "Uncheck", %lMenuRunAtStartup%
 
-IniWrite, % blnOptionsAlwaysTrayTip ? -1 : 0, %strIniFile%, Global, DisplayTrayTip
+if (blnOptionsAlwaysTrayTip <> -1) ; do not modify ini file if indeterminate/grey
+{
+	IniWrite, % blnOptionsAlwaysTrayTip ? -1 : 0, %strIniFile%, Global, DisplayTrayTip
+	intDisplayTrayTip := blnOptionsAlwaysTrayTip ? -1 : 0
+}
 	
+IniWrite, %blnDisplaySpecialFolders%, %strIniFile%, Global, DisplaySpecialFolders
+; Rebuild Folders menu w/ or w/o Special Folders
+Menu, menuFolders, Delete
+Gosub, BuildFoldersMenu
+
 Goto, 2GuiClose
 
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ButtonOptionsDonate:
+;------------------------------------------------------------
+Run, https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AJNCXKWKYAXLCV
 return
 ;------------------------------------------------------------
 
@@ -1407,7 +1467,7 @@ CanOpenFavorite(strMouseOrKeyboard, ByRef strWinId, ByRef strClass)
 	else
 		strWinId := WinExist("A")
 	WinGetClass strClass, % "ahk_id " . strWinId
-	###_T(strMouseOrKeyboard, strClass)
+
 	return WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or WindowIsConsole(strClass) or WindowIsDialog(strClass)
 }
 ;------------------------------------------------------------
@@ -1453,6 +1513,8 @@ WindowIsDialog(strClass)
 DialogIsSupported(strWinId)
 ;------------------------------------------------------------
 {
+	global
+	
 	WinGetTitle, strDialogTitle, ahk_id %strWinId%
 	loop, % arrDialogs.MaxIndex()
 		if InStr(strDialogTitle, arrDialogs[A_Index])
