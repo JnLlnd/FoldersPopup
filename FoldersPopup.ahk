@@ -8,7 +8,7 @@
 	- configurable mouse button and keyboard triggers in a new "Options" dialog box
 	- new keyboard triggers (by default, Windows-K and Shift-Windows-K) in addition to mouse button triggers (by default, Middle mouse and Shift-Middle mouse buttons)
 	- add "Run at startup" checkbox to "Options" dialog box to launch Folders Popup automatically at Windows startup
-	- add "Always display the startup tray tip" checkbox to "Options" dialog box to always display or hide the Folders popup's tray tip
+	- add "Display the startup tray tip" checkbox to "Options" dialog box to display or hide the Folders popup's tray tip
 	- add "Display Special Folders" checkbox to "Options" dialog box to enable/disable navigation to special folders (My Computer, Network, Recycle bion, etc.) in popup menu
 	- better formated startup help tray tip
 	- close "Settings" dialog box with Escape key
@@ -73,7 +73,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 0.9
+;@Ahk2Exe-SetVersion 1.0
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -86,7 +86,7 @@
 #KeyHistory 0
 ListLines, Off
 
-strCurrentVersion := "1.0 beta"
+strCurrentVersion := "1.0"
 #Include %A_ScriptDir%\FoldersPopup_LANG.ahk
 SetWorkingDir, %A_ScriptDir%
 
@@ -116,7 +116,7 @@ IfExist, %A_Startup%\%lAppName%.lnk
 	Menu, Tray, Check, %lMenuRunAtStartup%
 }
 
-if (intDisplayTrayTip <> 0)
+if (blnDisplayTrayTip)
 	TrayTip, % L(lTrayTipInstalledTitle, lAppName, lAppVersion)
 		, % L(lTrayTipInstalledDetail, lAppName
 			, Hotkey2Text(strModifiers1, strMouseButton1, strOptionsKey1)
@@ -181,7 +181,7 @@ IfNotExist, %strIniFile%
 			PopupHotkeyKeyboard=%strPopupHotkeyKeyboardDefault%
 			PopupHotkeyNewKeyboard=%strPopupHotkeyKeyboardNewDefault%
 			SettingsHotkey=%strSettingsHotkeyDefault%
-			DisplayTrayTip=10
+			DisplayTrayTip=1
 			DisplaySpecialFolders=1
 			[Folders]
 			Folder1=C:\|C:\
@@ -201,9 +201,7 @@ IfNotExist, %strIniFile%
 	
 Gosub, LoadIniHotkeys
 
-IniRead, intDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip
-if (intDisplayTrayTip > 0)
-	IniWrite, % (intDisplayTrayTip - 1), %strIniFile%, Global, DisplayTrayTip
+IniRead, blnDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip
 
 IniRead, blnDisplaySpecialFolders, %strIniFile%, Global, DisplaySpecialFolders, 1
 
@@ -372,7 +370,7 @@ BuildTrayMenu:
 
 ;@Ahk2Exe-IgnoreBegin
 ; Piece of code for developement phase only - won't be compiled
-Menu, Tray, Icon, %A_ScriptDir%\Folders-Likes-icon-256-light-center.ico, 1
+Menu, Tray, Icon, %A_ScriptDir%\Folders-Likes-icon-192-light-center.ico, 1
 ; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
 Menu, Tray, Add
@@ -1086,21 +1084,17 @@ Gui, 2:Add, Text, x10 y+10 w440 center, % L(lOptionsGuiIntro, lAppName)
 loop, % arrIniKeyNames%0%
 	GuiOptionsHotkey(A_Index)
 
-; Build other options
 Gui, 2:Add, Text, x10 y+5 w440 center, _______________________________________________________________
 
 Gui, 2:Font, s8 w700
 Gui, 2:Add, Text, x10 y+5 w440 center, %lOptionsOtherOptions%
 Gui, 2:Font
 
-Gui, 2:Add, CheckBox, y+20 x10 vblnOptionsRunAtStartup, %lOptionsRunAtStartup%
+Gui, 2:Add, CheckBox, y+10 x40 vblnOptionsRunAtStartup, %lOptionsRunAtStartup%
 GuiControl, , blnOptionsRunAtStartup, % FileExist(A_Startup . "\" . lAppName . ".lnk") ? 1 : 0
 
-Gui, 2:Add, CheckBox, yp x+20 vblnOptionsAlwaysTrayTip, %lOptionsAlwaysTrayTip%
-if (intDisplayTrayTip > 0)
-	GuiControl, , blnOptionsAlwaysTrayTip, -1 ; -1 for grey checkmark
-else
-	GuiControl, , blnOptionsAlwaysTrayTip, % (intDisplayTrayTip = -1) ? 1 : 0
+Gui, 2:Add, CheckBox, yp x+20 vblnOptionsTrayTip, %lOptionsTrayTip%
+GuiControl, , blnOptionsTrayTip, %blnDisplayTrayTip%
 
 Gui, 2:Add, CheckBox, yp x+20 vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
 GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
@@ -1112,8 +1106,6 @@ Gui, 2:Add, Button, yp x+15 vbtnOptionsCancel gButtonOptionsCancel, %lGuiCancel%
 Gui, 2:Add, Text
 GuiControl, Focus, btnOptionsSave
 
-;---------------------------------------
-; Show until user click Save
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
 
@@ -1207,11 +1199,8 @@ if (blnOptionsRunAtStartup)
 	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%lAppName%.lnk
 Menu, Tray, % blnOptionsRunAtStartup ? "Check" : "Uncheck", %lMenuRunAtStartup%
 
-if (blnOptionsAlwaysTrayTip <> -1) ; do not modify ini file if indeterminate/grey
-{
-	IniWrite, % blnOptionsAlwaysTrayTip ? -1 : 0, %strIniFile%, Global, DisplayTrayTip
-	intDisplayTrayTip := blnOptionsAlwaysTrayTip ? -1 : 0
-}
+IniWrite, %blnOptionsTrayTip%, %strIniFile%, Global, DisplayTrayTip
+blnDisplayTrayTip := blnOptionsTrayTip
 	
 IniWrite, %blnDisplaySpecialFolders%, %strIniFile%, Global, DisplaySpecialFolders
 ; Rebuild Folders menu w/ or w/o Special Folders
