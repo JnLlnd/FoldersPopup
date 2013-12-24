@@ -4,6 +4,9 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: FoldersPopup v1.01
+	- bug fix: mouse and keyboard triggers were disabled in non-explorer windows
+
 	Version: FoldersPopup v1.0 (First official release)
 	- configurable mouse button and keyboard triggers in a new "Options" dialog box
 	- new keyboard triggers (by default, Windows-K and Shift-Windows-K) in addition to mouse button triggers (by default, Middle mouse and Shift-Middle mouse buttons)
@@ -73,7 +76,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 1.0
+;@Ahk2Exe-SetVersion 1.01
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -86,7 +89,7 @@
 #KeyHistory 0
 ListLines, Off
 
-strCurrentVersion := "1.0"
+strCurrentVersion := "1.01"
 #Include %A_ScriptDir%\FoldersPopup_LANG.ahk
 SetWorkingDir, %A_ScriptDir%
 
@@ -261,12 +264,14 @@ PopupMenuKeyboard: ; default #k
 
 If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass)
 {
+	StringReplace, strThisHotkey, A_ThisHotkey, $ ; remove $ from hotkey
 	if (A_ThisLabel = "PopupMenuMouse")
-		strThisHotkey := A_ThisHotkey
+		Send, {%strThisHotkey%} ; for example {MButton}
 	else
-		StringReplace, strThisHotkey, A_ThisHotkey, $ ; remove $ from hotkey
-	Send, {%strThisHotkey%} ; for example {MButton} or #k
-
+	{
+		StringLower, strThisHotkey, strThisHotkey
+		Send, %strThisHotkey% ; for example #k
+	}
 	return
 }
 
