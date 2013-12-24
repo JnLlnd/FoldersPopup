@@ -13,10 +13,10 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
-### v1.01
+### 2013-12-24 v1.01
 * bug fix: mouse and keyboard triggers were disabled in non-explorer windows
 
-### v1.0 (First Official Release)
+### 2013-12-23 v1.0 (First Official Release)
 * configurable mouse button and keyboard triggers in a new "Options" dialog box
 * new keyboard triggers (by default, Windows-K and Shift-Windows-K) in addition to mouse button triggers (by default, Middle mouse and Shift-Middle mouse buttons)
 * add "Run at startup" checkbox to "Options" dialog box to launch Folders Popup automatically at Windows startup
