@@ -158,7 +158,7 @@ StringSplit, arrOptionsTitlesLong, lOptionsTitlesLong, |
 strMouseButtons := " |LButton|MButton|RButton|XButton1|XButton2|WheelUp|WheelDown|WheelLeft|WheelRight|"
 ; leave last | to enable default value on the last item
 StringSplit, arrMouseButtons, strMouseButtons, |
-strMouseButtonsText := " |Left mouse Button|Middle mouse Button|Right mouse Button|X Button1|X Button2|Wheel Up|Wheel Down|Wheel Left|Wheel Right|"
+strMouseButtonsText := " |Left Mouse Button|Middle Mouse Button|Right Mouse Button|X Button1|X Button2|Wheel Up|Wheel Down|Wheel Left|Wheel Right|"
 StringSplit, arrMouseButtonsText, strMouseButtonsText, |
 
 return
@@ -1084,32 +1084,40 @@ Gui, 1:Submit, NoHide
 Gui, 2:New, , % L(lOptionsGuiTitle, lAppName, lAppVersion)
 Gui, 2:+Owner1
 Gui, 2:Font, s10 w700, Verdana
-Gui, 2:Add, Text, x10 y10 w440 center, % L(lOptionsGuiTitle, lAppName)
+Gui, 2:Add, Text, x10 y10 w410 center, % L(lOptionsGuiTitle, lAppName)
 Gui, 2:Font
-Gui, 2:Add, Text, x10 y+10 w440 center, % L(lOptionsGuiIntro, lAppName)
+Gui, 2:Add, Text, x10 y+10 w410 center, % L(lOptionsGuiIntro, lAppName)
 
 ; Build Hotkey Gui lines
 loop, % arrIniKeyNames%0%
-	GuiOptionsHotkey(A_Index)
+{
+	; GuiOptionsHotkey(A_Index)
+	Gui, 2:Font, s8 w700
+	Gui, 2:Add, Text, x15 y+10, % arrOptionsTitles%A_Index%
+	Gui, 2:Font, s9 w500, Courier New
+	Gui, 2:Add, Text, x175 yp w200 center 0x1000, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
+	Gui, 2:Font
+	Gui, 2:Add, Button, h20 yp x380 gButtonOptionsEditHotkey, %lOptionsEditHotkey%
+}
 
-Gui, 2:Add, Text, x10 y+5 w440 center, _______________________________________________________________
+; Gui, 2:Add, Text, x10 y+5 w440 center, _______________________________________________________________
+Gui, 2:Add, Text, x10 y+15 h2 w410 0x10 ; Horizontal Line > Etched Gray
 
 Gui, 2:Font, s8 w700
-Gui, 2:Add, Text, x10 y+5 w440 center, %lOptionsOtherOptions%
+Gui, 2:Add, Text, x10 y+5 w410 center, %lOptionsOtherOptions%
 Gui, 2:Font
 
 Gui, 2:Add, CheckBox, y+10 x40 vblnOptionsRunAtStartup, %lOptionsRunAtStartup%
 GuiControl, , blnOptionsRunAtStartup, % FileExist(A_Startup . "\" . lAppName . ".lnk") ? 1 : 0
 
-Gui, 2:Add, CheckBox, yp x+20 vblnOptionsTrayTip, %lOptionsTrayTip%
+Gui, 2:Add, CheckBox, y+10 x40 vblnOptionsTrayTip, %lOptionsTrayTip%
 GuiControl, , blnOptionsTrayTip, %blnDisplayTrayTip%
 
-Gui, 2:Add, CheckBox, yp x+20 vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
+Gui, 2:Add, CheckBox, y+10 x40 vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
 GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
 
 ; Build Gui footer
-Gui, 2:Add, Button, y+20 x100 gButtonOptionsDonate, %lAboutDonate%
-Gui, 2:Add, Button, yp x+80 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
+Gui, 2:Add, Button, y+20 x180 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
 Gui, 2:Add, Button, yp x+15 vbtnOptionsCancel gButtonOptionsCancel, %lGuiCancel%
 Gui, 2:Add, Text
 GuiControl, Focus, btnOptionsSave
@@ -1806,7 +1814,7 @@ Hotkey2Text(strModifiers, strMouseButton, strOptionKey)
 ;------------------------------------------------------------
 {
 	global
-
+	
 	str := ""
 	loop, parse, strModifiers
 	{
@@ -1822,7 +1830,10 @@ Hotkey2Text(strModifiers, strMouseButton, strOptionKey)
 	if StrLen(strMouseButton)
 		str := str . GetText4MouseButton(strMouseButton)
 	if StrLen(strOptionKey)
+	{
+		StringUpper, strOptionKey, strOptionKey
 		str := str . strOptionKey
+	}
 
 	return str
 }
