@@ -4,67 +4,70 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: FoldersPopup v1.01
-	- bug fix: mouse and keyboard triggers were disabled in non-explorer windows
+	Version: FoldersPopup v1.2 (2014-01-##)
+	* 
 
-	Version: FoldersPopup v1.0 (First official release)
-	- configurable mouse button and keyboard triggers in a new "Options" dialog box
-	- new keyboard triggers (by default, Windows-K and Shift-Windows-K) in addition to mouse button triggers (by default, Middle mouse and Shift-Middle mouse buttons)
-	- add "Run at startup" checkbox to "Options" dialog box to launch Folders Popup automatically at Windows startup
-	- add "Display the startup tray tip" checkbox to "Options" dialog box to display or hide the Folders popup's tray tip
-	- add "Display Special Folders" checkbox to "Options" dialog box to enable/disable navigation to special folders (My Computer, Network, Recycle bion, etc.) in popup menu
-	- better formated startup help tray tip
-	- close "Settings" dialog box with Escape key
+	Version: FoldersPopup v1.01 (2013-12-24)
+	* bug fix: mouse and keyboard triggers were disabled in non-explorer windows
 
-	Version: FoldersPopup v0.9 BETA
-	- implemented startup option in tray and check4update
-	- removed debugging code, prepare for compiler, removed external pictures
-	- standardize dialog box titles, various text fixes
-	- renamed the app FoldersPopup
+	Version: FoldersPopup v1.0 (First official release, 2013-12-23)
+	* configurable mouse button and keyboard triggers in a new "Options" dialog box
+	* new keyboard triggers (by default, Windows-K and Shift-Windows-K) in addition to mouse button triggers (by default, Middle mouse and Shift-Middle mouse buttons)
+	* add "Run at startup" checkbox to "Options" dialog box to launch Folders Popup automatically at Windows startup
+	* add "Display the startup tray tip" checkbox to "Options" dialog box to display or hide the Folders popup's tray tip
+	* add "Display Special Folders" checkbox to "Options" dialog box to enable/disable navigation to special folders (My Computer, Network, Recycle bion, etc.) in popup menu
+	* better formated startup help tray tip
+	* close "Settings" dialog box with Escape key
 
-	Version: PopupFolders v0.5 ALPHA (last alpha version)
-	- implemented GuiAbout and GuiHelp, added About and Help to tray menu, tray tip displayed only 5 times
-	- removed file:/// protocol prefix, added support for ExploreWClass, implemented try/catch to Explore shell method, offer to add manually when add folder failed
+	Version: FoldersPopup v0.9 BETA (2013-11-11)
+	* implemented startup option in tray and check4update
+	* removed debugging code, prepare for compiler, removed external pictures
+	* standardize dialog box titles, various text fixes
+	* renamed the app FoldersPopup
 
-	Version: PopupFolders v0.4 ALPHA
-	- add settings hotkey to ini file (default Crtl-Windows-F), enable AddThisFolder in all version Explorer and only in WIN_7/Win_8 dialog boxes (not working in WIN_XP)
-	- add GuiSave, GuiCancel, RemoveFolder, EditFolder, AddSeparator, MoveFolderUp/Down, RemoveDialog, EditDialog, fix bug in GuiShow, add tray icon
+	Version: PopupFolders v0.5 ALPHA (last alpha version, 2013-11-11)
+	* implemented GuiAbout and GuiHelp, added About and Help to tray menu, tray tip displayed only 5 times
+	* removed file:/// protocol prefix, added support for ExploreWClass, implemented try/catch to Explore shell method, offer to add manually when add folder failed
 
-	Version: PopupFolders v0.3 ALPHA
-	- add NavigateConsole for console support (command prompt CMD)
-	- change .ini filename to new app name
+	Version: PopupFolders v0.4 ALPHA (2013-11-11)
+	* add settings hotkey to ini file (default Crtl-Windows-F), enable AddThisFolder in all version Explorer and only in WIN_7/Win_8 dialog boxes (not working in WIN_XP)
+	* add GuiSave, GuiCancel, RemoveFolder, EditFolder, AddSeparator, MoveFolderUp/Down, RemoveDialog, EditDialog, fix bug in GuiShow, add tray icon
 
-	Version: PopupFolders v0.2 ALPHA
-	- renamed app PopupFolders, isolate text into language variables
+	Version: PopupFolders v0.3 ALPHA (2013-11-10)
+	* add NavigateConsole for console support (command prompt CMD)
+	* change .ini filename to new app name
 
-	Version: DirMenu3 v0.1 ALPHA
-	- init skeleton, read ini file and create arrays for folders menu and supported dialog boxes
-	- create language file, build gui, tray menu and folder menu, skeleton for front end buttons and commands
-	- create AddThisDialog menu, MButton condition, CanOpenFavorite improvements with WindowIsAnExplorer, WindowIsDesktop and DialogIsSupported
-	- add SpecialFolders menu, OpenFavorite for Explorer and Desktop, NavigateExplorer
-	- support MS Office dialog boxes on WinXP (bosa_sdm_), open special folders in explorers
-	- NavigateDialog, add Desktop, Document and Pictures special folders, open these special menus in dialog boxes, enabling/disabling the appropriate menus in dialog boxes or explorers
+	Version: PopupFolders v0.2 ALPHA (2013-11-09)
+	* renamed app PopupFolders, isolate text into language variables
+
+	Version: DirMenu3 v0.1 ALPHA (2013-11-05)
+	* init skeleton, read ini file and create arrays for folders menu and supported dialog boxes
+	* create language file, build gui, tray menu and folder menu, skeleton for front end buttons and commands
+	* create AddThisDialog menu, MButton condition, CanOpenFavorite improvements with WindowIsAnExplorer, WindowIsDesktop and DialogIsSupported
+	* add SpecialFolders menu, OpenFavorite for Explorer and Desktop, NavigateExplorer
+	* support MS Office dialog boxes on WinXP (bosa_sdm_), open special folders in explorers
+	* NavigateDialog, add Desktop, Document and Pictures special folders, open these special menus in dialog boxes, enabling/disabling the appropriate menus in dialog boxes or explorers
 
 	Version: DirMenu v2.2 (never released / not stable - base of a total rewrite to DirMenu3)
-	- manage (add, modify or delete) supported dialog box titles in the Gui
-	- suggest current dialog box when adding a name
-	- save the supported dialog box names on the first line of the settings file (dirmenu.txt)
-	- add "Add This Dialog" to the MButton menu to add the current dialog box name (need to desactivate when in an already supported dialog box)
-	- added Win8 to the list of supported versions (assumed as equal to Win7 - could not test myself)
-	- removed the "Menu File" button because not needed anymore
-	- fixed an issue when 2 folders had the same name (now preventing the use of an existing name)
-	- change default setting filename to "DirMenu2.txt" to avoid upgrade errors
-	- upgrade previous versions settings files to v2.2
-	- ask confirmation before discarding changes with Revert or Cancel buttons
-	- replaces RegEx on strDialogNames with DialogIsSupported() function on the ListView
+	* manage (add, modify or delete) supported dialog box titles in the Gui
+	* suggest current dialog box when adding a name
+	* save the supported dialog box names on the first line of the settings file (dirmenu.txt)
+	* add "Add This Dialog" to the MButton menu to add the current dialog box name (need to desactivate when in an already supported dialog box)
+	* added Win8 to the list of supported versions (assumed as equal to Win7 - could not test myself)
+	* removed the "Menu File" button because not needed anymore
+	* fixed an issue when 2 folders had the same name (now preventing the use of an existing name)
+	* change default setting filename to "DirMenu2.txt" to avoid upgrade errors
+	* upgrade previous versions settings files to v2.2
+	* ask confirmation before discarding changes with Revert or Cancel buttons
+	* replaces RegEx on strDialogNames with DialogIsSupported() function on the ListView
 	
 	Version: DirMenu v2.1
-	- make it work with any locale (still working with English)
-	- put supported dialog box titles in a variable (strDialogNames) at the top of the script for easy editing
-	- put DirMenu data file name in a variable (strDirMenuFile) at the top of the script for easy editing
-	- add "Add This Folder" to the MButton menu to add the current folder
-	- add "Menu File" button to open de DirMenu.txt file for edition in Notepad
-	- propose the deepest folder name as default name for a new folder
+	* make it work with any locale (still working with English)
+	* put supported dialog box titles in a variable (strDialogNames) at the top of the script for easy editing
+	* put DirMenu data file name in a variable (strDirMenuFile) at the top of the script for easy editing
+	* add "Add This Folder" to the MButton menu to add the current folder
+	* add "Menu File" button to open de DirMenu.txt file for edition in Notepad
+	* propose the deepest folder name as default name for a new folder
 
 */ 
 ;===============================================
@@ -76,7 +79,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 1.01
+;@Ahk2Exe-SetVersion 1.2
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -89,7 +92,7 @@
 #KeyHistory 0
 ListLines, Off
 
-strCurrentVersion := "1.01"
+strCurrentVersion := "1.2 beta" ; "1.01" should have been "1.0.1" !!! Next one must be "1.2" ("1.1" wont be seen a an update)
 #Include %A_ScriptDir%\FoldersPopup_LANG.ahk
 SetWorkingDir, %A_ScriptDir%
 
@@ -421,7 +424,7 @@ Loop, % arrFolders.MaxIndex()
 	if (arrFolders[A_Index].Name = lMenuSeparator)
 		Menu, menuFolders, Add
 	else
-		Menu, menuFolders, Add, % arrFolders[A_Index].Name, OpenFavorite
+		Menu, menuFolders, Add, % "&" . A_Index . " " . arrFolders[A_Index].Name, OpenFavorite ; ### fix shortcuts
 }
 if (blnDisplaySpecialFolders)
 {
@@ -1165,7 +1168,18 @@ GuiOptionsHotkey(intIndex)
 	if (intType <> 2)
 		Gui, 2:Add, DropDownList, yp x+10 w90 vstrOptionsMouse%intIndex% gOptionsMouseChanged, % strMouseButtonsWithDefault%intIndex%
 	Gui, 2:Add, Text, x10 y+5 w440, % lOptionsArrDescriptions%intIndex%
+
+	Gui, 2:Add, Button, gButtonOptionsEditHotkey, %lOptionsEditHotkey%
+
 }
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ButtonOptionsEditHotkey:
+;------------------------------------------------------------
+Gosub, GuiEditHotkey
+return
 ;------------------------------------------------------------
 
 
@@ -1236,6 +1250,49 @@ return
 
 
 ;------------------------------------------------------------
+2GuiClose:
+2GuiEscape:
+;------------------------------------------------------------
+
+Gui, 1:-Disabled
+Gui, 2:Destroy
+WinActivate, ahk_id %intGui1WinID%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiEditHotkey:
+;------------------------------------------------------------
+
+intGui2WinID := WinExist("A")
+
+;---------------------------------------
+; Build Gui header
+Gui, 2:Submit, NoHide
+Gui, 3:New, , % L(lOptionsEditHotkeyTitle, lAppName, lAppVersion)
+Gui, 3:+Owner2
+Gui, 3:Font, s10 w700, Verdana
+Gui, 3:Add, Text, x10 y10 w440 center, % L(lOptionsEditHotkeyTitle, lAppName)
+Gui, 3:Font
+
+; edit here
+
+; Build Gui footer
+Gui, 3:Add, Button, y+20 x100 vbtnEditHotkeySave gButtonEditHotkeySave, %lGuiSave%
+Gui, 3:Add, Button, yp x+15 vbtnEditHotkeyCancel gButtonEditHotkeyCancel, %lGuiCancel%
+Gui, 3:Add, Text
+GuiControl, Focus, btnEditHotkeySave
+
+Gui, 3:Show, AutoSize Center
+Gui, 2:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 OptionsHotkeyChanged:
 ;------------------------------------------------------------
 strOptionsHotkeyControl := A_GuiControl ; hotkey var name
@@ -1272,13 +1329,35 @@ return
 
 
 ;------------------------------------------------------------
-2GuiClose:
-2GuiEscape:
+ButtonEditHotkeySave:
+;------------------------------------------------------------
+Gui, 3:Submit
+
+; save here
+
+Goto, 3GuiClose
+
+return
 ;------------------------------------------------------------
 
-Gui, 1:-Disabled
-Gui, 2:Destroy
-WinActivate, ahk_id %intGui1WinID%
+
+;------------------------------------------------------------
+ButtonEditHotkeyCancel:
+;------------------------------------------------------------
+Gosub, 3GuiClose
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+3GuiClose:
+3GuiEscape:
+;------------------------------------------------------------
+
+Gui, 2:-Disabled
+Gui, 3:Destroy
+WinActivate, ahk_id %intGui2WinID%
 
 return
 ;------------------------------------------------------------
@@ -1333,6 +1412,7 @@ return
 OpenFavorite:
 ;------------------------------------------------------------
 
+###_D(A_ThisMenuItem) ; finish shortcuts
 strPath := GetPathFor(A_ThisMenuItem)
 
 if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
