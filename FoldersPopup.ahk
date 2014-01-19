@@ -1091,13 +1091,12 @@ Gui, 2:Add, Text, x10 y+10 w410 center, % L(lOptionsGuiIntro, lAppName)
 ; Build Hotkey Gui lines
 loop, % arrIniKeyNames%0%
 {
-	; GuiOptionsHotkey(A_Index)
 	Gui, 2:Font, s8 w700
 	Gui, 2:Add, Text, x15 y+10, % arrOptionsTitles%A_Index%
 	Gui, 2:Font, s9 w500, Courier New
 	Gui, 2:Add, Text, x175 yp w200 center 0x1000, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
 	Gui, 2:Font
-	Gui, 2:Add, Button, h20 yp x380 gButtonOptionsEditHotkey, %lOptionsEditHotkey%
+	Gui, 2:Add, Button, h20 yp x380 vbtnEditHotkey%A_Index% gButtonOptionsEditHotkey%A_Index%, %lOptionsEditHotkey%
 }
 
 ; Gui, 2:Add, Text, x10 y+5 w440 center, _______________________________________________________________
@@ -1130,63 +1129,64 @@ return
 
 
 ;------------------------------------------------------------
-GuiOptionsHotkey(intIndex)
+ButtonOptionsEditHotkey1:
+ButtonOptionsEditHotkey2:
+ButtonOptionsEditHotkey3:
+ButtonOptionsEditHotkey4:
+ButtonOptionsEditHotkey5:
 ;------------------------------------------------------------
+
+StringReplace, intIndex, A_ThisLabel, ButtonOptionsEditHotkey
+intGui2WinID := WinExist("A")
+
+Gui, 2:Submit, NoHide
+Gui, 3:New, , % L(lOptionsEditHotkeyTitle, lAppName, lAppVersion)
+Gui, 3:+Owner2
+Gui, 3:Font, s10 w700, Verdana
+Gui, 3:Add, Text, x10 y10 w350 center, % L(lOptionsEditHotkeyTitle, lAppName)
+Gui, 3:Font
+
+intType := 3
+if InStr(arrIniKeyNames%intIndex%, "Mouse")
+	intType := 1
+if InStr(arrIniKeyNames%intIndex%, "Keyboard")
+	intType := 2
+
+Gui, 3:Add, Text, y+15 x10 , %lOptionsTriggerFor%
+Gui, 3:Font, s8 w700
+Gui, 3:Add, Text, x+5 yp , % arrOptionsTitles%intIndex%
+Gui, 3:Font
+
+Gui, 3:Add, Text, x10 y+5 w350, % lOptionsArrDescriptions%intIndex%
+
+Gui, 3:Add, CheckBox, y+20 x100 vblnOptionsShift, %lOptionsShift%
+GuiControl, , blnOptionsShift, % InStr(strModifiers%intIndex%, "+") ? 1 : 0
+GuiControlGet, posTop, Pos, blnOptionsShift
+Gui, 3:Add, CheckBox, y+10 x100 vblnOptionsCtrl, %lOptionsCtrl%
+GuiControl, , blnOptionsCtrl, % InStr(strModifiers%intIndex%, "^") ? 1 : 0
+Gui, 3:Add, CheckBox, y+10 x100 vblnOptionsAlt, %lOptionsAlt%
+GuiControl, , blnOptionsAlt, % InStr(strModifiers%intIndex%, "!") ? 1 : 0
+Gui, 3:Add, CheckBox, y+10 x100 vblnOptionsWin, %lOptionsWin%
+GuiControl, , blnOptionsWin, % InStr(strModifiers%intIndex%, "#") ? 1 : 0
+
+if (intType = 1)
+	Gui, 3:Add, DropDownList, % "y" . posTopY . " x200 w100 vstrOptionsMouse gOptionsMouseChanged", % strMouseButtonsWithDefault%intIndex%
+if (intType <> 1)
 {
-	global
-	
-	intType := 3
-	if InStr(arrIniKeyNames%intIndex%, "Mouse")
-		intType := 1
-	if InStr(arrIniKeyNames%intIndex%, "Keyboard")
-		intType := 2
-
-	; Hotkey Header
-	Gui, 2:Add, Text, % (intType = 3 ? "y+20 x5 w100 center" : "y+20 x5 w200 center"), %lOptionsTriggerFor%
-	Gui, 2:Add, Text, % (intType = 3 ? "yp x108 w25 center" : "yp x+5 w25 center"), %lOptionsShift%
-	Gui, 2:Add, Text, yp x+11 w25 center, %lOptionsCtrl%
-	Gui, 2:Add, Text, yp x+10 w25 center, %lOptionsAlt%
-	Gui, 2:Add, Text, yp x+10 w25 center, %lOptionsWin%
-	if (intType <> 1)
-		Gui, 2:Add, Text, yp x+10 w100 center, %lOptionsKeyboard%
-	if (intType <> 2)
-		Gui, 2:Add, Text, yp x+15 w80 center, %lOptionsMouse%
-
-	Gui, 2:Font, s8 w700
-	Gui, 2:Add, Text, % (intType = 3 ? "x5 y+5 w100 center" : "x5 y+5 w200 center"), % arrOptionsTitles%intIndex%
-	Gui, 2:Font
-	Gui, 2:Add, CheckBox, yp x+10 vblnOptionsShift%intIndex%, %A_Space%
-		; if we have no text to put at the right of the ckeckbox
-		; would it be possible to eliminate the dotted area ?
-		; intIndex put a space becauyse this is what intIndex found the less visible.
-	GuiControl, , blnOptionsShift%intIndex%, % InStr(strModifiers%intIndex%, "+") ? 1 : 0
-	Gui, 2:Add, CheckBox, yp x+10 vblnOptionsCtrl%intIndex%, %A_Space%
-	GuiControl, , blnOptionsCtrl%intIndex%, % InStr(strModifiers%intIndex%, "^") ? 1 : 0
-	Gui, 2:Add, CheckBox, yp x+10 vblnOptionsAlt%intIndex%, %A_Space%
-	GuiControl, , blnOptionsAlt%intIndex%, % InStr(strModifiers%intIndex%, "!") ? 1 : 0
-	Gui, 2:Add, CheckBox, yp x+10 vblnOptionsWin%intIndex%, %A_Space%
-	GuiControl, , blnOptionsWin%intIndex%, % InStr(strModifiers%intIndex%, "#") ? 1 : 0
-	if (intType <> 1)
-	{
-		Gui, 2:Add, Hotkey, yp x+10 w90 vstrOptionsKey%intIndex% gOptionsHotkeyChanged
-		GuiControl, , strOptionsKey%intIndex%, % strOptionsKey%intIndex%
-	}
-;	if (intType = 3)
-;		Gui, 2:Add, Text, yp x+5, %A_Space%%A_Space%or
-	if (intType <> 2)
-		Gui, 2:Add, DropDownList, yp x+10 w90 vstrOptionsMouse%intIndex% gOptionsMouseChanged, % strMouseButtonsWithDefault%intIndex%
-	Gui, 2:Add, Text, x10 y+5 w440, % lOptionsArrDescriptions%intIndex%
-
-	Gui, 2:Add, Button, gButtonOptionsEditHotkey, %lOptionsEditHotkey%
-
+	Gui, 3:Add, Hotkey, % "y" . posTopY . " x200 w100 vstrOptionsKey gOptionsHotkeyChanged"
+	GuiControl, , strOptionsKey, % strOptionsKey%intIndex%
 }
-;------------------------------------------------------------
+if (intType = 3)
+	Gui, 3:Add, DropDownList, % "y" . posTopY + 50 . " x200 w100 vstrOptionsMouse gOptionsMouseChanged", % strMouseButtonsWithDefault%intIndex%
 
+Gui, 3:Add, Button, y220 x140 vbtnEditHotkeySave gButtonEditHotkeySave%intIndex%, %lGuiSave%
+Gui, 3:Add, Button, yp x+20 vbtnEditHotkeyCancel gButtonEditHotkeyCancel, %lGuiCancel%
+Gui, 3:Add, Text
+GuiControl, Focus, btnEditHotkeySave
 
-;------------------------------------------------------------
-ButtonOptionsEditHotkey:
-;------------------------------------------------------------
-Gosub, GuiEditHotkey
+Gui, 3:Show, AutoSize Center
+Gui, 2:+Disabled
+
 return
 ;------------------------------------------------------------
 
@@ -1271,36 +1271,6 @@ return
 
 
 ;------------------------------------------------------------
-GuiEditHotkey:
-;------------------------------------------------------------
-
-intGui2WinID := WinExist("A")
-
-;---------------------------------------
-; Build Gui header
-Gui, 2:Submit, NoHide
-Gui, 3:New, , % L(lOptionsEditHotkeyTitle, lAppName, lAppVersion)
-Gui, 3:+Owner2
-Gui, 3:Font, s10 w700, Verdana
-Gui, 3:Add, Text, x10 y10 w440 center, % L(lOptionsEditHotkeyTitle, lAppName)
-Gui, 3:Font
-
-; edit here
-
-; Build Gui footer
-Gui, 3:Add, Button, y+20 x100 vbtnEditHotkeySave gButtonEditHotkeySave, %lGuiSave%
-Gui, 3:Add, Button, yp x+15 vbtnEditHotkeyCancel gButtonEditHotkeyCancel, %lGuiCancel%
-Gui, 3:Add, Text
-GuiControl, Focus, btnEditHotkeySave
-
-Gui, 3:Show, AutoSize Center
-Gui, 2:+Disabled
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
 OptionsHotkeyChanged:
 ;------------------------------------------------------------
 strOptionsHotkeyControl := A_GuiControl ; hotkey var name
@@ -1337,9 +1307,15 @@ return
 
 
 ;------------------------------------------------------------
-ButtonEditHotkeySave:
+ButtonEditHotkeySave1:
+ButtonEditHotkeySave2:
+ButtonEditHotkeySave3:
+ButtonEditHotkeySave4:
+ButtonEditHotkeySave5:
 ;------------------------------------------------------------
 Gui, 3:Submit
+
+StringReplace, intIndex, A_ThisLabel, ButtonEditHotkeySave
 
 ; save here
 
