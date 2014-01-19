@@ -190,6 +190,7 @@ IfNotExist, %strIniFile%
 			DisplayTrayTip=1
 			DisplaySpecialFolders=1
 			DisplayMenuShortcuts=0
+			Startups=1
 			[Folders]
 			Folder1=C:\|C:\
 			Folder2=Windows|%A_WinDir%
@@ -209,12 +210,11 @@ IfNotExist, %strIniFile%
 Gosub, LoadIniHotkeys
 
 IniRead, blnDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip
-
 IniRead, blnDisplaySpecialFolders, %strIniFile%, Global, DisplaySpecialFolders, 1
-
 IniRead, blnDisplayMenuShortcuts, %strIniFile%, Global, DisplayMenuShortcuts, 0
-
 IniRead, strLatestSkipped, %strIniFile%, Global, LatestVersionSkipped, 0.0
+IniRead, intStartups, %strIniFile%, Global, Startups, 1
+IniRead, blnDonator, %strIniFile%, Global, Donator, 0 ; Please, be fair. Don't cheat with this.
 
 Loop
 {
@@ -949,6 +949,15 @@ return
 ;------------------------------------------------------------
 Check4Update:
 ;------------------------------------------------------------
+if GetKeyState("Shift") and GetKeyState("LWin")
+	IniWrite, 1, %strIniFile%, Global, Donator
+else if !Mod(intStartups, 50) and !(blnDonator)
+{
+	MsgBox, 52, % l(lDonateTitle, intStartups, lAppName), % l(lDonatePrompt, lAppName, intStartups)
+	IfMsgBox, Yes
+		Gosub, ButtonOptionsDonate
+}
+IniWrite, % (intStartups + 1), %strIniFile%, Global, Startups
 
 strLatestVersion := Url2Var("https://raw.github.com/JnLlnd/FoldersPopup/master/latest-version.txt")
 
@@ -1054,7 +1063,7 @@ Gui, 2:Add, Link, , % L(lAboutText3)
 Gui, 2:Font, s10 w400, Verdana
 Gui, 2:Add, Link, , % L(lAboutText4)
 Gui, 2:Font, s8 w400, Verdana
-Gui, 2:Add, Button, x115 y+20 gButtonOptionsDonate, %lAboutDonate%
+Gui, 2:Add, Button, x115 y+20 gButtonOptionsDonate, %lDonateButton%
 Gui, 2:Add, Button, x150 y+20 g2GuiClose vbtnAboutClose, %lGui2Close%
 GuiControl, Focus, btnAboutClose
 Gui, 2:Show, AutoSize Center
@@ -1080,7 +1089,7 @@ Gui, 2:Add, Link, x10 w%intWidth%, %lHelpTextLead%
 Gui, 2:Font, s8 w400, Verdana
 loop, 7
 	Gui, 2:Add, Link, w%intWidth%, % lHelpText%A_Index%
-Gui, 2:Add, Button, x100 y+20 gButtonOptionsDonate, %lAboutDonate%
+Gui, 2:Add, Button, x100 y+20 gButtonOptionsDonate, %lDonateButton%
 Gui, 2:Add, Button, x320 yp g2GuiClose vbtnHelpClose, %lGui2Close%
 GuiControl, Focus, btnHelpClose
 Gui, 2:Show, AutoSize Center
@@ -1921,7 +1930,7 @@ L(strMessage, objVariables*)
 	Loop
 	{
 		if InStr(strMessage, "~" . A_Index . "~")
-			StringReplace, strMessage, strMessage, ~%A_Index%~, % objVariables[A_Index]
+			StringReplace, strMessage, strMessage, ~%A_Index%~, % objVariables[A_Index], A
  		else
 			break
 	}
