@@ -189,6 +189,7 @@ IfNotExist, %strIniFile%
 			SettingsHotkey=%strSettingsHotkeyDefault%
 			DisplayTrayTip=1
 			DisplaySpecialFolders=1
+			DisplayMenuShortcuts=0
 			[Folders]
 			Folder1=C:\|C:\
 			Folder2=Windows|%A_WinDir%
@@ -210,6 +211,8 @@ Gosub, LoadIniHotkeys
 IniRead, blnDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip
 
 IniRead, blnDisplaySpecialFolders, %strIniFile%, Global, DisplaySpecialFolders, 1
+
+IniRead, blnDisplayMenuShortcuts, %strIniFile%, Global, DisplayMenuShortcuts, 0
 
 IniRead, strLatestSkipped, %strIniFile%, Global, LatestVersionSkipped, 0.0
 
@@ -419,12 +422,20 @@ BuildFoldersMenu:
 
 Menu, menuFolders, Add
 Menu, menuFolders, DeleteAll
+intShortcut := 0
 Loop, % arrFolders.MaxIndex()
 {
 	if (arrFolders[A_Index].Name = lMenuSeparator)
 		Menu, menuFolders, Add
 	else
-		Menu, menuFolders, Add, % "&" . A_Index . " " . arrFolders[A_Index].Name, OpenFavorite ; ### fix shortcuts
+	{
+		intShortcut := intShortcut + 1
+		if (intShortcut < 10)
+			strShortcut := intShortcut ; 1 .. 9
+		else
+			strShortcut := Chr(intShortcut + 55) ; Chr(10 + 55) = "A" .. Chr(35 + 55) = "Z"
+		Menu, menuFolders, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . strShortcut . ") " : "") . arrFolders[A_Index].Name, OpenFavorite
+	}
 }
 if (blnDisplaySpecialFolders)
 {
@@ -483,8 +494,8 @@ Gui, 1:Add, Button, x+10 w75 gGuiAddDialog, %lGuiAddDialog%
 Gui, 1:Add, Button, w75 gGuiRemoveDialog, %lGuiRemoveDialog%
 Gui, 1:Add, Button, w75 gGuiEditDialog, %lGuiEditDialog%
 
-Gui, 1:Add, Button, x100 w75 r1 Disabled Default gGuiSave, %lGuiSave%
-Gui, 1:Add, Button, x+40 w75 r1 gGuiCancel, %lGuiClose% ; Close until changes occur
+Gui, 1:Add, Button, x100 w75 r1 Disabled Default vbtnGuiSave gGuiSave, %lGuiSave%
+Gui, 1:Add, Button, x+40 w75 r1 vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur
 Gui, 1:Add, Button, x+80 w75 gGuiOptions, %lGuiOptions%
 
 return
@@ -520,8 +531,9 @@ LV_Delete(intItemToRemove)
 LV_Modify(intItemToRemove, "Select Focus")
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
-GuiControl, Enable, %lGuiSave%
-GuiControl, , %lGuiClose%, %lGuiCancel%
+
+GuiControl, Enable, btnGuiSave
+GuiControl, , btnGuiCancel, %lGuiCancel%
 
 return
 ;------------------------------------------------------------
@@ -559,8 +571,9 @@ Loop
 LV_Modify(intRowToEdit, "Select Focus", strNewName, strNewPath)
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
-GuiControl, Enable, %lGuiSave%
-GuiControl, , %lGuiClose%, %lGuiCancel%
+
+GuiControl, Enable, btnGuiSave
+GuiControl, , btnGuiCancel, %lGuiCancel%
 
 return
 ;------------------------------------------------------------
@@ -573,8 +586,9 @@ GuiAddSeparator:
 GuiControl, Focus, lvFoldersList
 Gui, 1:ListView, lvFoldersList
 LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", lMenuSeparator, lMenuSeparator . lMenuSeparator)
-GuiControl, Enable, %lGuiSave%
-GuiControl, , %lGuiClose%, %lGuiCancel%
+
+GuiControl, Enable, btnGuiSave
+GuiControl, , btnGuiCancel, %lGuiCancel%
 
 return
 ;------------------------------------------------------------
@@ -599,8 +613,8 @@ LV_GetText(PriorPath, intSelectedRow - 1, 2)
 LV_Modify(intSelectedRow, "", PriorName, PriorPath)
 LV_Modify(intSelectedRow - 1, "Select Focus Vis", strThisName, strThisPath)
 
-GuiControl, Enable, %lGuiSave%
-GuiControl, , %lGuiClose%, %lGuiCancel%
+GuiControl, Enable, btnGuiSave
+GuiControl, , btnGuiCancel, %lGuiCancel%
 
 return
 ;------------------------------------------------------------
@@ -625,8 +639,8 @@ LV_GetText(NextPath, intSelectedRow + 1, 2)
 LV_Modify(intSelectedRow, "", NextName, NextPath)
 LV_Modify(intSelectedRow + 1, "Select Focus Vis", strThisName, strThisPath)
 
-GuiControl, Enable, %lGuiSave%
-GuiControl, , %lGuiClose%, %lGuiCancel%
+GuiControl, Enable, btnGuiSave
+GuiControl, , btnGuiCancel, %lGuiCancel%
 
 return
 ;------------------------------------------------------------
@@ -656,8 +670,9 @@ if !(intItemToRemove)
 }
 LV_Delete(intItemToRemove)
 LV_Modify(intItemToRemove, "Select Focus")
-GuiControl, Enable, %lGuiSave%
-GuiControl, , %lGuiClose%, %lGuiCancel%
+
+GuiControl, Enable, btnGuiSave
+GuiControl, , btnGuiCancel, %lGuiCancel%
 
 return
 ;------------------------------------------------------------
@@ -693,8 +708,9 @@ LV_Modify(intRowToEdit, "Select Focus", strNewDialog)
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(1, "Sort")
 LV_Modify(LV_GetNext(), "Vis")
-GuiControl, Enable, %lGuiSave%
-GuiControl, , %lGuiClose%, %lGuiCancel%
+
+GuiControl, Enable, btnGuiSave
+GuiControl, , btnGuiCancel, %lGuiCancel%
 
 return
 ;------------------------------------------------------------
@@ -746,15 +762,15 @@ return
 GuiCancel:
 ;------------------------------------------------------------
 
-GuiControlGet, blnSaveEnabled, Enabled, %lGuiSave%
+GuiControlGet, blnSaveEnabled, Enabled, btnGuiSave
 if (blnSaveEnabled)
 {
 	Gui, 1:+OwnDialogs
 	MsgBox, 36, % L(lDialogCancelTitle, lAppName, lAppVersion), %lDialogCancelPrompt%
 	IfMsgBox, Yes
 	{
-		GuiControl, Disable, %lGuiSave%
-		GuiControl, , %lGuiCancel%	, %lGuiClose%
+		GuiControl, Disable, btnGuiSave
+		GuiControl, , btnGuiCancel, %lGuiClose%
 	}
 	IfMsgBox, No
 		return
@@ -845,8 +861,9 @@ AddFolder(strPath)
 	LV_Modify(LV_GetNext(), "Vis")
 	LV_ModifyCol(1, "AutoHdr")
 	LV_ModifyCol(2, "AutoHdr")
-	GuiControl, Enable, %lGuiSave%
-	GuiControl, , %lGuiClose%, %lGuiCancel%
+	
+	GuiControl, Enable, btnGuiSave
+	GuiControl, , btnGuiCancel, %lGuiCancel%
 }
 ;------------------------------------------------------------
 
@@ -907,8 +924,9 @@ AddDialog(strCurrentDialogTitle)
 	LV_Add("Select Focus", strNewDialog)
 	LV_Modify(LV_GetNext(), "Vis")
 	LV_ModifyCol(1, "AutoHdr")
-	GuiControl, Enable, %lGuiSave%
-	GuiControl, , %lGuiClose%, %lGuiCancel%
+
+	GuiControl, Enable, btnGuiSave
+	GuiControl, , btnGuiCancel, %lGuiCancel%
 }
 ;------------------------------------------------------------
 
@@ -1094,9 +1112,9 @@ loop, % arrIniKeyNames%0%
 	Gui, 2:Font, s8 w700
 	Gui, 2:Add, Text, x15 y+10, % arrOptionsTitles%A_Index%
 	Gui, 2:Font, s9 w500, Courier New
-	Gui, 2:Add, Text, x175 yp w200 center 0x1000, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
+	Gui, 2:Add, Text, x175 yp w200 center 0x1000 vlblHotkeyText%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
 	Gui, 2:Font
-	Gui, 2:Add, Button, h20 yp x380 vbtnEditHotkey%A_Index% gButtonOptionsEditHotkey%A_Index%, %lOptionsEditHotkey%
+	Gui, 2:Add, Button, h20 yp x380 vbtnChangeHotkey%A_Index% gButtonOptionsChangeHotkey%A_Index%, %lOptionsChangeHotkey%
 }
 
 ; Gui, 2:Add, Text, x10 y+5 w440 center, _______________________________________________________________
@@ -1115,6 +1133,9 @@ GuiControl, , blnOptionsTrayTip, %blnDisplayTrayTip%
 Gui, 2:Add, CheckBox, y+10 x40 vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
 GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
 
+Gui, 2:Add, CheckBox, y+10 x40 vblnDisplayMenuShortcuts, %lOptionsDisplayMenuShortcuts%
+GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
+
 ; Build Gui footer
 Gui, 2:Add, Button, y+20 x180 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
 Gui, 2:Add, Button, yp x+15 vbtnOptionsCancel gButtonOptionsCancel, %lGuiCancel%
@@ -1129,21 +1150,21 @@ return
 
 
 ;------------------------------------------------------------
-ButtonOptionsEditHotkey1:
-ButtonOptionsEditHotkey2:
-ButtonOptionsEditHotkey3:
-ButtonOptionsEditHotkey4:
-ButtonOptionsEditHotkey5:
+ButtonOptionsChangeHotkey1:
+ButtonOptionsChangeHotkey2:
+ButtonOptionsChangeHotkey3:
+ButtonOptionsChangeHotkey4:
+ButtonOptionsChangeHotkey5:
 ;------------------------------------------------------------
 
-StringReplace, intIndex, A_ThisLabel, ButtonOptionsEditHotkey
+StringReplace, intIndex, A_ThisLabel, ButtonOptionsChangeHotkey
 intGui2WinID := WinExist("A")
 
 Gui, 2:Submit, NoHide
-Gui, 3:New, , % L(lOptionsEditHotkeyTitle, lAppName, lAppVersion)
+Gui, 3:New, , % L(lOptionsChangeHotkeyTitle, lAppName, lAppVersion)
 Gui, 3:+Owner2
 Gui, 3:Font, s10 w700, Verdana
-Gui, 3:Add, Text, x10 y10 w350 center, % L(lOptionsEditHotkeyTitle, lAppName)
+Gui, 3:Add, Text, x10 y10 w350 center, % L(lOptionsChangeHotkeyTitle, lAppName)
 Gui, 3:Font
 
 intType := 3
@@ -1179,10 +1200,10 @@ if (intType <> 1)
 if (intType = 3)
 	Gui, 3:Add, DropDownList, % "y" . posTopY + 50 . " x200 w100 vstrOptionsMouse gOptionsMouseChanged", % strMouseButtonsWithDefault%intIndex%
 
-Gui, 3:Add, Button, y220 x140 vbtnEditHotkeySave gButtonEditHotkeySave%intIndex%, %lGuiSave%
-Gui, 3:Add, Button, yp x+20 vbtnEditHotkeyCancel gButtonEditHotkeyCancel, %lGuiCancel%
+Gui, 3:Add, Button, y220 x140 vbtnChangeHotkeySave gButtonChangeHotkeySave%intIndex%, %lGuiSave%
+Gui, 3:Add, Button, yp x+20 vbtnChangeHotkeyCancel gButtonChangeHotkeyCancel, %lGuiCancel%
 Gui, 3:Add, Text
-GuiControl, Focus, btnEditHotkeySave
+GuiControl, Focus, btnChangeHotkeySave
 
 Gui, 3:Show, AutoSize Center
 Gui, 2:+Disabled
@@ -1196,30 +1217,6 @@ ButtonOptionsSave:
 ;------------------------------------------------------------
 Gui, 2:Submit
 
-StringSplit, arrIniVarNames, strIniKeyNames, |
-
-Loop, % arrIniVarNames%0%
-{
-	strHotkey%A_Index% := Trim(strOptionsKey%A_Index% . strOptionsMouse%A_Index%)
-	if StrLen(strHotkey%A_Index%)
-	{
-		Hotkey, % "$" . arrHotkeyVarNames%A_Index%, Off
-
-		if (blnOptionsWin%A_Index%)
-			strHotkey%A_Index% := "#" . strHotkey%A_Index%
-		if (blnOptionsAlt%A_Index%)
-			strHotkey%A_Index% := "!" . strHotkey%A_Index%
-		if (blnOptionsShift%A_Index%)
-			strHotkey%A_Index% := "+" . strHotkey%A_Index%
-		if (blnOptionsCtrl%A_Index%)
-			strHotkey%A_Index% := "^" . strHotkey%A_Index%
-		IniWrite, % strHotkey%A_Index%, %strIniFile%, Global, % arrIniVarNames%A_Index%
-	}
-	else
-		Oops(L(lOptionsNoKeyOrMouseSpecified, arrIniVarNames%A_Index%))
-}
-Gosub, LoadIniHotkeys ;  reload ini variables and reset hotkeys
-
 IfExist, %A_Startup%\%lAppName%.lnk
 	FileDelete, %A_Startup%\%lAppName%.lnk
 if (blnOptionsRunAtStartup)
@@ -1230,7 +1227,8 @@ IniWrite, %blnOptionsTrayTip%, %strIniFile%, Global, DisplayTrayTip
 blnDisplayTrayTip := blnOptionsTrayTip
 	
 IniWrite, %blnDisplaySpecialFolders%, %strIniFile%, Global, DisplaySpecialFolders
-; Rebuild Folders menu w/ or w/o Special Folders
+IniWrite, %blnDisplayMenuShortcuts%, %strIniFile%, Global, DisplayMenuShortcuts
+; Rebuild Folders menu w/ or w/o Special Folders and Shortcuts
 Menu, menuFolders, Delete
 Gosub, BuildFoldersMenu
 
@@ -1307,17 +1305,69 @@ return
 
 
 ;------------------------------------------------------------
-ButtonEditHotkeySave1:
-ButtonEditHotkeySave2:
-ButtonEditHotkeySave3:
-ButtonEditHotkeySave4:
-ButtonEditHotkeySave5:
+ButtonChangeHotkeySave1:
+ButtonChangeHotkeySave2:
+ButtonChangeHotkeySave3:
+ButtonChangeHotkeySave4:
+ButtonChangeHotkeySave5:
 ;------------------------------------------------------------
 Gui, 3:Submit
 
-StringReplace, intIndex, A_ThisLabel, ButtonEditHotkeySave
+StringReplace, intIndex, A_ThisLabel, ButtonChangeHotkeySave
 
-; save here
+StringSplit, arrIniVarNames, strIniKeyNames, |
+
+strHotkey := Trim(strOptionsKey . strOptionsMouse)
+
+if StrLen(strHotkey)
+{
+	Hotkey, % "$" . arrHotkeyVarNames%intIndex%, Off
+
+	if (blnOptionsWin)
+		strHotkey := "#" . strHotkey
+	if (blnOptionsAlt)
+		strHotkey := "!" . strHotkey
+	if (blnOptionsShift)
+		strHotkey := "+" . strHotkey
+	if (blnOptionsCtrl)
+		strHotkey := "^" . strHotkey
+	IniWrite, % strHotkey, %strIniFile%, Global, % arrIniVarNames%intIndex%
+	
+}
+else
+	Oops(L(lOptionsNoKeyOrMouseSpecified, arrIniVarNames%A_Index%))
+
+Gosub, LoadIniHotkeys ;  reload ini variables and reset hotkeys
+
+; update label
+; Gui, 2:Add, Text, x175 yp w200 center 0x1000, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
+GuiControl, 2:, lblHotkeyText%intIndex%, % Hotkey2Text(strModifiers%intIndex%, strMouseButton%intIndex%, strOptionsKey%intIndex%)
+
+/*
+StringSplit, arrIniVarNames, strIniKeyNames, |
+
+Loop, % arrIniVarNames%0%
+{
+	strHotkey%A_Index% := Trim(strOptionsKey%A_Index% . strOptionsMouse%A_Index%)
+	if StrLen(strHotkey%A_Index%)
+	{
+		Hotkey, % "$" . arrHotkeyVarNames%A_Index%, Off
+
+		if (blnOptionsWin%A_Index%)
+			strHotkey%A_Index% := "#" . strHotkey%A_Index%
+		if (blnOptionsAlt%A_Index%)
+			strHotkey%A_Index% := "!" . strHotkey%A_Index%
+		if (blnOptionsShift%A_Index%)
+			strHotkey%A_Index% := "+" . strHotkey%A_Index%
+		if (blnOptionsCtrl%A_Index%)
+			strHotkey%A_Index% := "^" . strHotkey%A_Index%
+		IniWrite, % strHotkey%A_Index%, %strIniFile%, Global, % arrIniVarNames%A_Index%
+	}
+	else
+		Oops(L(lOptionsNoKeyOrMouseSpecified, arrIniVarNames%A_Index%))
+}
+Gosub, LoadIniHotkeys ;  reload ini variables and reset hotkeys
+*/
 
 Goto, 3GuiClose
 
@@ -1326,7 +1376,7 @@ return
 
 
 ;------------------------------------------------------------
-ButtonEditHotkeyCancel:
+ButtonChangeHotkeyCancel:
 ;------------------------------------------------------------
 Gosub, 3GuiClose
 
@@ -1396,8 +1446,11 @@ return
 OpenFavorite:
 ;------------------------------------------------------------
 
-###_D(A_ThisMenuItem) ; finish shortcuts
-strPath := GetPathFor(A_ThisMenuItem)
+if (blnDisplayMenuShortcuts)
+	StringTrimLeft, strThisMenu, A_ThisMenuItem, 4 ; remove "&1) " from menu item
+else
+	strThisMenu := A_ThisMenuItem
+strPath := GetPathFor(strThisMenu)
 
 if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
 	ComObjCreate("Shell.Application").Explore(strPath)
