@@ -9,6 +9,8 @@ global lAppName := "FoldersPopup"
 global lAppTagline := "Jump instantly from one folder to another"
 global lAppVersion := "v" . strCurrentVersion
 global lButtonRemind := "Remind me"
+global lDiagModeCaution = "~1~ is running in diagnostic mode.`n`nInformation about the app's execution will be collected in the file:`n~2~`n`nNothing will be sent without your consent. See this file for more instructions.`n`nTo turn diagnostic mode OFF, enter ""DiagMode=0"" under the ""[Global]"" section in the ini file:`n~3~"
+global lDiagModeIntro = "Send this file to ahk@jeanlalonde.ca with a description of the situation requiring diagnostic."
 global lDialogAddDialogAlready := "This dialog box type is already supported."
 global lDialogAddDialogPrompt := "Enter the new dialog box name`n(or part of the name):"
 global lDialogAddDialogTitle := "Add Dialog Box - ~1~ ~2~"

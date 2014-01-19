@@ -95,6 +95,7 @@ ListLines, Off
 strCurrentVersion := "1.2 beta" ; "1.01" should have been "1.0.1" !!! Next one must be "1.2" ("1.1" wont be seen a an update)
 #Include %A_ScriptDir%\FoldersPopup_LANG.ahk
 SetWorkingDir, %A_ScriptDir%
+global blnDiagMode := False
 
 strIniFile := A_ScriptDir . "\" . lAppName . ".ini"
 ;@Ahk2Exe-IgnoreBegin
@@ -105,6 +106,7 @@ else if InStr(A_ComputerName, "STIC") ; for my work hotkeys
 	strIniFile := A_ScriptDir . "\" . lAppName . "-WORK.ini"
 ; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
+strDiagFile := A_ScriptDir . "\" . lAppName . "-DIAG.txt"
 
 Gosub, InitArrays
 Gosub, LoadIniFile
@@ -130,6 +132,28 @@ if (blnDisplayTrayTip)
 			, Hotkey2Text(strModifiers2, strMouseButton2, strOptionsKey2)
 			, Hotkey2Text(strModifiers4, strMouseButton4, strOptionsKey4))
 		, , 1
+
+if (blnDiagMode)
+{
+	Oops(L(lDiagModeCaution, lAppName, strDiagFile, strIniFile))
+	if !FileExist(strDiagFile)
+	{
+		FileAppend, DateTime`tName`tData`n, %strDiagFile%
+		Diag("DIAGNOSTIC FILE", lDiagModeIntro)
+		Diag("AppName", lAppName)
+		Diag("AppVersion", lAppVersion)
+		Diag("A_ScriptFullPath", A_ScriptFullPath)
+		Diag("A_AhkVersion", A_AhkVersion)
+		Diag("A_OSVersion", A_OSVersion)
+		Diag("A_Is64bitOS", A_Is64bitOS)
+		Diag("A_Language", A_Language)
+		Diag("A_IsAdmin", A_IsAdmin)
+	}
+	FileRead, strDiag, %strIniFile%
+	StringReplace, strDiag, strDiag, `", `"`"
+	Diag("IniFile", """" . strDiag . """")
+}
+
 return
 
 
@@ -190,6 +214,7 @@ IfNotExist, %strIniFile%
 			DisplayTrayTip=1
 			DisplaySpecialFolders=1
 			DisplayMenuShortcuts=0
+			DiagMode=0
 			Startups=1
 			[Folders]
 			Folder1=C:\|C:\
@@ -213,6 +238,7 @@ IniRead, blnDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip
 IniRead, blnDisplaySpecialFolders, %strIniFile%, Global, DisplaySpecialFolders, 1
 IniRead, blnDisplayMenuShortcuts, %strIniFile%, Global, DisplayMenuShortcuts, 0
 IniRead, strLatestSkipped, %strIniFile%, Global, LatestVersionSkipped, 0.0
+IniRead, blnDiagMode, %strIniFile%, Global, DiagMode, 0
 IniRead, intStartups, %strIniFile%, Global, Startups, 1
 IniRead, blnDonator, %strIniFile%, Global, Donator, 0 ; Please, be fair. Don't cheat with this.
 
@@ -1582,13 +1608,25 @@ CanOpenFavorite(strMouseOrKeyboard, ByRef strWinId, ByRef strClass)
 ; "#32770" -> Dialog
 ; "bosa_sdm_" (...) -> Dialog MS Office under WinXP
 {
+	
 	if (strMouseOrKeyboard = "PopupMenuMouse")
 		MouseGetPos, , , strWinId
 	else
 		strWinId := WinExist("A")
 	WinGetClass strClass, % "ahk_id " . strWinId
 
-	return WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or WindowIsConsole(strClass) or WindowIsDialog(strClass)
+	blnCanOpenFavorite := WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or WindowIsConsole(strClass) or WindowIsDialog(strClass)
+
+	if (blnDiagMode)
+	{
+		Diag("MouseOrKeyboard", strMouseOrKeyboard)
+		WinGetTitle strDiag, % "ahk_id " . strWinId
+		Diag("WinTitle", strDiag)
+		Diag("WinId", strWinId)
+		Diag("Class", strClass)
+		Diag("CanOpenFavorite", blnCanOpenFavorite)
+	}
+	return blnCanOpenFavorite
 }
 ;------------------------------------------------------------
 
@@ -1802,7 +1840,6 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 ;------------------------------------------------------------
 
 
-
 ;------------------------------------------------------------
 SplitHotkey(strHotkey, strMouseButtons, ByRef strModifiers, ByRef strKey, ByRef strMouseButton, ByRef strMouseButtonsWithDefault)
 ;------------------------------------------------------------
@@ -1911,10 +1948,9 @@ GetIniName4Hotkey(strSource)
 ; TOOLS
 ;============================================================
 
-
-; ------------------------------------------------
+;------------------------------------------------
 Oops(strMessage, objVariables*)
-; ------------------------------------------------
+;------------------------------------------------
 {
 	Gui, 1:+OwnDialogs
 	MsgBox, 48, % L(lFuncOopsTitle, lAppName, lAppVersion), % L(strMessage, objVariables*)
@@ -1922,10 +1958,9 @@ Oops(strMessage, objVariables*)
 ; ------------------------------------------------
 
 
-
-; ------------------------------------------------
+;------------------------------------------------
 L(strMessage, objVariables*)
-; ------------------------------------------------
+;------------------------------------------------
 {
 	Loop
 	{
@@ -1937,7 +1972,23 @@ L(strMessage, objVariables*)
 	
 	return strMessage
 }
-; ------------------------------------------------
+;------------------------------------------------
 
+
+;------------------------------------------------
+Diag(strName, strData)
+;------------------------------------------------
+{
+	global strDiagFile
+	
+	loop
+	{
+		FileAppend, %A_NowUTC%%A_MSec%`t%strName%`t%strData%`n, %strDiagFile%
+		if ErrorLevel
+			Sleep, 20
+	}
+	until !ErrorLevel or (A_Index > 50) ; after 1 second (20ms x 50), we have a problem
+}
+;------------------------------------------------
 
 
