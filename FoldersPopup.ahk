@@ -237,6 +237,12 @@ Gosub, LoadIniHotkeys
 IniRead, blnDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip
 IniRead, blnDisplaySpecialFolders, %strIniFile%, Global, DisplaySpecialFolders, 1
 IniRead, blnDisplayMenuShortcuts, %strIniFile%, Global, DisplayMenuShortcuts, 0
+if (blnDisplayMenuShortcuts)
+{
+	lMenuAddThisFolder := lMenuAddThisFolderNoShortcut
+	lMenuSettings := lMenuSettingsNoShortcut
+	lMenuSpecialFolders := lMenuSpecialFoldersNoShortcut
+}
 IniRead, strLatestSkipped, %strIniFile%, Global, LatestVersionSkipped, 0.0
 IniRead, blnDiagMode, %strIniFile%, Global, DiagMode, 0
 IniRead, intStartups, %strIniFile%, Global, Startups, 1
