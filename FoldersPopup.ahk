@@ -138,7 +138,7 @@ if (blnDiagMode)
 	Oops(L(lDiagModeCaution, lAppName, strDiagFile, strIniFile))
 	if !FileExist(strDiagFile)
 	{
-		FileAppend, DateTime`tName`tData`n, %strDiagFile%
+		FileAppend, DateTime`tType`tData`n, %strDiagFile%
 		Diag("DIAGNOSTIC FILE", lDiagModeIntro)
 		Diag("AppName", lAppName)
 		Diag("AppVersion", lAppVersion)
@@ -340,9 +340,6 @@ if (blnDisplaySpecialFolders)
 		, %lMenuRecycleBin%
 }
 
-; ONLY IF MOUSE HOTKEY -> moved to PopupMenuMouse
-; WinActivate, % "ahk_id " . strTargetWinId
-
 if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass) or DialogIsSupported(strTargetWinId))
 {
 	; Enable Add This Folder only if the mouse is over an Explorer (tested on WIN_XP and WIN_7) or a dialog box (works on WIN_7, not on WIN_XP)
@@ -351,10 +348,15 @@ if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or Win
 		, % WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 		, %lMenuAddThisFolder%
 	Menu, menuFolders, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
-
+	if (blnDiagMode)
+		Diag("ShowMenu", "Folders Menu " . (WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT") . " Add this folder")
 }
 else
+{
 	Menu, menuAddDialog, Show
+	if (blnDiagMode)
+		Diag("ShowMenu", "Add Dialog")
+}
 
 return
 ;------------------------------------------------------------
@@ -396,6 +398,16 @@ Menu, menuFolders
 	, % WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 	, %lMenuAddThisFolder%
 Menu, menuFolders, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
+
+if (blnDiagMode)
+{
+	Diag("MouseOrKeyboard", A_ThisLabel)
+	WinGetTitle strDiag, % "ahk_id " . strTargetWinId
+	Diag("WinTitle", strDiag)
+	Diag("WinId", strTargetWinId)
+	Diag("Class", strTargetClass)
+	Diag("ShowMenu", "Folders Menu " . (WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT") . " Add this folder")
+}
 
 return
 ;------------------------------------------------------------
@@ -827,8 +839,16 @@ ClipBoard := ""
 
 ; Add This folder menu is active only if we are in Explorer (WIN_XP, WIN_7 or WIN_8) or in a Dialog box (WIN_7 or WIN_8).
 ; In all these OS, the key sequence {F4}{Esc} selects the current location of the window.
-intWaitTimeIncrement := 150 ; time required on an XP average machine
-intTries := 3
+if (strTargetClass = "#32770")
+	intWaitTimeIncrement := 300 ; time allowed for dialog boxes
+else
+	intWaitTimeIncrement := 150 ; time allowed for Explorer
+
+if (blnDiagMode)
+	intTries := 8
+else
+	intTries := 3
+
 Loop, %intTries%
 {
 	Sleep, intWaitTimeIncrement * A_Index
@@ -836,9 +856,20 @@ Loop, %intTries%
 	Sleep, intWaitTimeIncrement * A_Index
 	Send ^c ; Copy
 	Sleep, intWaitTimeIncrement * A_Index
+	intTries := A_Index
 } Until (StrLen(ClipBoard))
 
 strCurrentFolder := ClipBoard
+Clipboard := objPrevClipboard ; Restore the original clipboard
+objPrevClipboard := "" ; Free the memory in case the clipboard was very large
+
+if (blnDiagMode)
+{
+	Diag("Menu", A_ThisLabel)
+	Diag("Class", strTargetClass)
+	Diag("Tries", intTries)
+	Diag("AddedFolder", strCurrentFolder)
+}
 
 If StrLen(strCurrentFolder)
 {
@@ -855,9 +886,6 @@ else
 		Gosub, GuiAddFolder
 	}
 }
-
-Clipboard := objPrevClipboard ; Restore the original clipboard
-objPrevClipboard := "" ; Free the memory in case the clipboard was very large
 
 return
 ;------------------------------------------------------------
@@ -975,8 +1003,9 @@ return
 ;------------------------------------------------------------
 Check4Update:
 ;------------------------------------------------------------
+
 if GetKeyState("Shift") and GetKeyState("LWin")
-	IniWrite, 1, %strIniFile%, Global, Donator
+	IniWrite, 1, %strIniFile%, Global, Donator ; stop Freeware donation nagging
 else if !Mod(intStartups, 50) and !(blnDonator)
 {
 	MsgBox, 52, % l(lDonateTitle, intStartups, lAppName), % l(lDonatePrompt, lAppName, intStartups)
@@ -1372,37 +1401,9 @@ if StrLen(strHotkey)
 else
 	Oops(L(lOptionsNoKeyOrMouseSpecified, arrIniVarNames%A_Index%))
 
-Gosub, LoadIniHotkeys ;  reload ini variables and reset hotkeys
+Gosub, LoadIniHotkeys ; reload ini variables and reset hotkeys
 
-; update label
-; Gui, 2:Add, Text, x175 yp w200 center 0x1000, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
 GuiControl, 2:, lblHotkeyText%intIndex%, % Hotkey2Text(strModifiers%intIndex%, strMouseButton%intIndex%, strOptionsKey%intIndex%)
-
-/*
-StringSplit, arrIniVarNames, strIniKeyNames, |
-
-Loop, % arrIniVarNames%0%
-{
-	strHotkey%A_Index% := Trim(strOptionsKey%A_Index% . strOptionsMouse%A_Index%)
-	if StrLen(strHotkey%A_Index%)
-	{
-		Hotkey, % "$" . arrHotkeyVarNames%A_Index%, Off
-
-		if (blnOptionsWin%A_Index%)
-			strHotkey%A_Index% := "#" . strHotkey%A_Index%
-		if (blnOptionsAlt%A_Index%)
-			strHotkey%A_Index% := "!" . strHotkey%A_Index%
-		if (blnOptionsShift%A_Index%)
-			strHotkey%A_Index% := "+" . strHotkey%A_Index%
-		if (blnOptionsCtrl%A_Index%)
-			strHotkey%A_Index% := "^" . strHotkey%A_Index%
-		IniWrite, % strHotkey%A_Index%, %strIniFile%, Global, % arrIniVarNames%A_Index%
-	}
-	else
-		Oops(L(lOptionsNoKeyOrMouseSpecified, arrIniVarNames%A_Index%))
-}
-Gosub, LoadIniHotkeys ;  reload ini variables and reset hotkeys
-*/
 
 Goto, 3GuiClose
 
@@ -1488,18 +1489,43 @@ else
 strPath := GetPathFor(strThisMenu)
 
 if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
+{
 	ComObjCreate("Shell.Application").Explore(strPath)
 	; http://msdn.microsoft.com/en-us/library/bb774094http://msdn.microsoft.com/en-us/library/bb774094
 	; ComObjCreate("Shell.Application").Explore(strPath)
 	; ComObjCreate("WScript.Shell").Exec("Explorer.exe /e /select," . strPath) ; not tested on XP
 	; ComObjCreate("Shell.Application").Open(strPath)
 	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
+	
+	if (blnDiagMode)
+		Diag("Navigate", "Shell.Application")
+}
 else if WindowIsAnExplorer(strTargetClass)
+{
 	NavigateExplorer(strPath, strTargetWinId)
+	
+	if (blnDiagMode)
+		Diag("Navigate", "NavigateExplorer")
+}
 else if WindowIsConsole(strTargetClass)
+{
 	NavigateConsole(strPath, strTargetWinId)
+	
+	if (blnDiagMode)
+		Diag("Navigate", "NavigateConsole")
+}
 else
+{
 	NavigateDialog(strPath, strTargetWinId, strTargetClass)
+	
+	if (blnDiagMode)
+	{
+		Diag("Navigate", "NavigateDialog")
+		Diag("TargetClass", strTargetClass)
+	}
+}
+if (blnDiagMode)
+	Diag("Path", strPath)
 
 return
 ;------------------------------------------------------------
@@ -1550,6 +1576,12 @@ else ; this is the console or a dialog box
 		NavigateConsole(strPath, strTargetWinId)
 	else
 		NavigateDialog(strPath, strTargetWinId, strTargetClass)
+}
+
+if (blnDiagMode)
+{
+	Diag("Navigate", "SpecialFolder")
+	Diag("SpecialFolder", intSpecialFolder)
 }
 
 return
@@ -1741,7 +1773,11 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 			strControl := "Edit2"
 			; but sometimes in MS office, if condition above fails, "Edit2" control is the right choice 
 		Else ; if above fails - just return and do nothing.
+		{
+			if (blnDiagMode)
+				Diag("NavigateDialog", "Error: #32770 Edit1 and Edit2 controls not visible")
 			return
+		}
 	Else if InStr(strClass, "bosa_sdm_") ; for some MS office dialog windows, which are not #32770 class
 		if ControlIsVisible("ahk_id " . strWinId, "Edit1")
 			strControl := "Edit1"
@@ -1750,14 +1786,25 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 			strControl := "RichEdit20W2"
 			; some MS office dialogs don't have "Edit1" control, but they have "RichEdit20W2" control, which is then the right choice.
 		Else ; if above fails, just return and do nothing.
+		{
+			if (blnDiagMode)
+				Diag("NavigateDialog", "Error: bosa_sdm Edit1 and RichEdit20W2 controls not visible")
 			return
+		}
 	Else ; in all other cases, open a new Explorer and return from this function
 	{
 		ComObjCreate("Shell.Application").Explore(strPath)
 		; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
+		Diag("NavigateDialog", "Not #32770 or bosa_sdm: open New Explorer")
 		return
 	}
 
+	if (blnDiagMode)
+	{
+		Diag("NavigateDialogControl", strControl)
+		Diag("NavigateDialogPath", strPath)
+	}
+			
 	;===In this part (if we reached it), we'll send strPath to control and restore control's initial text after navigating to specified folder===
 	ControlGetText, strPrevControlText, %strControl%, ahk_id %strWinId% ; we'll get and store control's initial text first
 	
@@ -1811,10 +1858,14 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 	Loop, %intTries%
 	{
 		ControlFocus, %strControl%, %strWinTitle% ; focus control
-		Sleep, 50
+		Sleep, % (50 * intTries) ; JL added "* intTries"
 		ControlGetFocus, strFocusedControl, %strWinTitle% ; check
 		if (strFocusedControl = strControl) ; if OK
+		{
+			if (blnDiagMode)
+				Diag("ControlSetFocusR Tries", A_Index)
 			return True
+		}
 	}
 }
 ;------------------------------------------------------------
@@ -1831,10 +1882,14 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 	Loop, %intTries%
 	{
 		ControlSetText, %strControl%, %strNewText%, %strWinTitle% ; set
-		Sleep, 50
+		Sleep, % (50 * intTries) ; JL added "* intTries"
 		ControlGetText, strCurControlText, %strControl%, %strWinTitle% ; check
 		if (strCurControlText = strNewText) ; if OK
+		{
+			if (blnDiagMode)
+				Diag("ControlSetTextR Tries", A_Index)
 			return True
+		}
 	}
 }
 ;------------------------------------------------------------
@@ -1981,9 +2036,10 @@ Diag(strName, strData)
 {
 	global strDiagFile
 	
+	FormatTime, strNow, %A_Now%, yyyyMMdd@HH:mm:ss
 	loop
 	{
-		FileAppend, %A_NowUTC%%A_MSec%`t%strName%`t%strData%`n, %strDiagFile%
+		FileAppend, %strNow%.%A_MSec%`t%strName%`t%strData%`n, %strDiagFile%
 		if ErrorLevel
 			Sleep, 20
 	}
