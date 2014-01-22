@@ -1211,8 +1211,10 @@ GuiControl, , blnDisplayTrayMenu, %blnDisplayTrayMenu%
 Gui, 2:Add, CheckBox, yp x250 vblnDisplayMenuShortcuts, %lOptionsDisplayMenuShortcuts%
 GuiControl, , blnDisplayMenuShortcuts, %blnDisplayMenuShortcuts%
 
-Gui, 2:Add, CheckBox, % "y+10 x40 vblnDisplayTrayTip " . (blnDisplayTrayMenu ? "" : "Disabled"), %lOptionsTrayTip%
+Gui, 2:Add, CheckBox, % "y+10 x40 vblnDisplayTrayTip " . (blnDisplayTrayMenu ? "" : "Hidden"), %lOptionsTrayTip%
 GuiControl, , blnDisplayTrayTip, %blnDisplayTrayTip%
+GuiControlGet, posDisplayTrayTip, Pos, blnDisplayTrayTip
+Gui, 2:Add, Button, % "yp x" . posDisplayTrayTipX . " vbtnOptionsUnload " . (blnDisplayTrayMenu ? "Hidden" : "") . " gButtonUnload", % L(lOptionsUnload, lAppName)
 
 Gui, 2:Add, CheckBox, yp x250 vblnPopupFix gPopupFixClicked, %lOptionsPopupFix%
 GuiControl, , blnPopupFix, %blnPopupFix%
@@ -1304,8 +1306,9 @@ DisplayTrayMenuClicked:
 ;------------------------------------------------------------
 Gui, 2:Submit, NoHide
 
-GuiControl, % (blnDisplayTrayMenu ? "Enable" : "Disable"), blnDisplayTrayTip
 GuiControl, , blnDisplayTrayTip, %blnDisplayTrayMenu%
+GuiControl, % (blnDisplayTrayMenu ? "Show" : "Hide"), blnDisplayTrayTip
+GuiControl, % (blnDisplayTrayMenu ? "Hide" : "Show"), btnOptionsUnload
 
 return
 ;------------------------------------------------------------
@@ -1358,6 +1361,16 @@ ButtonOptionsDonate:
 ;------------------------------------------------------------
 Run, https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AJNCXKWKYAXLCV
 return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ButtonUnload:
+;------------------------------------------------------------
+MsgBox, 52, % L(lOptionsUnloadTitle, lAppName), % L(lOptionsUnloadPrompt, lAppName)
+
+IfMsgBox, Yes
+	ExitApp
 ;------------------------------------------------------------
 
 
