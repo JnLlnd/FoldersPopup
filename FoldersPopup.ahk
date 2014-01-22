@@ -211,9 +211,12 @@ IfNotExist, %strIniFile%
 			PopupHotkeyKeyboard=%strPopupHotkeyKeyboardDefault%
 			PopupHotkeyNewKeyboard=%strPopupHotkeyKeyboardNewDefault%
 			SettingsHotkey=%strSettingsHotkeyDefault%
+			DisplayTrayMenu=1
 			DisplayTrayTip=1
 			DisplaySpecialFolders=1
 			DisplayMenuShortcuts=0
+			PopupFix=0
+			PopupFixPosition=20,20
 			DiagMode=0
 			Startups=1
 			[Folders]
@@ -234,8 +237,11 @@ IfNotExist, %strIniFile%
 	
 Gosub, LoadIniHotkeys
 
-IniRead, blnDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip
+IniRead, blnDisplayTrayMenu, %strIniFile%, Global, DisplayTrayMenu, 1
+IniRead, blnDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip, 1
 IniRead, blnDisplaySpecialFolders, %strIniFile%, Global, DisplaySpecialFolders, 1
+IniRead, blnPopupFix, %strIniFile%, Global, PopupFix, 0
+IniRead, strPopupFixPosition, %strIniFile%, Global, PopupFixPosition, 20,20
 IniRead, blnDisplayMenuShortcuts, %strIniFile%, Global, DisplayMenuShortcuts, 0
 if (blnDisplayMenuShortcuts)
 {
@@ -1187,7 +1193,6 @@ loop, % arrIniKeyNames%0%
 	Gui, 2:Add, Button, h20 yp x380 vbtnChangeHotkey%A_Index% gButtonOptionsChangeHotkey%A_Index%, %lOptionsChangeHotkey%
 }
 
-; Gui, 2:Add, Text, x10 y+5 w440 center, _______________________________________________________________
 Gui, 2:Add, Text, x10 y+15 h2 w410 0x10 ; Horizontal Line > Etched Gray
 
 Gui, 2:Font, s8 w700
@@ -1197,14 +1202,26 @@ Gui, 2:Font
 Gui, 2:Add, CheckBox, y+10 x40 vblnOptionsRunAtStartup, %lOptionsRunAtStartup%
 GuiControl, , blnOptionsRunAtStartup, % FileExist(A_Startup . "\" . lAppName . ".lnk") ? 1 : 0
 
-Gui, 2:Add, CheckBox, y+10 x40 vblnOptionsTrayTip, %lOptionsTrayTip%
-GuiControl, , blnOptionsTrayTip, %blnDisplayTrayTip%
-
-Gui, 2:Add, CheckBox, y+10 x40 vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
+Gui, 2:Add, CheckBox, yp x250 vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
 GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
 
-Gui, 2:Add, CheckBox, y+10 x40 vblnDisplayMenuShortcuts, %lOptionsDisplayMenuShortcuts%
-GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
+Gui, 2:Add, CheckBox, y+10 x40 vblnDisplayTrayMenu gDisplayTrayMenuClicked, %lOptionsTrayMenu%
+GuiControl, , blnDisplayTrayMenu, %blnDisplayTrayMenu%
+
+Gui, 2:Add, CheckBox, yp x250 vblnDisplayMenuShortcuts, %lOptionsDisplayMenuShortcuts%
+GuiControl, , blnDisplayMenuShortcuts, %blnDisplayMenuShortcuts%
+
+Gui, 2:Add, CheckBox, % "y+10 x40 vblnDisplayTrayTip " . (blnDisplayTrayMenu ? "" : "Disabled"), %lOptionsTrayTip%
+GuiControl, , blnDisplayTrayTip, %blnDisplayTrayTip%
+
+Gui, 2:Add, CheckBox, yp x250 vblnPopupFix gPopupFixClicked, %lOptionsPopupFix%
+GuiControl, , blnPopupFix, %blnPopupFix%
+
+StringSplit, arrPopupFixPosition, strPopupFixPosition, `,
+Gui, 2:Add, Text, % "y+10 x268 vlblPopupFixPositionX " . (blnPopupFix ? "" : "hidden"), %lOptionsPopupFixPositionX%
+Gui, 2:Add, Edit, % "yp x+5 w36 vstrPopupFixPositionX center " . (blnPopupFix ? "" : "hidden"), %arrPopupFixPosition1%
+Gui, 2:Add, Text, % "yp x+5 vlblPopupFixPositionY " . (blnPopupFix ? "" : "hidden"), %lOptionsPopupFixPositionY%
+Gui, 2:Add, Edit, % "yp x+5 w36 vstrPopupFixPositionY center " . (blnPopupFix ? "" : "hidden"), %arrPopupFixPosition2%
 
 ; Build Gui footer
 Gui, 2:Add, Button, y+20 x180 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
@@ -1283,6 +1300,32 @@ return
 
 
 ;------------------------------------------------------------
+DisplayTrayMenuClicked:
+;------------------------------------------------------------
+Gui, 2:Submit, NoHide
+
+GuiControl, % (blnDisplayTrayMenu ? "Enable" : "Disable"), blnDisplayTrayTip
+GuiControl, , blnDisplayTrayTip, %blnDisplayTrayMenu%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+PopupFixClicked:
+;------------------------------------------------------------
+Gui, 2:Submit, NoHide
+
+GuiControl, % (blnPopupFix ? "Show" : "Hide"), lblPopupFixPositionX
+GuiControl, % (blnPopupFix ? "Show" : "Hide"), strPopupFixPositionX
+GuiControl, % (blnPopupFix ? "Show" : "Hide"), lblPopupFixPositionY
+GuiControl, % (blnPopupFix ? "Show" : "Hide"), strPopupFixPositionY
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 ButtonOptionsSave:
 ;------------------------------------------------------------
 Gui, 2:Submit
@@ -1293,11 +1336,13 @@ if (blnOptionsRunAtStartup)
 	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%lAppName%.lnk
 Menu, Tray, % blnOptionsRunAtStartup ? "Check" : "Uncheck", %lMenuRunAtStartup%
 
-IniWrite, %blnOptionsTrayTip%, %strIniFile%, Global, DisplayTrayTip
-blnDisplayTrayTip := blnOptionsTrayTip
-	
+IniWrite, %blnDisplayTrayMenu%, %strIniFile%, Global, DisplayTrayMenu
+IniWrite, %blnDisplayTrayTip%, %strIniFile%, Global, DisplayTrayTip
 IniWrite, %blnDisplaySpecialFolders%, %strIniFile%, Global, DisplaySpecialFolders
 IniWrite, %blnDisplayMenuShortcuts%, %strIniFile%, Global, DisplayMenuShortcuts
+IniWrite, %blnPopupFix%, %strIniFile%, Global, PopupFix
+IniWrite, %strPopupFixPositionX%`,%strPopupFixPositionY%, %strIniFile%, Global, PopupFixPosition
+
 ; Rebuild Folders menu w/ or w/o Special Folders and Shortcuts
 Menu, menuFolders, Delete
 Gosub, BuildFoldersMenu
