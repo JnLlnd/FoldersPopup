@@ -242,6 +242,7 @@ IniRead, blnDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip, 1
 IniRead, blnDisplaySpecialFolders, %strIniFile%, Global, DisplaySpecialFolders, 1
 IniRead, blnPopupFix, %strIniFile%, Global, PopupFix, 0
 IniRead, strPopupFixPosition, %strIniFile%, Global, PopupFixPosition, 20,20
+StringSplit, arrPopupFixPosition, strPopupFixPosition, `,
 IniRead, blnDisplayMenuShortcuts, %strIniFile%, Global, DisplayMenuShortcuts, 0
 if (blnDisplayMenuShortcuts)
 {
@@ -319,19 +320,9 @@ If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass)
 	return
 }
 
-if (A_ThisLabel = "PopupMenuMouse")
-{
-	WinActivate, % "ahk_id " . strTargetWinId
-	; display menu at mouse pointer location
-	intMenuPosX :=
-	intMenuPosY :=
-}
-else
-{
-	; display menu at an offset of 20x20 pixel from top-left client area
-	intMenuPosX := 20
-	intMenuPosY := 20
-}
+blnMouse := InStr(A_ThisLabel, "Mouse")
+blnNewWindow := false
+Gosub, SetMenuPosition
 
 ; Can't find how to navigate a dialog box to My Computer or Network Neighborhood... is this is feasible?
 if (blnDisplaySpecialFolders)
@@ -378,20 +369,10 @@ return
 PopupMenuNewWindowMouse: ; default +MButton::
 PopupMenuNewWindowKeyboard: ; default +#k
 ;------------------------------------------------------------
-if (A_ThisLabel = "PopupMenuNewWindowMouse")
-{
-	MouseGetPos, , , strTargetWinId
-	; display menu at mouse pointer location
-	intMenuPosX :=
-	intMenuPosY :=
-}
-else
-{
-	strTargetWinId := WinExist("A")
-	; display menu at an offset of 20x20 pixel from top-left client area
-	intMenuPosX := 20
-	intMenuPosY := 20
-}
+blnMouse := InStr(A_ThisLabel, "Mouse")
+blnNewWindow := true
+Gosub, SetMenuPosition
+
 WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
 
 if (blnDisplaySpecialFolders)
@@ -422,6 +403,43 @@ if (blnDiagMode)
 }
 
 return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+SetMenuPosition:
+;------------------------------------------------------------
+
+CoordMode, Menu, % (blnPopupFix ? "Screen" : "Window")
+
+; will be contradicted if not fix location
+intMenuPosX := arrPopupFixPosition1
+intMenuPosY := arrPopupFixPosition2
+
+if (blnMouse)
+{
+	if (blnNewWindow)
+		MouseGetPos, , , strTargetWinId
+	else
+		WinActivate, % "ahk_id " . strTargetWinId
+	if (!blnPopupFix)
+	{
+		; display menu at mouse pointer location
+		intMenuPosX :=
+		intMenuPosY :=
+	}
+}
+else
+{
+	if (blnNewWindow)
+		strTargetWinId := WinExist("A")
+	if (!blnPopupFix)
+	{
+		; display menu at an offset of 20x20 pixel from top-left client area
+		intMenuPosX := 20
+		intMenuPosY := 20
+	}
+}
 ;------------------------------------------------------------
 
 
@@ -1219,7 +1237,6 @@ Gui, 2:Add, Button, % "yp x" . posDisplayTrayTipX . " vbtnOptionsUnload " . (bln
 Gui, 2:Add, CheckBox, yp x250 vblnPopupFix gPopupFixClicked, %lOptionsPopupFix%
 GuiControl, , blnPopupFix, %blnPopupFix%
 
-StringSplit, arrPopupFixPosition, strPopupFixPosition, `,
 Gui, 2:Add, Text, % "y+10 x268 vlblPopupFixPositionX " . (blnPopupFix ? "" : "hidden"), %lOptionsPopupFixPositionX%
 Gui, 2:Add, Edit, % "yp x+5 w36 vstrPopupFixPositionX center " . (blnPopupFix ? "" : "hidden"), %arrPopupFixPosition1%
 Gui, 2:Add, Text, % "yp x+5 vlblPopupFixPositionY " . (blnPopupFix ? "" : "hidden"), %lOptionsPopupFixPositionY%
@@ -1345,6 +1362,8 @@ IniWrite, %blnDisplaySpecialFolders%, %strIniFile%, Global, DisplaySpecialFolder
 IniWrite, %blnDisplayMenuShortcuts%, %strIniFile%, Global, DisplayMenuShortcuts
 IniWrite, %blnPopupFix%, %strIniFile%, Global, PopupFix
 IniWrite, %strPopupFixPositionX%`,%strPopupFixPositionY%, %strIniFile%, Global, PopupFixPosition
+arrPopupFixPosition1 := strPopupFixPositionX
+arrPopupFixPosition2 := strPopupFixPositionY
 
 ; Rebuild Folders menu w/ or w/o Special Folders and Shortcuts
 Menu, menuFolders, Delete
