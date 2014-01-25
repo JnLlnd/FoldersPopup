@@ -211,7 +211,6 @@ IfNotExist, %strIniFile%
 			PopupHotkeyKeyboard=%strPopupHotkeyKeyboardDefault%
 			PopupHotkeyNewKeyboard=%strPopupHotkeyKeyboardNewDefault%
 			SettingsHotkey=%strSettingsHotkeyDefault%
-			DisplayTrayMenu=1
 			DisplayTrayTip=1
 			DisplaySpecialFolders=1
 			DisplayMenuShortcuts=0
@@ -237,7 +236,6 @@ IfNotExist, %strIniFile%
 	
 Gosub, LoadIniHotkeys
 
-IniRead, blnDisplayTrayMenu, %strIniFile%, Global, DisplayTrayMenu, 1
 IniRead, blnDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip, 1
 IniRead, blnDisplaySpecialFolders, %strIniFile%, Global, DisplaySpecialFolders, 1
 IniRead, blnPopupFix, %strIniFile%, Global, PopupFix, 0
@@ -1220,24 +1218,19 @@ Gui, 2:Font
 Gui, 2:Add, CheckBox, y+10 x40 vblnOptionsRunAtStartup, %lOptionsRunAtStartup%
 GuiControl, , blnOptionsRunAtStartup, % FileExist(A_Startup . "\" . lAppName . ".lnk") ? 1 : 0
 
-Gui, 2:Add, CheckBox, yp x250 vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
-GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
-
-Gui, 2:Add, CheckBox, y+10 x40 vblnDisplayTrayMenu gDisplayTrayMenuClicked, %lOptionsTrayMenu%
-GuiControl, , blnDisplayTrayMenu, %blnDisplayTrayMenu%
-
 Gui, 2:Add, CheckBox, yp x250 vblnDisplayMenuShortcuts, %lOptionsDisplayMenuShortcuts%
 GuiControl, , blnDisplayMenuShortcuts, %blnDisplayMenuShortcuts%
 
-Gui, 2:Add, CheckBox, % "y+10 x40 vblnDisplayTrayTip " . (blnDisplayTrayMenu ? "" : "Hidden"), %lOptionsTrayTip%
+Gui, 2:Add, CheckBox, y+10 x40 vblnDisplayTrayTip, %lOptionsTrayTip%
 GuiControl, , blnDisplayTrayTip, %blnDisplayTrayTip%
-GuiControlGet, posDisplayTrayTip, Pos, blnDisplayTrayTip
-Gui, 2:Add, Button, % "yp x" . posDisplayTrayTipX . " vbtnOptionsUnload " . (blnDisplayTrayMenu ? "Hidden" : "") . " gButtonUnload", % L(lOptionsUnload, lAppName)
 
 Gui, 2:Add, CheckBox, yp x250 vblnPopupFix gPopupFixClicked, %lOptionsPopupFix%
 GuiControl, , blnPopupFix, %blnPopupFix%
 
-Gui, 2:Add, Text, % "y+10 x268 vlblPopupFixPositionX " . (blnPopupFix ? "" : "hidden"), %lOptionsPopupFixPositionX%
+Gui, 2:Add, CheckBox, y+10 x40 vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
+GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
+
+Gui, 2:Add, Text, % "yp x268 vlblPopupFixPositionX " . (blnPopupFix ? "" : "hidden"), %lOptionsPopupFixPositionX%
 Gui, 2:Add, Edit, % "yp x+5 w36 vstrPopupFixPositionX center " . (blnPopupFix ? "" : "hidden"), %arrPopupFixPosition1%
 Gui, 2:Add, Text, % "yp x+5 vlblPopupFixPositionY " . (blnPopupFix ? "" : "hidden"), %lOptionsPopupFixPositionY%
 Gui, 2:Add, Edit, % "yp x+5 w36 vstrPopupFixPositionY center " . (blnPopupFix ? "" : "hidden"), %arrPopupFixPosition2%
@@ -1319,19 +1312,6 @@ return
 
 
 ;------------------------------------------------------------
-DisplayTrayMenuClicked:
-;------------------------------------------------------------
-Gui, 2:Submit, NoHide
-
-GuiControl, , blnDisplayTrayTip, %blnDisplayTrayMenu%
-GuiControl, % (blnDisplayTrayMenu ? "Show" : "Hide"), blnDisplayTrayTip
-GuiControl, % (blnDisplayTrayMenu ? "Hide" : "Show"), btnOptionsUnload
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
 PopupFixClicked:
 ;------------------------------------------------------------
 Gui, 2:Submit, NoHide
@@ -1356,7 +1336,6 @@ if (blnOptionsRunAtStartup)
 	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%lAppName%.lnk
 Menu, Tray, % blnOptionsRunAtStartup ? "Check" : "Uncheck", %lMenuRunAtStartup%
 
-IniWrite, %blnDisplayTrayMenu%, %strIniFile%, Global, DisplayTrayMenu
 IniWrite, %blnDisplayTrayTip%, %strIniFile%, Global, DisplayTrayTip
 IniWrite, %blnDisplaySpecialFolders%, %strIniFile%, Global, DisplaySpecialFolders
 IniWrite, %blnDisplayMenuShortcuts%, %strIniFile%, Global, DisplayMenuShortcuts
@@ -1380,16 +1359,6 @@ ButtonOptionsDonate:
 ;------------------------------------------------------------
 Run, https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AJNCXKWKYAXLCV
 return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-ButtonUnload:
-;------------------------------------------------------------
-MsgBox, 52, % L(lOptionsUnloadTitle, lAppName), % L(lOptionsUnloadPrompt, lAppName)
-
-IfMsgBox, Yes
-	ExitApp
 ;------------------------------------------------------------
 
 
