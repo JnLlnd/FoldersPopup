@@ -116,7 +116,9 @@ Gosub, BuildGUI
 Gosub, BuildAddDialogMenu
 Gosub, Check4Update
 Gosub, BuildTrayMenu
-
+if (blnDiagMode)
+	Gosub, InitDiagMode
+	
 IfExist, %A_Startup%\%lAppName%.lnk
 {
 	FileDelete, %A_Startup%\%lAppName%.lnk
@@ -133,26 +135,7 @@ if (blnDisplayTrayTip)
 			, Hotkey2Text(strModifiers4, strMouseButton4, strOptionsKey4))
 		, , 1
 
-if (blnDiagMode)
-{
-	Oops(L(lDiagModeCaution, lAppName, strDiagFile, strIniFile))
-	if !FileExist(strDiagFile)
-	{
-		FileAppend, DateTime`tType`tData`n, %strDiagFile%
-		Diag("DIAGNOSTIC FILE", lDiagModeIntro)
-		Diag("AppName", lAppName)
-		Diag("AppVersion", lAppVersion)
-		Diag("A_ScriptFullPath", A_ScriptFullPath)
-		Diag("A_AhkVersion", A_AhkVersion)
-		Diag("A_OSVersion", A_OSVersion)
-		Diag("A_Is64bitOS", A_Is64bitOS)
-		Diag("A_Language", A_Language)
-		Diag("A_IsAdmin", A_IsAdmin)
-	}
-	FileRead, strDiag, %strIniFile%
-	StringReplace, strDiag, strDiag, `", `"`"
-	Diag("IniFile", """" . strDiag . """")
-}
+OnExit, ExitDiagMode
 
 return
 
@@ -292,6 +275,55 @@ loop, % arrIniKeyNames%0%
 
 return
 ;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+InitDiagMode:
+;------------------------------------------------------------
+
+MsgBox, 52, %lAppName%, % L(lDiagModeCaution, lAppName, strDiagFile)
+IfMsgBox, No
+{
+	blnDiagMode := False
+	IniWrite, 0, %strIniFile%, Global, DiagMode
+	return
+}
+	
+if !FileExist(strDiagFile)
+{
+	FileAppend, DateTime`tType`tData`n, %strDiagFile%
+	Diag("DIAGNOSTIC FILE", lDiagModeIntro)
+	Diag("AppName", lAppName)
+	Diag("AppVersion", lAppVersion)
+	Diag("A_ScriptFullPath", A_ScriptFullPath)
+	Diag("A_AhkVersion", A_AhkVersion)
+	Diag("A_OSVersion", A_OSVersion)
+	Diag("A_Is64bitOS", A_Is64bitOS)
+	Diag("A_Language", A_Language)
+	Diag("A_IsAdmin", A_IsAdmin)
+}
+else
+	FileAppend, `n, %strDiagFile% ; required when the last line of the existing file ends with "
+
+FileRead, strDiag, %strIniFile%
+StringReplace, strDiag, strDiag, `", `"`"
+Diag("IniFile", """" . strDiag . """")
+
+return
+;------------------------------------------------------------
+
+
+;-----------------------------------------------------------
+ExitDiagMode:
+;-----------------------------------------------------------
+if (blnDiagMode)
+{
+	MsgBox, 52, %lAppName%, % L(lDiagModeExit, lAppName, strDiagFile) . "`n`n" . lDiagModeIntro . "`n`n" . lDiagModeSee
+	IfMsgBox, Yes
+		Run, %strDiagFile%
+}
+ExitApp
+;-----------------------------------------------------------
 
 
 
@@ -1847,7 +1879,8 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 	{
 		ComObjCreate("Shell.Application").Explore(strPath)
 		; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
-		Diag("NavigateDialog", "Not #32770 or bosa_sdm: open New Explorer")
+		if (blnDiagMode)
+			Diag("NavigateDialog", "Not #32770 or bosa_sdm: open New Explorer")
 		return
 	}
 
