@@ -4,8 +4,11 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: FoldersPopup v1.2 (2014-01-##)
-	* 
+	Version: FoldersPopup v1.2 (2014-01-26)
+	* add an option to add numeric keyboard shortcuts to launch folders in popup menu
+	* add an option to display the popup menu at a fix position
+	* add a diagnostic mode to collect support info (add DiagMode=1 under [Global] section in ini file)
+	* redesign of the Options dialog box
 
 	Version: FoldersPopup v1.01 (2013-12-24)
 	* bug fix: mouse and keyboard triggers were disabled in non-explorer windows
@@ -92,7 +95,7 @@
 #KeyHistory 0
 ListLines, Off
 
-strCurrentVersion := "1.2 beta" ; "1.01" should have been "1.0.1" !!! Next one must be "1.2" ("1.1" wont be seen a an update)
+strCurrentVersion := "1.2" ; "major.minor.bugs"
 #Include %A_ScriptDir%\FoldersPopup_LANG.ahk
 SetWorkingDir, %A_ScriptDir%
 global blnDiagMode := False
@@ -108,6 +111,7 @@ else if InStr(A_ComputerName, "STIC") ; for my work hotkeys
 ;@Ahk2Exe-IgnoreEnd
 strDiagFile := A_ScriptDir . "\" . lAppName . "-DIAG.txt"
 
+; Keep gosubs in this order
 Gosub, InitArrays
 Gosub, LoadIniFile
 Gosub, BuildSpecialFoldersMenu ; build even if blnDisplaySpecialFolders is false because it could become true
@@ -532,7 +536,7 @@ Loop, % arrFolders.MaxIndex()
 			strShortcut := intShortcut ; 1 .. 9
 		else
 			strShortcut := Chr(intShortcut + 55) ; Chr(10 + 55) = "A" .. Chr(35 + 55) = "Z"
-		Menu, menuFolders, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . strShortcut . ") " : "") . arrFolders[A_Index].Name, OpenFavorite
+		Menu, menuFolders, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . strShortcut . " " : "") . arrFolders[A_Index].Name, OpenFavorite
 	}
 }
 if (blnDisplaySpecialFolders)
@@ -1063,12 +1067,16 @@ return
 ;------------------------------------------------------------
 Check4Update:
 ;------------------------------------------------------------
+Gui, 1:+OwnDialogs
 
 if GetKeyState("Shift") and GetKeyState("LWin")
-	IniWrite, 1, %strIniFile%, Global, Donator ; stop Freeware donation nagging
-else if !Mod(intStartups, 50) and !(blnDonator)
 {
-	MsgBox, 52, % l(lDonateTitle, intStartups, lAppName), % l(lDonatePrompt, lAppName, intStartups)
+	IniWrite, 1, %strIniFile%, Global, Donator ; stop Freeware donation nagging
+	MsgBox, 64, %lAppName%, %lDonateThankyou%
+}
+else if Time2Donate(intStartups, blnDonator)
+{
+	MsgBox, 36, % l(lDonateTitle, intStartups, lAppName), % l(lDonatePrompt, lAppName, intStartups)
 	IfMsgBox, Yes
 		Gosub, ButtonOptionsDonate
 }
@@ -1155,6 +1163,22 @@ Url2Var(strUrl)
 }
 ;------------------------------------------------------------
 
+
+;------------------------------------------------------------
+Time2Donate(intStartups, blnDonator)
+;------------------------------------------------------------
+{
+	if (intStartups > 100)
+		intDivisor := 25
+	else if (intStartups > 60)
+		intDivisor := 20
+	else if (intStartups > 30)
+		intDivisor := 15
+	else intDivisor := 10
+		
+	return !Mod(intStartups, intDivisor) and !(blnDonator)
+}
+;------------------------------------------------------------
 
 
 ;------------------------------------------------------------
@@ -1567,7 +1591,7 @@ OpenFavorite:
 ;------------------------------------------------------------
 
 if (blnDisplayMenuShortcuts)
-	StringTrimLeft, strThisMenu, A_ThisMenuItem, 4 ; remove "&1) " from menu item
+	StringTrimLeft, strThisMenu, A_ThisMenuItem, 3 ; remove "&1 " from menu item
 else
 	strThisMenu := A_ThisMenuItem
 strPath := GetPathFor(strThisMenu)

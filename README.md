@@ -13,6 +13,12 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### 2013-01-26 v1.2
+* add an option to add numeric keyboard shortcuts to launch folders in popup menu
+* add an option to display the popup menu at a fix position
+* add a diagnostic mode to collect support info (add DiagMode=1 under [Global] section in ini file)
+* redesign of the Options dialog box
+
 ### 2013-12-24 v1.01
 * bug fix: mouse and keyboard triggers were disabled in non-explorer windows
 
