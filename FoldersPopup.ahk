@@ -483,7 +483,7 @@ BuildTrayMenu:
 
 ;@Ahk2Exe-IgnoreBegin
 ; Piece of code for developement phase only - won't be compiled
-Menu, Tray, Icon, %A_ScriptDir%\Folders-Likes-icon-192-light-center.ico, 1
+Menu, Tray, Icon, %A_ScriptDir%\Folders-Likes-icon-192-RED-center.ico, 1
 ; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
 Menu, Tray, Add
