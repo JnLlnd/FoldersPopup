@@ -4,6 +4,9 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: FoldersPopup v1.2.1 (2014-01-??)
+	* improve diagnostic data collection
+
 	Version: FoldersPopup v1.2 (2014-01-26)
 	* add an option to add numeric keyboard shortcuts to launch folders in popup menu
 	* add an option to display the popup menu at a fix position
@@ -311,7 +314,7 @@ else
 
 FileRead, strDiag, %strIniFile%
 StringReplace, strDiag, strDiag, `", `"`"
-Diag("IniFile", """" . strDiag . """")
+Diag("IniFile", """" . strDiag . """`n")
 
 return
 ;------------------------------------------------------------
@@ -381,18 +384,18 @@ if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or Win
 {
 	; Enable Add This Folder only if the mouse is over an Explorer (tested on WIN_XP and WIN_7) or a dialog box (works on WIN_7, not on WIN_XP)
 	; Other tests shown that WIN_8 behaves like WIN_7. So, I assume WIN_8 to work. If someone could confirm (until I can test it myself)?
+	if (blnDiagMode)
+		Diag("ShowMenu", "Folders Menu " . (WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT") . " Add this folder")
 	Menu, menuFolders
 		, % WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 		, %lMenuAddThisFolder%
 	Menu, menuFolders, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
-	if (blnDiagMode)
-		Diag("ShowMenu", "Folders Menu " . (WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT") . " Add this folder")
 }
 else
 {
-	Menu, menuAddDialog, Show
 	if (blnDiagMode)
 		Diag("ShowMenu", "Add Dialog")
+	Menu, menuAddDialog, Show
 }
 
 return
@@ -408,6 +411,16 @@ blnNewWindow := true
 Gosub, SetMenuPosition
 
 WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
+
+if (blnDiagMode)
+{
+	Diag("MouseOrKeyboard", A_ThisLabel)
+	WinGetTitle strDiag, % "ahk_id " . strTargetWinId
+	Diag("WinTitle", strDiag)
+	Diag("WinId", strTargetWinId)
+	Diag("Class", strTargetClass)
+	Diag("ShowMenu", "Folders Menu " . (WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT") . " Add this folder")
+}
 
 if (blnDisplaySpecialFolders)
 {
@@ -425,16 +438,6 @@ Menu, menuFolders
 	, % WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 	, %lMenuAddThisFolder%
 Menu, menuFolders, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
-
-if (blnDiagMode)
-{
-	Diag("MouseOrKeyboard", A_ThisLabel)
-	WinGetTitle strDiag, % "ahk_id " . strTargetWinId
-	Diag("WinTitle", strDiag)
-	Diag("WinId", strTargetWinId)
-	Diag("Class", strTargetClass)
-	Diag("ShowMenu", "Folders Menu " . (WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT") . " Add this folder")
-}
 
 return
 ;------------------------------------------------------------
@@ -1596,8 +1599,18 @@ else
 	strThisMenu := A_ThisMenuItem
 strPath := GetPathFor(strThisMenu)
 
+if (blnDiagMode)
+{
+	Diag("A_ThisHotkey", A_ThisHotkey)
+	Diag("Navigate", "RegularFolder")
+	Diag("Path", strPath)
+}
+
 if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
 {
+	if (blnDiagMode)
+		Diag("Navigate", "Shell.Application")
+	
 	ComObjCreate("Shell.Application").Explore(strPath)
 	; http://msdn.microsoft.com/en-us/library/bb774094http://msdn.microsoft.com/en-us/library/bb774094
 	; ComObjCreate("Shell.Application").Explore(strPath)
@@ -1606,34 +1619,41 @@ if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetCla
 	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 	
 	if (blnDiagMode)
-		Diag("Navigate", "Shell.Application")
+		Diag("NavigateResult", ErrorLevel)
 }
 else if WindowIsAnExplorer(strTargetClass)
 {
+	if (blnDiagMode)
+		Diag("Navigate", "NavigateExplorer")
+	
 	NavigateExplorer(strPath, strTargetWinId)
 	
 	if (blnDiagMode)
-		Diag("Navigate", "NavigateExplorer")
+		Diag("NavigateResult", ErrorLevel)
 }
 else if WindowIsConsole(strTargetClass)
 {
-	NavigateConsole(strPath, strTargetWinId)
-	
 	if (blnDiagMode)
 		Diag("Navigate", "NavigateConsole")
+	
+	NavigateConsole(strPath, strTargetWinId)
+
+	if (blnDiagMode)
+		Diag("NavigateResult", ErrorLevel)
 }
 else
 {
-	NavigateDialog(strPath, strTargetWinId, strTargetClass)
-	
 	if (blnDiagMode)
 	{
 		Diag("Navigate", "NavigateDialog")
 		Diag("TargetClass", strTargetClass)
 	}
+	
+	NavigateDialog(strPath, strTargetWinId, strTargetClass)
+
+	if (blnDiagMode)
+		Diag("NavigateResult", ErrorLevel)
 }
-if (blnDiagMode)
-	Diag("Path", strPath)
 
 return
 ;------------------------------------------------------------
@@ -1659,6 +1679,13 @@ else if (A_ThisMenuItem = lMenuNetworkNeighborhood)
 else if (A_ThisMenuItem = lMenuPictures)
 	intSpecialFolder := 39
 
+if (blnDiagMode)
+{
+	Diag("A_ThisHotkey", A_ThisHotkey)
+	Diag("Navigate", "SpecialFolder")
+	Diag("SpecialFolder", intSpecialFolder)
+}
+
 if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
 	ComObjCreate("Shell.Application").Explore(intSpecialFolder)
 	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
@@ -1678,7 +1705,11 @@ else ; this is the console or a dialog box
 		strPath := strPath . "Pictures"
 	}	
 	else ; we do not support this special folder
+	{
+		if (blnDiagMode)
+			Diag("NavigateResult", "SpecialFolderNotSupported")
 		return
+	}
 
 	if WindowIsConsole(strTargetClass)
 		NavigateConsole(strPath, strTargetWinId)
@@ -1687,10 +1718,7 @@ else ; this is the console or a dialog box
 }
 
 if (blnDiagMode)
-{
-	Diag("Navigate", "SpecialFolder")
-	Diag("SpecialFolder", intSpecialFolder)
-}
+	Diag("NavigateResult", ErrorLevel)
 
 return
 ;------------------------------------------------------------
@@ -1844,9 +1872,11 @@ http://msdn.microsoft.com/en-us/library/aa752094
 			}
 			else
 			{
-				; try pExp.Navigate("file:///" . varPath) - removed to allow UNC (e.g. \\my.server.com@SSL\DavWWWRoot\Folder\Subfolder)
+				; Was "try pExp.Navigate("file:///" . varPath)" - removed "file:///" to allow UNC (e.g. \\my.server.com@SSL\DavWWWRoot\Folder\Subfolder)
 				try pExp.Navigate(varPath)
 				catch, objErr
+					; Note: If an error occurs in Navigate, the error message is given by Navigate itself and this script does not
+					; receive an error notification. From my experience, the following line would never be executed.
 					Oops(lNavigateFileError, varPath)
 			}
 	}
@@ -1938,6 +1968,9 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 	
 	if (WinExist("A") <> strWinId) ; sometimes initialy active window loses focus, so we'll activate it again
 		WinActivate, ahk_id %strWinId%
+
+	if (blnDiagMode)
+		Diag("NavigateDialog", "Finished")
 }
 
 
