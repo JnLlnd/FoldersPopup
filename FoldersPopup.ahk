@@ -6,7 +6,7 @@
 
 	Version: FoldersPopup v1.2.1 (2014-02-01)
 	* fix a bug that added separator lines at the bottom of Tray Menu (one line added at each display of the popu menu)
-	* improve diagnostic data collection
+	* improve diagnostic data collection (always at the user's discretion)
 
 	Version: FoldersPopup v1.2 (2014-01-26)
 	* add an option to add numeric keyboard shortcuts to launch folders in popup menu

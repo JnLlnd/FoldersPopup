@@ -13,6 +13,10 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### 2014-02-01 v1.2.1
+	* fix a bug that added separator lines at the bottom of Tray Menu (one line added at each display of the popu menu)
+	* improve diagnostic data collection (always at the user's discretion)
+
 ### 2013-01-26 v1.2
 * add an option to add numeric keyboard shortcuts to launch folders in popup menu
 * add an option to display the popup menu at a fix position
