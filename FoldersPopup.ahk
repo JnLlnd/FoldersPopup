@@ -86,7 +86,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 1.2
+;@Ahk2Exe-SetVersion 1.2.1
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -99,7 +99,7 @@
 #KeyHistory 0
 ListLines, Off
 
-strCurrentVersion := "1.2" ; "major.minor.bugs"
+strCurrentVersion := "1.2.1" ; "major.minor.bugs"
 #Include %A_ScriptDir%\FoldersPopup_LANG.ahk
 SetWorkingDir, %A_ScriptDir%
 global blnDiagMode := False
