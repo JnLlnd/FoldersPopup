@@ -4,7 +4,8 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: FoldersPopup v1.2.1 (2014-01-??)
+	Version: FoldersPopup v1.2.1 (2014-02-01)
+	* fix a bug that added separator lines at the bottom of Tray Menu (one line added at each display of the popu menu)
 	* improve diagnostic data collection
 
 	Version: FoldersPopup v1.2 (2014-01-26)
