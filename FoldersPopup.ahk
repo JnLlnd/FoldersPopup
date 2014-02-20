@@ -1614,7 +1614,8 @@ if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetCla
 	if (blnDiagMode)
 		Diag("Navigate", "Shell.Application")
 	
-	ComObjCreate("Shell.Application").Explore(strPath)
+	; ComObjCreate("Shell.Application").Explore(strPath)
+	Run, %strPath%
 	; http://msdn.microsoft.com/en-us/library/bb774094http://msdn.microsoft.com/en-us/library/bb774094
 	; ComObjCreate("Shell.Application").Explore(strPath)
 	; ComObjCreate("WScript.Shell").Exec("Explorer.exe /e /select," . strPath) ; not tested on XP
@@ -1934,7 +1935,8 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 		}
 	Else ; in all other cases, open a new Explorer and return from this function
 	{
-		ComObjCreate("Shell.Application").Explore(strPath)
+		; ComObjCreate("Shell.Application").Explore(strPath)
+		Run, %strPath%
 		; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 		if (blnDiagMode)
 			Diag("NavigateDialog", "Not #32770 or bosa_sdm: open New Explorer")
