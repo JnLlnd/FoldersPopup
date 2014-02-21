@@ -4,6 +4,9 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: FoldersPopup v1.2.2 (2014-02-20)
+	* opens new Explorer windows complying with the Explorer navigation pane setting
+
 	Version: FoldersPopup v1.2.1 (2014-02-01)
 	* fix a bug that added separator lines at the bottom of Tray Menu (one line added at each display of the popu menu)
 	* improve diagnostic data collection (always at the user's discretion)
@@ -86,7 +89,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 1.2.1
+;@Ahk2Exe-SetVersion 1.2.2
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -99,7 +102,7 @@
 #KeyHistory 0
 ListLines, Off
 
-strCurrentVersion := "1.2.1" ; "major.minor.bugs"
+strCurrentVersion := "1.2.2" ; "major.minor.bugs"
 #Include %A_ScriptDir%\FoldersPopup_LANG.ahk
 SetWorkingDir, %A_ScriptDir%
 global blnDiagMode := False
