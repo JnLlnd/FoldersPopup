@@ -13,27 +13,30 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### 2014-02-20 v1.2.2
+* Opens new Explorer windows complying with the Explorer navigation pane setting
+
 ### 2014-02-01 v1.2.1
-	* fix a bug that added separator lines at the bottom of Tray Menu (one line added at each display of the popu menu)
-	* improve diagnostic data collection (always at the user's discretion)
+* Fix a bug that added separator lines at the bottom of Tray Menu (one line added at each display of the popu menu)
+* Improve diagnostic data collection (always at the user's discretion)
 
 ### 2013-01-26 v1.2
-* add an option to add numeric keyboard shortcuts to launch folders in popup menu
-* add an option to display the popup menu at a fix position
-* add a diagnostic mode to collect support info (add DiagMode=1 under [Global] section in ini file)
-* redesign of the Options dialog box
+* Add an option to add numeric keyboard shortcuts to launch folders in popup menu
+* Add an option to display the popup menu at a fix position
+* Add a diagnostic mode to collect support info (add DiagMode=1 under [Global] section in ini file)
+* Redesign of the Options dialog box
 
 ### 2013-12-24 v1.01
-* bug fix: mouse and keyboard triggers were disabled in non-explorer windows
+* Bug fix: mouse and keyboard triggers were disabled in non-explorer windows
 
 ### 2013-12-23 v1.0 (First Official Release)
-* configurable mouse button and keyboard triggers in a new "Options" dialog box
-* new keyboard triggers (by default, Windows-K and Shift-Windows-K) in addition to mouse button triggers (by default, Middle mouse and Shift-Middle mouse buttons)
-* add "Run at startup" checkbox to "Options" dialog box to launch Folders Popup automatically at Windows startup
-* add "Display the startup tray tip" checkbox to "Options" dialog box to display or hide the Folders popup's tray tip
-* add "Display Special Folders" checkbox to "Options" dialog box to enable/disable navigation to special folders (My Computer, Network, Recycle bion, etc.) in popup menu
-* better formated startup help tray tip
-* close "Settings" dialog box with Escape key
+* Configurable mouse button and keyboard triggers in a new "Options" dialog box
+* New keyboard triggers (by default, Windows-K and Shift-Windows-K) in addition to mouse button triggers (by default, Middle mouse and Shift-Middle mouse buttons)
+* Add "Run at startup" checkbox to "Options" dialog box to launch Folders Popup automatically at Windows startup
+* Add "Display the startup tray tip" checkbox to "Options" dialog box to display or hide the Folders popup's tray tip
+* Add "Display Special Folders" checkbox to "Options" dialog box to enable/disable navigation to special folders (My Computer, Network, Recycle bion, etc.) in popup menu
+* Better formated startup help tray tip
+* Close "Settings" dialog box with Escape key
 
 ### 2013-11-11 v0.9 (beta version)
 * Implemented startup option in tray and check4update, standardize dialog box titles, various text fixes
