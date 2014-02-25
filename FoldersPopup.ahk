@@ -4,6 +4,9 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: FoldersPopup v1.2.3 (2014-02-25)
+	* Windows XP only: revert to pre-1.2.2 state due to a different behaviour of Winddows Explorer in XP
+
 	Version: FoldersPopup v1.2.2 (2014-02-20)
 	* opens new Explorer windows complying with the Explorer navigation pane setting
 
@@ -89,7 +92,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 1.2.2
+;@Ahk2Exe-SetVersion 1.2.3
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -102,7 +105,7 @@
 #KeyHistory 0
 ListLines, Off
 
-strCurrentVersion := "1.2.2" ; "major.minor.bugs"
+strCurrentVersion := "1.2.3" ; "major.minor.bugs"
 #Include %A_ScriptDir%\FoldersPopup_LANG.ahk
 SetWorkingDir, %A_ScriptDir%
 global blnDiagMode := False
@@ -1617,8 +1620,10 @@ if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetCla
 	if (blnDiagMode)
 		Diag("Navigate", "Shell.Application")
 	
-	; ComObjCreate("Shell.Application").Explore(strPath)
-	Run, %strPath%
+	if (A_OSVersion = "WIN_XP")
+		ComObjCreate("Shell.Application").Explore(strPath)
+	else
+		Run, %strPath%
 	; http://msdn.microsoft.com/en-us/library/bb774094http://msdn.microsoft.com/en-us/library/bb774094
 	; ComObjCreate("Shell.Application").Explore(strPath)
 	; ComObjCreate("WScript.Shell").Exec("Explorer.exe /e /select," . strPath) ; not tested on XP
@@ -1938,8 +1943,10 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 		}
 	Else ; in all other cases, open a new Explorer and return from this function
 	{
-		; ComObjCreate("Shell.Application").Explore(strPath)
-		Run, %strPath%
+		if (A_OSVersion = "WIN_XP")
+			ComObjCreate("Shell.Application").Explore(strPath)
+		else
+			Run, %strPath%
 		; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 		if (blnDiagMode)
 			Diag("NavigateDialog", "Not #32770 or bosa_sdm: open New Explorer")
