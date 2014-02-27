@@ -13,6 +13,9 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### 2014-02-25 v1.2.3
+* For Windows XP users only, revert to v1.2.1 state due to unwanted behavior of FP v1.2.2 in Windows Explorer XP
+
 ### 2014-02-20 v1.2.2
 * Opens new Explorer windows complying with the Explorer navigation pane setting
 
