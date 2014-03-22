@@ -4,6 +4,13 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: v1.5 ALPHA (not to be released) (2014-03-22)
+	* add recent folders sub-menu
+	* add ini variable RecentFolders
+	* when blnDisplayMenuShortcuts reserve shortcut chars for app's items in menus
+	* add GetDeepestFolderName as function
+	* add ValueInObject function
+	
 	Version: FoldersPopup v1.2.3 (2014-02-25)
 	* Windows XP only: revert to pre-1.2.2 state due to a different behaviour of Winddows Explorer in XP
 

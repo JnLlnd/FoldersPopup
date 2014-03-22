@@ -13,6 +13,13 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### 2014-##-## v1.5 ALPHA (not to be released)
+* add recent folders sub-menu
+* add ini variable RecentFolders
+* when blnDisplayMenuShortcuts reserve shortcut chars for app's items in menus
+* add GetDeepestFolderName as function
+* add ValueInObject function
+
 ### 2014-02-25 v1.2.3
 * For Windows XP users only, revert to v1.2.1 state due to unwanted behavior of FP v1.2.2 in Windows Explorer XP
 
