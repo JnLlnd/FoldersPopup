@@ -92,7 +92,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 1.2.3
+;@Ahk2Exe-SetVersion 1.5
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -105,7 +105,7 @@
 #KeyHistory 0
 ListLines, Off
 
-strCurrentVersion := "1.2.3" ; "major.minor.bugs"
+strCurrentVersion := "1.5 ALPHA" ; "major.minor.bugs"
 #Include %A_ScriptDir%\FoldersPopup_LANG.ahk
 SetWorkingDir, %A_ScriptDir%
 global blnDiagMode := False
@@ -125,6 +125,7 @@ strDiagFile := A_ScriptDir . "\" . lAppName . "-DIAG.txt"
 Gosub, InitArrays
 Gosub, LoadIniFile
 Gosub, BuildSpecialFoldersMenu ; build even if blnDisplaySpecialFolders is false because it could become true
+Gosub, BuildRecentFoldersMenu
 Gosub, BuildFoldersMenu
 Gosub, BuildGUI
 Gosub, BuildAddDialogMenu
@@ -213,6 +214,7 @@ IfNotExist, %strIniFile%
 			DisplayMenuShortcuts=0
 			PopupFix=0
 			PopupFixPosition=20,20
+			RecentFolders=10
 			DiagMode=0
 			Startups=1
 			[Folders]
@@ -239,16 +241,11 @@ IniRead, blnPopupFix, %strIniFile%, Global, PopupFix, 0
 IniRead, strPopupFixPosition, %strIniFile%, Global, PopupFixPosition, 20,20
 StringSplit, arrPopupFixPosition, strPopupFixPosition, `,
 IniRead, blnDisplayMenuShortcuts, %strIniFile%, Global, DisplayMenuShortcuts, 0
-if (blnDisplayMenuShortcuts)
-{
-	lMenuAddThisFolder := lMenuAddThisFolderNoShortcut
-	lMenuSettings := lMenuSettingsNoShortcut
-	lMenuSpecialFolders := lMenuSpecialFoldersNoShortcut
-}
 IniRead, strLatestSkipped, %strIniFile%, Global, LatestVersionSkipped, 0.0
 IniRead, blnDiagMode, %strIniFile%, Global, DiagMode, 0
 IniRead, intStartups, %strIniFile%, Global, Startups, 1
 IniRead, blnDonator, %strIniFile%, Global, Donator, 0 ; Please, be fair. Don't cheat with this.
+IniRead, intRecentFolders, %strIniFile%, Global, RecentFolders, 10
 
 Loop
 {
@@ -367,6 +364,7 @@ If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass)
 blnMouse := InStr(A_ThisLabel, "Mouse")
 blnNewWindow := false
 Gosub, SetMenuPosition
+Gosub, BuildRecentFoldersMenu
 
 ; Can't find how to navigate a dialog box to My Computer or Network Neighborhood... is this is feasible?
 if (blnDisplaySpecialFolders)
@@ -416,6 +414,7 @@ PopupMenuNewWindowKeyboard: ; default +#k
 blnMouse := InStr(A_ThisLabel, "Mouse")
 blnNewWindow := true
 Gosub, SetMenuPosition
+Gosub, BuildRecentFoldersMenu
 
 WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
 
@@ -531,23 +530,89 @@ return
 
 
 ;------------------------------------------------------------
+BuildRecentFoldersMenu:
+;------------------------------------------------------------
+
+Menu, menuRecentFolders, Add
+Menu, menuRecentFolders, DeleteAll
+
+objRecentFolders := Object()
+objRecentFoldersIndex := 0
+
+strRecentsFolder := A_AppData . "\Microsoft\Windows\Recent"
+strDirList := ""
+	
+Loop, %strRecentsFolder%\*.*
+	strDirList := strDirList . A_LoopFileTimeModified . "`t`" . A_LoopFileFullPath . "`n"
+Sort, strDirList, R
+
+intShortcut := 0
+
+Loop, parse, strDirList, `n
+{
+	if !StrLen(A_LoopField) ; last line is empty
+		continue
+
+	arrTargetFullName := StrSplit(A_LoopField, A_Tab)
+	strTargetFullName := arrTargetFullName[2]
+	FileGetShortcut, %strTargetFullName%, strOutTarget
+	if (errorlevel) ; hidden or system files (like desktop.ini) returns an error
+		continue
+	
+	FileGetAttrib, strAttributes, %strOutTarget%
+	if !InStr(strAttributes, "D")
+		SplitPath, strOutTarget, , strOutTarget ; for files, retreive the folder containing the file
+
+	if !ValueInObject(strOutTarget, objRecentFolders)
+	{
+		objRecentFoldersIndex := objRecentFoldersIndex + 1
+		objRecentFolders.Insert(objRecentFoldersIndex, strOutTarget)
+		
+		if (blnDisplayMenuShortcuts)
+		{
+			intShortcut := intShortcut + 1
+			if (intShortcut < 10)
+				strShortcut := intShortcut ; 1 .. 9
+			else
+				strShortcut := Chr(intShortcut + 55) ; Chr(10 + 55) = "A" .. Chr(35 + 55) = "Z"
+		}
+		Menu, menuRecentFolders, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . strShortcut . " " : "") . GetDeepestFolderName(strOutTarget), OpenRecentFolder
+		
+		if (objRecentFoldersIndex >= intRecentFolders)
+			break
+	}
+}
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 BuildFoldersMenu:
 ;------------------------------------------------------------
 
 Menu, menuFolders, Add
 Menu, menuFolders, DeleteAll
 intShortcut := 0
+
 Loop, % arrFolders.MaxIndex()
 {
 	if (arrFolders[A_Index].Name = lMenuSeparator)
 		Menu, menuFolders, Add
 	else
 	{
-		intShortcut := intShortcut + 1
-		if (intShortcut < 10)
-			strShortcut := intShortcut ; 1 .. 9
-		else
-			strShortcut := Chr(intShortcut + 55) ; Chr(10 + 55) = "A" .. Chr(35 + 55) = "Z"
+		if (blnDisplayMenuShortcuts)
+		{
+			intShortcut := intShortcut + 1
+			if (intShortcut < 10)
+				strShortcut := intShortcut ; 1 .. 9
+			else
+			{
+				while InStr(lMenuReservedShortcuts, Chr(intShortcut + 55))
+					intShortcut := intShortcut + 1
+				strShortcut := Chr(intShortcut + 55) ; Chr(10 + 55) = "A" .. Chr(35 + 55) = "Z"
+			}
+		}
 		Menu, menuFolders, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . strShortcut . " " : "") . arrFolders[A_Index].Name, OpenFavorite
 	}
 }
@@ -555,6 +620,7 @@ if (blnDisplaySpecialFolders)
 {
 	Menu, menuFolders, Add
 	Menu, menuFolders, Add, %lMenuSpecialFolders%, :menuSpecialFolders
+	Menu, menuFolders, Add, %lMenuRecentFolders%, :menuRecentFolders
 }
 Menu, menuFolders, Add
 Menu, menuFolders, Add, %lMenuSettings%, GuiShow
@@ -974,14 +1040,9 @@ AddFolder(strPath)
 	GuiControl, Focus, lvFoldersList
 	Gui, 1:+OwnDialogs
 
-	; suggest the deepest folder's name as default name for the added folder
-	SplitPath, strPath, strDefaultName, , , , strDrive
-	if !StrLen(strDefaultName) ; we are probably at the root of a drive
-		strDefaultName := strDrive
-
 	Loop
 	{
-		InputBox strName, % L(lDialogFolderNameTitle, lAppName, lAppVersion), %lDialogFolderNamePrompt%, , 250, 120, , , , , %strDefaultName%
+		InputBox strName, % L(lDialogFolderNameTitle, lAppName, lAppVersion), %lDialogFolderNamePrompt%, , 250, 120, , , , , % GetDeepestFolderName(strPath)
 		if (ErrorLevel) or !StrLen(strName)
 			return
 	} until FolderNameIsNew(strName)
@@ -1406,8 +1467,9 @@ Menu, Tray, % blnOptionsRunAtStartup ? "Check" : "Uncheck", %lMenuRunAtStartup%
 
 IniWrite, %blnDisplayTrayTip%, %strIniFile%, Global, DisplayTrayTip
 IniWrite, %blnDisplaySpecialFolders%, %strIniFile%, Global, DisplaySpecialFolders
-IniWrite, %blnDisplayMenuShortcuts%, %strIniFile%, Global, DisplayMenuShortcuts
 IniWrite, %blnPopupFix%, %strIniFile%, Global, PopupFix
+IniWrite, %blnDisplayMenuShortcuts%, %strIniFile%, Global, DisplayMenuShortcuts
+
 IniWrite, %strPopupFixPositionX%`,%strPopupFixPositionY%, %strIniFile%, Global, PopupFixPosition
 arrPopupFixPosition1 := strPopupFixPositionX
 arrPopupFixPosition2 := strPopupFixPositionY
@@ -1731,6 +1793,25 @@ else ; this is the console or a dialog box
 
 if (blnDiagMode)
 	Diag("NavigateResult", ErrorLevel)
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+OpenRecentFolder:
+;------------------------------------------------------------
+
+if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
+	ComObjCreate("Shell.Application").Explore(objRecentFolders[A_ThisMenuItemPos])
+	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
+else if WindowIsAnExplorer(strTargetClass)
+	NavigateExplorer(objRecentFolders[A_ThisMenuItemPos], strTargetWinId)
+else ; this is the console or a dialog box
+	if WindowIsConsole(strTargetClass)
+		NavigateConsole(objRecentFolders[A_ThisMenuItemPos], strTargetWinId)
+	else
+		NavigateDialog(objRecentFolders[A_ThisMenuItemPos], strTargetWinId, strTargetClass)
 
 return
 ;------------------------------------------------------------
@@ -2185,6 +2266,32 @@ L(strMessage, objVariables*)
 	return strMessage
 }
 ;------------------------------------------------
+
+
+;------------------------------------------------------------
+GetDeepestFolderName(strPath)
+;------------------------------------------------------------
+{
+	SplitPath, strPath, strDeepestName, , , , strDrive
+	if !StrLen(strDeepestName) ; we are probably at the root of a drive
+		return strDrive
+	else
+		return strDeepestName
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ValueInObject(strValue, obj)
+;------------------------------------------------------------
+{
+	loop, % obj.MaxIndex()
+		if (strValue = obj[A_Index])
+			return true
+		
+	return false
+}
+;------------------------------------------------------------
 
 
 ;------------------------------------------------
