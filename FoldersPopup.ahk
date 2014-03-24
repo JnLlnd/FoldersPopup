@@ -666,6 +666,9 @@ Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, Button, x+10 w75 gGuiHelp, %lGuiHelp%
 Gui, 1:Add, Text, x10 y30, %lAppTagline%
 
+Gui, 1:Add, Text, x10, %lGuiSubmenuDropdownLabel%
+Gui, 1:Add, DropDownList, x+10 yp vGuiSubmenuDropdown
+
 Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, ListView, x10 w350 h220 Count32 -Multi NoSortHdr LV0x10 vlvFoldersList, %lGuiLvFoldersHeader%
 Gui, 1:Add, Button, x+10 w75 gGuiAddFolder, %lGuiAddFolder%
@@ -674,6 +677,7 @@ Gui, 1:Add, Button, w75 gGuiEditFolder, %lGuiEditFolder%
 Gui, 1:Add, Button, w75 gGuiAddSeparator, %lGuiSeparator%
 Gui, 1:Add, Button, w75 gGuiMoveFolderUp, %lGuiMoveFolderUp%
 Gui, 1:Add, Button, w75 gGuiMoveFolderDown, %lGuiMoveFolderDown%
+Gui, 1:Add, Button, w75 gGuiAddSubmenu, %lGuiAddSubmenu%
 
 Gui, 1:Add, ListView
 	, x10 w350 h120 Count16 -Multi NoSortHdr +0x10 LV0x10 vlvDialogsList, %lGuiLvDialogsHeader%
@@ -753,7 +757,7 @@ Loop
 		, %lDialogEditFolderPrompt%, , 250, 120, , , , , %strCurrentName%
 	if (ErrorLevel)
 		return
-} until (strNewName = strCurrentName) or FolderNameIsNew(strNewName)
+} until (strNewName = strCurrentName) or FolderNameIsNew(strNewName) ; ### check do mot include lGuiSubmenuSeparator
 
 LV_Modify(intRowToEdit, "Select Focus", strNewName, strNewPath)
 LV_ModifyCol(1, "AutoHdr")
@@ -828,6 +832,15 @@ LV_Modify(intSelectedRow + 1, "Select Focus Vis", strThisName, strThisPath)
 
 GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lGuiCancel%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiAddSubmenu:
+;------------------------------------------------------------
+AddFolder("", "S")
 
 return
 ;------------------------------------------------------------
@@ -939,7 +952,7 @@ GuiShow:
 ;------------------------------------------------------------
 
 Gosub, LoadSettingsToGui
-Gui, 1:Show, w455 h455
+Gui, 1:Show, w455 ; h455
 
 return
 ;------------------------------------------------------------
@@ -1041,7 +1054,8 @@ return
 
 
 ;------------------------------------------------------------
-AddFolder(strPath)
+AddFolder(strPath, strType := "F")
+; strType: "F" for folder (default) or "S" for Submenu
 ;------------------------------------------------------------
 {
 	GuiControl, Focus, lvFoldersList
@@ -1049,13 +1063,16 @@ AddFolder(strPath)
 
 	Loop
 	{
-		InputBox strName, % L(lDialogFolderNameTitle, lAppName, lAppVersion), %lDialogFolderNamePrompt%, , 250, 120, , , , , % GetDeepestFolderName(strPath)
+		if (strType = "S")
+			InputBox strName, % L(lDialogSubmenuNameTitle, lAppName, lAppVersion), %lDialogSubmenuNamePrompt%, , 250, 120
+		else
+			InputBox strName, % L(lDialogFolderNameTitle, lAppName, lAppVersion), %lDialogFolderNamePrompt%, , 250, 120, , , , , % GetDeepestFolderName(strPath)
 		if (ErrorLevel) or !StrLen(strName)
 			return
-	} until FolderNameIsNew(strName)
+	} until FolderNameIsNew(strName) ; ### check do mot include lGuiSubmenuSeparator
 	
 	Gui, 1:ListView, lvFoldersList
-	LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", strName, strPath)
+	LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", (strType = "S" ? strName . lGuiSubmenuSeparator : strName), strPath)
 	LV_Modify(LV_GetNext(), "Vis")
 	LV_ModifyCol(1, "AutoHdr")
 	LV_ModifyCol(2, "AutoHdr")
