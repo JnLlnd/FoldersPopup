@@ -1,11 +1,11 @@
 global lAboutText1 := "~1~ ~2~ (~3~ bits)"
 global lAboutText2 := "FoldersPopup is written by Jean Lalonde using the`n<a href=""http://ahkscript.org/"">AutoHotkey</a> programming language.`n`nIcon by: <a href=""http://www.visualpharm.com"">Visual Pharm</a>`nAutoHotkey_L v1.1 sources: <a href=""https://github.com/JnLlnd/FoldersPopup"">GitHub</a>"
-global lAboutText3 := chr(169) . " Jean Lalonde 2013-2014. Freeware."
+global lAboutText3 := "~1~ Jean Lalonde 2013-2014. Freeware."
 global lAboutText4 := "Support on <a href=""http://code.jeanlalonde.ca/folderspopup"">www.code.jeanlalonde.ca</a>"
 global lAboutTitle := "About - ~1~ ~2~"
 global lAppName := "FoldersPopup"
 global lAppTagline := "Jump instantly from one folder to another"
-global lAppVersion := "v" . strCurrentVersion
+global lAppVersion := "v~1~"
 global lButtonRemind := "Remind me"
 global lDiagModeCaution = "~1~ is running in diagnostic mode.`n`nInformation about the app's execution will be collected in the file:`n~2~`n`nNothing will be sent without your consent.`n`nDo you want to keep diagnostic mode ON?"
 global lDiagModeExit = "~1~ colleted diagnostic information in the file ~2~."

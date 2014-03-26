@@ -111,13 +111,14 @@
 #SingleInstance force
 #KeyHistory 0
 ListLines, Off
+SetWorkingDir, %A_ScriptDir%
+#Include %A_ScriptDir%\FoldersPopup_LANG.ahk
 
 strCurrentVersion := "1.5 ALPHA" ; "major.minor.bugs"
-#Include %A_ScriptDir%\FoldersPopup_LANG.ahk
-SetWorkingDir, %A_ScriptDir%
 global blnDiagMode := False
-
-strIniFile := A_ScriptDir . "\" . lAppName . ".ini"
+global strAppVersion := L(lAppVersion, strCurrentVersion)
+global strDiagFile := A_ScriptDir . "\" . lAppName . "-DIAG.txt"
+global strIniFile := A_ScriptDir . "\" . lAppName . ".ini"
 ;@Ahk2Exe-IgnoreBegin
 ; Piece of code for developement phase only - won't be compiled
 if (A_ComputerName = "JEAN-PC") ; for my home PC
@@ -126,11 +127,11 @@ else if InStr(A_ComputerName, "STIC") ; for my work hotkeys
 	strIniFile := A_ScriptDir . "\" . lAppName . "-WORK.ini"
 ; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
-strDiagFile := A_ScriptDir . "\" . lAppName . "-DIAG.txt"
 
 ; Keep gosubs in this order
 Gosub, InitArrays
 Gosub, LoadIniFile
+Gosub, InitLanguage
 Gosub, BuildSpecialFoldersMenu ; build even if blnDisplaySpecialFolders is false because it could become true
 Gosub, BuildRecentFoldersMenu
 Gosub, BuildFoldersMenu
@@ -149,7 +150,7 @@ IfExist, %A_Startup%\%lAppName%.lnk
 }
 
 if (blnDisplayTrayTip)
-	TrayTip, % L(lTrayTipInstalledTitle, lAppName, lAppVersion)
+	TrayTip, % L(lTrayTipInstalledTitle, lAppName, strAppVersion)
 		, % L(lTrayTipInstalledDetail, lAppName
 			, Hotkey2Text(strModifiers1, strMouseButton1, strOptionsKey1)
 			, Hotkey2Text(strModifiers3, strMouseButton3, strOptionsKey3)
@@ -224,6 +225,7 @@ IfNotExist, %strIniFile%
 			RecentFolders=10
 			DiagMode=0
 			Startups=1
+			Language=EN
 			[Folders]
 			Folder1=C:\|C:\
 			Folder2=Windows|%A_WinDir%
@@ -253,6 +255,7 @@ IniRead, blnDiagMode, %strIniFile%, Global, DiagMode, 0
 IniRead, intStartups, %strIniFile%, Global, Startups, 1
 IniRead, blnDonator, %strIniFile%, Global, Donator, 0 ; Please, be fair. Don't cheat with this.
 IniRead, intRecentFolders, %strIniFile%, Global, RecentFolders, 10
+IniRead, strLanguage, %strIniFile%, Global, Language, EN
 
 Loop
 {
@@ -296,6 +299,14 @@ return
 
 
 ;------------------------------------------------------------
+InitLanguage:
+;------------------------------------------------------------
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 InitDiagMode:
 ;------------------------------------------------------------
 
@@ -312,7 +323,7 @@ if !FileExist(strDiagFile)
 	FileAppend, DateTime`tType`tData`n, %strDiagFile%
 	Diag("DIAGNOSTIC FILE", lDiagModeIntro)
 	Diag("AppName", lAppName)
-	Diag("AppVersion", lAppVersion)
+	Diag("AppVersion", strAppVersion)
 	Diag("A_ScriptFullPath", A_ScriptFullPath)
 	Diag("A_AhkVersion", A_AhkVersion)
 	Diag("A_OSVersion", A_OSVersion)
@@ -657,7 +668,7 @@ return
 BuildGui:
 ;------------------------------------------------------------
 
-Gui, 1:New, , % L(lGuiTitle, lAppName, lAppVersion)
+Gui, 1:New, , % L(lGuiTitle, lAppName, strAppVersion)
 Gui, 1:Font, s12 w700, Verdana
 Gui, 1:Add, Text, x10 y10 w490 h25, %lAppName%
 Gui, 1:Font, s8 w400, Arial
@@ -753,7 +764,7 @@ if (strNewPath = "")
 
 Loop
 {
-	InputBox strNewName, % L(lDialogEditFolderTitle, lAppName, lAppVersion)
+	InputBox strNewName, % L(lDialogEditFolderTitle, lAppName, strAppVersion)
 		, %lDialogEditFolderPrompt%, , 250, 120, , , , , %strCurrentName%
 	if (ErrorLevel)
 		return
@@ -888,7 +899,7 @@ Gui, 1:ListView, lvDialogsList
 intRowToEdit := LV_GetNext()
 LV_GetText(strCurrentDialog, intRowToEdit, 1)
 
-InputBox strNewDialog, % L(lDialogEditDialogTitle, lAppName, lAppVersion)
+InputBox strNewDialog, % L(lDialogEditDialogTitle, lAppName, strAppVersion)
 	, %lDialogEditDialogPrompt%, , 250, 120, , , , , %strCurrentDialog%
 if (ErrorLevel) or !StrLen(strNewDialog) or (strNewDialog = strCurrentDialog)
 	return
@@ -966,7 +977,7 @@ GuiControlGet, blnSaveEnabled, Enabled, btnGuiSave
 if (blnSaveEnabled)
 {
 	Gui, 1:+OwnDialogs
-	MsgBox, 36, % L(lDialogCancelTitle, lAppName, lAppVersion), %lDialogCancelPrompt%
+	MsgBox, 36, % L(lDialogCancelTitle, lAppName, strAppVersion), %lDialogCancelPrompt%
 	IfMsgBox, Yes
 	{
 		GuiControl, Disable, btnGuiSave
@@ -1041,7 +1052,7 @@ If StrLen(strCurrentFolder)
 else
 {
 	Gui, 1:+OwnDialogs 
-	MsgBox, 52, % L(lDialogAddFolderManuallyTitle, lAppName, lAppVersion), %lDialogAddFolderManuallyPrompt%
+	MsgBox, 52, % L(lDialogAddFolderManuallyTitle, lAppName, strAppVersion), %lDialogAddFolderManuallyPrompt%
 	IfMsgBox, Yes
 	{
 		Gosub, GuiShow
@@ -1064,9 +1075,9 @@ AddFolder(strPath, strType := "F")
 	Loop
 	{
 		if (strType = "S")
-			InputBox strName, % L(lDialogSubmenuNameTitle, lAppName, lAppVersion), %lDialogSubmenuNamePrompt%, , 250, 120
+			InputBox strName, % L(lDialogSubmenuNameTitle, lAppName, strAppVersion), %lDialogSubmenuNamePrompt%, , 250, 120
 		else
-			InputBox strName, % L(lDialogFolderNameTitle, lAppName, lAppVersion), %lDialogFolderNamePrompt%, , 250, 120, , , , , % GetDeepestFolderName(strPath)
+			InputBox strName, % L(lDialogFolderNameTitle, lAppName, strAppVersion), %lDialogFolderNamePrompt%, , 250, 120, , , , , % GetDeepestFolderName(strPath)
 		if (ErrorLevel) or !StrLen(strName)
 			return
 	} until FolderNameIsNew(strName) ; ### check do mot include lGuiSubmenuSeparator
@@ -1121,7 +1132,7 @@ AddDialog(strCurrentDialogTitle)
 	Gui, 1:+OwnDialogs
 	GuiControl, Focus, lvDialogsList
 
-	InputBox, strNewDialog, % L(lDialogAddDialogTitle, lAppName, lAppVersion), %lDialogAddDialogPrompt%, , 250, 150, , , , , %strCurrentDialogTitle%
+	InputBox, strNewDialog, % L(lDialogAddDialogTitle, lAppName, strAppVersion), %lDialogAddDialogPrompt%, , 250, 150, , , , , %strCurrentDialogTitle%
 	if (ErrorLevel) or !StrLen(strNewDialog)
 		return
 	
@@ -1202,7 +1213,7 @@ if FirstVsSecondIs(strLatestVersion, strCurrentVersion) = 1
 }
 else if (A_ThisMenuItem = lMenuUpdate)
 {
-	MsgBox, 4, % l(lUpdateTitle, lAppName), % l(lUpdateYouHaveLatest, lAppVersion, lAppName), 30
+	MsgBox, 4, % l(lUpdateTitle, lAppName), % l(lUpdateYouHaveLatest, strAppVersion, lAppName), 30
 	IfMsgBox, Yes
 		Run, http://code.jeanlalonde.ca/folderspopup/
 }
@@ -1288,14 +1299,14 @@ GuiAbout:
 
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
-Gui, 2:New, , % L(lAboutTitle, lAppName, lAppVersion)
+Gui, 2:New, , % L(lAboutTitle, lAppName, strAppVersion)
 Gui, 2:+Owner1
 str32or64 := A_PtrSize  * 8
 Gui, 2:Font, s12 w700, Verdana
-Gui, 2:Add, Link, y10 vlblAboutText1, % L(lAboutText1, lAppName, lAppVersion, str32or64)
+Gui, 2:Add, Link, y10 vlblAboutText1, % L(lAboutText1, lAppName, strAppVersion, str32or64)
 Gui, 2:Font, s8 w400, Verdana
 Gui, 2:Add, Link, , % L(lAboutText2)
-Gui, 2:Add, Link, , % L(lAboutText3)
+Gui, 2:Add, Link, , % L(lAboutText3, chr(169))
 Gui, 2:Font, s10 w400, Verdana
 Gui, 2:Add, Link, , % L(lAboutText4)
 Gui, 2:Font, s8 w400, Verdana
@@ -1315,7 +1326,7 @@ GuiHelp:
 
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
-Gui, 2:New, , % L(lHelpTitle, lAppName, lAppVersion)
+Gui, 2:New, , % L(lHelpTitle, lAppName, strAppVersion)
 Gui, 2:+Owner1
 intWidth := 450
 Gui, 2:Font, s12 w700, Verdana
@@ -1344,7 +1355,7 @@ intGui1WinID := WinExist("A")
 ;---------------------------------------
 ; Build Gui header
 Gui, 1:Submit, NoHide
-Gui, 2:New, , % L(lOptionsGuiTitle, lAppName, lAppVersion)
+Gui, 2:New, , % L(lOptionsGuiTitle, lAppName, strAppVersion)
 Gui, 2:+Owner1
 Gui, 2:Font, s10 w700, Verdana
 Gui, 2:Add, Text, x10 y10 w410 center, % L(lOptionsGuiTitle, lAppName)
@@ -1413,7 +1424,7 @@ StringReplace, intIndex, A_ThisLabel, ButtonOptionsChangeHotkey
 intGui2WinID := WinExist("A")
 
 Gui, 2:Submit, NoHide
-Gui, 3:New, , % L(lOptionsChangeHotkeyTitle, lAppName, lAppVersion)
+Gui, 3:New, , % L(lOptionsChangeHotkeyTitle, lAppName, strAppVersion)
 Gui, 3:+Owner2
 Gui, 3:Font, s10 w700, Verdana
 Gui, 3:Add, Text, x10 y10 w350 center, % L(lOptionsChangeHotkeyTitle, lAppName)
@@ -2270,7 +2281,7 @@ Oops(strMessage, objVariables*)
 ;------------------------------------------------
 {
 	Gui, 1:+OwnDialogs
-	MsgBox, 48, % L(lFuncOopsTitle, lAppName, lAppVersion), % L(strMessage, objVariables*)
+	MsgBox, 48, % L(lFuncOopsTitle, lAppName, strAppVersion), % L(strMessage, objVariables*)
 }
 ; ------------------------------------------------
 
@@ -2322,8 +2333,6 @@ ValueInObject(strValue, obj)
 Diag(strName, strData)
 ;------------------------------------------------
 {
-	global strDiagFile
-	
 	FormatTime, strNow, %A_Now%, yyyyMMdd@HH:mm:ss
 	loop
 	{
