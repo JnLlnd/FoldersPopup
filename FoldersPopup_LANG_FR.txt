@@ -1,0 +1,124 @@
+lAboutText1	~1~ ~2~ (~3~ bits)
+lAboutText2	FoldersPopup est développé par Jean Lalonde`nsur la plateforme <a href="http://ahkscript.org/">AutoHotkey</a>.`n`nIcônes par: <a href="http://www.visualpharm.com">Visual Pharm</a>`nSources AutoHotkey_L v1.1: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText3	~1~ Jean Lalonde 2013-2014. Gratuiciel.
+lAboutText4	Soutien en ligne: <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
+lAboutTitle	À propos - ~1~ ~2~
+lAppName	FoldersPopup
+lAppTagline	Jump instantly from one folder to another
+lAppVersion	v~1~
+lButtonRemind	Remind me
+lDiagModeCaution	~1~ is running in diagnostic mode.`n`nInformation about the app's execution will be collected in the file:`n~2~`n`nNothing will be sent without your consent.`n`nDo you want to keep diagnostic mode ON?
+lDiagModeExit	~1~ colleted diagnostic information in the file ~2~.
+lDiagModeIntro	Send this file to ahk@jeanlalonde.ca with a description of the situation requiring diagnostic.
+lDiagModeSee	Do you want to see the diagnostic file?
+lDialogAddDialogAlready	This dialog box type is already supported.
+lDialogAddDialogPrompt	Enter the new dialog box name`n(or part of the name):
+lDialogAddDialogTitle	Add Dialog Box - ~1~ ~2~
+lDialogAddFolderManuallyPrompt	Sorry, we can't detect the current folder in this type of window.`n`nDo you want to add it manually now?
+lDialogAddFolderManuallyTitle	Add This Folder - ~1~ ~2~
+lDialogAddFolderSelect	Choose or create the new folder:
+lDialogCancelPrompt	Discard changes?
+lDialogCancelTitle	Cancel - ~1~ ~2~
+lDialogEditDialogPrompt	Enter the new dialog box name`n(or part of the name):
+lDialogEditDialogTitle	Edit Dialog box - ~1~ ~2~
+lDialogEditFolderPrompt	Enter the name for this foler:
+lDialogEditFolderSelect	Choose or create the new folder:
+lDialogEditFolderTitle	Edit Folder - ~1~ ~2~
+lDialogFolderNameNotNew	The name ~1~ is already used. Please, choose a new name.
+lDialogFolderNamePrompt	Name of the new folder:
+lDialogFolderNameTitle	Folder Name - ~1~ ~2~
+lDialogSelectItemToEdit	Please, select the item to edit.
+lDialogSelectItemToRemove	Please, select the item to remove.
+lDialogSubmenuNamePrompt	Give a short name to this submenu:
+lDialogSubmenuNameTitle	Submenu Name - ~1~ ~2~
+lDonateButton	Support Freeware!
+lDonatePrompt	Are you happy with ~1~?`n`n~1~ is not only FREE of charge but also FREE of nasty advertising or adware that you never know if they carry spyware or malware.`n`n~2~ times so far, ~1~ has helped you in your daily work. How about supporting freeware now?
+lDonateThankyou	Thank you for being fair and support freeware!
+lDonateTitle	~1~ times! - ~2~
+lGui2Close	Close
+lGuiAbout	A&bout
+lGuiAddDialog	A&dd
+lGuiAddFolder	&Add
+lGuiAddSubMenu	Subme&nu
+lGuiCancel	&Cancel
+lGuiClose	&Close
+lGuiEditDialog	Ed&it
+lGuiEditFolder	&Edit
+lGuiHelp	&Help
+lGuiLvDialogsHeader	Supported Dialog Boxes (part of names)
+lGuiLvFoldersHeader	Name|Path
+lGuiMoveFolderDown	Move D&own
+lGuiMoveFolderUp	Move &Up
+lGuiOptions	Op&tions
+lGuiRemoveDialog	Re&move
+lGuiRemoveFolder	&Remove
+lGuiSave	&Save
+lGuiSeparator	Se&parator
+lGuiSubmenuDropdownLabel	Menu or submenu:
+lGuiSubmenuSeparator	>
+lGuiTitle	Settings - ~1~ ~2~
+lHelpText1	At its launch, FoldersPopup add an icon in the System Tray and await your orders. When you need to change folder in Windows Explorer or in a file dialog box, just click the Middle mouse button or press Windows-K and, in the popup menu, select the desired folder. FoldersPopup will take you there this instantly!
+lHelpText2	Choose Settings to open the FoldersPopup settings window where you can add folders to your menu, delete, move or rename them. Click Save to save your changes.
+lHelpText3	You can quickly add new folders to the popup menu:`n1) Go to a frequently used folder.`n2) Click the Middle mouse button (or press Windows-K) and choose Add This Folder.`n3) Give the folder a short name, click OK and Save in the settings window.
+lHelpText4	By default, FoldersPopup supports regular dialog boxes (Open, Save, etc.). You can easily teach FoldersPopup to recognize other types of dialog box:`n1) When you are in an unsupported dialog box, click the Middle mouse button (or press Windows-K) and choose Add this dialog to the supported list.`n2 ) Click OK and Save in the settings window.
+lHelpText5	TIPS AND TRICKS`n- In the Tray menu, check the Run at Startup option to launch FoldersPopup automatically at startup.`n- Need to open a favorite folder in a New Explorer window? Just press Shift-Middle mouse button (or Shift-Windows-K).`n- Configure your popup menu triggers: choose your preferred mouse buttons or keyboard shortcuts in Settings, Options.`n- Also in Options: pin the popup menu at a fix position and add numeric keyboard shortcuts to the folders menu.
+lHelpText6	Support on FoldersPopup is available at`n<a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
+lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware!
+lHelpTextLead	FoldersPopup lets you move like a breeze between your frequently used folders!
+lHelpTitle	Help - ~1~ ~2~
+lMenuAbout	A&bout
+lMenuAddThisDialog	&Add This Dialog Box to the supported list
+lMenuAddThisFolder	&Add This Folder
+lMenuControlPanel	&Control Panel
+lMenuDesktop	&Desktop
+lMenuDialogNotSupported	This dialog box type is not supported yet
+lMenuDocuments	D&ocuments
+lMenuEditFoldersMenu	&Edit Folders Menu
+lMenuHelp	Help
+lMenuMyComputer	&My Computer
+lMenuNetworkNeighborhood	&Network Neighborhood
+lMenuPictures	&Pictures
+lMenuRecentFolders	&Recent folders
+lMenuRecycleBin	&Recycle Bin
+lMenuReservedShortcuts	ARPS
+lMenuRunAtStartup	&Run at Startup
+lMenuSeparator	----------------
+lMenuSettings	Folders &Popup Settings
+lMenuSpecialFolders	&Special Folders
+lMenuUpdate	Check for &update
+lNavigateFileError	An error occured while opening the folder:`n~1~.
+lNavigateSpecialError	An error occured while opening the special folder #~1~.
+lNavigateUNCError	An error occured while opening the folder:`n~1~`n`nYou may need to login to this folder manually before opening it again with ~2~.
+lNotImplementedYet	Not implemented yet$This feature is still under development.
+lOptionsAlt	Alt
+lOptionsArrDescriptions1	Choose the MOUSE button and modifiers combination that will open the folders popup menu in Windows Explorer or file dialog boxes. By default, this is the middle mouse button (MButton) without any modifier key.
+lOptionsArrDescriptions2	Choose the MOUSE button and modifiers combination that will open the folders popup menu in ANY window and navigate to the selected folder in a NEW Windows Explorer window. By default, this is the middle mouse button (MButton) while the Shift key is pressed.
+lOptionsArrDescriptions3	Choose the KEYBOARD hotkey combination that will open the folders popup menu in the active Windows Explorer or file dialog box. By default, this is Win+K (the K letter while the Windows key is pressed).
+lOptionsArrDescriptions4	Choose the KEYBOARD hotkey combination that will open the folders popup menu in ANY window and navigate to the selected folder in a NEW Windows Explorer window. By default, this is Shift+Win+K (the K letter while the Shift and Windows keys are pressed).
+lOptionsArrDescriptions5	Choose the hotkey or mouse button combination that will open the Folders Popup setting dialog box. By default, this is Shift+Windows+F.
+lOptionsChangeHotkey	Change
+lOptionsChangeHotkeyTitle	Change hotkey - ~1~ ~2~
+lOptionsCtrl	Ctrl
+lOptionsDisplayMenuShortcuts	Display &Numeric Menu Shortcuts
+lOptionsDisplaySpecialFolders	Display S&pecial Folders
+lOptionsGuiIntro	Define the mouse buttons and keyboard hotkeys that will trigger  . lAppName . .
+lOptionsGuiTitle	Options - ~1~ ~2~
+lOptionsKeyboard	Keyboard
+lOptionsMouse	Mouse
+lOptionsNoKeyOrMouseSpecified	No Key or Mouse Button specified. The existing ~1~ hotkey is unchanged.
+lOptionsOtherOptions	Other Options
+lOptionsPopupFix	Popup &Menu at Fix Position
+lOptionsPopupFixPositionX	Position X:
+lOptionsPopupFixPositionY	Y:
+lOptionsRunAtStartup	&Run at Startup
+lOptionsShift	Shift
+lOptionsTitles	Mouse - Folders Popup|Mouse - New Explorer|Keyboard - Folders Popup|Keyboard - New Explorer|Settings window
+lOptionsTrayTip	&Display Startup Tray Tip
+lOptionsTriggerFor	Trigger for:
+lOptionsUnloadTitle	Unload - ~1~
+lOptionsWin	Win
+lTrayTipInstalledDetail	To show ~1~ menu, press:`n`n~2~ / ~3~`nin Windows Explorer or in a Dialog box`n`n~4~ / ~5~`nto open a New Explorer window
+lTrayTipinstalledTitle	~1~ ~2~ ready!
+lUpdatePrompt	Update ~1~ from v~2~ to v~3~?
+lUpdateTitle	Update ~1~?
+lUpdateYouHaveLatest	You have the latest version: ~1~.`n`nVisit the ~2~ web page anyway?

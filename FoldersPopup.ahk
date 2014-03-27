@@ -4,6 +4,10 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	To-do
+	- language switching in Options
+	- complete submenus
+
 	Version: v1.5 ALPHA (not to be released) (2014-03-22)
 	* add recent folders sub-menu
 	* add ini variable RecentFolders
@@ -301,6 +305,19 @@ return
 ;------------------------------------------------------------
 InitLanguage:
 ;------------------------------------------------------------
+
+strLanguageFile := lAppName . "_LANG_" . strLanguage . ".txt"
+
+if FileExist(strLanguageFile)
+{
+	FileRead, strLanguageStrings, %strLanguageFile%
+	Loop, Parse, strLanguageStrings, `n, `r
+	{
+		StringSplit, arrLanguageBit, A_LoopField, `t
+		%arrLanguageBit1% := arrLanguageBit2
+		StringReplace, %arrLanguageBit1%, %arrLanguageBit1%, ``n, `n, All
+	}
+}
 
 return
 ;------------------------------------------------------------
@@ -1334,8 +1351,9 @@ Gui, 2:Add, Text, x10 y10, %lAppName%
 Gui, 2:Font, s10 w400, Verdana
 Gui, 2:Add, Link, x10 w%intWidth%, %lHelpTextLead%
 Gui, 2:Font, s8 w400, Verdana
-loop, 7
+loop, 6
 	Gui, 2:Add, Link, w%intWidth%, % lHelpText%A_Index%
+Gui, 2:Add, Link, w%intWidth%, % L(lHelpText7, chr(169))
 Gui, 2:Add, Button, x100 y+20 gButtonOptionsDonate, %lDonateButton%
 Gui, 2:Add, Button, x320 yp g2GuiClose vbtnHelpClose, %lGui2Close%
 GuiControl, Focus, btnHelpClose
