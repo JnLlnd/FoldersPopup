@@ -5,7 +5,7 @@
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
 	To-do
-	- language switching in Options
+	- complete language switching in Options
 	- complete submenus
 
 	Version: v1.5 ALPHA (not to be released) (2014-03-22)
@@ -13,7 +13,7 @@
 	* add ini variable RecentFolders
 	* when blnDisplayMenuShortcuts reserve shortcut chars for app's items in menus
 	* add GetDeepestFolderName as function
-	* add ValueInObject function
+	* add ValueIsInObject function
 	
 	Version: FoldersPopup v1.2.3 (2014-02-25)
 	* Windows XP only: revert to pre-1.2.2 state due to a different behaviour of Winddows Explorer in XP
@@ -133,9 +133,10 @@ else if InStr(A_ComputerName, "STIC") ; for my work hotkeys
 ;@Ahk2Exe-IgnoreEnd
 
 ; Keep gosubs in this order
-Gosub, InitArrays
+Gosub, InitSystemArrays
 Gosub, LoadIniFile
 Gosub, InitLanguage
+Gosub, InitLanguageArrays
 Gosub, BuildSpecialFoldersMenu ; build even if blnDisplaySpecialFolders is false because it could become true
 Gosub, BuildRecentFoldersMenu
 Gosub, BuildFoldersMenu
@@ -174,7 +175,7 @@ return
 
 
 ;-----------------------------------------------------------
-InitArrays:
+InitSystemArrays:
 ;-----------------------------------------------------------
 
 ; Hotkeys: ini names, hotkey variables name, default values, gosub label and Gui hotkey titles
@@ -186,8 +187,6 @@ strHotkeyDefaults := "MButton|+MButton|#k|+#k|+#f"
 StringSplit, arrHotkeyDefaults, strHotkeyDefaults, |
 strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|GuiShow"
 StringSplit, arrHotkeyLabels, strHotkeyLabels, |
-StringSplit, arrOptionsTitles, lOptionsTitles, |
-StringSplit, arrOptionsTitlesLong, lOptionsTitlesLong, |
 
 strMouseButtons := " |LButton|MButton|RButton|XButton1|XButton2|WheelUp|WheelDown|WheelLeft|WheelRight|"
 ; leave last | to enable default value on the last item
@@ -229,7 +228,7 @@ IfNotExist, %strIniFile%
 			RecentFolders=10
 			DiagMode=0
 			Startups=1
-			Language=EN
+			LanguageCode=EN
 			[Folders]
 			Folder1=C:\|C:\
 			Folder2=Windows|%A_WinDir%
@@ -259,7 +258,7 @@ IniRead, blnDiagMode, %strIniFile%, Global, DiagMode, 0
 IniRead, intStartups, %strIniFile%, Global, Startups, 1
 IniRead, blnDonator, %strIniFile%, Global, Donator, 0 ; Please, be fair. Don't cheat with this.
 IniRead, intRecentFolders, %strIniFile%, Global, RecentFolders, 10
-IniRead, strLanguage, %strIniFile%, Global, Language, EN
+IniRead, strLanguageCode, %strIniFile%, Global, LanguageCode, EN
 
 Loop
 {
@@ -306,7 +305,7 @@ return
 InitLanguage:
 ;------------------------------------------------------------
 
-strLanguageFile := lAppName . "_LANG_" . strLanguage . ".txt"
+strLanguageFile := lAppName . "_LANG_" . strLanguageCode . ".txt"
 
 if FileExist(strLanguageFile)
 {
@@ -318,6 +317,26 @@ if FileExist(strLanguageFile)
 		StringReplace, %arrLanguageBit1%, %arrLanguageBit1%, ``n, `n, All
 	}
 }
+
+return
+;------------------------------------------------------------
+
+
+;-----------------------------------------------------------
+InitLanguageArrays:
+;-----------------------------------------------------------
+
+StringSplit, arrOptionsTitles, lOptionsTitles, |
+StringSplit, arrOptionsTitlesLong, lOptionsTitlesLong, |
+StringSplit, arrOptionsLanguageCodes, lOptionsLanguageCodes, |
+StringSplit, arrOptionsLanguageLabels, lOptionsLanguageLabels, |
+
+loop, %arrOptionsLanguageCodes0%
+	if (arrOptionsLanguageCodes%A_Index% = strLanguageCode)
+		{
+			strLanguageLabel := arrOptionsLanguageLabels%A_Index%
+			break
+		}
 
 return
 ;------------------------------------------------------------
@@ -598,7 +617,7 @@ Loop, parse, strDirList, `n
 	if !InStr(strAttributes, "D")
 		SplitPath, strOutTarget, , strOutTarget ; for files, retreive the folder containing the file
 
-	if !ValueInObject(strOutTarget, objRecentFolders)
+	if !ValueIsInObject(strOutTarget, objRecentFolders)
 	{
 		objRecentFoldersIndex := objRecentFoldersIndex + 1
 		objRecentFolders.Insert(objRecentFoldersIndex, strOutTarget)
@@ -611,7 +630,7 @@ Loop, parse, strDirList, `n
 			else
 				strShortcut := Chr(intShortcut + 55) ; Chr(10 + 55) = "A" .. Chr(35 + 55) = "Z"
 		}
-		Menu, menuRecentFolders, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . strShortcut . " " : "") . GetDeepestFolderName(strOutTarget), OpenRecentFolder
+		Menu, menuRecentFolders, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . strShortcut . " " : "") . strOutTarget, OpenRecentFolder
 		
 		if (objRecentFoldersIndex >= intRecentFolders)
 			break
@@ -1396,6 +1415,10 @@ Gui, 2:Add, Text, x10 y+15 h2 w410 0x10 ; Horizontal Line > Etched Gray
 Gui, 2:Font, s8 w700
 Gui, 2:Add, Text, x10 y+5 w410 center, %lOptionsOtherOptions%
 Gui, 2:Font
+
+Gui, 2:Add, Text, y+10 x40, %lOptionsLanguage%
+Gui, 2:Add, DropDownList, yp x+10 vdrpLanguage, %lOptionsLanguageLabels%
+GuiControl, ChooseString, drpLanguage, %strLanguageLabel%
 
 Gui, 2:Add, CheckBox, y+10 x40 vblnOptionsRunAtStartup, %lOptionsRunAtStartup%
 GuiControl, , blnOptionsRunAtStartup, % FileExist(A_Startup . "\" . lAppName . ".lnk") ? 1 : 0
@@ -2335,7 +2358,7 @@ GetDeepestFolderName(strPath)
 
 
 ;------------------------------------------------------------
-ValueInObject(strValue, obj)
+ValueIsInObject(strValue, obj)
 ;------------------------------------------------------------
 {
 	loop, % obj.MaxIndex()
