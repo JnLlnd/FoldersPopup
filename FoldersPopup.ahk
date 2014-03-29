@@ -14,6 +14,8 @@
 	* when blnDisplayMenuShortcuts reserve shortcut chars for app's items in menus
 	* add GetDeepestFolderName as function
 	* add ValueIsInObject function
+	* add language dropdown
+	* display full folder names in recent folders
 	
 	Version: FoldersPopup v1.2.3 (2014-02-25)
 	* Windows XP only: revert to pre-1.2.2 state due to a different behaviour of Winddows Explorer in XP
@@ -103,7 +105,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 1.5
+;@Ahk2Exe-SetVersion 1.5 ALPHA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -116,19 +118,21 @@
 #KeyHistory 0
 ListLines, Off
 SetWorkingDir, %A_ScriptDir%
-#Include %A_ScriptDir%\FoldersPopup_LANG.ahk
 
-strCurrentVersion := "1.5 ALPHA" ; "major.minor.bugs"
+Gosub, InitLanguageVariables
+
+global strAppName := "FoldersPopup"
+global strCurrentVersion := "1.5 ALPHA" ; "major.minor.bugs"
+global strAppVersion := "v" . strCurrentVersion
 global blnDiagMode := False
-global strAppVersion := L(lAppVersion, strCurrentVersion)
-global strDiagFile := A_ScriptDir . "\" . lAppName . "-DIAG.txt"
-global strIniFile := A_ScriptDir . "\" . lAppName . ".ini"
+global strDiagFile := A_ScriptDir . "\" . strAppName . "-DIAG.txt"
+global strIniFile := A_ScriptDir . "\" . strAppName . ".ini"
 ;@Ahk2Exe-IgnoreBegin
 ; Piece of code for developement phase only - won't be compiled
 if (A_ComputerName = "JEAN-PC") ; for my home PC
-	strIniFile := A_ScriptDir . "\" . lAppName . "-HOME.ini"
+	strIniFile := A_ScriptDir . "\" . strAppName . "-HOME.ini"
 else if InStr(A_ComputerName, "STIC") ; for my work hotkeys
-	strIniFile := A_ScriptDir . "\" . lAppName . "-WORK.ini"
+	strIniFile := A_ScriptDir . "\" . strAppName . "-WORK.ini"
 ; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
 
@@ -136,7 +140,6 @@ else if InStr(A_ComputerName, "STIC") ; for my work hotkeys
 Gosub, InitSystemArrays
 Gosub, LoadIniFile
 Gosub, InitLanguage
-Gosub, InitLanguageArrays
 Gosub, BuildSpecialFoldersMenu ; build even if blnDisplaySpecialFolders is false because it could become true
 Gosub, BuildRecentFoldersMenu
 Gosub, BuildFoldersMenu
@@ -147,16 +150,16 @@ Gosub, BuildTrayMenu
 if (blnDiagMode)
 	Gosub, InitDiagMode
 	
-IfExist, %A_Startup%\%lAppName%.lnk
+IfExist, %A_Startup%\%strAppName%.lnk
 {
-	FileDelete, %A_Startup%\%lAppName%.lnk
-	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%lAppName%.lnk
+	FileDelete, %A_Startup%\%strAppName%.lnk
+	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%strAppName%.lnk
 	Menu, Tray, Check, %lMenuRunAtStartup%
 }
 
 if (blnDisplayTrayTip)
-	TrayTip, % L(lTrayTipInstalledTitle, lAppName, strAppVersion)
-		, % L(lTrayTipInstalledDetail, lAppName
+	TrayTip, % L(lTrayTipInstalledTitle, strAppName, strAppVersion)
+		, % L(lTrayTipInstalledDetail, strAppName
 			, Hotkey2Text(strModifiers1, strMouseButton1, strOptionsKey1)
 			, Hotkey2Text(strModifiers3, strMouseButton3, strOptionsKey3)
 			, Hotkey2Text(strModifiers2, strMouseButton2, strOptionsKey2)
@@ -167,6 +170,7 @@ OnExit, ExitDiagMode
 
 return
 
+#Include %A_ScriptDir%\FoldersPopup_LANG.ahk
 
 
 ;============================================================
@@ -305,7 +309,7 @@ return
 InitLanguage:
 ;------------------------------------------------------------
 
-strLanguageFile := lAppName . "_LANG_" . strLanguageCode . ".txt"
+strLanguageFile := strAppName . "_LANG_" . strLanguageCode . ".txt"
 
 if FileExist(strLanguageFile)
 {
@@ -313,18 +317,15 @@ if FileExist(strLanguageFile)
 	Loop, Parse, strLanguageStrings, `n, `r
 	{
 		StringSplit, arrLanguageBit, A_LoopField, `t
-		%arrLanguageBit1% := arrLanguageBit2
+		if SubStr(arrLanguageBit1, 1, 1) = "l"
+			%arrLanguageBit1% := arrLanguageBit2
 		StringReplace, %arrLanguageBit1%, %arrLanguageBit1%, ``n, `n, All
 	}
 }
+else
+	strLanguageCode := "EN"
 
-return
-;------------------------------------------------------------
-
-
-;-----------------------------------------------------------
-InitLanguageArrays:
-;-----------------------------------------------------------
+; Init Language Arrays
 
 StringSplit, arrOptionsTitles, lOptionsTitles, |
 StringSplit, arrOptionsTitlesLong, lOptionsTitlesLong, |
@@ -346,7 +347,7 @@ return
 InitDiagMode:
 ;------------------------------------------------------------
 
-MsgBox, 52, %lAppName%, % L(lDiagModeCaution, lAppName, strDiagFile)
+MsgBox, 52, %strAppName%, % L(lDiagModeCaution, strAppName, strDiagFile)
 IfMsgBox, No
 {
 	blnDiagMode := False
@@ -358,7 +359,7 @@ if !FileExist(strDiagFile)
 {
 	FileAppend, DateTime`tType`tData`n, %strDiagFile%
 	Diag("DIAGNOSTIC FILE", lDiagModeIntro)
-	Diag("AppName", lAppName)
+	Diag("AppName", strAppName)
 	Diag("AppVersion", strAppVersion)
 	Diag("A_ScriptFullPath", A_ScriptFullPath)
 	Diag("A_AhkVersion", A_AhkVersion)
@@ -383,7 +384,7 @@ ExitDiagMode:
 ;-----------------------------------------------------------
 if (blnDiagMode)
 {
-	MsgBox, 52, %lAppName%, % L(lDiagModeExit, lAppName, strDiagFile) . "`n`n" . lDiagModeIntro . "`n`n" . lDiagModeSee
+	MsgBox, 52, %strAppName%, % L(lDiagModeExit, strAppName, strDiagFile) . "`n`n" . lDiagModeIntro . "`n`n" . lDiagModeSee
 	IfMsgBox, Yes
 		Run, %strDiagFile%
 }
@@ -704,9 +705,9 @@ return
 BuildGui:
 ;------------------------------------------------------------
 
-Gui, 1:New, , % L(lGuiTitle, lAppName, strAppVersion)
+Gui, 1:New, , % L(lGuiTitle, strAppName, strAppVersion)
 Gui, 1:Font, s12 w700, Verdana
-Gui, 1:Add, Text, x10 y10 w490 h25, %lAppName%
+Gui, 1:Add, Text, x10 y10 w490 h25, %strAppName%
 Gui, 1:Font, s8 w400, Arial
 Gui, 1:Add, Button, y10 x315 w45 h22 gGuiAbout, % L(lGuiAbout)
 Gui, 1:Font, s8 w400, Verdana
@@ -800,7 +801,7 @@ if (strNewPath = "")
 
 Loop
 {
-	InputBox strNewName, % L(lDialogEditFolderTitle, lAppName, strAppVersion)
+	InputBox strNewName, % L(lDialogEditFolderTitle, strAppName, strAppVersion)
 		, %lDialogEditFolderPrompt%, , 250, 120, , , , , %strCurrentName%
 	if (ErrorLevel)
 		return
@@ -935,7 +936,7 @@ Gui, 1:ListView, lvDialogsList
 intRowToEdit := LV_GetNext()
 LV_GetText(strCurrentDialog, intRowToEdit, 1)
 
-InputBox strNewDialog, % L(lDialogEditDialogTitle, lAppName, strAppVersion)
+InputBox strNewDialog, % L(lDialogEditDialogTitle, strAppName, strAppVersion)
 	, %lDialogEditDialogPrompt%, , 250, 120, , , , , %strCurrentDialog%
 if (ErrorLevel) or !StrLen(strNewDialog) or (strNewDialog = strCurrentDialog)
 	return
@@ -1013,7 +1014,7 @@ GuiControlGet, blnSaveEnabled, Enabled, btnGuiSave
 if (blnSaveEnabled)
 {
 	Gui, 1:+OwnDialogs
-	MsgBox, 36, % L(lDialogCancelTitle, lAppName, strAppVersion), %lDialogCancelPrompt%
+	MsgBox, 36, % L(lDialogCancelTitle, strAppName, strAppVersion), %lDialogCancelPrompt%
 	IfMsgBox, Yes
 	{
 		GuiControl, Disable, btnGuiSave
@@ -1088,7 +1089,7 @@ If StrLen(strCurrentFolder)
 else
 {
 	Gui, 1:+OwnDialogs 
-	MsgBox, 52, % L(lDialogAddFolderManuallyTitle, lAppName, strAppVersion), %lDialogAddFolderManuallyPrompt%
+	MsgBox, 52, % L(lDialogAddFolderManuallyTitle, strAppName, strAppVersion), %lDialogAddFolderManuallyPrompt%
 	IfMsgBox, Yes
 	{
 		Gosub, GuiShow
@@ -1111,9 +1112,9 @@ AddFolder(strPath, strType := "F")
 	Loop
 	{
 		if (strType = "S")
-			InputBox strName, % L(lDialogSubmenuNameTitle, lAppName, strAppVersion), %lDialogSubmenuNamePrompt%, , 250, 120
+			InputBox strName, % L(lDialogSubmenuNameTitle, strAppName, strAppVersion), %lDialogSubmenuNamePrompt%, , 250, 120
 		else
-			InputBox strName, % L(lDialogFolderNameTitle, lAppName, strAppVersion), %lDialogFolderNamePrompt%, , 250, 120, , , , , % GetDeepestFolderName(strPath)
+			InputBox strName, % L(lDialogFolderNameTitle, strAppName, strAppVersion), %lDialogFolderNamePrompt%, , 250, 120, , , , , % GetDeepestFolderName(strPath)
 		if (ErrorLevel) or !StrLen(strName)
 			return
 	} until FolderNameIsNew(strName) ; ### check do mot include lGuiSubmenuSeparator
@@ -1168,7 +1169,7 @@ AddDialog(strCurrentDialogTitle)
 	Gui, 1:+OwnDialogs
 	GuiControl, Focus, lvDialogsList
 
-	InputBox, strNewDialog, % L(lDialogAddDialogTitle, lAppName, strAppVersion), %lDialogAddDialogPrompt%, , 250, 150, , , , , %strCurrentDialogTitle%
+	InputBox, strNewDialog, % L(lDialogAddDialogTitle, strAppName, strAppVersion), %lDialogAddDialogPrompt%, , 250, 150, , , , , %strCurrentDialogTitle%
 	if (ErrorLevel) or !StrLen(strNewDialog)
 		return
 	
@@ -1199,10 +1200,10 @@ RunAtStartup:
 ; Startup code adapted from Avi Aryan Ryan in Clipjump
 
 Menu, Tray, Togglecheck, %lMenuRunAtStartup%
-IfExist, %A_Startup%\%lAppName%.lnk
-	FileDelete, %A_Startup%\%lAppName%.lnk
+IfExist, %A_Startup%\%strAppName%.lnk
+	FileDelete, %A_Startup%\%strAppName%.lnk
 else
-	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%lAppName%.lnk
+	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%strAppName%.lnk
 
 return
 ;------------------------------------------------------------
@@ -1216,11 +1217,11 @@ Gui, 1:+OwnDialogs
 if GetKeyState("Shift") and GetKeyState("LWin")
 {
 	IniWrite, 1, %strIniFile%, Global, Donator ; stop Freeware donation nagging
-	MsgBox, 64, %lAppName%, %lDonateThankyou%
+	MsgBox, 64, %strAppName%, %lDonateThankyou%
 }
 else if Time2Donate(intStartups, blnDonator)
 {
-	MsgBox, 36, % l(lDonateTitle, intStartups, lAppName), % l(lDonatePrompt, lAppName, intStartups)
+	MsgBox, 36, % l(lDonateTitle, intStartups, strAppName), % l(lDonatePrompt, strAppName, intStartups)
 	IfMsgBox, Yes
 		Gosub, ButtonOptionsDonate
 }
@@ -1237,7 +1238,7 @@ if FirstVsSecondIs(strLatestVersion, strCurrentVersion) = 1
 	Gui, 1:+OwnDialogs
 	SetTimer, ChangeButtonNames, 50
 
-	MsgBox, 3, % l(lUpdateTitle, lAppName), % l(lUpdatePrompt, lAppName, strCurrentVersion, strLatestVersion), 30
+	MsgBox, 3, % l(lUpdateTitle, strAppName), % l(lUpdatePrompt, strAppName, strCurrentVersion, strLatestVersion), 30
 	IfMsgBox, Yes
 		Run, http://code.jeanlalonde.ca/folderspopup/
 	IfMsgBox, No
@@ -1249,7 +1250,7 @@ if FirstVsSecondIs(strLatestVersion, strCurrentVersion) = 1
 }
 else if (A_ThisMenuItem = lMenuUpdate)
 {
-	MsgBox, 4, % l(lUpdateTitle, lAppName), % l(lUpdateYouHaveLatest, strAppVersion, lAppName), 30
+	MsgBox, 4, % l(lUpdateTitle, strAppName), % l(lUpdateYouHaveLatest, strAppVersion, strAppName), 30
 	IfMsgBox, Yes
 		Run, http://code.jeanlalonde.ca/folderspopup/
 }
@@ -1284,7 +1285,7 @@ FirstVsSecondIs(strFirstVersion, strSecondVersion)
 ChangeButtonNames: 
 ;------------------------------------------------------------
 
-IfWinNotExist, % l(lUpdateTitle, lAppName)
+IfWinNotExist, % l(lUpdateTitle, strAppName)
     return  ; Keep waiting.
 SetTimer, ChangeButtonNames, Off 
 WinActivate 
@@ -1335,11 +1336,11 @@ GuiAbout:
 
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
-Gui, 2:New, , % L(lAboutTitle, lAppName, strAppVersion)
+Gui, 2:New, , % L(lAboutTitle, strAppName, strAppVersion)
 Gui, 2:+Owner1
 str32or64 := A_PtrSize  * 8
 Gui, 2:Font, s12 w700, Verdana
-Gui, 2:Add, Link, y10 vlblAboutText1, % L(lAboutText1, lAppName, strAppVersion, str32or64)
+Gui, 2:Add, Link, y10 vlblAboutText1, % L(lAboutText1, strAppName, strAppVersion, str32or64)
 Gui, 2:Font, s8 w400, Verdana
 Gui, 2:Add, Link, , % L(lAboutText2)
 Gui, 2:Add, Link, , % L(lAboutText3, chr(169))
@@ -1362,11 +1363,11 @@ GuiHelp:
 
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
-Gui, 2:New, , % L(lHelpTitle, lAppName, strAppVersion)
+Gui, 2:New, , % L(lHelpTitle, strAppName, strAppVersion)
 Gui, 2:+Owner1
 intWidth := 450
 Gui, 2:Font, s12 w700, Verdana
-Gui, 2:Add, Text, x10 y10, %lAppName%
+Gui, 2:Add, Text, x10 y10, %strAppName%
 Gui, 2:Font, s10 w400, Verdana
 Gui, 2:Add, Link, x10 w%intWidth%, %lHelpTextLead%
 Gui, 2:Font, s8 w400, Verdana
@@ -1392,12 +1393,12 @@ intGui1WinID := WinExist("A")
 ;---------------------------------------
 ; Build Gui header
 Gui, 1:Submit, NoHide
-Gui, 2:New, , % L(lOptionsGuiTitle, lAppName, strAppVersion)
+Gui, 2:New, , % L(lOptionsGuiTitle, strAppName, strAppVersion)
 Gui, 2:+Owner1
 Gui, 2:Font, s10 w700, Verdana
-Gui, 2:Add, Text, x10 y10 w410 center, % L(lOptionsGuiTitle, lAppName)
+Gui, 2:Add, Text, x10 y10 w410 center, % L(lOptionsGuiTitle, strAppName)
 Gui, 2:Font
-Gui, 2:Add, Text, x10 y+10 w410 center, % L(lOptionsGuiIntro, lAppName)
+Gui, 2:Add, Text, x10 y+10 w410 center, % L(lOptionsGuiIntro, strAppName)
 
 ; Build Hotkey Gui lines
 loop, % arrIniKeyNames%0%
@@ -1421,7 +1422,7 @@ Gui, 2:Add, DropDownList, yp x+10 vdrpLanguage, %lOptionsLanguageLabels%
 GuiControl, ChooseString, drpLanguage, %strLanguageLabel%
 
 Gui, 2:Add, CheckBox, y+10 x40 vblnOptionsRunAtStartup, %lOptionsRunAtStartup%
-GuiControl, , blnOptionsRunAtStartup, % FileExist(A_Startup . "\" . lAppName . ".lnk") ? 1 : 0
+GuiControl, , blnOptionsRunAtStartup, % FileExist(A_Startup . "\" . strAppName . ".lnk") ? 1 : 0
 
 Gui, 2:Add, CheckBox, yp x250 vblnDisplayMenuShortcuts, %lOptionsDisplayMenuShortcuts%
 GuiControl, , blnDisplayMenuShortcuts, %blnDisplayMenuShortcuts%
@@ -1465,10 +1466,10 @@ StringReplace, intIndex, A_ThisLabel, ButtonOptionsChangeHotkey
 intGui2WinID := WinExist("A")
 
 Gui, 2:Submit, NoHide
-Gui, 3:New, , % L(lOptionsChangeHotkeyTitle, lAppName, strAppVersion)
+Gui, 3:New, , % L(lOptionsChangeHotkeyTitle, strAppName, strAppVersion)
 Gui, 3:+Owner2
 Gui, 3:Font, s10 w700, Verdana
-Gui, 3:Add, Text, x10 y10 w350 center, % L(lOptionsChangeHotkeyTitle, lAppName)
+Gui, 3:Add, Text, x10 y10 w350 center, % L(lOptionsChangeHotkeyTitle, strAppName)
 Gui, 3:Font
 
 intType := 3
@@ -1535,11 +1536,23 @@ ButtonOptionsSave:
 ;------------------------------------------------------------
 Gui, 2:Submit
 
-IfExist, %A_Startup%\%lAppName%.lnk
-	FileDelete, %A_Startup%\%lAppName%.lnk
+IfExist, %A_Startup%\%strAppName%.lnk
+	FileDelete, %A_Startup%\%strAppName%.lnk
 if (blnOptionsRunAtStartup)
-	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%lAppName%.lnk
+	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%strAppName%.lnk
 Menu, Tray, % blnOptionsRunAtStartup ? "Check" : "Uncheck", %lMenuRunAtStartup%
+
+strLanguageLabel := drpLanguage
+loop, %arrOptionsLanguageLabels0%
+	if (arrOptionsLanguageLabels%A_Index% = strLanguageLabel)
+		{
+			strLanguageCode := arrOptionsLanguageCodes%A_Index%
+			break
+		}
+IniWrite, %strLanguageCode%, %strIniFile%, Global, LanguageCode
+
+Gosub, InitLanguageVariables ; re-init initial EN variables as a backup for the selected language
+Gosub, InitLanguage
 
 IniWrite, %blnDisplayTrayTip%, %strIniFile%, Global, DisplayTrayTip
 IniWrite, %blnDisplaySpecialFolders%, %strIniFile%, Global, DisplaySpecialFolders
@@ -2322,7 +2335,7 @@ Oops(strMessage, objVariables*)
 ;------------------------------------------------
 {
 	Gui, 1:+OwnDialogs
-	MsgBox, 48, % L(lFuncOopsTitle, lAppName, strAppVersion), % L(strMessage, objVariables*)
+	MsgBox, 48, % L(lFuncOopsTitle, strAppName, strAppVersion), % L(strMessage, objVariables*)
 }
 ; ------------------------------------------------
 
