@@ -1,3 +1,5 @@
+!lOptionsDisplayRecentFolders	Display Recent Folders
+!lOptionsDisplaySwitchMenu	Display Switch Menu
 lAboutText1	~1~ ~2~ (~3~ bits)
 lAboutText2	DEUTCH FoldersPopup is written by Jean Lalonde using the`n<a href="http://ahkscript.org/">AutoHotkey</a> programming language.`n`nIcon by: <a href="http://www.visualpharm.com">Visual Pharm</a>`nAutoHotkey_L v1.1 sources: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.

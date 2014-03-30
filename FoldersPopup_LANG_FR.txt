@@ -99,7 +99,9 @@ lOptionsChangeHotkey	Change
 lOptionsChangeHotkeyTitle	Change hotkey - ~1~ ~2~
 lOptionsCtrl	Ctrl
 lOptionsDisplayMenuShortcuts	Display &Numeric Menu Shortcuts
+lOptionsDisplayRecentFolders	Display Recent Folders
 lOptionsDisplaySpecialFolders	Display S&pecial Folders
+lOptionsDisplaySwitchMenu	Display Switch Menu
 lOptionsGuiIntro	Define the mouse buttons and keyboard hotkeys that will trigger  . lAppName . .
 lOptionsGuiTitle	Options - ~1~ ~2~
 lOptionsKeyboard	Keyboard

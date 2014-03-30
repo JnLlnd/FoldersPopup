@@ -17,6 +17,7 @@
 	* add language dropdown
 	* display full folder names in recent folders
 	* add swith submenu to activate any other open Explorer
+	* add DisplayRecentFolders and DisplaySwitchMenu options in Options dialog box and ini file
 	
 	Version: FoldersPopup v1.2.3 (2014-02-25)
 	* Windows XP only: revert to pre-1.2.2 state due to a different behaviour of Winddows Explorer in XP
@@ -106,7 +107,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 1.5.1 ALPHA
+;@Ahk2Exe-SetVersion 1.5.2 ALPHA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -123,7 +124,7 @@ SetWorkingDir, %A_ScriptDir%
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "1.5.1 ALPHA" ; "major.minor.bugs"
+global strCurrentVersion := "1.5.2 ALPHA" ; "major.minor.bugs"
 global strAppVersion := "v" . strCurrentVersion
 global blnDiagMode := False
 global strDiagFile := A_ScriptDir . "\" . strAppName . "-DIAG.txt"
@@ -142,8 +143,8 @@ Gosub, InitSystemArrays
 Gosub, LoadIniFile
 Gosub, InitLanguage
 Gosub, BuildSpecialFoldersMenu ; build even if blnDisplaySpecialFolders is false because it could become true
-Gosub, BuildRecentFoldersMenu
-Gosub, BuildSwitchMenu
+Gosub, BuildRecentFoldersMenu ; build even if blnDisplayRecentFolders is false because it could become true
+Gosub, BuildSwitchMenu ; build even if blnDisplaySwitchMenu is false because it could become true
 Gosub, BuildFoldersMenu ; need to be initialized here - will be updated at each call to popup menu
 Gosub, BuildGUI
 Gosub, BuildAddDialogMenu
@@ -228,6 +229,8 @@ IfNotExist, %strIniFile%
 			SettingsHotkey=%strSettingsHotkeyDefault%
 			DisplayTrayTip=1
 			DisplaySpecialFolders=1
+			DisplayRecentFolders=1
+			DisplaySwitchMenu=1
 			DisplayMenuShortcuts=0
 			PopupFix=0
 			PopupFixPosition=20,20
@@ -255,6 +258,8 @@ Gosub, LoadIniHotkeys
 
 IniRead, blnDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip, 1
 IniRead, blnDisplaySpecialFolders, %strIniFile%, Global, DisplaySpecialFolders, 1
+IniRead, blnDisplayRecentFolders, %strIniFile%, Global, DisplayRecentFolders, 1
+IniRead, blnDisplaySwitchMenu, %strIniFile%, Global, DisplaySwitchMenu, 1
 IniRead, blnPopupFix, %strIniFile%, Global, PopupFix, 0
 IniRead, strPopupFixPosition, %strIniFile%, Global, PopupFixPosition, 20,20
 StringSplit, arrPopupFixPosition, strPopupFixPosition, `,
@@ -422,16 +427,6 @@ blnMouse := InStr(A_ThisLabel, "Mouse")
 blnNewWindow := false
 Gosub, SetMenuPosition
 
-Gosub, BuildRecentFoldersMenu
-Menu, menuFolders
-	, % (intRecentFoldersIndex ? "Enable" : "Disable")
-	, %lMenuRecentFolders%
-
-Gosub, BuildSwitchMenu
-Menu, menuFolders
-	, % (intExplorersIndex ? "Enable" : "Disable")
-	, %lMenuSwitchExplorer%
-
 ; Can't find how to navigate a dialog box to My Computer or Network Neighborhood... is this is feasible?
 if (blnDisplaySpecialFolders)
 {
@@ -449,6 +444,22 @@ if (blnDisplaySpecialFolders)
 	Menu, menuSpecialFolders
 		, % WindowIsConsole(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
 		, %lMenuRecycleBin%
+}
+
+if (blnDisplayRecentFolders)
+{
+	Gosub, BuildRecentFoldersMenu
+	Menu, menuFolders
+		, % (intRecentFoldersIndex ? "Enable" : "Disable")
+		, %lMenuRecentFolders%
+}
+
+if (blnDisplaySwitchMenu)
+{
+	Gosub, BuildSwitchMenu
+	Menu, menuFolders
+		, % (intExplorersIndex ? "Enable" : "Disable")
+		, %lMenuSwitchExplorer%
 }
 
 if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass) or DialogIsSupported(strTargetWinId))
@@ -481,16 +492,6 @@ blnMouse := InStr(A_ThisLabel, "Mouse")
 blnNewWindow := true
 Gosub, SetMenuPosition
 
-Gosub, BuildRecentFoldersMenu
-Menu, menuFolders
-	, % (intRecentFoldersIndex ? "Enable" : "Disable")
-	, %lMenuRecentFolders%
-
-Gosub, BuildSwitchMenu
-Menu, menuFolders
-	, % (intExplorersIndex ? "Enable" : "Disable")
-	, %lMenuSwitchExplorer%
-
 WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
 
 if (blnDiagMode)
@@ -510,6 +511,22 @@ if (blnDisplaySpecialFolders)
 	Menu, menuSpecialFolders, Enable, %lMenuNetworkNeighborhood%
 	Menu, menuSpecialFolders, Enable, %lMenuControlPanel%
 	Menu, menuSpecialFolders, Enable, %lMenuRecycleBin%
+}
+
+if (blnDisplayRecentFolders)
+{
+	Gosub, BuildRecentFoldersMenu
+	Menu, menuFolders
+		, % (intRecentFoldersIndex ? "Enable" : "Disable")
+		, %lMenuRecentFolders%
+}
+
+if (blnDisplaySwitchMenu)
+{
+	Gosub, BuildSwitchMenu
+	Menu, menuFolders
+		, % (intExplorersIndex ? "Enable" : "Disable")
+		, %lMenuSwitchExplorer%
 }
 
 ; Enable "Add This Folder" only if the target window is an Explorer (tested on WIN_XP and WIN_7)
@@ -705,13 +722,14 @@ Loop, % arrFolders.MaxIndex()
 	else
 		Menu, menuFolders, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, true) . " " : "") . arrFolders[A_Index].Name, OpenFavorite
 }
-if (blnDisplaySpecialFolders)
-{
+if (blnDisplaySpecialFolders or blnDisplayRecentFolders or blnDisplaySwitchMenu)
 	Menu, menuFolders, Add
+if (blnDisplaySpecialFolders)
 	Menu, menuFolders, Add, %lMenuSpecialFolders%, :menuSpecialFolders
+if (blnDisplayRecentFolders)
 	Menu, menuFolders, Add, %lMenuRecentFolders%, :menuRecentFolders
+if (blnDisplaySwitchMenu)
 	Menu, menuFolders, Add, %lMenuSwitchExplorer%, :menuSwitchExplorer
-}
 
 Menu, menuFolders, Add
 Menu, menuFolders, Add, %lMenuSettings%, GuiShow
@@ -1475,9 +1493,15 @@ Gui, 2:Add, CheckBox, y+10 x40 vblnDisplaySpecialFolders, %lOptionsDisplaySpecia
 GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
 
 Gui, 2:Add, Text, % "yp x268 vlblPopupFixPositionX " . (blnPopupFix ? "" : "hidden"), %lOptionsPopupFixPositionX%
-Gui, 2:Add, Edit, % "yp x+5 w36 vstrPopupFixPositionX center " . (blnPopupFix ? "" : "hidden"), %arrPopupFixPosition1%
+Gui, 2:Add, Edit, % "yp x+5 w36 h15 vstrPopupFixPositionX center " . (blnPopupFix ? "" : "hidden"), %arrPopupFixPosition1%
 Gui, 2:Add, Text, % "yp x+5 vlblPopupFixPositionY " . (blnPopupFix ? "" : "hidden"), %lOptionsPopupFixPositionY%
-Gui, 2:Add, Edit, % "yp x+5 w36 vstrPopupFixPositionY center " . (blnPopupFix ? "" : "hidden"), %arrPopupFixPosition2%
+Gui, 2:Add, Edit, % "yp x+5 w36 h15 vstrPopupFixPositionY center " . (blnPopupFix ? "" : "hidden"), %arrPopupFixPosition2%
+
+Gui, 2:Add, CheckBox, y+10 x40 vblnDisplayRecentFolders, %lOptionsDisplayRecentFolders%
+GuiControl, , blnDisplayRecentFolders, %blnDisplayRecentFolders%
+
+Gui, 2:Add, CheckBox, y+10 x40 vblnDisplaySwitchMenu, %lOptionsDisplaySwitchMenu%
+GuiControl, , blnDisplaySwitchMenu, %blnDisplaySwitchMenu%
 
 ; Build Gui footer
 Gui, 2:Add, Button, y+20 x180 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
@@ -1594,6 +1618,8 @@ Gosub, InitLanguage
 
 IniWrite, %blnDisplayTrayTip%, %strIniFile%, Global, DisplayTrayTip
 IniWrite, %blnDisplaySpecialFolders%, %strIniFile%, Global, DisplaySpecialFolders
+IniWrite, %blnDisplayRecentFolders%, %strIniFile%, Global, DisplayRecentFolders
+IniWrite, %blnDisplaySwitchMenu%, %strIniFile%, Global, DisplaySwitchMenu
 IniWrite, %blnPopupFix%, %strIniFile%, Global, PopupFix
 IniWrite, %blnDisplayMenuShortcuts%, %strIniFile%, Global, DisplayMenuShortcuts
 
