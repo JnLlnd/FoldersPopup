@@ -145,8 +145,8 @@ Gosub, InitLanguage
 Gosub, BuildSpecialFoldersMenu ; build even if blnDisplaySpecialFolders is false because it could become true
 Gosub, BuildRecentFoldersMenu ; build even if blnDisplayRecentFolders is false because it could become true
 Gosub, BuildSwitchMenu ; build even if blnDisplaySwitchMenu is false because it could become true
-Gosub, BuildFoldersMenu ; need to be initialized here - will be updated at each call to popup menu
-Gosub, BuildGUI
+Gosub, BuildFoldersMenus ; need to be initialized here - will be updated at each call to popup menu
+Gosub, BuildGui
 Gosub, BuildAddDialogMenu
 Gosub, Check4Update
 Gosub, BuildTrayMenu
@@ -209,8 +209,11 @@ return
 LoadIniFile:
 ;-----------------------------------------------------------
 
-arrFolders := Object() ; reinit if already exist
-arrDialogs := Object() ; reinit if already exist
+; reinit after Settings save if already exist
+Global arrMenus := Object() ; list of menus (Main and submenus)
+arrMainMenu := Object() ; array of folders of the Main menu
+arrMenus.Insert("Main", arrMainMenu) ; "Main" is the main menu internal name, use lMainMenuMane for display name
+arrDialogs := Object() ; list of supported dialog boxes
 
 strPopupHotkeyMouseDefault := arrHotkeyDefaults1 ; "MButton"
 strPopupHotkeyMouseNewDefault := arrHotkeyDefaults2 ; "+MButton"
@@ -277,11 +280,18 @@ Loop
 	if (strIniLine = "ERROR")
 		Break
 	StringSplit, arrThisObject, strIniLine, |
-	objFolder := Object()
-	objFolder.Name := arrThisObject1
-	objFolder.Path := arrThisObject2
-	arrFolders.Insert(objFolder)
+	objFolder := Object() ; new menu item
+	objFolder.Menu := arrThisObject1 ; parent menu of this menu item
+	objFolder.Name := arrThisObject2 ; display name of this menu item
+	objFolder.Path := arrThisObject3 ; path for this menu item
+	if !StrLen(objFolder.Path) ; this is a new submenu
+	{
+		arrSubMenu := Object() ; create submenu
+		arrMenus.Insert(objFolder.Name, arrSubMenu) ; add this submenu to the array of menus
+	}
+	arrMenus[objFolder.Menu].Insert(objFolder) ; add this menu item to the array of this menu
 }
+
 Loop
 {
 	IniRead, strIniLine, %strIniFile%, Dialogs, Dialog%A_Index%
@@ -449,7 +459,7 @@ if (blnDisplaySpecialFolders)
 if (blnDisplayRecentFolders)
 {
 	Gosub, BuildRecentFoldersMenu
-	Menu, menuFolders
+	Menu, Main
 		, % (intRecentFoldersIndex ? "Enable" : "Disable")
 		, %lMenuRecentFolders%
 }
@@ -457,7 +467,7 @@ if (blnDisplayRecentFolders)
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
-	Menu, menuFolders
+	Menu, Main
 		, % (intExplorersIndex ? "Enable" : "Disable")
 		, %lMenuSwitchExplorer%
 }
@@ -468,10 +478,10 @@ if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or Win
 	; Other tests shown that WIN_8 behaves like WIN_7. So, I assume WIN_8 to work. If someone could confirm (until I can test it myself)?
 	if (blnDiagMode)
 		Diag("ShowMenu", "Folders Menu " . (WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT") . " Add this folder")
-	Menu, menuFolders
+	Menu, Main
 		, % WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 		, %lMenuAddThisFolder%
-	Menu, menuFolders, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
+	Menu, Main, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
 }
 else
 {
@@ -516,7 +526,7 @@ if (blnDisplaySpecialFolders)
 if (blnDisplayRecentFolders)
 {
 	Gosub, BuildRecentFoldersMenu
-	Menu, menuFolders
+	Menu, Main
 		, % (intRecentFoldersIndex ? "Enable" : "Disable")
 		, %lMenuRecentFolders%
 }
@@ -524,7 +534,7 @@ if (blnDisplayRecentFolders)
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
-	Menu, menuFolders
+	Menu, Main
 		, % (intExplorersIndex ? "Enable" : "Disable")
 		, %lMenuSwitchExplorer%
 }
@@ -532,10 +542,10 @@ if (blnDisplaySwitchMenu)
 ; Enable "Add This Folder" only if the target window is an Explorer (tested on WIN_XP and WIN_7)
 ; or a dialog box under WIN_7 (does not work under WIN_XP).
 ; Other tests shown that WIN_8 behaves like WIN_7.
-Menu, menuFolders
+Menu, Main
 	, % WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 	, %lMenuAddThisFolder%
-Menu, menuFolders, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
+Menu, Main, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
 
 return
 ;------------------------------------------------------------
@@ -708,35 +718,54 @@ return
 
 
 ;------------------------------------------------------------
-BuildFoldersMenu:
+BuildFoldersMenus:
 ;------------------------------------------------------------
 
-Menu, menuFolders, Add
-Menu, menuFolders, DeleteAll
+Menu, Main, Add
+Menu, Main, DeleteAll
 intShortcut := 0
 
-Loop, % arrFolders.MaxIndex()
-{
-	if (arrFolders[A_Index].Name = lMenuSeparator)
-		Menu, menuFolders, Add
-	else
-		Menu, menuFolders, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, true) . " " : "") . arrFolders[A_Index].Name, OpenFavorite
-}
-if (blnDisplaySpecialFolders or blnDisplayRecentFolders or blnDisplaySwitchMenu)
-	Menu, menuFolders, Add
-if (blnDisplaySpecialFolders)
-	Menu, menuFolders, Add, %lMenuSpecialFolders%, :menuSpecialFolders
-if (blnDisplayRecentFolders)
-	Menu, menuFolders, Add, %lMenuRecentFolders%, :menuRecentFolders
-if (blnDisplaySwitchMenu)
-	Menu, menuFolders, Add, %lMenuSwitchExplorer%, :menuSwitchExplorer
+BuildOneMenu(arrMenus["Main"]) ; recursive function
 
-Menu, menuFolders, Add
-Menu, menuFolders, Add, %lMenuSettings%, GuiShow
-Menu, menuFolders, Default, %lMenuSettings%
-Menu, menuFolders, Add, %lMenuAddThisFolder%, AddThisFolder
+if (blnDisplaySpecialFolders or blnDisplayRecentFolders or blnDisplaySwitchMenu)
+	Menu, Main, Add
+if (blnDisplaySpecialFolders)
+	Menu, Main, Add, %lMenuSpecialFolders%, :menuSpecialFolders
+if (blnDisplayRecentFolders)
+	Menu, Main, Add, %lMenuRecentFolders%, :menuRecentFolders
+if (blnDisplaySwitchMenu)
+	Menu, Main, Add, %lMenuSwitchExplorer%, :menuSwitchExplorer
+
+Menu, Main, Add
+Menu, Main, Add, %lMenuSettings%, GuiShow
+Menu, Main, Default, %lMenuSettings%
+Menu, Main, Add, %lMenuAddThisFolder%, AddThisFolder
 
 return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+BuildOneMenu(arrMenu)
+; recursive function
+;------------------------------------------------------------
+{
+	global blnDisplayMenuShortcuts
+	global intShortcut
+	
+	Loop, % arrMenu.MaxIndex()
+		if !StrLen(arrMenu[A_Index].Path) ; this is a submenu
+		{
+			strSubMenuName := arrMenu[A_Index].Name
+			strSubMenuParent := arrMenu[A_Index].Menu
+			BuildOneMenu(arrMenus[strSubMenuName]) ; recursive call
+			Menu, %strSubMenuParent%, Add, % arrMenu[A_Index].Name, % ":" . arrMenu[A_Index].Name
+		}
+		else if (arrMenu[A_Index].Name = lMenuSeparator)
+			Menu, arrMenu[A_Index].Menu , Add
+		else
+			Menu, % arrMenu[A_Index].Menu , Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, true) . " " : "") . arrMenu[A_Index].Name, OpenFavorite
+}
 ;------------------------------------------------------------
 
 
@@ -1042,7 +1071,7 @@ Loop % LV_GetCount()
 }
 
 Gosub, LoadIniFile
-Gosub, BuildFoldersMenu
+Gosub, BuildFoldersMenus
 GuiControl, Disable, %lGuiSave%
 GuiControl, , %lGuiCancel%, %lGuiClose%
 Gosub, GuiCancel
@@ -1627,9 +1656,13 @@ IniWrite, %strPopupFixPositionX%`,%strPopupFixPositionY%, %strIniFile%, Global, 
 arrPopupFixPosition1 := strPopupFixPositionX
 arrPopupFixPosition2 := strPopupFixPositionY
 
-; Rebuild Folders menu w/ or w/o Special Folders and Shortcuts
-Menu, menuFolders, Delete
-Gosub, BuildFoldersMenu
+; Rebuild Folders menus w/ or w/o optional folders and shortcuts
+for strMenuName, arrMenu in arrMenus
+{
+	Menu, %strMenuName%, Delete
+	arrMenu := ; free object's memory
+}
+Gosub, BuildFoldersMenus
 
 Goto, 2GuiClose
 
@@ -1788,12 +1821,12 @@ Gui, 1:ListView, lvDialogsList
 LV_Delete()
 
 Gui, 1:ListView, lvFoldersList
-Loop, % arrFolders.MaxIndex()
+Loop, % arrMenus[lMainMenuMane].MaxIndex()
 {
-	If !StrLen(arrFolders[A_Index].Name)
+	If !StrLen(arrMenus[lMainMenuMane][A_Index].Name)
 		LV_Add()
 	else
-		LV_Add(, arrFolders[A_Index].Name, arrFolders[A_Index].Path)
+		LV_Add(, arrMenus[lMainMenuMane][A_Index].Name, arrMenus[lMainMenuMane][A_Index].Path)
 }
 LV_Modify(1, "Select Focus")
 LV_ModifyCol(1, "AutoHdr")
@@ -1821,7 +1854,7 @@ if (blnDisplayMenuShortcuts)
 	StringTrimLeft, strThisMenu, A_ThisMenuItem, 3 ; remove "&1 " from menu item
 else
 	strThisMenu := A_ThisMenuItem
-strPath := GetPathFor(strThisMenu)
+strPath := GetPathFor(A_ThisMenu, strThisMenu)
 
 if (blnDiagMode)
 {
@@ -2010,14 +2043,14 @@ WinUnderMouseID()
 
 
 ;------------------------------------------------------------
-GetPathFor(strName)
+GetPathFor(strMenu, strName)
 ;------------------------------------------------------------
 {
 	global
 	
-	Loop, % arrFolders.MaxIndex()
-		if (strName = arrFolders[A_Index].Name)
-			return arrFolders[A_Index].Path
+	Loop, % arrMenus[strMenu].MaxIndex()
+		if (strName = arrMenus[strMenu][A_Index].Name)
+			return arrMenus[strMenu][A_Index].Path
 }
 ;------------------------------------------------------------
 

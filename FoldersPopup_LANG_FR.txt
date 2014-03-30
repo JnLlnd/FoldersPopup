@@ -64,6 +64,7 @@ lHelpText6	Support on FoldersPopup is available at`n<a href="http://www.code.jea
 lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware!
 lHelpTextLead	FoldersPopup lets you move like a breeze between your frequently used folders!
 lHelpTitle	Help - ~1~ ~2~
+lMainMenuMane	Main
 lMenuAbout	A&bout
 lMenuAddThisDialog	&Add This Dialog Box to the supported list
 lMenuAddThisFolder	&Add This Folder

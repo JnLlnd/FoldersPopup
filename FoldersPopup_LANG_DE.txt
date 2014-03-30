@@ -1,3 +1,4 @@
+!lMainMenuMane	Main
 !lOptionsDisplayRecentFolders	Display Recent Folders
 !lOptionsDisplaySwitchMenu	Display Switch Menu
 lAboutText1	~1~ ~2~ (~3~ bits)
