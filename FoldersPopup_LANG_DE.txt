@@ -103,9 +103,9 @@ lOptionsDisplaySpecialFolders	Display S&pecial Folders
 lOptionsGuiIntro	Define the mouse buttons and keyboard hotkeys that will trigger  . lAppName . .
 lOptionsGuiTitle	Options - ~1~ ~2~
 lOptionsKeyboard	Keyboard
-lOptionsLanguage	Langue
+lOptionsLanguage	Language
 lOptionsLanguageCodes	EN|FR|DE
-lOptionsLanguageLabels	Anglais|Français|Allemand
+lOptionsLanguageLabels	English|French|German
 lOptionsMouse	Mouse
 lOptionsNoKeyOrMouseSpecified	No Key or Mouse Button specified. The existing ~1~ hotkey is unchanged.
 lOptionsOtherOptions	Other Options

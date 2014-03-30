@@ -106,7 +106,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 1.5 ALPHA
+;@Ahk2Exe-SetVersion 1.5.1 ALPHA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -123,7 +123,7 @@ SetWorkingDir, %A_ScriptDir%
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "1.5 ALPHA" ; "major.minor.bugs"
+global strCurrentVersion := "1.5.1 ALPHA" ; "major.minor.bugs"
 global strAppVersion := "v" . strCurrentVersion
 global blnDiagMode := False
 global strDiagFile := A_ScriptDir . "\" . strAppName . "-DIAG.txt"
@@ -750,8 +750,10 @@ Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, Button, x+10 w75 gGuiHelp, %lGuiHelp%
 Gui, 1:Add, Text, x10 y30, %lAppTagline%
 
+/*
 Gui, 1:Add, Text, x10, %lGuiSubmenuDropdownLabel%
 Gui, 1:Add, DropDownList, x+10 yp vGuiSubmenuDropdown
+*/
 
 Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, ListView, x10 w350 h220 Count32 -Multi NoSortHdr LV0x10 vlvFoldersList, %lGuiLvFoldersHeader%
