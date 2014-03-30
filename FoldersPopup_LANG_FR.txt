@@ -78,11 +78,12 @@ lMenuNetworkNeighborhood	&Network Neighborhood
 lMenuPictures	&Pictures
 lMenuRecentFolders	&Recent folders
 lMenuRecycleBin	&Recycle Bin
-lMenuReservedShortcuts	ARPS
+lMenuReservedShortcuts	ARPSW
 lMenuRunAtStartup	&Run at Startup
 lMenuSeparator	----------------
 lMenuSettings	Folders &Popup Settings
 lMenuSpecialFolders	&Special Folders
+lMenuSwitchExplorer	S&witch
 lMenuUpdate	Check for &update
 lNavigateFileError	An error occured while opening the folder:`n~1~.
 lNavigateSpecialError	An error occured while opening the special folder #~1~.

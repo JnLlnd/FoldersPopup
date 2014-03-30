@@ -16,6 +16,7 @@
 	* add ValueIsInObject function
 	* add language dropdown
 	* display full folder names in recent folders
+	* add swith submenu to activate any other open Explorer
 	
 	Version: FoldersPopup v1.2.3 (2014-02-25)
 	* Windows XP only: revert to pre-1.2.2 state due to a different behaviour of Winddows Explorer in XP
@@ -142,7 +143,8 @@ Gosub, LoadIniFile
 Gosub, InitLanguage
 Gosub, BuildSpecialFoldersMenu ; build even if blnDisplaySpecialFolders is false because it could become true
 Gosub, BuildRecentFoldersMenu
-Gosub, BuildFoldersMenu
+Gosub, BuildSwitchMenu
+Gosub, BuildFoldersMenu ; need to be initialized here - will be updated at each call to popup menu
 Gosub, BuildGUI
 Gosub, BuildAddDialogMenu
 Gosub, Check4Update
@@ -419,7 +421,16 @@ If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass)
 blnMouse := InStr(A_ThisLabel, "Mouse")
 blnNewWindow := false
 Gosub, SetMenuPosition
+
 Gosub, BuildRecentFoldersMenu
+Menu, menuFolders
+	, % (intRecentFoldersIndex ? "Enable" : "Disable")
+	, %lMenuRecentFolders%
+
+Gosub, BuildSwitchMenu
+Menu, menuFolders
+	, % (intExplorersIndex ? "Enable" : "Disable")
+	, %lMenuSwitchExplorer%
 
 ; Can't find how to navigate a dialog box to My Computer or Network Neighborhood... is this is feasible?
 if (blnDisplaySpecialFolders)
@@ -469,7 +480,16 @@ PopupMenuNewWindowKeyboard: ; default +#k
 blnMouse := InStr(A_ThisLabel, "Mouse")
 blnNewWindow := true
 Gosub, SetMenuPosition
+
 Gosub, BuildRecentFoldersMenu
+Menu, menuFolders
+	, % (intRecentFoldersIndex ? "Enable" : "Disable")
+	, %lMenuRecentFolders%
+
+Gosub, BuildSwitchMenu
+Menu, menuFolders
+	, % (intExplorersIndex ? "Enable" : "Disable")
+	, %lMenuSwitchExplorer%
 
 WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
 
@@ -569,6 +589,7 @@ return
 ;------------------------------------------------------------
 BuildSpecialFoldersMenu:
 ;------------------------------------------------------------
+intShortcut := 0
 
 Menu, menuSpecialFolders, Add, %lMenuDesktop%, OpenSpecialFolder
 Menu, menuSpecialFolders, Add, %lMenuDocuments%, OpenSpecialFolder
@@ -592,7 +613,7 @@ Menu, menuRecentFolders, Add
 Menu, menuRecentFolders, DeleteAll
 
 objRecentFolders := Object()
-objRecentFoldersIndex := 0
+intRecentFoldersIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
 
 strRecentsFolder := A_AppData . "\Microsoft\Windows\Recent"
 strDirList := ""
@@ -620,21 +641,48 @@ Loop, parse, strDirList, `n
 
 	if !ValueIsInObject(strOutTarget, objRecentFolders)
 	{
-		objRecentFoldersIndex := objRecentFoldersIndex + 1
-		objRecentFolders.Insert(objRecentFoldersIndex, strOutTarget)
+		intRecentFoldersIndex := intRecentFoldersIndex + 1
+		objRecentFolders.Insert(intRecentFoldersIndex, strOutTarget)
 		
-		if (blnDisplayMenuShortcuts)
-		{
-			intShortcut := intShortcut + 1
-			if (intShortcut < 10)
-				strShortcut := intShortcut ; 1 .. 9
-			else
-				strShortcut := Chr(intShortcut + 55) ; Chr(10 + 55) = "A" .. Chr(35 + 55) = "Z"
-		}
-		Menu, menuRecentFolders, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . strShortcut . " " : "") . strOutTarget, OpenRecentFolder
+		Menu, menuRecentFolders, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strOutTarget, OpenRecentFolder
 		
-		if (objRecentFoldersIndex >= intRecentFolders)
+		if (intRecentFoldersIndex >= intRecentFolders)
 			break
+	}
+}
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+BuildSwitchMenu:
+;------------------------------------------------------------
+
+Menu, menuSwitchExplorer, Add
+Menu, menuSwitchExplorer, DeleteAll
+
+objExplorers := Object()
+intExplorersIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
+intShortcut := 0
+
+For pExp in ComObjCreate("Shell.Application").Windows
+{
+	strType := ""
+	try
+		strType := pExp.Type
+	if !StrLen(strType)
+	{
+		intExplorersIndex := intExplorersIndex + 1
+		objExplorers.Insert(intExplorersIndex, pExp.HWND)
+		
+		strPath :=  UriDecode(pExp.LocationURL)
+		StringReplace, strPath, strPath, file:///
+		StringReplace, strPath, strPath, /, \, A
+		if !StrLen(strPath)
+			strPath := pExp.LocationName
+
+		Menu, menuSwitchExplorer, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strPath, SwitchExplorer
 	}
 }
 
@@ -655,28 +703,16 @@ Loop, % arrFolders.MaxIndex()
 	if (arrFolders[A_Index].Name = lMenuSeparator)
 		Menu, menuFolders, Add
 	else
-	{
-		if (blnDisplayMenuShortcuts)
-		{
-			intShortcut := intShortcut + 1
-			if (intShortcut < 10)
-				strShortcut := intShortcut ; 1 .. 9
-			else
-			{
-				while InStr(lMenuReservedShortcuts, Chr(intShortcut + 55))
-					intShortcut := intShortcut + 1
-				strShortcut := Chr(intShortcut + 55) ; Chr(10 + 55) = "A" .. Chr(35 + 55) = "Z"
-			}
-		}
-		Menu, menuFolders, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . strShortcut . " " : "") . arrFolders[A_Index].Name, OpenFavorite
-	}
+		Menu, menuFolders, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, true) . " " : "") . arrFolders[A_Index].Name, OpenFavorite
 }
 if (blnDisplaySpecialFolders)
 {
 	Menu, menuFolders, Add
 	Menu, menuFolders, Add, %lMenuSpecialFolders%, :menuSpecialFolders
 	Menu, menuFolders, Add, %lMenuRecentFolders%, :menuRecentFolders
+	Menu, menuFolders, Add, %lMenuSwitchExplorer%, :menuSwitchExplorer
 }
+
 Menu, menuFolders, Add
 Menu, menuFolders, Add, %lMenuSettings%, GuiShow
 Menu, menuFolders, Default, %lMenuSettings%
@@ -1907,6 +1943,16 @@ return
 
 
 ;------------------------------------------------------------
+SwitchExplorer:
+;------------------------------------------------------------
+
+WinActivate, % "ahk_id " . objExplorers[A_ThisMenuItemPos]
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 WinGetClassA()
 ;------------------------------------------------------------
 {
@@ -2399,3 +2445,34 @@ Diag(strName, strData)
 ;------------------------------------------------
 
 
+;------------------------------------------------------------
+NextMenuShortcut(ByRef intShortcut, blnMainMenu)
+;------------------------------------------------------------
+{
+	if (intShortcut < 10)
+		strShortcut := intShortcut ; 0 .. 9
+	else
+	{
+		while (blnMainMenu and InStr(lMenuReservedShortcuts, Chr(intShortcut + 55)))
+			intShortcut := intShortcut + 1
+		strShortcut := Chr(intShortcut + 55) ; Chr(10 + 55) = "A" .. Chr(35 + 55) = "Z"
+	}
+	intShortcut := intShortcut + 1
+	return strShortcut
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------
+UriDecode(str)
+; by polyethene
+; http://www.autohotkey.com/board/topic/17367-url-encoding-and-decoding-of-special-characters/?p=112822
+;------------------------------------------------
+{
+	Loop
+		If RegExMatch(str, "i)(?<=%)[\da-f]{1,2}", hex)
+			StringReplace, str, str, `%%hex%, % Chr("0x" . hex), All
+		Else
+			Break
+	return str
+}
