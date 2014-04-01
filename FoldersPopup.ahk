@@ -797,10 +797,8 @@ Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, Button, x+10 w75 gGuiHelp, %lGuiHelp%
 Gui, 1:Add, Text, x10 y30, %lAppTagline%
 
-/*
 Gui, 1:Add, Text, x10, %lGuiSubmenuDropdownLabel%
-Gui, 1:Add, DropDownList, x+10 yp vGuiSubmenuDropdown
-*/
+Gui, 1:Add, DropDownList, x+10 yp vdrpMenusList gGuiMenusListChanged
 
 Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, ListView, x10 w350 h220 Count32 -Multi NoSortHdr LV0x10 vlvFoldersList, %lGuiLvFoldersHeader%
@@ -821,6 +819,14 @@ Gui, 1:Add, Button, w75 gGuiEditDialog, %lGuiEditDialog%
 Gui, 1:Add, Button, x100 w75 r1 Disabled Default vbtnGuiSave gGuiSave, %lGuiSave%
 Gui, 1:Add, Button, x+40 w75 r1 vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur
 Gui, 1:Add, Button, x+80 w75 gGuiOptions, %lGuiOptions%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiMenusListChanged:
+;------------------------------------------------------------
 
 return
 ;------------------------------------------------------------
@@ -1084,6 +1090,7 @@ return
 GuiShow:
 ;------------------------------------------------------------
 
+strCurrentMenu := "Main"
 Gosub, LoadSettingsToGui
 Gui, 1:Show, w455 ; h455
 
@@ -1815,18 +1822,23 @@ GuiControlGet, blnSaveEnabled, Enabled, %lGuiSave%
 if (blnSaveEnabled)
 	return
 
+strMenusList := "|"
+for strMenuName, arrMenu in arrMenus
+	strMenusList := strMenusList . (strMenuName = strCurrentMenu ? lMainMenuMane . "|" : strMenuName) . "|"
+GuiControl, , drpMenusList, %strMenusList%
+
 Gui, 1:ListView, lvFoldersList
 LV_Delete()
 Gui, 1:ListView, lvDialogsList
 LV_Delete()
 
 Gui, 1:ListView, lvFoldersList
-Loop, % arrMenus[lMainMenuMane].MaxIndex()
+Loop, % arrMenus[strCurrentMenu].MaxIndex()
 {
-	If !StrLen(arrMenus[lMainMenuMane][A_Index].Name)
+	If !StrLen(arrMenus[strCurrentMenu][A_Index].Name)
 		LV_Add()
 	else
-		LV_Add(, arrMenus[lMainMenuMane][A_Index].Name, arrMenus[lMainMenuMane][A_Index].Path)
+		LV_Add(, arrMenus[strCurrentMenu][A_Index].Name, (StrLen(arrMenus[strCurrentMenu][A_Index].Path) ? arrMenus[strCurrentMenu][A_Index].Path : ">"))
 }
 LV_Modify(1, "Select Focus")
 LV_ModifyCol(1, "AutoHdr")
