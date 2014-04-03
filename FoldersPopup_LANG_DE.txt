@@ -1,3 +1,4 @@
+!lGuiSubmenuDropdownLabel	Menu to edit:
 !lMainMenuMane	Main
 !lOptionsDisplayRecentFolders	Display Recent Folders
 !lOptionsDisplaySwitchMenu	Display Switch Menu
@@ -55,7 +56,6 @@ lGuiRemoveDialog	Re&move
 lGuiRemoveFolder	&Remove
 lGuiSave	&Save
 lGuiSeparator	Se&parator
-lGuiSubmenuDropdownLabel	Menu or submenu:
 lGuiSubmenuSeparator	>
 lGuiTitle	Settings - ~1~ ~2~
 lHelpText1	At its launch, FoldersPopup add an icon in the System Tray and await your orders. When you need to change folder in Windows Explorer or in a file dialog box, just click the Middle mouse button or press Windows-K and, in the popup menu, select the desired folder. FoldersPopup will take you there this instantly!
