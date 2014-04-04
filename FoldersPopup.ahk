@@ -725,7 +725,7 @@ Menu, Main, Add
 Menu, Main, DeleteAll
 intShortcut := 0
 
-BuildOneMenu(arrMenus["Main"]) ; and recurse for submenus
+BuildOneMenu("Main") ; and recurse for submenus
 
 if (blnDisplaySpecialFolders or blnDisplayRecentFolders or blnDisplaySwitchMenu)
 	Menu, Main, Add
@@ -746,25 +746,27 @@ return
 
 
 ;------------------------------------------------------------
-BuildOneMenu(arrMenu)
+BuildOneMenu(strMenu)
 ; recursive function
 ;------------------------------------------------------------
 {
 	global blnDisplayMenuShortcuts
 	global intShortcut
 	
-	Loop, % arrMenu.MaxIndex()
-		if !StrLen(arrMenu[A_Index].FolderPath) ; this is a submenu
+	arrThisMenu := arrMenus[strMenu]
+	Loop, % arrThisMenu.MaxIndex()
+		if !StrLen(arrThisMenu[A_Index].FolderPath) ; this is a submenu
 		{
-			strSubMenuName := arrMenu[A_Index].FolderName
-			strSubMenuParent := arrMenu[A_Index].MenuName
-			BuildOneMenu(arrMenus[strSubMenuName]) ; recursive call
-			Menu, %strSubMenuParent%, Add, % arrMenu[A_Index].FolderName, % ":" . arrMenu[A_Index].FolderName
+			strSubMenuName := arrThisMenu[A_Index].FolderName
+			strSubMenuDisplayName := SubMenuDisplayName(strSubMenuName)
+			strSubMenuParent := arrThisMenu[A_Index].MenuName
+			BuildOneMenu(strSubMenuName) ; recursive call
+			Menu, %strSubMenuParent%, Add, %strSubMenuDisplayName%, % ":" . strSubMenuName
 		}
-		else if (arrMenu[A_Index].FolderName = lMenuSeparator)
-			Menu, arrMenu[A_Index].MenuName , Add
+		else if (arrThisMenu[A_Index].FolderName = lMenuSeparator)
+			Menu, arrThisMenu[A_Index].MenuName , Add
 		else
-			Menu, % arrMenu[A_Index].MenuName , Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, true) . " " : "") . arrMenu[A_Index].FolderName, OpenFavorite
+			Menu, % arrThisMenu[A_Index].MenuName , Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, true) . " " : "") . arrThisMenu[A_Index].FolderName, OpenFavorite
 }
 ;------------------------------------------------------------
 
@@ -1198,6 +1200,8 @@ AddFolder(strPath, strType := "F")
 ; strType: "F" for folder (default) or "S" for Submenu
 ;------------------------------------------------------------
 {
+	; ### if submenu refuse char "_"
+	
 	GuiControl, Focus, lvFoldersList
 	Gui, 1:+OwnDialogs
 
@@ -1822,26 +1826,12 @@ GuiControlGet, blnSaveEnabled, Enabled, %lGuiSave%
 if (blnSaveEnabled)
 	return
 
-GuiControl, , drpMenusList, % BuildMenuTreeDropDown("Main", "Sub")
+GuiControl, , drpMenusList, % BuildMenuTreeDropDown(strCurrentMenu, strCurrentMenu)
 
-Gui, 1:ListView, lvFoldersList
-LV_Delete()
-Gui, 1:ListView, lvDialogsList
-LV_Delete()
-
-Gui, 1:ListView, lvFoldersList
-Loop, % arrMenus[strCurrentMenu].MaxIndex()
-{
-	If !StrLen(arrMenus[strCurrentMenu][A_Index].FolderName)
-		LV_Add()
-	else
-		LV_Add(, arrMenus[strCurrentMenu][A_Index].FolderName, (StrLen(arrMenus[strCurrentMenu][A_Index].FolderPath) ? arrMenus[strCurrentMenu][A_Index].FolderPath : ">"))
-}
-LV_Modify(1, "Select Focus")
-LV_ModifyCol(1, "AutoHdr")
-LV_ModifyCol(2, "AutoHdr")
+Gosub, LoadOneMenu
 
 Gui, 1:ListView, lvDialogsList
+LV_Delete()
 Loop, % arrDialogs.MaxIndex()
 {
 	LV_Add(, arrDialogs[A_Index])
@@ -1856,6 +1846,28 @@ return
 
 
 ;------------------------------------------------------------
+LoadOneMenu:
+;------------------------------------------------------------
+Gui, 1:ListView, lvFoldersList
+LV_Delete()
+
+Loop, % arrMenus[strCurrentMenu].MaxIndex()
+	If !StrLen(arrMenus[strCurrentMenu][A_Index].FolderName)
+		LV_Add()
+	else
+		if StrLen(arrMenus[strCurrentMenu][A_Index].FolderPath) ; this is a folder
+			LV_Add(, arrMenus[strCurrentMenu][A_Index].FolderName, arrMenus[strCurrentMenu][A_Index].FolderPath)
+		else ; this is a submenu
+			LV_Add(, SubMenuDisplayName(arrMenus[strCurrentMenu][A_Index].FolderName), ">")
+LV_Modify(1, "Select Focus")
+LV_ModifyCol(1, "AutoHdr")
+LV_ModifyCol(2, "AutoHdr")
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 BuildMenuTreeDropDown(strMenu, strDefaultMenu, intLevel := 0)
 ; recursive function
 ;------------------------------------------------------------
@@ -1863,7 +1875,9 @@ BuildMenuTreeDropDown(strMenu, strDefaultMenu, intLevel := 0)
 	strList := ""
 	loop, %intLevel%
 		strList := strList . chr(187) ; ">>>"
-	strList := strList . " " . strMenu
+	
+	strDisplayMenu := SubMenuDisplayName(strMenu)
+	strList := strList . " " . strDisplayMenu
 	
 	if (strMenu = strDefaultMenu)
 		strList := strList . "|" ; default value
@@ -1875,6 +1889,17 @@ BuildMenuTreeDropDown(strMenu, strDefaultMenu, intLevel := 0)
 	intLevel := intLevel - 1
 	
 	return strList
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+SubMenuDisplayName(strMenu)
+;------------------------------------------------------------
+{
+	StringSplit, arrMenu, strMenu, _
+	
+	return arrMenu%arrMenu0%
 }
 ;------------------------------------------------------------
 
