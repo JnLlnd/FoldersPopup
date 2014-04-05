@@ -803,7 +803,7 @@ Gui, 1:Add, Text, x10, %lGuiSubmenuDropdownLabel%
 Gui, 1:Add, DropDownList, x+10 yp vdrpMenusList gGuiMenusListChanged
 
 Gui, 1:Font, s8 w400, Verdana
-Gui, 1:Add, ListView, x10 w350 h220 Count32 -Multi NoSortHdr LV0x10 vlvFoldersList, %lGuiLvFoldersHeader%
+Gui, 1:Add, ListView, x10 w350 h220 Count32 -Multi NoSortHdr LV0x10 vlvFoldersList gGuiFoldersListEvent, %lGuiLvFoldersHeader%
 Gui, 1:Add, Button, x+10 w75 gGuiAddFolder, %lGuiAddFolder%
 Gui, 1:Add, Button, w75 gGuiRemoveFolder, %lGuiRemoveFolder%
 Gui, 1:Add, Button, w75 gGuiEditFolder, %lGuiEditFolder%
@@ -821,6 +821,25 @@ Gui, 1:Add, Button, w75 gGuiEditDialog, %lGuiEditDialog%
 Gui, 1:Add, Button, x100 w75 r1 Disabled Default vbtnGuiSave gGuiSave, %lGuiSave%
 Gui, 1:Add, Button, x+40 w75 r1 vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur
 Gui, 1:Add, Button, x+80 w75 gGuiOptions, %lGuiOptions%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiFoldersListEvent:
+;------------------------------------------------------------
+Gui, 1:ListView, lvFoldersList
+if (A_GuiEvent = "DoubleClick")
+{
+	LV_GetText(strName, A_EventInfo, 1)
+	LV_GetText(strPath, A_EventInfo, 2)
+	if (strPath = ">")
+	{
+		strCurrentMenu := strCurrentMenu . "_" . strName
+		gosub, LoadOneMenu
+	}
+}
 
 return
 ;------------------------------------------------------------
@@ -1826,8 +1845,6 @@ GuiControlGet, blnSaveEnabled, Enabled, %lGuiSave%
 if (blnSaveEnabled)
 	return
 
-GuiControl, , drpMenusList, % BuildMenuTreeDropDown(strCurrentMenu, strCurrentMenu)
-
 Gosub, LoadOneMenu
 
 Gui, 1:ListView, lvDialogsList
@@ -1862,6 +1879,8 @@ Loop, % arrMenus[strCurrentMenu].MaxIndex()
 LV_Modify(1, "Select Focus")
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
+
+GuiControl, , drpMenusList, % "|" . BuildMenuTreeDropDown("Main", strCurrentMenu) . "|"
 
 return
 ;------------------------------------------------------------
