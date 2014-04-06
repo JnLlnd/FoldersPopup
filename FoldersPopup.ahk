@@ -811,7 +811,6 @@ Gui, 1:Add, Button, w75 gGuiEditFolder, %lGuiEditFolder%
 Gui, 1:Add, Button, w75 gGuiAddSeparator, %lGuiSeparator%
 Gui, 1:Add, Button, w75 gGuiMoveFolderUp, %lGuiMoveFolderUp%
 Gui, 1:Add, Button, w75 gGuiMoveFolderDown, %lGuiMoveFolderDown%
-Gui, 1:Add, Button, w75 gGuiAddSubmenu, %lGuiAddSubmenu%
 
 Gui, 1:Add, ListView
 	, x10 w350 h120 Count16 -Multi NoSortHdr +0x10 LV0x10 vlvDialogsList, %lGuiLvDialogsHeader%
@@ -859,19 +858,6 @@ return
 
 
 ;------------------------------------------------------------
-GuiAddFolder:
-;------------------------------------------------------------
-
-FileSelectFolder, strNewPath, *C:\, 3, %lDialogAddFolderSelect%
-if (strNewPath = "")
-	return
-AddFolder(strNewPath)
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
 GuiRemoveFolder:
 ;------------------------------------------------------------
 
@@ -885,46 +871,6 @@ if !(intItemToRemove)
 }
 LV_Delete(intItemToRemove)
 LV_Modify(intItemToRemove, "Select Focus")
-LV_ModifyCol(1, "AutoHdr")
-LV_ModifyCol(2, "AutoHdr")
-
-GuiControl, Enable, btnGuiSave
-GuiControl, , btnGuiCancel, %lGuiCancel%
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiEditFolder:
-;------------------------------------------------------------
-
-Gui, 1:+OwnDialogs
-GuiControl, Focus, lvFoldersList
-
-Gui, 1:ListView, lvFoldersList
-intRowToEdit := LV_GetNext()
-LV_GetText(strCurrentName, intRowToEdit, 1)
-if !StrLen(strCurrentName)
-{
-	Oops(lDialogSelectItemToEdit)
-	return
-}
-LV_GetText(strCurrentPath, intRowToEdit, 2)
-
-FileSelectFolder, strNewPath, *%strCurrentPath%, 3, %lDialogEditFolderSelect%
-if (strNewPath = "")
-	return
-
-Loop
-{
-	InputBox strNewName, % L(lDialogEditFolderTitle, strAppName, strAppVersion)
-		, %lDialogEditFolderPrompt%, , 250, 120, , , , , %strCurrentName%
-	if (ErrorLevel)
-		return
-} until (strNewName = strCurrentName) or FolderNameIsNew(strNewName) ; ### check do mot include lGuiSubmenuSeparator
-
-LV_Modify(intRowToEdit, "Select Focus", strNewName, strNewPath)
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
 
@@ -997,15 +943,6 @@ LV_Modify(intSelectedRow + 1, "Select Focus Vis", strThisName, strThisPath)
 
 GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lGuiCancel%
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiAddSubmenu:
-;------------------------------------------------------------
-AddFolder("", "S")
 
 return
 ;------------------------------------------------------------
@@ -1202,7 +1139,7 @@ if (blnDiagMode)
 If StrLen(strCurrentFolder)
 {
 	Gosub, GuiShow
-	AddFolder(strCurrentFolder)
+	; ### AddFolder(strCurrentFolder)
 }
 else
 {
@@ -1216,57 +1153,6 @@ else
 }
 
 return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-AddFolder(strPath, strType := "F")
-; strType: "F" for folder (default) or "S" for Submenu
-;------------------------------------------------------------
-{
-	; ### if submenu refuse char "_"
-	
-	GuiControl, Focus, lvFoldersList
-	Gui, 1:+OwnDialogs
-
-	Loop
-	{
-		if (strType = "S")
-			InputBox strName, % L(lDialogSubmenuNameTitle, strAppName, strAppVersion), %lDialogSubmenuNamePrompt%, , 250, 120
-		else
-			InputBox strName, % L(lDialogFolderNameTitle, strAppName, strAppVersion), %lDialogFolderNamePrompt%, , 250, 120, , , , , % GetDeepestFolderName(strPath)
-		if (ErrorLevel) or !StrLen(strName)
-			return
-	} until FolderNameIsNew(strName) ; ### check do mot include lGuiSubmenuSeparator
-	
-	Gui, 1:ListView, lvFoldersList
-	LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", (strType = "S" ? strName . lGuiSubmenuSeparator : strName), strPath)
-	LV_Modify(LV_GetNext(), "Vis")
-	LV_ModifyCol(1, "AutoHdr")
-	LV_ModifyCol(2, "AutoHdr")
-	
-	GuiControl, Enable, btnGuiSave
-	GuiControl, , btnGuiCancel, %lGuiCancel%
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-FolderNameIsNew(strCandidateName)
-;------------------------------------------------------------
-{
-	Gui, 1:ListView, lvFoldersList
-	Loop, % LV_GetCount()
-	{
-		LV_GetText(strThisName, A_Index, 1)
-		if (strCandidateName = strThisName)
-		{
-			Oops(lDialogFolderNameNotNew, strCandidateName)
-			return False
-		}
-	}
-	return True
-}
 ;------------------------------------------------------------
 
 
@@ -1449,6 +1335,175 @@ Time2Donate(intStartups, blnDonator)
 ;------------------------------------------------------------
 ; GUI2 About, Help and Options
 ;------------------------------------------------------------
+
+;------------------------------------------------------------
+GuiAddFolder:
+GuiEditFolder:
+;------------------------------------------------------------
+
+if (A_ThisLabel = "GuiEditFolder")
+{
+	Gui, 1:ListView, lvFoldersList
+	intRowToEdit := LV_GetNext()
+	LV_GetText(strCurrentName, intRowToEdit, 1)
+	if !StrLen(strCurrentName)
+	{
+		Oops(lDialogSelectItemToEdit)
+		return
+	}
+	LV_GetText(strCurrentLocation, intRowToEdit, 2)
+
+/*Gui, 1:+OwnDialogs
+GuiControl, Focus, lvFoldersList
+
+Gui, 1:ListView, lvFoldersList
+intRowToEdit := LV_GetNext()
+LV_GetText(strCurrentName, intRowToEdit, 1)
+if !StrLen(strCurrentName)
+{
+	Oops(lDialogSelectItemToEdit)
+	return
+}
+LV_GetText(strCurrentLocation, intRowToEdit, 2)
+
+FileSelectFolder, strNewPath, *%strCurrentLocation%, 3, %lDialogEditFolderSelect%
+if (strNewPath = "")
+	return
+
+Loop
+{
+	InputBox strNewName, % L(lDialogEditFolderTitle, strAppName, strAppVersion)
+		, %lDialogEditFolderPrompt%, , 250, 120, , , , , %strCurrentName%
+	if (ErrorLevel)
+		return
+} until (strNewName = strCurrentName) or FolderNameIsNew(strNewName, "###") ; ### check do mot include lGuiSubmenuSeparator
+
+LV_Modify(intRowToEdit, "Select Focus", strNewName, strNewPath)
+LV_ModifyCol(1, "AutoHdr")
+LV_ModifyCol(2, "AutoHdr")
+
+GuiControl, Enable, btnGuiSave
+GuiControl, , btnGuiCancel, %lGuiCancel%
+
+*/
+
+}
+
+intGui1WinID := WinExist("A")
+Gui, 1:Submit, NoHide
+Gui, 2:New, , % L(lDialogAddEditFolderTitle, (A_ThisLabel = "GuiAddFolder" ? lDialodAdd : lDialogEdit), strAppName, strAppVersion)
+Gui, 2:+Owner1
+Gui, 2:+OwnDialogs
+
+Gui, 2:Add, Text, x10 y10 vlblFolderParentMenu, %lDialogFolderParentMenu%
+arrMenusPosition := Object() ; reset array
+Gui, 2:Add, DropDownList, % "x10 w250 vdrpParentMenu AltSubmit " .  (A_ThisLabel = "GuiAddFolder" ? "Disabled" : ""), % BuildMenuTreeDropDown("Main", strCurrentMenu) . "|"
+
+Gui, 2:Add, Text, x10, %lDialogFolderShortName%
+Gui, 2:Add, Edit, x10 w250 vstrFolderShortName, %strCurrentName%
+
+Gui, 2:Add, Text, x10, %lDialogFolderLabel%
+Gui, 2:Add, Edit, x10 w200 vstrFolderLocation disabled, %strCurrentLocation%
+Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation w45 default, %lDialogSelectButton%
+
+Gui, 2:Add, Button, x100 gGuiAddEditFolderSave, % (A_ThisLabel = "GuiAddFolder" ? lDialodAdd : lDialogEdit)
+Gui, 2:Add, Button, x+20 yp gGuiAddFolderCancel, %lGuiCancel%
+Gui, 2:Show, AutoSize Center
+Gui, 1:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ButtonSelectFolderLocation:
+;------------------------------------------------------------
+Gui, 1:Submit, NoHide
+Gui, 1:+OwnDialogs
+
+FileSelectFolder, strNewLocation, *%strCurrentLocation%, 3, %lDialogAddFolderSelect%
+if !(StrLen(strNewLocation))
+	return
+GuiControl, 2:, strFolderLocation, %strNewLocation%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiAddEditFolderSave:
+;------------------------------------------------------------
+Gui, 2:Submit, NoHide
+
+GuiControlGet, intDropdownPosition, , drpParentMenu
+strMenu := arrMenusPosition[intDropdownPosition]
+
+if !StrLen(strFolderShortName) or !StrLen(strFolderLocation)
+{
+	Oops(lDialogFolderNameOrLocationEmpty)
+	return
+}
+
+; ### if edit OK when (strNewName = strCurrentName)
+if !FolderNameIsNew(strFolderShortName, (strMenu = strCurrentMenu ? "" : strMenu))
+{
+	Oops(lDialogFolderNameNotNew, strFolderShortName)
+	return
+}
+
+Gosub, 2GuiClose
+
+; #### if edit replace current row
+
+Gui, 1:Default
+GuiControl, 1:Focus, lvFoldersList
+Gui, 1:ListView, lvFoldersList
+LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", strFolderShortName, strFolderLocation)
+LV_Modify(LV_GetNext(), "Vis")
+LV_ModifyCol(1, "AutoHdr")
+LV_ModifyCol(2, "AutoHdr")
+
+GuiControl, Enable, btnGuiSave
+GuiControl, , btnGuiCancel, %lDialogCancelButton%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiAddFolderCancel:
+;------------------------------------------------------------
+gosub, 2GuiClose
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+FolderNameIsNew(strCandidateName, strMenu)
+;------------------------------------------------------------
+{
+	if StrLen(strMenu)
+	{
+		Loop, % arrMenus[strMenu].MaxIndex()
+			if (strCandidateName = arrMenus[strMenu][A_Index].FolderName)
+				return False
+	}
+	else
+	{
+		Gui, 1:Default
+		Gui, 1:ListView, lvFoldersList
+		Loop, % LV_GetCount()
+		{
+			LV_GetText(strThisName, A_Index, 1)
+			if (strCandidateName = strThisName)
+				return False
+		}
+	}
+	return True
+}
+;------------------------------------------------------------
+
 
 ;------------------------------------------------------------
 GuiAbout:
