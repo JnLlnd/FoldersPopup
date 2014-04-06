@@ -211,6 +211,7 @@ LoadIniFile:
 
 ; reinit after Settings save if already exist
 Global arrMenus := Object() ; list of menus (Main and submenus)
+Global arrMenusPosition := Object() ; positions of menus in dropdown list
 arrMainMenu := Object() ; array of folders of the Main menu
 arrMenus.Insert("Main", arrMainMenu) ; "Main" is the main menu internal name, use lMainMenuMane for display name
 arrDialogs := Object() ; list of supported dialog boxes
@@ -800,7 +801,7 @@ Gui, 1:Add, Button, x+10 w75 gGuiHelp, %lGuiHelp%
 Gui, 1:Add, Text, x10 y30, %lAppTagline%
 
 Gui, 1:Add, Text, x10, %lGuiSubmenuDropdownLabel%
-Gui, 1:Add, DropDownList, x+10 yp vdrpMenusList gGuiMenusListChanged
+Gui, 1:Add, DropDownList, x+10 yp vdrpMenusList gGuiMenusListChanged AltSubmit
 
 Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, ListView, x10 w350 h220 Count32 -Multi NoSortHdr LV0x10 vlvFoldersList gGuiFoldersListEvent, %lGuiLvFoldersHeader%
@@ -848,6 +849,10 @@ return
 ;------------------------------------------------------------
 GuiMenusListChanged:
 ;------------------------------------------------------------
+
+GuiControlGet, intDropdownPosition, , drpMenusList
+strCurrentMenu := arrMenusPosition[intDropdownPosition]
+Gosub, LoadOneMenu
 
 return
 ;------------------------------------------------------------
@@ -1880,6 +1885,7 @@ LV_Modify(1, "Select Focus")
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
 
+arrMenusPosition := Object() ; reset array
 GuiControl, , drpMenusList, % "|" . BuildMenuTreeDropDown("Main", strCurrentMenu) . "|"
 
 return
@@ -1887,13 +1893,15 @@ return
 
 
 ;------------------------------------------------------------
-BuildMenuTreeDropDown(strMenu, strDefaultMenu, intLevel := 0)
+BuildMenuTreeDropDown(strMenu, strDefaultMenu, intLevel := 0, intCount := 0)
 ; recursive function
 ;------------------------------------------------------------
 {
+	intCount := intCount + 1
+	arrMenusPosition.Insert(intCount, strMenu)
 	strList := ""
 	loop, %intLevel%
-		strList := strList . chr(187) ; ">>>"
+		strList := strList . chr(187) ; small ">>"
 	
 	strDisplayMenu := SubMenuDisplayName(strMenu)
 	strList := strList . " " . strDisplayMenu
@@ -1904,7 +1912,7 @@ BuildMenuTreeDropDown(strMenu, strDefaultMenu, intLevel := 0)
 	intLevel := intLevel + 1
 	Loop, % arrMenus[strMenu].MaxIndex()
 		if !StrLen(arrMenus[strMenu][A_Index].FolderPath) ; this is a submenu
-			strList := strList . "|" . BuildMenuTreeDropDown(arrMenus[strMenu][A_Index].FolderName, strDefaultMenu, intLevel)
+			strList := strList . "|" . BuildMenuTreeDropDown(arrMenus[strMenu][A_Index].FolderName, strDefaultMenu, intLevel, intCount)
 	intLevel := intLevel - 1
 	
 	return strList
