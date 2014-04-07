@@ -1,7 +1,7 @@
 !lDialodAdd	Add
 !lDialogAddEditFolderTitle	~1~ folder - ~2~ ~3~
 !lDialogCancelButton	Cancel
-!lDialogEdit	Edit
+!lDialogSave	Save
 !lDialogFolderLabel	Folder
 !lDialogFolderNameNotNew	The name ~1~ is already used in this menu. Please, choose a new name.
 !lDialogFolderNameOrLocationEmpty	The folder name or location are empty. Please, choose a name and a location.

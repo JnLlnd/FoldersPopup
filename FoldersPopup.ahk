@@ -839,6 +839,8 @@ if (A_GuiEvent = "DoubleClick")
 		strCurrentMenu := strCurrentMenu . "_" . strName
 		gosub, LoadOneMenu
 	}
+	else
+		gosub, GuiEditFolder
 }
 
 return
@@ -1352,43 +1354,10 @@ if (A_ThisLabel = "GuiEditFolder")
 		return
 	}
 	LV_GetText(strCurrentLocation, intRowToEdit, 2)
-
-/*Gui, 1:+OwnDialogs
-GuiControl, Focus, lvFoldersList
-
-Gui, 1:ListView, lvFoldersList
-intRowToEdit := LV_GetNext()
-LV_GetText(strCurrentName, intRowToEdit, 1)
-if !StrLen(strCurrentName)
-{
-	Oops(lDialogSelectItemToEdit)
-	return
 }
-LV_GetText(strCurrentLocation, intRowToEdit, 2)
-
-FileSelectFolder, strNewPath, *%strCurrentLocation%, 3, %lDialogEditFolderSelect%
-if (strNewPath = "")
-	return
-
-Loop
-{
-	InputBox strNewName, % L(lDialogEditFolderTitle, strAppName, strAppVersion)
-		, %lDialogEditFolderPrompt%, , 250, 120, , , , , %strCurrentName%
-	if (ErrorLevel)
-		return
-} until (strNewName = strCurrentName) or FolderNameIsNew(strNewName, "###") ; ### check do mot include lGuiSubmenuSeparator
-
-LV_Modify(intRowToEdit, "Select Focus", strNewName, strNewPath)
-LV_ModifyCol(1, "AutoHdr")
-LV_ModifyCol(2, "AutoHdr")
-
-GuiControl, Enable, btnGuiSave
-GuiControl, , btnGuiCancel, %lGuiCancel%
-
-*/
-
-}
-
+else
+	intRowToEdit := 0 ;  used when saving to flag to insert a new row
+	
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
 Gui, 2:New, , % L(lDialogAddEditFolderTitle, (A_ThisLabel = "GuiAddFolder" ? lDialodAdd : lDialogEdit), strAppName, strAppVersion)
@@ -1406,7 +1375,7 @@ Gui, 2:Add, Text, x10, %lDialogFolderLabel%
 Gui, 2:Add, Edit, x10 w200 vstrFolderLocation disabled, %strCurrentLocation%
 Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation w45 default, %lDialogSelectButton%
 
-Gui, 2:Add, Button, x100 gGuiAddEditFolderSave, % (A_ThisLabel = "GuiAddFolder" ? lDialodAdd : lDialogEdit)
+Gui, 2:Add, Button, x100 gGuiAddEditFolderSave, % (A_ThisLabel = "GuiAddFolder" ? lDialodAdd : lDialogSave)
 Gui, 2:Add, Button, x+20 yp gGuiAddFolderCancel, %lGuiCancel%
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
@@ -1444,8 +1413,8 @@ if !StrLen(strFolderShortName) or !StrLen(strFolderLocation)
 	return
 }
 
-; ### if edit OK when (strNewName = strCurrentName)
 if !FolderNameIsNew(strFolderShortName, (strMenu = strCurrentMenu ? "" : strMenu))
+	and (strFolderShortName <> strCurrentName)
 {
 	Oops(lDialogFolderNameNotNew, strFolderShortName)
 	return
@@ -1453,13 +1422,32 @@ if !FolderNameIsNew(strFolderShortName, (strMenu = strCurrentMenu ? "" : strMenu
 
 Gosub, 2GuiClose
 
-; #### if edit replace current row
-
 Gui, 1:Default
 GuiControl, 1:Focus, lvFoldersList
 Gui, 1:ListView, lvFoldersList
-LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", strFolderShortName, strFolderLocation)
-LV_Modify(LV_GetNext(), "Vis")
+
+if (intRowToEdit) ; modify selected row or move item to another menu
+{
+	if (strMenu = strCurrentMenu) ; modify selected row
+		LV_Modify(intRowToEdit, "Select Focus", strFolderShortName, strFolderLocation)
+	else ; move menu item to another menu: add to the new menu's object and remove item from this menu in the Gui
+	{
+		objFolder := Object() ; new menu item
+		objFolder.MenuName := strMenu ; parent menu of this menu item
+		objFolder.FolderName := strFolderShortName ; display name of this menu item
+		objFolder.FolderPath := strFolderLocation ; path for this menu item
+		arrMenus[objFolder.MenuName].Insert(objFolder) ; add this menu item to the new menu
+		
+		LV_Delete(intRowToEdit)
+		LV_Modify(intRowToEdit, "Select Focus")
+	}
+}
+else ; insert new item at the top of the Gui
+{
+	LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", strFolderShortName, strFolderLocation)
+	LV_Modify(LV_GetNext(), "Vis")
+}
+
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
 
@@ -1483,13 +1471,7 @@ return
 FolderNameIsNew(strCandidateName, strMenu)
 ;------------------------------------------------------------
 {
-	if StrLen(strMenu)
-	{
-		Loop, % arrMenus[strMenu].MaxIndex()
-			if (strCandidateName = arrMenus[strMenu][A_Index].FolderName)
-				return False
-	}
-	else
+	if !StrLen(strMenu)
 	{
 		Gui, 1:Default
 		Gui, 1:ListView, lvFoldersList
@@ -1500,6 +1482,18 @@ FolderNameIsNew(strCandidateName, strMenu)
 				return False
 		}
 	}
+	else
+		Loop, % arrMenus[strMenu].MaxIndex()
+		{
+			if !StrLen(arrMenus[strMenu][A_Index].FolderPath) ; then this is a new submenu
+				strThisName := SubMenuDisplayName(arrMenus[strMenu][A_Index].FolderName)
+			else
+				strThisName := arrMenus[strMenu][A_Index].FolderName
+
+			if (strCandidateName = strThisName)
+				return False
+		}
+
 	return True
 }
 ;------------------------------------------------------------

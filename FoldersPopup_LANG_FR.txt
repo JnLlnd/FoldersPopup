@@ -20,7 +20,7 @@ lDialogAddFolderSelect	Choose or create the new folder:
 lDialogCancelButton	Cancel
 lDialogCancelPrompt	Discard changes?
 lDialogCancelTitle	Cancel - ~1~ ~2~
-lDialogEdit	Edit
+lDialogSave	Save
 lDialogEditDialogPrompt	Enter the new dialog box name`n(or part of the name):
 lDialogEditDialogTitle	Edit Dialog box - ~1~ ~2~
 lDialogEditFolderPrompt	Enter the name for this foler:
