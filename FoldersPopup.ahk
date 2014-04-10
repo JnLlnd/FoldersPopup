@@ -1,3 +1,11 @@
+/*
+todo:
+fix dropdown menu navigation when menu is added
+add submenu - create object, forge name with > (lGuiSubmenuSeparator)
+save current LV at loadonemneu
+restore menuBK if cancel
+*/
+
 ;===============================================
 /*
 	FoldersPopup
@@ -152,7 +160,7 @@ Gosub, Check4Update
 Gosub, BuildTrayMenu
 if (blnDiagMode)
 	Gosub, InitDiagMode
-	
+
 IfExist, %A_Startup%\%strAppName%.lnk
 {
 	FileDelete, %A_Startup%\%strAppName%.lnk
@@ -284,8 +292,8 @@ Loop
 	objFolder := Object() ; new menu item
 	objFolder.MenuName := arrThisObject1 ; parent menu of this menu item
 	objFolder.FolderName := arrThisObject2 ; display name of this menu item
-	objFolder.FolderPath := arrThisObject3 ; path for this menu item
-	if !StrLen(objFolder.FolderPath) ; then this is a new submenu
+	objFolder.FolderLocation := arrThisObject3 ; path for this menu item
+	if !StrLen(objFolder.FolderLocation) ; then this is a new submenu
 	{
 		arrSubMenu := Object() ; create submenu
 		arrMenus.Insert(objFolder.FolderName, arrSubMenu) ; add this submenu to the array of menus
@@ -756,7 +764,7 @@ BuildOneMenu(strMenu)
 	
 	arrThisMenu := arrMenus[strMenu]
 	Loop, % arrThisMenu.MaxIndex()
-		if !StrLen(arrThisMenu[A_Index].FolderPath) ; this is a submenu
+		if !StrLen(arrThisMenu[A_Index].FolderLocation) ; this is a submenu
 		{
 			strSubMenuName := arrThisMenu[A_Index].FolderName
 			strSubMenuDisplayName := SubMenuDisplayName(strSubMenuName)
@@ -791,6 +799,8 @@ return
 BuildGui:
 ;------------------------------------------------------------
 
+Gosub, BackupMenuObjects
+
 Gui, 1:New, , % L(lGuiTitle, strAppName, strAppVersion)
 Gui, 1:Font, s12 w700, Verdana
 Gui, 1:Add, Text, x10 y10 w490 h25, %strAppName%
@@ -801,7 +811,7 @@ Gui, 1:Add, Button, x+10 w75 gGuiHelp, %lGuiHelp%
 Gui, 1:Add, Text, x10 y30, %lAppTagline%
 
 Gui, 1:Add, Text, x10, %lGuiSubmenuDropdownLabel%
-Gui, 1:Add, DropDownList, x+10 yp vdrpMenusList gGuiMenusListChanged AltSubmit
+Gui, 1:Add, DropDownList, x+10 yp vdrpMenusList gGuiMenusListChanged AltSubmit ; ### Sort -> need to manage int also
 
 Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, ListView, x10 w350 h220 Count32 -Multi NoSortHdr LV0x10 vlvFoldersList gGuiFoldersListEvent, %lGuiLvFoldersHeader%
@@ -827,6 +837,36 @@ return
 
 
 ;------------------------------------------------------------
+BackupMenuObjects:
+;------------------------------------------------------------
+
+arrMenusBK := Object()
+for strMenuName, arrMenu in arrMenus
+{
+	arrMenuBK := Object()
+	for intIndex, objFolder in arrMenu
+	{
+		objFolderBK := Object()
+		arrMenuBK.MenuName := objFolder.MenuName
+		arrMenuBK.FolderName := objFolder.FolderName
+		arrMenuBK.FolderLocation := objFolder.FolderLocation
+		/*
+		###_D(intIndex . "/" . arrMenu.MaxIndex() . "`n"
+			. "arrMenuBK.MenuName = " . arrMenuBK.MenuName . "`n"
+			. "arrMenuBK.FolderName = " . arrMenuBK.FolderName . "`n"
+			. "arrMenuBK.FolderLocation = " . arrMenuBK.FolderLocation . "`n"
+			. "")
+		*/
+	}
+	arrMenusBK.Insert(strMenuName, arrMenuBK) ; add this submenu to the array of menus
+	; ###_D(strMenuName . " terminé")
+}
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 GuiFoldersListEvent:
 ;------------------------------------------------------------
 Gui, 1:ListView, lvFoldersList
@@ -834,13 +874,7 @@ if (A_GuiEvent = "DoubleClick")
 {
 	LV_GetText(strName, A_EventInfo, 1)
 	LV_GetText(strPath, A_EventInfo, 2)
-	if (strPath = ">")
-	{
-		strCurrentMenu := strCurrentMenu . "_" . strName
-		gosub, LoadOneMenu
-	}
-	else
-		gosub, GuiEditFolder
+	gosub, GuiEditFolder
 }
 
 return
@@ -1126,7 +1160,7 @@ Loop, %intTries%
 	intTries := A_Index
 } Until (StrLen(ClipBoard))
 
-strCurrentFolder := ClipBoard
+strCurrentLocation := ClipBoard
 Clipboard := objPrevClipboard ; Restore the original clipboard
 objPrevClipboard := "" ; Free the memory in case the clipboard was very large
 
@@ -1135,13 +1169,13 @@ if (blnDiagMode)
 	Diag("Menu", A_ThisLabel)
 	Diag("Class", strTargetClass)
 	Diag("Tries", intTries)
-	Diag("AddedFolder", strCurrentFolder)
+	Diag("AddedFolder", strCurrentLocation)
 }
 
-If StrLen(strCurrentFolder)
+If StrLen(strCurrentLocation)
 {
 	Gosub, GuiShow
-	; ### AddFolder(strCurrentFolder)
+	Gosub, GuiAddFromPopup
 }
 else
 {
@@ -1340,6 +1374,7 @@ Time2Donate(intStartups, blnDonator)
 
 ;------------------------------------------------------------
 GuiAddFolder:
+GuiAddFromPopup:
 GuiEditFolder:
 ;------------------------------------------------------------
 
@@ -1356,24 +1391,34 @@ if (A_ThisLabel = "GuiEditFolder")
 	LV_GetText(strCurrentLocation, intRowToEdit, 2)
 }
 else
+{
 	intRowToEdit := 0 ;  used when saving to flag to insert a new row
+	if (A_ThisLabel = GuiAddFromPopup)
+		strCurrentName := GetDeepestFolderName(strCurrentLocation) ; value received from AddThisFolder
+}
 	
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
-Gui, 2:New, , % L(lDialogAddEditFolderTitle, (A_ThisLabel = "GuiAddFolder" ? lDialodAdd : lDialogEdit), strAppName, strAppVersion)
+Gui, 2:New, , % L(lDialogAddEditFolderTitle, (InStr(A_ThisLabel, "Add") ? lDialodAdd : lDialogEdit), strAppName, strAppVersion)
 Gui, 2:+Owner1
 Gui, 2:+OwnDialogs
 
 Gui, 2:Add, Text, x10 y10 vlblFolderParentMenu, %lDialogFolderParentMenu%
 arrMenusPosition := Object() ; reset array
-Gui, 2:Add, DropDownList, % "x10 w250 vdrpParentMenu AltSubmit " .  (A_ThisLabel = "GuiAddFolder" ? "Disabled" : ""), % BuildMenuTreeDropDown("Main", strCurrentMenu) . "|"
+Gui, 2:Add, DropDownList, % "x10 w250 vdrpParentMenu AltSubmit " .  (A_ThisLabel = "GuiAddFolder" ? "Disabled" : ""), % BuildMenuTreeDropDown("Main", strCurrentMenu) . "|" ; ### Sort -> need to manage int also
 
-Gui, 2:Add, Text, x10, %lDialogFolderShortName%
+if (A_ThisLabel = "GuiAddFolder")
+{
+	Gui, 2:Add, Text, x10, Add:
+	Gui, 2:Add, Radio, x+10 yp vblnRadioFolder checked gRadioButtonsChanged, %lDialogFolderLabel%
+	Gui, 2:Add, Radio, x+10 yp vblnRadioSubmenu gRadioButtonsChanged, %lDialogSubmenuLabel%
+}
+Gui, 2:Add, Text, x10 vlblShortName, %lDialogFolderShortName%
 Gui, 2:Add, Edit, x10 w250 vstrFolderShortName, %strCurrentName%
 
-Gui, 2:Add, Text, x10, %lDialogFolderLabel%
-Gui, 2:Add, Edit, x10 w200 vstrFolderLocation disabled, %strCurrentLocation%
-Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation w45 default, %lDialogSelectButton%
+Gui, 2:Add, Text, % "x10 vlblFolder" . (strCurrentLocation = lGuiSubmenuLocation ? "hidden" : ""), %lDialogFolderLabel%
+Gui, 2:Add, Edit, % "x10 w200 vstrFolderLocation disabled " . (strCurrentLocation = lGuiSubmenuLocation ? "hidden" : ""), %strCurrentLocation%
+Gui, 2:Add, Button, % "x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation w45 " . (strCurrentLocation = lGuiSubmenuLocation ? "hidden" : "default"), %lDialogSelectButton%
 
 Gui, 2:Add, Button, x100 gGuiAddEditFolderSave, % (A_ThisLabel = "GuiAddFolder" ? lDialodAdd : lDialogSave)
 Gui, 2:Add, Button, x+20 yp gGuiAddFolderCancel, %lGuiCancel%
@@ -1385,10 +1430,24 @@ return
 
 
 ;------------------------------------------------------------
+RadioButtonsChanged:
+;------------------------------------------------------------
+Gui, 2:Submit, NoHide
+
+GuiControl, , lblShortName, % (blnRadioSubmenu ? lDialogSubmenuShortName : lDialogFolderShortName)
+GuiControl, % (blnRadioSubmenu ? "Hide" : "Show"), lblFolder
+GuiControl, % (blnRadioSubmenu ? "Hide" : "Show"), strFolderLocation
+GuiControl, % (blnRadioSubmenu ? "Hide" : "Show"), btnSelectFolderLocation
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 ButtonSelectFolderLocation:
 ;------------------------------------------------------------
-Gui, 1:Submit, NoHide
-Gui, 1:+OwnDialogs
+Gui, 2:Submit, NoHide
+Gui, 2:+OwnDialogs
 
 FileSelectFolder, strNewLocation, *%strCurrentLocation%, 3, %lDialogAddFolderSelect%
 if !(StrLen(strNewLocation))
@@ -1403,21 +1462,44 @@ return
 GuiAddEditFolderSave:
 ;------------------------------------------------------------
 Gui, 2:Submit, NoHide
+Gui, 2:+OwnDialogs
 
 GuiControlGet, intDropdownPosition, , drpParentMenu
-strMenu := arrMenusPosition[intDropdownPosition]
+strDropdownMenu := arrMenusPosition[intDropdownPosition]
 
-if !StrLen(strFolderShortName) or !StrLen(strFolderLocation)
+if !StrLen(strFolderShortName) or (!blnRadioSubmenu and !StrLen(strFolderLocation))
 {
 	Oops(lDialogFolderNameOrLocationEmpty)
 	return
 }
 
-if !FolderNameIsNew(strFolderShortName, (strMenu = strCurrentMenu ? "" : strMenu))
+if !FolderNameIsNew(strFolderShortName, (strDropdownMenu = strCurrentMenu ? "" : strDropdownMenu))
 	and (strFolderShortName <> strCurrentName)
 {
 	Oops(lDialogFolderNameNotNew, strFolderShortName)
 	return
+}
+
+if (blnRadioSubmenu)
+{
+	strFolderLocation := lGuiSubmenuLocation
+	strNewMenuName := strDropdownMenu . "_" . strFolderShortName
+	###_D(""
+		. "strDropdownMenu: " . strDropdownMenu . "`n"
+		. "strCurrentMenu: " . strCurrentMenu . "`n"
+		. "strNewMenuName: " . strNewMenuName . "`n"
+		. "")
+	arrNewMenu := Object() ; array of folders of the new menu
+	arrMenus.Insert(strNewMenuName, arrNewMenu)
+	
+	objFolder := Object()
+	objFolder.MenuName := strCurrentMenu ; parent menu of this menu item
+	objFolder.FolderName := strNewMenuName ; name of this menu item
+	objFolder.FolderLocation := "" ; empty for submenu
+	arrMenus[strCurrentMenu].Insert(objFolder)
+
+	arrMenusPosition := Object() ; reset array ; #### CHECK INT BECAUSE SELECTION NOT WORKING
+	GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown("Main", strCurrentMenu) . "|"
 }
 
 Gosub, 2GuiClose
@@ -1428,14 +1510,14 @@ Gui, 1:ListView, lvFoldersList
 
 if (intRowToEdit) ; modify selected row or move item to another menu
 {
-	if (strMenu = strCurrentMenu) ; modify selected row
+	if (strDropdownMenu = strCurrentMenu) ; modify selected row
 		LV_Modify(intRowToEdit, "Select Focus", strFolderShortName, strFolderLocation)
 	else ; move menu item to another menu: add to the new menu's object and remove item from this menu in the Gui
 	{
 		objFolder := Object() ; new menu item
-		objFolder.MenuName := strMenu ; parent menu of this menu item
+		objFolder.MenuName := strDropdownMenu ; parent menu of this menu item
 		objFolder.FolderName := strFolderShortName ; display name of this menu item
-		objFolder.FolderPath := strFolderLocation ; path for this menu item
+		objFolder.FolderLocation := strFolderLocation ; path for this menu item
 		arrMenus[objFolder.MenuName].Insert(objFolder) ; add this menu item to the new menu
 		
 		LV_Delete(intRowToEdit)
@@ -1485,7 +1567,7 @@ FolderNameIsNew(strCandidateName, strMenu)
 	else
 		Loop, % arrMenus[strMenu].MaxIndex()
 		{
-			if !StrLen(arrMenus[strMenu][A_Index].FolderPath) ; then this is a new submenu
+			if !StrLen(arrMenus[strMenu][A_Index].FolderLocation) ; then this is a new submenu
 				strThisName := SubMenuDisplayName(arrMenus[strMenu][A_Index].FolderName)
 			else
 				strThisName := arrMenus[strMenu][A_Index].FolderName
@@ -1919,6 +2001,10 @@ return
 ;------------------------------------------------------------
 LoadOneMenu:
 ;------------------------------------------------------------
+
+###_D(A_ThisLabel)
+; save current LV in current arrMenu
+
 Gui, 1:ListView, lvFoldersList
 LV_Delete()
 
@@ -1926,10 +2012,10 @@ Loop, % arrMenus[strCurrentMenu].MaxIndex()
 	If !StrLen(arrMenus[strCurrentMenu][A_Index].FolderName)
 		LV_Add()
 	else
-		if StrLen(arrMenus[strCurrentMenu][A_Index].FolderPath) ; this is a folder
-			LV_Add(, arrMenus[strCurrentMenu][A_Index].FolderName, arrMenus[strCurrentMenu][A_Index].FolderPath)
+		if StrLen(arrMenus[strCurrentMenu][A_Index].FolderLocation) ; this is a folder
+			LV_Add(, arrMenus[strCurrentMenu][A_Index].FolderName, arrMenus[strCurrentMenu][A_Index].FolderLocation)
 		else ; this is a submenu
-			LV_Add(, SubMenuDisplayName(arrMenus[strCurrentMenu][A_Index].FolderName), ">")
+			LV_Add(, SubMenuDisplayName(arrMenus[strCurrentMenu][A_Index].FolderName), lGuiSubmenuLocation)
 LV_Modify(1, "Select Focus")
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
@@ -1946,11 +2032,12 @@ BuildMenuTreeDropDown(strMenu, strDefaultMenu, intLevel := 0, intCount := 0)
 ; recursive function
 ;------------------------------------------------------------
 {
+	; ###_D("BuildMenuTreeDropDown: " . strMenu)
 	intCount := intCount + 1
 	arrMenusPosition.Insert(intCount, strMenu)
 	strList := ""
 	loop, %intLevel%
-		strList := strList . chr(187) ; small ">>"
+		strList := strList . chr(187) . " " ; small ">>"
 	
 	strDisplayMenu := SubMenuDisplayName(strMenu)
 	strList := strList . " " . strDisplayMenu
@@ -1960,7 +2047,7 @@ BuildMenuTreeDropDown(strMenu, strDefaultMenu, intLevel := 0, intCount := 0)
 	
 	intLevel := intLevel + 1
 	Loop, % arrMenus[strMenu].MaxIndex()
-		if !StrLen(arrMenus[strMenu][A_Index].FolderPath) ; this is a submenu
+		if !StrLen(arrMenus[strMenu][A_Index].FolderLocation) ; this is a submenu
 			strList := strList . "|" . BuildMenuTreeDropDown(arrMenus[strMenu][A_Index].FolderName, strDefaultMenu, intLevel, intCount)
 	intLevel := intLevel - 1
 	
@@ -2184,7 +2271,7 @@ GetPathFor(strMenu, strName)
 	
 	Loop, % arrMenus[strMenu].MaxIndex()
 		if (strName = arrMenus[strMenu][A_Index].FolderName)
-			return arrMenus[strMenu][A_Index].FolderPath
+			return arrMenus[strMenu][A_Index].FolderLocation
 }
 ;------------------------------------------------------------
 
