@@ -285,18 +285,22 @@ IniRead, strLanguageCode, %strIniFile%, Global, LanguageCode, EN
 
 Loop
 {
+	; ####
 	IniRead, strIniLine, %strIniFile%, Folders, Folder%A_Index%
 	if (strIniLine = "ERROR")
 		Break
+	strIniLine := strIniLine . "|" ; additional "|" to make sure we have an empty 4th item
 	StringSplit, arrThisObject, strIniLine, |
 	objFolder := Object() ; new menu item
 	objFolder.MenuName := arrThisObject1 ; parent menu of this menu item
 	objFolder.FolderName := arrThisObject2 ; display name of this menu item
 	objFolder.FolderLocation := arrThisObject3 ; path for this menu item
-	if !StrLen(objFolder.FolderLocation) ; then this is a new submenu
+	objFolder.SubmenuFullName := arrThisObject4 ; full name of the submenu
+	; ###_D("objFolder.SubmenuFullName: " . objFolder.SubmenuFullName)
+	if StrLen(objFolder.SubmenuFullName) ; then this is a new submenu
 	{
 		arrSubMenu := Object() ; create submenu
-		arrMenus.Insert(objFolder.FolderName, arrSubMenu) ; add this submenu to the array of menus
+		arrMenus.Insert(objFolder.SubmenuFullName, arrSubMenu) ; add this submenu to the array of menus
 	}
 	arrMenus[objFolder.MenuName].Insert(objFolder) ; add this menu item to parent menu
 }
@@ -762,15 +766,17 @@ BuildOneMenu(strMenu)
 	global blnDisplayMenuShortcuts
 	global intShortcut
 	
+	; ###_D("BuildOneMenu(strMenu): " . strMenu)
 	arrThisMenu := arrMenus[strMenu]
 	Loop, % arrThisMenu.MaxIndex()
-		if !StrLen(arrThisMenu[A_Index].FolderLocation) ; this is a submenu
+		if StrLen(arrThisMenu[A_Index].SubmenuFullName) ; this is a submenu
 		{
-			strSubMenuName := arrThisMenu[A_Index].FolderName
-			strSubMenuDisplayName := SubMenuDisplayName(strSubMenuName)
+			strSubMenuFullName := arrThisMenu[A_Index].SubmenuFullName
+			strSubMenuDisplayName := arrThisMenu[A_Index].FolderName
+			; #### strSubMenuDisplayName := SubMenuDisplayName(strSubMenuName)
 			strSubMenuParent := arrThisMenu[A_Index].MenuName
-			BuildOneMenu(strSubMenuName) ; recursive call
-			Menu, %strSubMenuParent%, Add, %strSubMenuDisplayName%, % ":" . strSubMenuName
+			BuildOneMenu(strSubMenuFullName) ; recursive call
+			Menu, %strSubMenuParent%, Add, %strSubMenuDisplayName%, % ":" . strSubMenuFullName
 		}
 		else if (arrThisMenu[A_Index].FolderName = lMenuSeparator)
 			Menu, arrThisMenu[A_Index].MenuName , Add
@@ -811,10 +817,11 @@ Gui, 1:Add, Button, x+10 w75 gGuiHelp, %lGuiHelp%
 Gui, 1:Add, Text, x10 y30, %lAppTagline%
 
 Gui, 1:Add, Text, x10, %lGuiSubmenuDropdownLabel%
-Gui, 1:Add, DropDownList, x+10 yp vdrpMenusList gGuiMenusListChanged AltSubmit ; ### Sort -> need to manage int also
+Gui, 1:Add, DropDownList, x+10 yp vdrpMenusList gGuiMenusListChanged Sort ; ####
 
 Gui, 1:Font, s8 w400, Verdana
-Gui, 1:Add, ListView, x10 w350 h220 Count32 -Multi NoSortHdr LV0x10 vlvFoldersList gGuiFoldersListEvent, %lGuiLvFoldersHeader%
+Gui, 1:Add, ListView, x10 w350 h220 Count32 -Multi NoSortHdr LV0x10 vlvFoldersList gGuiFoldersListEvent, %lGuiLvFoldersHeader%|TEMP ; 
+; ### when debuging over LV_ModifyCol(4, 0) ; hide 4th column
 Gui, 1:Add, Button, x+10 w75 gGuiAddFolder, %lGuiAddFolder%
 Gui, 1:Add, Button, w75 gGuiRemoveFolder, %lGuiRemoveFolder%
 Gui, 1:Add, Button, w75 gGuiEditFolder, %lGuiEditFolder%
@@ -885,8 +892,8 @@ return
 GuiMenusListChanged:
 ;------------------------------------------------------------
 
-GuiControlGet, intDropdownPosition, , drpMenusList
-strCurrentMenu := arrMenusPosition[intDropdownPosition]
+GuiControlGet, strCurrentMenu, , drpMenusList ; ### create strCurrentMenuDisplay replacing Main with display Main name
+; strCurrentMenu := arrMenusPosition[intDropdownPosition] ; ### arrMenusPosition not used
 Gosub, LoadOneMenu
 
 return
@@ -2002,8 +2009,8 @@ return
 LoadOneMenu:
 ;------------------------------------------------------------
 
-###_D(A_ThisLabel)
-; save current LV in current arrMenu
+; ###_D(A_ThisLabel)
+; ### save current LV in current arrMenu
 
 Gui, 1:ListView, lvFoldersList
 LV_Delete()
@@ -2015,7 +2022,7 @@ Loop, % arrMenus[strCurrentMenu].MaxIndex()
 		if StrLen(arrMenus[strCurrentMenu][A_Index].FolderLocation) ; this is a folder
 			LV_Add(, arrMenus[strCurrentMenu][A_Index].FolderName, arrMenus[strCurrentMenu][A_Index].FolderLocation)
 		else ; this is a submenu
-			LV_Add(, SubMenuDisplayName(arrMenus[strCurrentMenu][A_Index].FolderName), lGuiSubmenuLocation)
+			LV_Add(, arrMenus[strCurrentMenu][A_Index].FolderName, lGuiSubmenuLocation, arrMenus[strCurrentMenu][A_Index].SubmenuFullName)
 LV_Modify(1, "Select Focus")
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
@@ -2032,7 +2039,8 @@ BuildMenuTreeDropDown(strMenu, strDefaultMenu, intLevel := 0, intCount := 0)
 ; recursive function
 ;------------------------------------------------------------
 {
-	; ###_D("BuildMenuTreeDropDown: " . strMenu)
+	###_D("BuildMenuTreeDropDown: " . strMenu)
+	/* removed: ####
 	intCount := intCount + 1
 	arrMenusPosition.Insert(intCount, strMenu)
 	strList := ""
@@ -2041,14 +2049,16 @@ BuildMenuTreeDropDown(strMenu, strDefaultMenu, intLevel := 0, intCount := 0)
 	
 	strDisplayMenu := SubMenuDisplayName(strMenu)
 	strList := strList . " " . strDisplayMenu
-	
+	*/
+	strList := strMenu
 	if (strMenu = strDefaultMenu)
 		strList := strList . "|" ; default value
 	
 	intLevel := intLevel + 1
 	Loop, % arrMenus[strMenu].MaxIndex()
-		if !StrLen(arrMenus[strMenu][A_Index].FolderLocation) ; this is a submenu
-			strList := strList . "|" . BuildMenuTreeDropDown(arrMenus[strMenu][A_Index].FolderName, strDefaultMenu, intLevel, intCount)
+		if StrLen(arrMenus[strMenu][A_Index].SubmenuFullName) ; this is a submenu
+			; was strList := strList . "|" . BuildMenuTreeDropDown(arrMenus[strMenu][A_Index].FolderName, strDefaultMenu, intLevel, intCount)
+			strList := strList . "|" . BuildMenuTreeDropDown(arrMenus[strMenu][A_Index].SubmenuFullName, strDefaultMenu, intLevel, intCount)
 	intLevel := intLevel - 1
 	
 	return strList
