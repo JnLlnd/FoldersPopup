@@ -1,6 +1,6 @@
 /*
 todo:
-save gui
+complete save gui
 restore menuBK if cancel
 */
 
@@ -855,6 +855,7 @@ for strMenuName, arrMenu in arrMenus
 		arrMenuBK.MenuName := objFolder.MenuName
 		arrMenuBK.FolderName := objFolder.FolderName
 		arrMenuBK.FolderLocation := objFolder.FolderLocation
+		arrMenuBK.SubmenuFullName := objFolder.SubmenuFullName
 		/*
 		###_D(intIndex . "/" . arrMenu.MaxIndex() . "`n"
 			. "arrMenuBK.MenuName = " . arrMenuBK.MenuName . "`n"
@@ -950,13 +951,15 @@ if (intSelectedRow = 1)
 	return
 
 LV_GetText(strThisName, intSelectedRow, 1)
-LV_GetText(strThisPath, intSelectedRow, 2)
+LV_GetText(strThisLocation, intSelectedRow, 2)
+LV_GetText(strThisMenu, intSelectedRow, 3)
 
-LV_GetText(PriorName, intSelectedRow - 1, 1)
-LV_GetText(PriorPath, intSelectedRow - 1, 2)
+LV_GetText(strPriorName, intSelectedRow - 1, 1)
+LV_GetText(strPriorLocation, intSelectedRow - 1, 2)
+LV_GetText(strPriorMenu, intSelectedRow - 1, 3)
 
-LV_Modify(intSelectedRow, "", PriorName, PriorPath)
-LV_Modify(intSelectedRow - 1, "Select Focus Vis", strThisName, strThisPath)
+LV_Modify(intSelectedRow, "", strPriorName, strPriorLocation, strPriorMenu)
+LV_Modify(intSelectedRow - 1, "Select Focus Vis", strThisName, strThisLocation, strThisMenu)
 
 GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lGuiCancel%
@@ -976,13 +979,15 @@ if (intSelectedRow = LV_GetCount())
 	return
 
 LV_GetText(strThisName, intSelectedRow, 1)
-LV_GetText(strThisPath, intSelectedRow, 2)
+LV_GetText(strThisLocation, intSelectedRow, 2)
+LV_GetText(strThisMenu, intSelectedRow, 3)
 
-LV_GetText(NextName, intSelectedRow + 1, 1)
-LV_GetText(NextPath, intSelectedRow + 1, 2)
+LV_GetText(strNextName, intSelectedRow + 1, 1)
+LV_GetText(strNextLocation, intSelectedRow + 1, 2)
+LV_GetText(strNextMenu, intSelectedRow + 1, 3)
 	
-LV_Modify(intSelectedRow, "", NextName, NextPath)
-LV_Modify(intSelectedRow + 1, "Select Focus Vis", strThisName, strThisPath)
+LV_Modify(intSelectedRow, "", strNextName, strNextLocation, strNextMenu)
+LV_Modify(intSelectedRow + 1, "Select Focus Vis", strThisName, strThisLocation, strThisMenu)
 
 GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lGuiCancel%
@@ -1065,8 +1070,21 @@ return
 GuiSave:
 ;------------------------------------------------------------
 
+Gosub, SaveCurrentListviewToMenuObject ; save current LV before saving
+; #####
+for strMenu, arrMenu in arrMenus
+	loop, % arrMenu.MaxIndex()
+		###_D(strMenu . "/" . arrMenu.MaxIndex() . "`n"
+			. "arrMenu[A_Index].MenuName = " . arrMenu[A_Index].MenuName . "`n"
+			. "arrMenu[A_Index].FolderName = " . arrMenu[A_Index].FolderName . "`n"
+			. "arrMenu[A_Index].FolderLocation = " . arrMenu[A_Index].FolderLocation . "`n"
+			. "arrMenu[A_Index].SubmenuFullName = " . arrMenu[A_Index].SubmenuFullName . "`n"
+			. "")
+
+return
 IniDelete, %strIniFile%, Folders
 Gui, 1:ListView, lvFoldersList
+
 Loop % LV_GetCount()
 {
 	LV_GetText(strName, A_Index, 1)
@@ -1502,15 +1520,14 @@ if (blnRadioSubmenu)
 	arrNewMenu := Object() ; array of folders of the new menu
 	arrMenus.Insert(strNewMenuName, arrNewMenu)
 	
+	/* NO DON'T DO THAT. Menu is empty.
 	objFolder := Object()
 	objFolder.MenuName := strCurrentMenu ; parent menu of this menu item
 	objFolder.FolderName := strNewMenuName ; name of this menu item
 	objFolder.FolderLocation := "" ; empty for submenu
 	objFolder.SubmenuFullName := strNewMenuName ; full name of the submenu
 	arrMenus[strNewMenuName].Insert(objFolder)
-
-	; arrMenusPosition := Object() ; reset array ; #### CHECK INT BECAUSE SELECTION NOT WORKING
-	GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown("Main", strCurrentMenu) . "|"
+	*/
 }
 else
 {
@@ -1551,12 +1568,18 @@ if (intRowToEdit) ; modify selected row or move item to another menu
 }
 else ; insert new item at the top of the Gui
 {
-	LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", strFolderShortName, strFolderLocation)
+	LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", strFolderShortName, strFolderLocation, strNewMenuName)
 	LV_Modify(LV_GetNext(), "Vis")
 }
 
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
+
+if (blnRadioSubmenu)
+{
+	Gosub, SaveCurrentListviewToMenuObject ; save current LV tbefore update the dropdown menu
+	GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown("Main", strCurrentMenu) . "|"
+}
 
 GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lDialogCancelButton%
@@ -2037,12 +2060,15 @@ LV_Delete()
 
 Loop, % arrMenus[strCurrentMenu].MaxIndex()
 	If !StrLen(arrMenus[strCurrentMenu][A_Index].FolderName) ; ### WHY?
+	{
 		LV_Add()
+		###_D("Why here???")
+	}
 	else
-		if StrLen(arrMenus[strCurrentMenu][A_Index].FolderLocation) ; this is a folder
-			LV_Add(, arrMenus[strCurrentMenu][A_Index].FolderName, arrMenus[strCurrentMenu][A_Index].FolderLocation)
-		else ; this is a submenu
+		if StrLen(arrMenus[strCurrentMenu][A_Index].SubmenuFullName) ; this is a submenu
 			LV_Add(, arrMenus[strCurrentMenu][A_Index].FolderName, lGuiSubmenuLocation, arrMenus[strCurrentMenu][A_Index].SubmenuFullName)
+		else ; this is a folder
+			LV_Add(, arrMenus[strCurrentMenu][A_Index].FolderName, arrMenus[strCurrentMenu][A_Index].FolderLocation)
 LV_Modify(1, "Select Focus")
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
