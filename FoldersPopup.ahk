@@ -774,7 +774,14 @@ BuildOneMenu(strMenu)
 			; #### strSubMenuDisplayName := SubMenuDisplayName(strSubMenuName)
 			strSubMenuParent := arrThisMenu[A_Index].MenuName
 			BuildOneMenu(strSubMenuFullName) ; recursive call
-			Menu, %strSubMenuParent%, Add, %strSubMenuDisplayName%, % ":" . strSubMenuFullName
+			try Menu, %strSubMenuParent%, Add, %strSubMenuDisplayName%, % ":" . strSubMenuFullName ; ####
+			catch e
+			{
+				###_D("catch")
+				; Menu, %strSubMenuParent%, Add, %strSubMenuDisplayName%
+				Menu, % arrThisMenu[A_Index].MenuName, Add, % arrThisMenu[A_Index].FolderName
+				Menu, % arrThisMenu[A_Index].MenuName, Disable, % arrThisMenu[A_Index].FolderName
+			}
 		}
 		else if (arrThisMenu[A_Index].FolderName = lMenuSeparator)
 			Menu, arrThisMenu[A_Index].MenuName , Add
@@ -878,8 +885,8 @@ GuiFoldersListEvent:
 Gui, 1:ListView, lvFoldersList
 if (A_GuiEvent = "DoubleClick")
 {
-	LV_GetText(strName, A_EventInfo, 1)
-	LV_GetText(strLocation, A_EventInfo, 2)
+	; LV_GetText(strName, A_EventInfo, 1)
+	; LV_GetText(strLocation, A_EventInfo, 2)
 	gosub, GuiEditFolder
 }
 
@@ -913,11 +920,26 @@ if !(intItemToRemove)
 	Oops(lDialogSelectItemToRemove)
 	return
 }
+
+LV_GetText(strSubmenuFullName, intItemToRemove, 3)
+if StrLen(strSubmenuFullName)
+{
+	MsgBox, 52, % L(lDialogFolderRemoveTitle, strAppName), % L(lDialogFolderRemovePrompt, strSubmenuFullName)
+	IfMsgBox, No
+		return
+	arrMenus.Remove(strSubmenuFullName) ; ##### must remove subfolders from arrMenus
+}
+
 LV_Delete(intItemToRemove)
 LV_Modify(intItemToRemove, "Select Focus")
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
 
+if StrLen(strSubmenuFullName)
+{
+	Gosub, SaveCurrentListviewToMenuObject ; save current LV tbefore update the dropdown menu
+	GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown("Main", strCurrentMenu) . "|"
+}
 GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lGuiCancel%
 
@@ -1071,26 +1093,25 @@ GuiSave:
 ;------------------------------------------------------------
 
 Gosub, SaveCurrentListviewToMenuObject ; save current LV before saving
-; #####
-for strMenu, arrMenu in arrMenus
-	loop, % arrMenu.MaxIndex()
-		###_D(strMenu . "/" . arrMenu.MaxIndex() . "`n"
-			. "arrMenu[A_Index].MenuName = " . arrMenu[A_Index].MenuName . "`n"
-			. "arrMenu[A_Index].FolderName = " . arrMenu[A_Index].FolderName . "`n"
-			. "arrMenu[A_Index].FolderLocation = " . arrMenu[A_Index].FolderLocation . "`n"
-			. "arrMenu[A_Index].SubmenuFullName = " . arrMenu[A_Index].SubmenuFullName . "`n"
-			. "")
 
-return
+; #####
 IniDelete, %strIniFile%, Folders
 Gui, 1:ListView, lvFoldersList
+intIndex := 0
+for strMenu, arrMenu in arrMenus
+	Loop, % arrMenu.MaxIndex()
+		{
+			strValue := arrMenu[A_Index].MenuName . "|" . arrMenu[A_Index].FolderName . "|" . arrMenu[A_Index].FolderLocation . "|" . arrMenu[A_Index].SubmenuFullName
+			intIndex := intIndex + 1
+			IniWrite, %strValue%, %strIniFile%, Folders, Folder%intIndex%
+			###_D(strMenu . "/" . arrMenu.MaxIndex() . "`n"
+				. "arrMenu[A_Index].MenuName = " . arrMenu[A_Index].MenuName . "`n"
+				. "arrMenu[A_Index].FolderName = " . arrMenu[A_Index].FolderName . "`n"
+				. "arrMenu[A_Index].FolderLocation = " . arrMenu[A_Index].FolderLocation . "`n"
+				. "arrMenu[A_Index].SubmenuFullName = " . arrMenu[A_Index].SubmenuFullName . "`n"
+				. "")
+		}
 
-Loop % LV_GetCount()
-{
-	LV_GetText(strName, A_Index, 1)
-	LV_GetText(strLocation, A_Index, 2)
-	IniWrite, %strName%|%strLocation%, %strIniFile%, Folders, Folder%A_Index%
-}
 
 IniDelete, %strIniFile%, Dialogs
 Gui, 1:ListView, lvDialogsList
@@ -1408,6 +1429,7 @@ if (A_ThisLabel = "GuiEditFolder")
 	Gui, 1:ListView, lvFoldersList
 	intRowToEdit := LV_GetNext()
 	LV_GetText(strCurrentName, intRowToEdit, 1)
+	LV_GetText(strCurrentLocation, intRowToEdit, 2)
 	if !StrLen(strCurrentName)
 	{
 		Oops(lDialogSelectItemToEdit)
@@ -1441,7 +1463,7 @@ if (A_ThisLabel = "GuiAddFolder")
 Gui, 2:Add, Text, x10 vlblShortName, %lDialogFolderShortName%
 Gui, 2:Add, Edit, x10 w250 vstrFolderShortName, %strCurrentName%
 
-Gui, 2:Add, Text, % "x10 vlblFolder" . (strCurrentLocation = lGuiSubmenuLocation ? "hidden" : ""), %lDialogFolderLabel%
+Gui, 2:Add, Text, % "x10 vlblFolder " . (strCurrentLocation = lGuiSubmenuLocation ? "hidden" : ""), %lDialogFolderLabel%
 Gui, 2:Add, Edit, % "x10 w200 vstrFolderLocation " . (strCurrentLocation = lGuiSubmenuLocation ? "hidden" : ""), %strCurrentLocation%
 Gui, 2:Add, Button, % "x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation w45 " . (strCurrentLocation = lGuiSubmenuLocation ? "hidden" : "default"), %lDialogBrowseButton%
 

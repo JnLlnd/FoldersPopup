@@ -1,3 +1,5 @@
+!lDialogFolderParentMenu	Folder parent menu
+!lDialogFolderRemovePrompt	Remove the folder "~1~"`nand ALL its content (folders and submenus)?
 !lDialodAdd	Add
 !lDialogAddEditFolderTitle	~1~ folder - ~2~ ~3~
 !lDialogBrowseButton	Browse

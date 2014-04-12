@@ -30,6 +30,8 @@ lDialogFolderLabel	Folder
 lDialogFolderNameNotNew	The name ~1~ is already used in this menu. Please, choose a new name.
 lDialogFolderNameOrLocationEmpty	The folder name or location are empty. Please, choose a name and a location.
 lDialogFolderParentMenu	Folder parent menu
+lDialogFolderRemovePrompt	Remove the folder "~1~"`nand ALL its content (folders and submenus)?
+lDialogFolderRemoveTitle	Remove Folder - ~1~
 lDialogFolderShortName	Folder short name for menu
 lDialogSave	Save
 lDialogBrowseButton	Browse
