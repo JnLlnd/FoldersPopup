@@ -1,9 +1,6 @@
 /*
 todo:
-fix dropdown menu navigation when menu is added
-add submenu - create object, forge name with > (lGuiSubmenuSeparator)
-save current LV at loadonemneu
-replace strPath with strLocation globally and commit
+save gui
 restore menuBK if cancel
 */
 
@@ -717,13 +714,13 @@ For pExp in ComObjCreate("Shell.Application").Windows
 		intExplorersIndex := intExplorersIndex + 1
 		objExplorers.Insert(intExplorersIndex, pExp.HWND)
 		
-		strPath :=  UriDecode(pExp.LocationURL)
-		StringReplace, strPath, strPath, file:///
-		StringReplace, strPath, strPath, /, \, A
-		if !StrLen(strPath)
-			strPath := pExp.LocationName
+		strLocation :=  UriDecode(pExp.LocationURL)
+		StringReplace, strLocation, strLocation, file:///
+		StringReplace, strLocation, strLocation, /, \, A
+		if !StrLen(strLocation)
+			strLocation := pExp.LocationName
 
-		Menu, menuSwitchExplorer, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strPath, SwitchExplorer
+		Menu, menuSwitchExplorer, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strLocation, SwitchExplorer
 	}
 }
 
@@ -881,7 +878,7 @@ Gui, 1:ListView, lvFoldersList
 if (A_GuiEvent = "DoubleClick")
 {
 	LV_GetText(strName, A_EventInfo, 1)
-	LV_GetText(strPath, A_EventInfo, 2)
+	LV_GetText(strLocation, A_EventInfo, 2)
 	gosub, GuiEditFolder
 }
 
@@ -1073,8 +1070,8 @@ Gui, 1:ListView, lvFoldersList
 Loop % LV_GetCount()
 {
 	LV_GetText(strName, A_Index, 1)
-	LV_GetText(strPath, A_Index, 2)
-	IniWrite, %strName%|%strPath%, %strIniFile%, Folders, Folder%A_Index%
+	LV_GetText(strLocation, A_Index, 2)
+	IniWrite, %strName%|%strLocation%, %strIniFile%, Folders, Folder%A_Index%
 }
 
 IniDelete, %strIniFile%, Dialogs
@@ -1495,11 +1492,13 @@ if (blnRadioSubmenu)
 {
 	strFolderLocation := lGuiSubmenuLocation
 	strNewMenuName := strParentMenu . lGuiSubmenuSeparator . strFolderShortName
+	/*
 	###_D("ADD OR EDIT SUBMENU`n"
 		. "strParentMenu: " . strParentMenu . "`n"
 		. "strCurrentMenu: " . strCurrentMenu . "`n"
 		. "strNewMenuName: " . strNewMenuName . "`n"
 		. "")
+	*/
 	arrNewMenu := Object() ; array of folders of the new menu
 	arrMenus.Insert(strNewMenuName, arrNewMenu)
 	
@@ -1516,6 +1515,7 @@ if (blnRadioSubmenu)
 else
 {
 	strNewMenuName := ""
+	/*
 	###_D("ADD OR EDIT FOLDER`n"
 		. "strParentMenu: " . strParentMenu . "`n"
 		. "strCurrentMenu: " . strCurrentMenu . "`n"
@@ -1523,6 +1523,7 @@ else
 		. "strFolderShortName: " . strFolderShortName . "`n"
 		. "strFolderLocation: " . strFolderLocation . "`n"
 		. "")
+	*/
 }
 
 Gosub, 2GuiClose
@@ -2072,7 +2073,7 @@ Loop % LV_GetCount()
 	objFolder.FolderLocation := strLocation ; path for this menu item
 	objFolder.SubmenuFullName := strMenu ; if menu, full name of the submenu
 	arrMenus[objFolder.MenuName].Insert(objFolder) ; add this menu item to parent menu
-	###_D("objFolder.SubmenuFullName: " . objFolder.SubmenuFullName)
+	; ###_D("objFolder.SubmenuFullName: " . objFolder.SubmenuFullName)
 }
 
 return
@@ -2084,7 +2085,7 @@ BuildMenuTreeDropDown(strMenu, strDefaultMenu, intLevel := 0, intCount := 0)
 ; recursive function
 ;------------------------------------------------------------
 {
-	###_D("BuildMenuTreeDropDown: " . strMenu)
+	; ###_D("BuildMenuTreeDropDown: " . strMenu)
 	/* removed: ####
 	intCount := intCount + 1
 	arrMenusPosition.Insert(intCount, strMenu)
@@ -2103,9 +2104,9 @@ BuildMenuTreeDropDown(strMenu, strDefaultMenu, intLevel := 0, intCount := 0)
 	Loop, % arrMenus[strMenu].MaxIndex()
 		if StrLen(arrMenus[strMenu][A_Index].SubmenuFullName) ; this is a submenu
 		{
-			###_D("arrMenus[strMenu][A_Index].SubmenuFullName: " . arrMenus[strMenu][A_Index].SubmenuFullName)
-				; was strList := strList . "|" . BuildMenuTreeDropDown(arrMenus[strMenu][A_Index].FolderName, strDefaultMenu, intLevel, intCount)
-				strList := strList . "|" . BuildMenuTreeDropDown(arrMenus[strMenu][A_Index].SubmenuFullName, strDefaultMenu, intLevel, intCount)
+			; ###_D("arrMenus[strMenu][A_Index].SubmenuFullName: " . arrMenus[strMenu][A_Index].SubmenuFullName)
+			; was strList := strList . "|" . BuildMenuTreeDropDown(arrMenus[strMenu][A_Index].FolderName, strDefaultMenu, intLevel, intCount)
+			strList := strList . "|" . BuildMenuTreeDropDown(arrMenus[strMenu][A_Index].SubmenuFullName, strDefaultMenu, intLevel, intCount)
 		}
 	intLevel := intLevel - 1
 	
@@ -2133,13 +2134,13 @@ if (blnDisplayMenuShortcuts)
 	StringTrimLeft, strThisMenu, A_ThisMenuItem, 3 ; remove "&1 " from menu item
 else
 	strThisMenu := A_ThisMenuItem
-strPath := GetPathFor(A_ThisMenu, strThisMenu)
+strLocation := GetPathFor(A_ThisMenu, strThisMenu)
 
 if (blnDiagMode)
 {
 	Diag("A_ThisHotkey", A_ThisHotkey)
 	Diag("Navigate", "RegularFolder")
-	Diag("Path", strPath)
+	Diag("Path", strLocation)
 }
 
 if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
@@ -2148,13 +2149,13 @@ if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetCla
 		Diag("Navigate", "Shell.Application")
 	
 	if (A_OSVersion = "WIN_XP")
-		ComObjCreate("Shell.Application").Explore(strPath)
+		ComObjCreate("Shell.Application").Explore(strLocation)
 	else
-		Run, %strPath%
+		Run, %strLocation%
 	; http://msdn.microsoft.com/en-us/library/bb774094http://msdn.microsoft.com/en-us/library/bb774094
-	; ComObjCreate("Shell.Application").Explore(strPath)
-	; ComObjCreate("WScript.Shell").Exec("Explorer.exe /e /select," . strPath) ; not tested on XP
-	; ComObjCreate("Shell.Application").Open(strPath)
+	; ComObjCreate("Shell.Application").Explore(strLocation)
+	; ComObjCreate("WScript.Shell").Exec("Explorer.exe /e /select," . strLocation) ; not tested on XP
+	; ComObjCreate("Shell.Application").Open(strLocation)
 	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 	
 	if (blnDiagMode)
@@ -2165,7 +2166,7 @@ else if WindowIsAnExplorer(strTargetClass)
 	if (blnDiagMode)
 		Diag("Navigate", "NavigateExplorer")
 	
-	NavigateExplorer(strPath, strTargetWinId)
+	NavigateExplorer(strLocation, strTargetWinId)
 	
 	if (blnDiagMode)
 		Diag("NavigateResult", ErrorLevel)
@@ -2175,7 +2176,7 @@ else if WindowIsConsole(strTargetClass)
 	if (blnDiagMode)
 		Diag("Navigate", "NavigateConsole")
 	
-	NavigateConsole(strPath, strTargetWinId)
+	NavigateConsole(strLocation, strTargetWinId)
 
 	if (blnDiagMode)
 		Diag("NavigateResult", ErrorLevel)
@@ -2188,7 +2189,7 @@ else
 		Diag("TargetClass", strTargetClass)
 	}
 	
-	NavigateDialog(strPath, strTargetWinId, strTargetClass)
+	NavigateDialog(strLocation, strTargetWinId, strTargetClass)
 
 	if (blnDiagMode)
 		Diag("NavigateResult", ErrorLevel)
@@ -2233,15 +2234,15 @@ else if WindowIsAnExplorer(strTargetClass)
 else ; this is the console or a dialog box
 {
 	if (intSpecialFolder = 0)
-		strPath := A_Desktop
+		strLocation := A_Desktop
 	else if (intSpecialFolder = 5)
-		strPath := A_MyDocuments
+		strLocation := A_MyDocuments
 	else if (intSpecialFolder = 39)
 	{
-		; do not use: StringReplace, strPath, A_MyDocuments, Documents, Pictures
+		; do not use: StringReplace, strLocation, A_MyDocuments, Documents, Pictures
 		; because A_MyDocument could contain a "Documents" string before the final folder
-		StringLeft, strPath, A_MyDocuments, % StrLen(A_MyDocuments) - StrLen("Documents")
-		strPath := strPath . "Pictures"
+		StringLeft, strLocation, A_MyDocuments, % StrLen(A_MyDocuments) - StrLen("Documents")
+		strLocation := strLocation . "Pictures"
 	}	
 	else ; we do not support this special folder
 	{
@@ -2251,9 +2252,9 @@ else ; this is the console or a dialog box
 	}
 
 	if WindowIsConsole(strTargetClass)
-		NavigateConsole(strPath, strTargetWinId)
+		NavigateConsole(strLocation, strTargetWinId)
 	else
-		NavigateDialog(strPath, strTargetWinId, strTargetClass)
+		NavigateDialog(strLocation, strTargetWinId, strTargetClass)
 }
 
 if (blnDiagMode)
@@ -2453,18 +2454,18 @@ http://msdn.microsoft.com/en-us/library/aa752094
 
 
 ;------------------------------------------------------------
-NavigateConsole(strPath, strWinId)
+NavigateConsole(strLocation, strWinId)
 ;------------------------------------------------------------
 {
 	if (WinExist("A") <> strWinId) ; in case that some window just popped out, and initialy active window lost focus
 		WinActivate, ahk_id %strWinId% ; we'll activate initialy active window
-	SendInput, CD /D %strPath%{Enter}
+	SendInput, CD /D %strLocation%{Enter}
 }
 ;------------------------------------------------------------
 
 
 ;------------------------------------------------------------
-NavigateDialog(strPath, strWinId, strClass)
+NavigateDialog(strLocation, strWinId, strClass)
 ;------------------------------------------------------------
 /*
 Excerpt from RMApp_Explorer_Navigate(FullPath, hwnd="") by Learning One
@@ -2500,9 +2501,9 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 	Else ; in all other cases, open a new Explorer and return from this function
 	{
 		if (A_OSVersion = "WIN_XP")
-			ComObjCreate("Shell.Application").Explore(strPath)
+			ComObjCreate("Shell.Application").Explore(strLocation)
 		else
-			Run, %strPath%
+			Run, %strLocation%
 		; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 		if (blnDiagMode)
 			Diag("NavigateDialog", "Not #32770 or bosa_sdm: open New Explorer")
@@ -2512,13 +2513,13 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 	if (blnDiagMode)
 	{
 		Diag("NavigateDialogControl", strControl)
-		Diag("NavigateDialogPath", strPath)
+		Diag("NavigateDialogPath", strLocation)
 	}
 			
-	;===In this part (if we reached it), we'll send strPath to control and restore control's initial text after navigating to specified folder===
+	;===In this part (if we reached it), we'll send strLocation to control and restore control's initial text after navigating to specified folder===
 	ControlGetText, strPrevControlText, %strControl%, ahk_id %strWinId% ; we'll get and store control's initial text first
 	
-	ControlSetTextR(strControl, strPath, "ahk_id " . strWinId) ; set control's text to strPath
+	ControlSetTextR(strControl, strLocation, "ahk_id " . strWinId) ; set control's text to strLocation
 	ControlSetFocusR(strControl, "ahk_id " . strWinId) ; focus control
 	if (WinExist("A") <> strWinId) ; in case that some window just popped out, and initialy active window lost focus
 		WinActivate, ahk_id %strWinId% ; we'll activate initialy active window
@@ -2744,10 +2745,10 @@ L(strMessage, objVariables*)
 
 
 ;------------------------------------------------------------
-GetDeepestFolderName(strPath)
+GetDeepestFolderName(strLocation)
 ;------------------------------------------------------------
 {
-	SplitPath, strPath, strDeepestName, , , , strDrive
+	SplitPath, strLocation, strDeepestName, , , , strDrive
 	if !StrLen(strDeepestName) ; we are probably at the root of a drive
 		return strDrive
 	else
