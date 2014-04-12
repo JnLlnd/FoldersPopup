@@ -17,6 +17,7 @@ lDialogAddEditFolderTitle	~1~ folder - ~2~ ~3~
 lDialogAddFolderManuallyPrompt	Sorry, we can't detect the current folder in this type of window.`n`nDo you want to add it manually now?
 lDialogAddFolderManuallyTitle	Add This Folder - ~1~ ~2~
 lDialogAddFolderSelect	Choose or create the new folder:
+lDialogBrowseButton	Browse
 lDialogCancelButton	Cancel
 lDialogCancelPrompt	Discard changes?
 lDialogCancelTitle	Cancel - ~1~ ~2~
@@ -31,7 +32,7 @@ lDialogFolderNameOrLocationEmpty	The folder name or location are empty. Please, 
 lDialogFolderParentMenu	Folder parent menu
 lDialogFolderShortName	Folder short name for menu
 lDialogSave	Save
-lDialogSelectButton	Select
+lDialogBrowseButton	Browse
 lDialogSelectItemToEdit	Please, select the item to edit.
 lDialogSelectItemToRemove	Please, select the item to remove.
 lDialogSubmenuLabel	Submenu
