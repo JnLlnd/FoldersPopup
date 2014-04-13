@@ -27,6 +27,7 @@ lDialogEditFolderPrompt	Enter the name for this foler:
 lDialogEditFolderSelect	Choose or create the new folder:
 lDialogEditFolderTitle	Edit Folder - ~1~ ~2~
 lDialogFolderLabel	Folder
+lDialogFolderNameNoSeparator	The submenu name cannot include the reserved character "~1~".
 lDialogFolderNameNotNew	The name ~1~ is already used in this menu. Please, choose a new name.
 lDialogFolderNameOrLocationEmpty	The folder name or location are empty. Please, choose a name and a location.
 lDialogFolderParentMenu	Folder parent menu
@@ -34,7 +35,6 @@ lDialogFolderRemovePrompt	Remove the folder "~1~"`nand ALL its content (folders 
 lDialogFolderRemoveTitle	Remove Folder - ~1~
 lDialogFolderShortName	Folder short name for menu
 lDialogSave	Save
-lDialogBrowseButton	Browse
 lDialogSelectItemToEdit	Please, select the item to edit.
 lDialogSelectItemToRemove	Please, select the item to remove.
 lDialogSubmenuLabel	Submenu

@@ -287,7 +287,7 @@ Loop
 	IniRead, strIniLine, %strIniFile%, Folders, Folder%A_Index%
 	if (strIniLine = "ERROR")
 		Break
-	strIniLine := strIniLine . "|" ; additional "|" to make sure we have an empty 4th item
+	strIniLine := strIniLine . "|||" ; additional "|" to make sure we have all empty items
 	StringSplit, arrThisObject, strIniLine, |
 	objFolder := Object() ; new menu item
 	objFolder.MenuName := arrThisObject1 ; parent menu of this menu item
@@ -855,14 +855,16 @@ BackupMenuObjects:
 arrMenusBK := Object()
 for strMenuName, arrMenu in arrMenus
 {
+	###_D(strMenuName . " début BACKUP")
 	arrMenuBK := Object()
 	for intIndex, objFolder in arrMenu
 	{
 		objFolderBK := Object()
-		arrMenuBK.MenuName := objFolder.MenuName
-		arrMenuBK.FolderName := objFolder.FolderName
-		arrMenuBK.FolderLocation := objFolder.FolderLocation
-		arrMenuBK.SubmenuFullName := objFolder.SubmenuFullName
+		objFolderBK.MenuName := objFolder.MenuName
+		objFolderBK.FolderName := objFolder.FolderName
+		objFolderBK.FolderLocation := objFolder.FolderLocation
+		objFolderBK.SubmenuFullName := objFolder.SubmenuFullName
+		arrMenuBK.Insert(objFolderBK)
 		/*
 		###_D(intIndex . "/" . arrMenu.MaxIndex() . "`n"
 			. "arrMenuBK.MenuName = " . arrMenuBK.MenuName . "`n"
@@ -873,6 +875,38 @@ for strMenuName, arrMenu in arrMenus
 	}
 	arrMenusBK.Insert(strMenuName, arrMenuBK) ; add this submenu to the array of menus
 	; ###_D(strMenuName . " terminé")
+}
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+RestoreBackupMenuObjects:
+;------------------------------------------------------------
+
+arrMenus := Object() ; reinit
+for strMenuName, arrMenuBK in arrMenusBK
+{
+	###_D(strMenuName . " début RESTORE")
+	arrMenu := Object()
+	for intIndex, objFolderBK in arrMenuBK
+	{
+		objFolder := Object()
+		objFolder.MenuName := objFolderBK.MenuName
+		objFolder.FolderName := objFolderBK.FolderName
+		objFolder.FolderLocation := objFolderBK.FolderLocation
+		objFolder.SubmenuFullName := objFolderBK.SubmenuFullName
+		arrMenu.Insert(objFolder)
+		###_D(intIndex . "/" . arrMenuBK.MaxIndex() . "`n"
+			. "objFolder.MenuName = " . objFolderF.MenuName . "`n"
+			. "objFolder.FolderName = " . objFolder.FolderName . "`n"
+			. "objFolder.FolderLocation = " . objFolder.FolderLocation . "`n"
+			. "objFolder.SubmenuFullName = " . objFolder.SubmenuFullName
+			. "")
+	}
+	arrMenus.Insert(strMenuName, arrMenu) ; add this submenu to the array of menus
+	###_D(strMenuName . " terminé")
 }
 
 return
@@ -927,7 +961,7 @@ if StrLen(strSubmenuFullName)
 	MsgBox, 52, % L(lDialogFolderRemoveTitle, strAppName), % L(lDialogFolderRemovePrompt, strSubmenuFullName)
 	IfMsgBox, No
 		return
-	arrMenus.Remove(strSubmenuFullName) ; ##### must remove subfolders from arrMenus
+	RemoveAllSubMenus(strSubmenuFullName)
 }
 
 LV_Delete(intItemToRemove)
@@ -944,6 +978,22 @@ GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lGuiCancel%
 
 return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+RemoveAllSubMenus(strSubmenuFullName)
+;------------------------------------------------------------
+{
+	Loop, % arrMenus[strSubmenuFullName].MaxIndex()
+	{
+		###_D(arrMenus[strSubmenuFullName][A_Index].FolderName . ": " . arrMenus[strSubmenuFullName][A_Index].SubmenuFullName)
+		if StrLen(arrMenus[strSubmenuFullName][A_Index].SubmenuFullName)
+			RemoveAllSubMenus(arrMenus[strSubmenuFullName][A_Index].SubmenuFullName)
+	}
+	###_D("Remove menu: " . strSubmenuFullName)
+	arrMenus.Remove(strSubmenuFullName)
+}
 ;------------------------------------------------------------
 
 
@@ -1154,6 +1204,7 @@ if (blnSaveEnabled)
 	MsgBox, 36, % L(lDialogCancelTitle, strAppName, strAppVersion), %lDialogCancelPrompt%
 	IfMsgBox, Yes
 	{
+		Gosub, RestoreBackupMenuObjects
 		GuiControl, Disable, btnGuiSave
 		GuiControl, , btnGuiCancel, %lGuiClose%
 	}
@@ -1530,6 +1581,11 @@ if !FolderNameIsNew(strFolderShortName, (strParentMenu = strCurrentMenu ? "" : s
 
 if (blnRadioSubmenu)
 {
+	if InStr(strFolderShortName, lGuiSubmenuSeparator)
+	{
+		Oops(L(lDialogFolderNameNoSeparator, lGuiSubmenuSeparator))
+		return
+	}
 	strFolderLocation := lGuiSubmenuLocation
 	strNewMenuName := strParentMenu . lGuiSubmenuSeparator . strFolderShortName
 	/*

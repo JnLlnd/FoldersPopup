@@ -1,16 +1,16 @@
-!lDialogFolderParentMenu	Folder parent menu
-!lDialogFolderRemovePrompt	Remove the folder "~1~"`nand ALL its content (folders and submenus)?
 !lDialodAdd	Add
 !lDialogAddEditFolderTitle	~1~ folder - ~2~ ~3~
 !lDialogBrowseButton	Browse
 !lDialogCancelButton	Cancel
 !lDialogFolderLabel	Folder
+!lDialogFolderNameNoSeparator	The submenu name cannot include the reserved character "~1~".
 !lDialogFolderNameNotNew	The name ~1~ is already used in this menu. Please, choose a new name.
 !lDialogFolderNameOrLocationEmpty	The folder name or location are empty. Please, choose a name and a location.
 !lDialogFolderParentMenu	Folder parent menu
+!lDialogFolderParentMenu	Folder parent menu
+!lDialogFolderRemovePrompt	Remove the folder "~1~"`nand ALL its content (folders and submenus)?
 !lDialogFolderShortName	Folder short name for menu
 !lDialogSave	Save
-!lDialogBrowseButton	Browse
 !lDialogSubmenuLabel	Submenu
 !lDialogSubmenuShortName	Submenu short name
 !lGuiSubmenuDropdownLabel	Menu to edit:
