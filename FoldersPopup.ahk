@@ -1,7 +1,10 @@
 /*
-todo:
-complete save gui
-restore menuBK if cancel
+BUG
+- when moving a submenu
+
+TODO
+- replace Main with display name
+- add numeric shortcuts to submenus
 */
 
 ;===============================================
@@ -148,9 +151,10 @@ else if InStr(A_ComputerName, "STIC") ; for my work hotkeys
 Gosub, InitSystemArrays
 Gosub, LoadIniFile
 Gosub, InitLanguage
-Gosub, BuildSpecialFoldersMenu ; build even if blnDisplaySpecialFolders is false because it could become true
-Gosub, BuildRecentFoldersMenu ; build even if blnDisplayRecentFolders is false because it could become true
-Gosub, BuildSwitchMenu ; build even if blnDisplaySwitchMenu is false because it could become true
+; build even if blnDisplaySpecialFolders, blnDisplaySwitchMenu or blnDisplaySwitchMenu are false because they could become true
+Gosub, BuildSpecialFoldersMenu
+Gosub, BuildRecentFoldersMenu
+Gosub, BuildSwitchMenu
 Gosub, BuildFoldersMenus ; need to be initialized here - will be updated at each call to popup menu
 Gosub, BuildGui
 Gosub, BuildAddDialogMenu
@@ -217,7 +221,6 @@ LoadIniFile:
 
 ; reinit after Settings save if already exist
 Global arrMenus := Object() ; list of menus (Main and submenus)
-Global arrMenusPosition := Object() ; positions of menus in dropdown list
 arrMainMenu := Object() ; array of folders of the Main menu
 arrMenus.Insert("Main", arrMainMenu) ; "Main" is the main menu internal name, use lMainMenuMane for display name
 arrDialogs := Object() ; list of supported dialog boxes
@@ -283,18 +286,18 @@ IniRead, strLanguageCode, %strIniFile%, Global, LanguageCode, EN
 
 Loop
 {
-	; ####
 	IniRead, strIniLine, %strIniFile%, Folders, Folder%A_Index%
 	if (strIniLine = "ERROR")
 		Break
 	strIniLine := strIniLine . "|||" ; additional "|" to make sure we have all empty items
 	StringSplit, arrThisObject, strIniLine, |
+	
 	objFolder := Object() ; new menu item
 	objFolder.MenuName := arrThisObject1 ; parent menu of this menu item
 	objFolder.FolderName := arrThisObject2 ; display name of this menu item
 	objFolder.FolderLocation := arrThisObject3 ; path for this menu item
 	objFolder.SubmenuFullName := arrThisObject4 ; full name of the submenu
-	; ###_D("objFolder.SubmenuFullName: " . objFolder.SubmenuFullName)
+
 	if StrLen(objFolder.SubmenuFullName) ; then this is a new submenu
 	{
 		arrSubMenu := Object() ; create submenu
@@ -354,7 +357,6 @@ else
 	strLanguageCode := "EN"
 
 ; Init Language Arrays
-
 StringSplit, arrOptionsTitles, lOptionsTitles, |
 StringSplit, arrOptionsTitlesLong, lOptionsTitlesLong, |
 StringSplit, arrOptionsLanguageCodes, lOptionsLanguageCodes, |
@@ -568,7 +570,7 @@ SetMenuPosition:
 
 CoordMode, Menu, % (blnPopupFix ? "Screen" : "Window")
 
-; will be contradicted if not fix location
+; will be overridden if not fix location
 intMenuPosX := arrPopupFixPosition1
 intMenuPosY := arrPopupFixPosition2
 
@@ -764,21 +766,18 @@ BuildOneMenu(strMenu)
 	global blnDisplayMenuShortcuts
 	global intShortcut
 	
-	; ###_D("BuildOneMenu(strMenu): " . strMenu)
 	arrThisMenu := arrMenus[strMenu]
 	Loop, % arrThisMenu.MaxIndex()
 		if StrLen(arrThisMenu[A_Index].SubmenuFullName) ; this is a submenu
 		{
 			strSubMenuFullName := arrThisMenu[A_Index].SubmenuFullName
 			strSubMenuDisplayName := arrThisMenu[A_Index].FolderName
-			; #### strSubMenuDisplayName := SubMenuDisplayName(strSubMenuName)
 			strSubMenuParent := arrThisMenu[A_Index].MenuName
 			BuildOneMenu(strSubMenuFullName) ; recursive call
-			try Menu, %strSubMenuParent%, Add, %strSubMenuDisplayName%, % ":" . strSubMenuFullName ; ####
+			
+			try Menu, %strSubMenuParent%, Add, %strSubMenuDisplayName%, % ":" . strSubMenuFullName
 			catch e
 			{
-				###_D("catch")
-				; Menu, %strSubMenuParent%, Add, %strSubMenuDisplayName%
 				Menu, % arrThisMenu[A_Index].MenuName, Add, % arrThisMenu[A_Index].FolderName
 				Menu, % arrThisMenu[A_Index].MenuName, Disable, % arrThisMenu[A_Index].FolderName
 			}
@@ -822,11 +821,11 @@ Gui, 1:Add, Button, x+10 w75 gGuiHelp, %lGuiHelp%
 Gui, 1:Add, Text, x10 y30, %lAppTagline%
 
 Gui, 1:Add, Text, x10, %lGuiSubmenuDropdownLabel%
-Gui, 1:Add, DropDownList, x+10 yp vdrpMenusList gGuiMenusListChanged Sort ; ####
+Gui, 1:Add, DropDownList, x+10 yp vdrpMenusList gGuiMenusListChanged ; Sort
 
 Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, ListView, x10 w350 h220 Count32 -Multi NoSortHdr LV0x10 vlvFoldersList gGuiFoldersListEvent, %lGuiLvFoldersHeader%|TEMP ; 
-; ### when debuging over LV_ModifyCol(4, 0) ; hide 4th column
+LV_ModifyCol(3, 0) ; hide 3rd column
 Gui, 1:Add, Button, x+10 w75 gGuiAddFolder, %lGuiAddFolder%
 Gui, 1:Add, Button, w75 gGuiRemoveFolder, %lGuiRemoveFolder%
 Gui, 1:Add, Button, w75 gGuiEditFolder, %lGuiEditFolder%
@@ -855,7 +854,6 @@ BackupMenuObjects:
 arrMenusBK := Object()
 for strMenuName, arrMenu in arrMenus
 {
-	###_D(strMenuName . " début BACKUP")
 	arrMenuBK := Object()
 	for intIndex, objFolder in arrMenu
 	{
@@ -865,16 +863,8 @@ for strMenuName, arrMenu in arrMenus
 		objFolderBK.FolderLocation := objFolder.FolderLocation
 		objFolderBK.SubmenuFullName := objFolder.SubmenuFullName
 		arrMenuBK.Insert(objFolderBK)
-		/*
-		###_D(intIndex . "/" . arrMenu.MaxIndex() . "`n"
-			. "arrMenuBK.MenuName = " . arrMenuBK.MenuName . "`n"
-			. "arrMenuBK.FolderName = " . arrMenuBK.FolderName . "`n"
-			. "arrMenuBK.FolderLocation = " . arrMenuBK.FolderLocation . "`n"
-			. "")
-		*/
 	}
 	arrMenusBK.Insert(strMenuName, arrMenuBK) ; add this submenu to the array of menus
-	; ###_D(strMenuName . " terminé")
 }
 
 return
@@ -888,7 +878,6 @@ RestoreBackupMenuObjects:
 arrMenus := Object() ; reinit
 for strMenuName, arrMenuBK in arrMenusBK
 {
-	###_D(strMenuName . " début RESTORE")
 	arrMenu := Object()
 	for intIndex, objFolderBK in arrMenuBK
 	{
@@ -898,15 +887,8 @@ for strMenuName, arrMenuBK in arrMenusBK
 		objFolder.FolderLocation := objFolderBK.FolderLocation
 		objFolder.SubmenuFullName := objFolderBK.SubmenuFullName
 		arrMenu.Insert(objFolder)
-		###_D(intIndex . "/" . arrMenuBK.MaxIndex() . "`n"
-			. "objFolder.MenuName = " . objFolderF.MenuName . "`n"
-			. "objFolder.FolderName = " . objFolder.FolderName . "`n"
-			. "objFolder.FolderLocation = " . objFolder.FolderLocation . "`n"
-			. "objFolder.SubmenuFullName = " . objFolder.SubmenuFullName
-			. "")
 	}
 	arrMenus.Insert(strMenuName, arrMenu) ; add this submenu to the array of menus
-	###_D(strMenuName . " terminé")
 }
 
 return
@@ -917,12 +899,9 @@ return
 GuiFoldersListEvent:
 ;------------------------------------------------------------
 Gui, 1:ListView, lvFoldersList
+
 if (A_GuiEvent = "DoubleClick")
-{
-	; LV_GetText(strName, A_EventInfo, 1)
-	; LV_GetText(strLocation, A_EventInfo, 2)
 	gosub, GuiEditFolder
-}
 
 return
 ;------------------------------------------------------------
@@ -933,9 +912,7 @@ GuiMenusListChanged:
 ;------------------------------------------------------------
 
 Gosub, SaveCurrentListviewToMenuObject ; save current LV before changing strCurrentMenu
-
 GuiControlGet, strCurrentMenu, , drpMenusList ; ### create strCurrentMenuDisplay replacing Main with display Main name
-; strCurrentMenu := arrMenusPosition[intDropdownPosition] ; ### arrMenusPosition not used
 Gosub, LoadOneMenu
 
 return
@@ -983,15 +960,12 @@ return
 
 ;------------------------------------------------------------
 RemoveAllSubMenus(strSubmenuFullName)
+; recursive function
 ;------------------------------------------------------------
 {
 	Loop, % arrMenus[strSubmenuFullName].MaxIndex()
-	{
-		###_D(arrMenus[strSubmenuFullName][A_Index].FolderName . ": " . arrMenus[strSubmenuFullName][A_Index].SubmenuFullName)
 		if StrLen(arrMenus[strSubmenuFullName][A_Index].SubmenuFullName)
-			RemoveAllSubMenus(arrMenus[strSubmenuFullName][A_Index].SubmenuFullName)
-	}
-	###_D("Remove menu: " . strSubmenuFullName)
+			RemoveAllSubMenus(arrMenus[strSubmenuFullName][A_Index].SubmenuFullName) ; recursive call
 	arrMenus.Remove(strSubmenuFullName)
 }
 ;------------------------------------------------------------
@@ -1144,9 +1118,9 @@ GuiSave:
 
 Gosub, SaveCurrentListviewToMenuObject ; save current LV before saving
 
-; #####
 IniDelete, %strIniFile%, Folders
 Gui, 1:ListView, lvFoldersList
+
 intIndex := 0
 for strMenu, arrMenu in arrMenus
 	Loop, % arrMenu.MaxIndex()
@@ -1154,14 +1128,7 @@ for strMenu, arrMenu in arrMenus
 			strValue := arrMenu[A_Index].MenuName . "|" . arrMenu[A_Index].FolderName . "|" . arrMenu[A_Index].FolderLocation . "|" . arrMenu[A_Index].SubmenuFullName
 			intIndex := intIndex + 1
 			IniWrite, %strValue%, %strIniFile%, Folders, Folder%intIndex%
-			###_D(strMenu . "/" . arrMenu.MaxIndex() . "`n"
-				. "arrMenu[A_Index].MenuName = " . arrMenu[A_Index].MenuName . "`n"
-				. "arrMenu[A_Index].FolderName = " . arrMenu[A_Index].FolderName . "`n"
-				. "arrMenu[A_Index].FolderLocation = " . arrMenu[A_Index].FolderLocation . "`n"
-				. "arrMenu[A_Index].SubmenuFullName = " . arrMenu[A_Index].SubmenuFullName . "`n"
-				. "")
 		}
-
 
 IniDelete, %strIniFile%, Dialogs
 Gui, 1:ListView, lvDialogsList
@@ -1502,8 +1469,7 @@ Gui, 2:+Owner1
 Gui, 2:+OwnDialogs
 
 Gui, 2:Add, Text, x10 y10 vlblFolderParentMenu, %lDialogFolderParentMenu%
-arrMenusPosition := Object() ; reset array
-Gui, 2:Add, DropDownList, % "x10 w250 vdrpParentMenu " .  (A_ThisLabel = "GuiAddFolder" ? "Disabled" : ""), % BuildMenuTreeDropDown("Main", strCurrentMenu) . "|" ; ### Sort -> need to manage int also
+Gui, 2:Add, DropDownList, % "x10 w250 vdrpParentMenu " .  (A_ThisLabel = "GuiAddFolder" ? "Disabled" : ""), % BuildMenuTreeDropDown("Main", strCurrentMenu) . "|"
 
 if (A_ThisLabel = "GuiAddFolder")
 {
@@ -1563,8 +1529,6 @@ Gui, 2:Submit, NoHide
 Gui, 2:+OwnDialogs
 
 GuiControlGet, strParentMenu, , drpParentMenu
-; strDropdownMenu := arrMenusPosition[intDropdownPosition]
-; ###_D(strParentMenu)
 
 if !StrLen(strFolderShortName) or (!blnRadioSubmenu and !StrLen(strFolderLocation))
 {
@@ -1588,38 +1552,11 @@ if (blnRadioSubmenu)
 	}
 	strFolderLocation := lGuiSubmenuLocation
 	strNewMenuName := strParentMenu . lGuiSubmenuSeparator . strFolderShortName
-	/*
-	###_D("ADD OR EDIT SUBMENU`n"
-		. "strParentMenu: " . strParentMenu . "`n"
-		. "strCurrentMenu: " . strCurrentMenu . "`n"
-		. "strNewMenuName: " . strNewMenuName . "`n"
-		. "")
-	*/
 	arrNewMenu := Object() ; array of folders of the new menu
 	arrMenus.Insert(strNewMenuName, arrNewMenu)
-	
-	/* NO DON'T DO THAT. Menu is empty.
-	objFolder := Object()
-	objFolder.MenuName := strCurrentMenu ; parent menu of this menu item
-	objFolder.FolderName := strNewMenuName ; name of this menu item
-	objFolder.FolderLocation := "" ; empty for submenu
-	objFolder.SubmenuFullName := strNewMenuName ; full name of the submenu
-	arrMenus[strNewMenuName].Insert(objFolder)
-	*/
 }
 else
-{
 	strNewMenuName := ""
-	/*
-	###_D("ADD OR EDIT FOLDER`n"
-		. "strParentMenu: " . strParentMenu . "`n"
-		. "strCurrentMenu: " . strCurrentMenu . "`n"
-		. "strNewMenuName: " . strNewMenuName . "`n"
-		. "strFolderShortName: " . strFolderShortName . "`n"
-		. "strFolderLocation: " . strFolderLocation . "`n"
-		. "")
-	*/
-}
 
 Gosub, 2GuiClose
 
@@ -1795,7 +1732,7 @@ Gui, 2:Add, Text, x10 y+5 w410 center, %lOptionsOtherOptions%
 Gui, 2:Font
 
 Gui, 2:Add, Text, y+10 x40, %lOptionsLanguage%
-Gui, 2:Add, DropDownList, yp x+10 vdrpLanguage, %lOptionsLanguageLabels%
+Gui, 2:Add, DropDownList, yp x+10 vdrpLanguage Sort, %lOptionsLanguageLabels%
 GuiControl, ChooseString, drpLanguage, %strLanguageLabel%
 
 Gui, 2:Add, CheckBox, y+10 x40 vblnOptionsRunAtStartup, %lOptionsRunAtStartup%
@@ -1948,7 +1885,7 @@ IniWrite, %strPopupFixPositionX%`,%strPopupFixPositionY%, %strIniFile%, Global, 
 arrPopupFixPosition1 := strPopupFixPositionX
 arrPopupFixPosition2 := strPopupFixPositionY
 
-; Rebuild Folders menus w/ or w/o optional folders and shortcuts
+; rebuild Folders menus w/ or w/o optional folders and shortcuts
 for strMenuName, arrMenu in arrMenus
 {
 	Menu, %strMenuName%, Delete
@@ -2128,30 +2065,18 @@ return
 LoadOneMenu:
 ;------------------------------------------------------------
 
-; ###_D(A_ThisLabel)
-; ### save current LV in current arrMenu
-
-; ####
-
 Gui, 1:ListView, lvFoldersList
 LV_Delete()
 
 Loop, % arrMenus[strCurrentMenu].MaxIndex()
-	If !StrLen(arrMenus[strCurrentMenu][A_Index].FolderName) ; ### WHY?
-	{
-		LV_Add()
-		###_D("Why here???")
-	}
-	else
-		if StrLen(arrMenus[strCurrentMenu][A_Index].SubmenuFullName) ; this is a submenu
-			LV_Add(, arrMenus[strCurrentMenu][A_Index].FolderName, lGuiSubmenuLocation, arrMenus[strCurrentMenu][A_Index].SubmenuFullName)
-		else ; this is a folder
-			LV_Add(, arrMenus[strCurrentMenu][A_Index].FolderName, arrMenus[strCurrentMenu][A_Index].FolderLocation)
+	if StrLen(arrMenus[strCurrentMenu][A_Index].SubmenuFullName) ; this is a submenu
+		LV_Add(, arrMenus[strCurrentMenu][A_Index].FolderName, lGuiSubmenuLocation, arrMenus[strCurrentMenu][A_Index].SubmenuFullName)
+	else ; this is a folder
+		LV_Add(, arrMenus[strCurrentMenu][A_Index].FolderName, arrMenus[strCurrentMenu][A_Index].FolderLocation)
 LV_Modify(1, "Select Focus")
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
 
-; arrMenusPosition := Object() ; reset array
 GuiControl, , drpMenusList, % "|" . BuildMenuTreeDropDown("Main", strCurrentMenu) . "|"
 
 return
@@ -2177,7 +2102,6 @@ Loop % LV_GetCount()
 	objFolder.FolderLocation := strLocation ; path for this menu item
 	objFolder.SubmenuFullName := strMenu ; if menu, full name of the submenu
 	arrMenus[objFolder.MenuName].Insert(objFolder) ; add this menu item to parent menu
-	; ###_D("objFolder.SubmenuFullName: " . objFolder.SubmenuFullName)
 }
 
 return
@@ -2185,34 +2109,17 @@ return
 
 
 ;------------------------------------------------------------
-BuildMenuTreeDropDown(strMenu, strDefaultMenu, intLevel := 0, intCount := 0)
+BuildMenuTreeDropDown(strMenu, strDefaultMenu)
 ; recursive function
 ;------------------------------------------------------------
 {
-	; ###_D("BuildMenuTreeDropDown: " . strMenu)
-	/* removed: ####
-	intCount := intCount + 1
-	arrMenusPosition.Insert(intCount, strMenu)
-	strList := ""
-	loop, %intLevel%
-		strList := strList . chr(187) . " " ; small ">>"
-	
-	strDisplayMenu := SubMenuDisplayName(strMenu)
-	strList := strList . " " . strDisplayMenu
-	*/
 	strList := strMenu
 	if (strMenu = strDefaultMenu)
 		strList := strList . "|" ; default value
 	
-	intLevel := intLevel + 1
 	Loop, % arrMenus[strMenu].MaxIndex()
 		if StrLen(arrMenus[strMenu][A_Index].SubmenuFullName) ; this is a submenu
-		{
-			; ###_D("arrMenus[strMenu][A_Index].SubmenuFullName: " . arrMenus[strMenu][A_Index].SubmenuFullName)
-			; was strList := strList . "|" . BuildMenuTreeDropDown(arrMenus[strMenu][A_Index].FolderName, strDefaultMenu, intLevel, intCount)
-			strList := strList . "|" . BuildMenuTreeDropDown(arrMenus[strMenu][A_Index].SubmenuFullName, strDefaultMenu, intLevel, intCount)
-		}
-	intLevel := intLevel - 1
+			strList := strList . "|" . BuildMenuTreeDropDown(arrMenus[strMenu][A_Index].SubmenuFullName, strDefaultMenu) ; recursive call
 	
 	return strList
 }
@@ -2657,7 +2564,8 @@ Adapted from ControlIsVisible(WinTitle,ControlClass) by Learning One
 http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 */
 ;------------------------------------------------------------
-{ ; used in Navigator
+{
+	; used in Navigator
 	ControlGet, blnIsControlVisible, Visible, , %strControlClass%, %strWinTitle%
 
 	return blnIsControlVisible
@@ -2672,7 +2580,8 @@ Adapted from RMApp_ControlSetFocusR(Control, WinTitle="", Tries=3) by Learning O
 http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 */
 ;------------------------------------------------------------
-{ ; used in Navigator. More reliable ControlSetFocus
+{
+	; used in Navigator. More reliable ControlSetFocus
 	Loop, %intTries%
 	{
 		ControlFocus, %strControl%, %strWinTitle% ; focus control
@@ -2696,7 +2605,8 @@ Adapted from from RMApp_ControlSetTextR(Control, NewText="", WinTitle="", Tries=
 http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 */
 ;------------------------------------------------------------
-{ ; used in Navigator. More reliable ControlSetText
+{
+	; used in Navigator. More reliable ControlSetText
 	Loop, %intTries%
 	{
 		ControlSetText, %strControl%, %strNewText%, %strWinTitle% ; set
