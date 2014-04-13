@@ -220,7 +220,7 @@ LoadIniFile:
 ;-----------------------------------------------------------
 
 ; reinit after Settings save if already exist
-Global arrMenus := Object() ; list of menus (Main and submenus)
+Global arrMenus := Object() ; list of menus (Main and submenus), non-hierachical
 arrMainMenu := Object() ; array of folders of the Main menu
 arrMenus.Insert("Main", arrMainMenu) ; "Main" is the main menu internal name, use lMainMenuMane for display name
 arrDialogs := Object() ; list of supported dialog boxes
@@ -825,7 +825,7 @@ Gui, 1:Add, DropDownList, x+10 yp vdrpMenusList gGuiMenusListChanged ; Sort
 
 Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, ListView, x10 w350 h220 Count32 -Multi NoSortHdr LV0x10 vlvFoldersList gGuiFoldersListEvent, %lGuiLvFoldersHeader%|TEMP ; 
-LV_ModifyCol(3, 0) ; hide 3rd column
+; WHEN DEBUG FINISHED LV_ModifyCol(3, 0) ; hide 3rd column
 Gui, 1:Add, Button, x+10 w75 gGuiAddFolder, %lGuiAddFolder%
 Gui, 1:Add, Button, w75 gGuiRemoveFolder, %lGuiRemoveFolder%
 Gui, 1:Add, Button, w75 gGuiEditFolder, %lGuiEditFolder%
@@ -849,6 +849,7 @@ return
 
 ;------------------------------------------------------------
 BackupMenuObjects:
+; in case of Gui Cancel to restore objects to original state
 ;------------------------------------------------------------
 
 arrMenusBK := Object()
@@ -873,6 +874,7 @@ return
 
 ;------------------------------------------------------------
 RestoreBackupMenuObjects:
+; when Gui Cancel to restore objects to original state
 ;------------------------------------------------------------
 
 arrMenus := Object() ; reinit
@@ -1122,13 +1124,7 @@ IniDelete, %strIniFile%, Folders
 Gui, 1:ListView, lvFoldersList
 
 intIndex := 0
-for strMenu, arrMenu in arrMenus
-	Loop, % arrMenu.MaxIndex()
-		{
-			strValue := arrMenu[A_Index].MenuName . "|" . arrMenu[A_Index].FolderName . "|" . arrMenu[A_Index].FolderLocation . "|" . arrMenu[A_Index].SubmenuFullName
-			intIndex := intIndex + 1
-			IniWrite, %strValue%, %strIniFile%, Folders, Folder%intIndex%
-		}
+SaveOneMenu("Main") ; recursive function
 
 IniDelete, %strIniFile%, Dialogs
 Gui, 1:ListView, lvDialogsList
@@ -1145,6 +1141,30 @@ GuiControl, , %lGuiCancel%, %lGuiClose%
 Gosub, GuiCancel
 
 return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+SaveOneMenu(strMenu)
+; recursive fucntion
+;------------------------------------------------------------
+{
+	global strIniFile
+	global intIndex
+	
+	Loop, % arrMenus[strMenu].MaxIndex()
+	{
+		strValue := arrMenus[strMenu][A_Index].MenuName
+			. "|" . arrMenus[strMenu][A_Index].FolderName 
+			. "|" . arrMenus[strMenu][A_Index].FolderLocation 
+			. "|" . arrMenus[strMenu][A_Index].SubmenuFullName
+		intIndex := intIndex + 1
+		IniWrite, %strValue%, %strIniFile%, Folders, Folder%intIndex%
+		###_D(intIndex . ": " . strValue)
+		if StrLen(arrMenus[strMenu][A_Index].SubmenuFullName)
+			SaveOneMenu(arrMenus[strMenu][A_Index].SubmenuFullName)
+	}
+}
 ;------------------------------------------------------------
 
 
@@ -1447,13 +1467,13 @@ if (A_ThisLabel = "GuiEditFolder")
 	Gui, 1:ListView, lvFoldersList
 	intRowToEdit := LV_GetNext()
 	LV_GetText(strCurrentName, intRowToEdit, 1)
-	LV_GetText(strCurrentLocation, intRowToEdit, 2)
 	if !StrLen(strCurrentName)
 	{
 		Oops(lDialogSelectItemToEdit)
 		return
 	}
 	LV_GetText(strCurrentLocation, intRowToEdit, 2)
+	LV_GetText(strCurrentSubmenuFullName, intRowToEdit, 3)
 }
 else
 {
@@ -1477,7 +1497,7 @@ if (A_ThisLabel = "GuiAddFolder")
 	Gui, 2:Add, Radio, x+10 yp vblnRadioFolder checked gRadioButtonsChanged, %lDialogFolderLabel%
 	Gui, 2:Add, Radio, x+10 yp vblnRadioSubmenu gRadioButtonsChanged, %lDialogSubmenuLabel%
 }
-Gui, 2:Add, Text, x10 vlblShortName, %lDialogFolderShortName%
+Gui, 2:Add, Text, x10 vlblShortName, % (StrLen(strCurrentSubmenuFullName) ? lDialogSubmenuShortName : lDialogFolderShortName)
 Gui, 2:Add, Edit, x10 w250 vstrFolderShortName, %strCurrentName%
 
 Gui, 2:Add, Text, % "x10 vlblFolder " . (strCurrentLocation = lGuiSubmenuLocation ? "hidden" : ""), %lDialogFolderLabel%
@@ -1543,20 +1563,27 @@ if !FolderNameIsNew(strFolderShortName, (strParentMenu = strCurrentMenu ? "" : s
 	return
 }
 
-if (blnRadioSubmenu)
+if (blnRadioSubmenu) or StrLen(strCurrentSubmenuFullName) ; add or edit a submenu
 {
 	if InStr(strFolderShortName, lGuiSubmenuSeparator)
 	{
 		Oops(L(lDialogFolderNameNoSeparator, lGuiSubmenuSeparator))
 		return
 	}
-	strFolderLocation := lGuiSubmenuLocation
-	strNewMenuName := strParentMenu . lGuiSubmenuSeparator . strFolderShortName
-	arrNewMenu := Object() ; array of folders of the new menu
-	arrMenus.Insert(strNewMenuName, arrNewMenu)
+	strNewSubmenuFullName := strParentMenu . lGuiSubmenuSeparator . strFolderShortName
 }
 else
-	strNewMenuName := ""
+	strNewSubmenuFullName := ""
+
+if (blnRadioSubmenu) ; add submenu
+{
+	strFolderLocation := lGuiSubmenuLocation
+	arrNewMenu := Object() ; array of folders of the new menu
+	arrMenus.Insert(strNewSubmenuFullName, arrNewMenu)
+}
+
+if StrLen(strCurrentSubmenuFullName)
+	UpdateMenuNameInSubmenus(strCurrentSubmenuFullName, strNewSubmenuFullName) ; change names in menu objects
 
 Gosub, 2GuiClose
 
@@ -1567,14 +1594,14 @@ Gui, 1:ListView, lvFoldersList
 if (intRowToEdit) ; modify selected row or move item to another menu
 {
 	if (strParentMenu = strCurrentMenu) ; modify selected row
-		LV_Modify(intRowToEdit, "Select Focus", strFolderShortName, strFolderLocation, strNewMenuName)
+		LV_Modify(intRowToEdit, "Select Focus", strFolderShortName, strFolderLocation, strNewSubmenuFullName)
 	else ; move menu item to another menu: add to the new menu's object and remove item from this menu in the Gui
 	{
 		objFolder := Object() ; new menu item
 		objFolder.MenuName := strParentMenu ; parent menu of this menu item
 		objFolder.FolderName := strFolderShortName ; display name of this menu item
 		objFolder.FolderLocation := strFolderLocation ; path for this menu item
-		objFolder.SubmenuFullName := strNewMenuName ; full name of the submenu ### check if the full name id OK when moved to a new menu
+		objFolder.SubmenuFullName := strNewSubmenuFullName ; full name of the submenu ### check if the full name id OK when moved to a new menu
 		arrMenus[objFolder.MenuName].Insert(objFolder) ; add this menu item to the new menu
 		
 		LV_Delete(intRowToEdit)
@@ -1583,14 +1610,14 @@ if (intRowToEdit) ; modify selected row or move item to another menu
 }
 else ; insert new item at the top of the Gui
 {
-	LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", strFolderShortName, strFolderLocation, strNewMenuName)
+	LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", strFolderShortName, strFolderLocation, strNewSubmenuFullName)
 	LV_Modify(LV_GetNext(), "Vis")
 }
 
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
 
-if (blnRadioSubmenu)
+if (blnRadioSubmenu or StrLen(strCurrentSubmenuFullName))
 {
 	Gosub, SaveCurrentListviewToMenuObject ; save current LV tbefore update the dropdown menu
 	GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown("Main", strCurrentMenu) . "|"
@@ -1600,6 +1627,30 @@ GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lDialogCancelButton%
 
 return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+UpdateMenuNameInSubmenus(strOldMenu, strNewMenu)
+; recursive function
+;------------------------------------------------------------
+{
+	; ###_D("Update: " . strOldMenu . " " . arrMenus[strOldMenu].MaxIndex())
+	; ###_D("strOldMenu: " . strOldMenu . "`nstrNewMenu: " . strNewMenu)
+	arrMenus.Insert(strNewMenu, arrMenus[strOldMenu])
+	arrMenus.Remove(strOldMenu)
+	Loop, % arrMenus[strNewMenu].MaxIndex()
+	{
+		arrMenus[strNewMenu][A_Index].MenuName := strNewMenu
+		if StrLen(arrMenus[strNewMenu][A_Index].SubmenuFullName)
+		{
+			arrMenus[strNewMenu][A_Index].SubmenuFullName := strNewMenu . lGuiSubmenuSeparator . arrMenus[strNewMenu][A_Index].FolderName
+			; ###_D("Down to: " . arrMenus[strNewMenu][A_Index].SubmenuFullName)
+			UpdateMenuNameInSubmenus(strOldMenu . lGuiSubmenuSeparator . arrMenus[strNewMenu][A_Index].FolderName, arrMenus[strNewMenu][A_Index].SubmenuFullName) ; recursive call
+		}
+		; ###_D("arrMenus[strNewMenu][A_Index].FolderName: " . arrMenus[strNewMenu][A_Index].FolderName . "`narrMenus[strNewMenu][A_Index].MenuName: " . arrMenus[strNewMenu][A_Index].MenuName)
+	}
+}
 ;------------------------------------------------------------
 
 
