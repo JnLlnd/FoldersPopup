@@ -1,10 +1,9 @@
 /*
 BUG
-- when moving a submenu
+- (none known...)
 
 TODO
 - replace Main with display name
-- add numeric shortcuts to submenus
 */
 
 ;===============================================
@@ -629,7 +628,6 @@ return
 ;------------------------------------------------------------
 BuildSpecialFoldersMenu:
 ;------------------------------------------------------------
-intShortcut := 0
 
 Menu, menuSpecialFolders, Add, %lMenuDesktop%, OpenSpecialFolder
 Menu, menuSpecialFolders, Add, %lMenuDocuments%, OpenSpecialFolder
@@ -736,7 +734,6 @@ BuildFoldersMenus:
 
 Menu, Main, Add
 Menu, Main, DeleteAll
-intShortcut := 0
 
 BuildOneMenu("Main") ; and recurse for submenus
 
@@ -764,7 +761,11 @@ BuildOneMenu(strMenu)
 ;------------------------------------------------------------
 {
 	global blnDisplayMenuShortcuts
-	global intShortcut
+	intShortcut := 0
+	
+	; try because at first execution strMenu does not exist and produces an error,
+	; but DeleteAll is required later for menu updates
+	try Menu, %strMenu%, DeleteAll
 	
 	arrThisMenu := arrMenus[strMenu]
 	Loop, % arrThisMenu.MaxIndex()
@@ -775,7 +776,9 @@ BuildOneMenu(strMenu)
 			strSubMenuParent := arrThisMenu[A_Index].MenuName
 			BuildOneMenu(strSubMenuFullName) ; recursive call
 			
-			try Menu, %strSubMenuParent%, Add, %strSubMenuDisplayName%, % ":" . strSubMenuFullName
+			try Menu, %strSubMenuParent%, Add
+				, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = "Main")) . " " : "")
+				. strSubMenuDisplayName, % ":" . strSubMenuFullName
 			catch e
 			{
 				Menu, % arrThisMenu[A_Index].MenuName, Add, % arrThisMenu[A_Index].FolderName
@@ -785,7 +788,9 @@ BuildOneMenu(strMenu)
 		else if (arrThisMenu[A_Index].FolderName = lMenuSeparator)
 			Menu, arrThisMenu[A_Index].MenuName , Add
 		else
-			Menu, % arrThisMenu[A_Index].MenuName , Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, true) . " " : "") . arrThisMenu[A_Index].FolderName, OpenFavorite
+			Menu, % arrThisMenu[A_Index].MenuName , Add
+				, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = "Main")) . " " : "")
+				. arrThisMenu[A_Index].FolderName, OpenFavorite
 }
 ;------------------------------------------------------------
 
@@ -950,9 +955,10 @@ LV_ModifyCol(2, "AutoHdr")
 
 if StrLen(strSubmenuFullName)
 {
-	Gosub, SaveCurrentListviewToMenuObject ; save current LV tbefore update the dropdown menu
+	Gosub, SaveCurrentListviewToMenuObject ; save current LV before update the dropdown menu
 	GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown("Main", strCurrentMenu) . "|"
 }
+
 GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lGuiCancel%
 
@@ -1635,8 +1641,6 @@ UpdateMenuNameInSubmenus(strOldMenu, strNewMenu)
 ; recursive function
 ;------------------------------------------------------------
 {
-	; ###_D("Update: " . strOldMenu . " " . arrMenus[strOldMenu].MaxIndex())
-	; ###_D("strOldMenu: " . strOldMenu . "`nstrNewMenu: " . strNewMenu)
 	arrMenus.Insert(strNewMenu, arrMenus[strOldMenu])
 	arrMenus.Remove(strOldMenu)
 	Loop, % arrMenus[strNewMenu].MaxIndex()
@@ -1645,10 +1649,8 @@ UpdateMenuNameInSubmenus(strOldMenu, strNewMenu)
 		if StrLen(arrMenus[strNewMenu][A_Index].SubmenuFullName)
 		{
 			arrMenus[strNewMenu][A_Index].SubmenuFullName := strNewMenu . lGuiSubmenuSeparator . arrMenus[strNewMenu][A_Index].FolderName
-			; ###_D("Down to: " . arrMenus[strNewMenu][A_Index].SubmenuFullName)
 			UpdateMenuNameInSubmenus(strOldMenu . lGuiSubmenuSeparator . arrMenus[strNewMenu][A_Index].FolderName, arrMenus[strNewMenu][A_Index].SubmenuFullName) ; recursive call
 		}
-		; ###_D("arrMenus[strNewMenu][A_Index].FolderName: " . arrMenus[strNewMenu][A_Index].FolderName . "`narrMenus[strNewMenu][A_Index].MenuName: " . arrMenus[strNewMenu][A_Index].MenuName)
 	}
 }
 ;------------------------------------------------------------
