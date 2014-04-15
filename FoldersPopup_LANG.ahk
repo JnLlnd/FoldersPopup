@@ -76,7 +76,7 @@ global lHelpText6 := "Support on FoldersPopup is available at`n<a href=""http://
 global lHelpText7 := chr(169) . " Jean Lalonde 2013-2014. Freeware."
 global lHelpTextLead := "FoldersPopup lets you move like a breeze between your frequently used folders!"
 global lHelpTitle := "Help - ~1~ ~2~"
-global lMainMenuMane := "Main"
+global lMainMenuName := "Main"
 global lMenuAbout := "A&bout"
 global lMenuAddThisDialog := "&Add This Dialog Box to the supported list"
 global lMenuAddThisFolder := "&Add This Folder"

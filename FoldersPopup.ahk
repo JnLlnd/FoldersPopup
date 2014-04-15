@@ -3,7 +3,9 @@ BUG
 - cannot move submenu under itself
 
 TODO
-- replace Main with display name
+- QA AddThisFolder
+- update default ini file
+- update user's ini file at first launch (include version number in ini file?)
 */
 
 ;===============================================
@@ -221,7 +223,7 @@ LoadIniFile:
 ; reinit after Settings save if already exist
 Global arrMenus := Object() ; list of menus (Main and submenus), non-hierachical
 arrMainMenu := Object() ; array of folders of the Main menu
-arrMenus.Insert(lMainMenuMane, arrMainMenu) ; lMainMenuMane is used in the objects but not saved/restores in the ini file
+arrMenus.Insert(lMainMenuName, arrMainMenu) ; lMainMenuName is used in the objects but not saved/restores in the ini file
 arrDialogs := Object() ; list of supported dialog boxes
 
 strPopupHotkeyMouseDefault := arrHotkeyDefaults1 ; "MButton"
@@ -292,10 +294,13 @@ Loop
 	StringSplit, arrThisObject, strIniLine, |
 	
 	objFolder := Object() ; new menu item
-	objFolder.MenuName := arrThisObject1 ; parent menu of this menu item
+	objFolder.MenuName := lMainMenuName . arrThisObject1 ; parent menu of this menu item, adding main menu name
 	objFolder.FolderName := arrThisObject2 ; display name of this menu item
 	objFolder.FolderLocation := arrThisObject3 ; path for this menu item
-	objFolder.SubmenuFullName := arrThisObject4 ; full name of the submenu
+	if StrLen(arrThisObject4)
+		objFolder.SubmenuFullName := lMainMenuName . arrThisObject4 ; full name of the submenu, adding main menu name
+	else
+		objFolder.SubmenuFullName := ""
 
 	if StrLen(objFolder.SubmenuFullName) ; then this is a new submenu
 	{
@@ -471,7 +476,7 @@ if (blnDisplaySpecialFolders)
 if (blnDisplayRecentFolders)
 {
 	Gosub, BuildRecentFoldersMenu
-	Menu, %lMainMenuMane%
+	Menu, %lMainMenuName%
 		, % (intRecentFoldersIndex ? "Enable" : "Disable")
 		, %lMenuRecentFolders%
 }
@@ -479,7 +484,7 @@ if (blnDisplayRecentFolders)
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
-	Menu, %lMainMenuMane%
+	Menu, %lMainMenuName%
 		, % (intExplorersIndex ? "Enable" : "Disable")
 		, %lMenuSwitchExplorer%
 }
@@ -490,10 +495,10 @@ if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or Win
 	; Other tests shown that WIN_8 behaves like WIN_7. So, I assume WIN_8 to work. If someone could confirm (until I can test it myself)?
 	if (blnDiagMode)
 		Diag("ShowMenu", "Folders Menu " . (WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT") . " Add this folder")
-	Menu, %lMainMenuMane%
+	Menu, %lMainMenuName%
 		, % WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 		, %lMenuAddThisFolder%
-	Menu, %lMainMenuMane%, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
+	Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
 }
 else
 {
@@ -538,7 +543,7 @@ if (blnDisplaySpecialFolders)
 if (blnDisplayRecentFolders)
 {
 	Gosub, BuildRecentFoldersMenu
-	Menu, %lMainMenuMane%
+	Menu, %lMainMenuName%
 		, % (intRecentFoldersIndex ? "Enable" : "Disable")
 		, %lMenuRecentFolders%
 }
@@ -546,7 +551,7 @@ if (blnDisplayRecentFolders)
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
-	Menu, %lMainMenuMane%
+	Menu, %lMainMenuName%
 		, % (intExplorersIndex ? "Enable" : "Disable")
 		, %lMenuSwitchExplorer%
 }
@@ -554,10 +559,10 @@ if (blnDisplaySwitchMenu)
 ; Enable "Add This Folder" only if the target window is an Explorer (tested on WIN_XP and WIN_7)
 ; or a dialog box under WIN_7 (does not work under WIN_XP).
 ; Other tests shown that WIN_8 behaves like WIN_7.
-Menu, %lMainMenuMane%
+Menu, %lMainMenuName%
 	, % WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 	, %lMenuAddThisFolder%
-Menu, %lMainMenuMane%, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
+Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
 
 return
 ;------------------------------------------------------------
@@ -732,24 +737,24 @@ return
 BuildFoldersMenus:
 ;------------------------------------------------------------
 
-Menu, %lMainMenuMane%, Add
-Menu, %lMainMenuMane%, DeleteAll
+Menu, %lMainMenuName%, Add
+Menu, %lMainMenuName%, DeleteAll
 
-BuildOneMenu(lMainMenuMane) ; and recurse for submenus
+BuildOneMenu(lMainMenuName) ; and recurse for submenus
 
 if (blnDisplaySpecialFolders or blnDisplayRecentFolders or blnDisplaySwitchMenu)
-	Menu, %lMainMenuMane%, Add
+	Menu, %lMainMenuName%, Add
 if (blnDisplaySpecialFolders)
-	Menu, %lMainMenuMane%, Add, %lMenuSpecialFolders%, :menuSpecialFolders
+	Menu, %lMainMenuName%, Add, %lMenuSpecialFolders%, :menuSpecialFolders
 if (blnDisplayRecentFolders)
-	Menu, %lMainMenuMane%, Add, %lMenuRecentFolders%, :menuRecentFolders
+	Menu, %lMainMenuName%, Add, %lMenuRecentFolders%, :menuRecentFolders
 if (blnDisplaySwitchMenu)
-	Menu, %lMainMenuMane%, Add, %lMenuSwitchExplorer%, :menuSwitchExplorer
+	Menu, %lMainMenuName%, Add, %lMenuSwitchExplorer%, :menuSwitchExplorer
 
-Menu, %lMainMenuMane%, Add
-Menu, %lMainMenuMane%, Add, %lMenuSettings%, GuiShow
-Menu, %lMainMenuMane%, Default, %lMenuSettings%
-Menu, %lMainMenuMane%, Add, %lMenuAddThisFolder%, AddThisFolder
+Menu, %lMainMenuName%, Add
+Menu, %lMainMenuName%, Add, %lMenuSettings%, GuiShow
+Menu, %lMainMenuName%, Default, %lMenuSettings%
+Menu, %lMainMenuName%, Add, %lMenuAddThisFolder%, AddThisFolder
 
 return
 ;------------------------------------------------------------
@@ -777,11 +782,11 @@ BuildOneMenu(strMenu)
 			BuildOneMenu(strSubMenuFullName) ; recursive call
 			
 			try Menu, %strSubMenuParent%, Add
-				, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = lMainMenuMane)) . " " : "")
+				, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = lMainMenuName)) . " " : "")
 				. strSubMenuDisplayName, % ":" . strSubMenuFullName
 			catch e
 			{
-				Menu, % arrThisMenu[A_Index].MenuName, Add, % arrThisMenu[A_Index].FolderName
+				Menu, % arrThisMenu[A_Index].MenuName, Add, % arrThisMenu[A_Index].FolderName, OpenFavorite ; will never be called because disabled
 				Menu, % arrThisMenu[A_Index].MenuName, Disable, % arrThisMenu[A_Index].FolderName
 			}
 		}
@@ -789,7 +794,7 @@ BuildOneMenu(strMenu)
 			Menu, arrThisMenu[A_Index].MenuName , Add
 		else
 			Menu, % arrThisMenu[A_Index].MenuName , Add
-				, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = lMainMenuMane)) . " " : "")
+				, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = lMainMenuName)) . " " : "")
 				. arrThisMenu[A_Index].FolderName, OpenFavorite
 }
 ;------------------------------------------------------------
@@ -826,7 +831,7 @@ Gui, 1:Add, Button, x+10 w75 gGuiHelp, %lGuiHelp%
 Gui, 1:Add, Text, x10 y30, %lAppTagline%
 
 Gui, 1:Add, Text, x10, %lGuiSubmenuDropdownLabel%
-Gui, 1:Add, DropDownList, x+10 yp vdrpMenusList gGuiMenusListChanged ; Sort
+Gui, 1:Add, DropDownList, x10 w350 vdrpMenusList gGuiMenusListChanged ; Sort
 
 Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, ListView, x10 w350 h220 Count32 -Multi NoSortHdr LV0x10 vlvFoldersList gGuiFoldersListEvent, %lGuiLvFoldersHeader%|TEMP ; 
@@ -956,7 +961,7 @@ LV_ModifyCol(2, "AutoHdr")
 if StrLen(strSubmenuFullName)
 {
 	Gosub, SaveCurrentListviewToMenuObject ; save current LV before update the dropdown menu
-	GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuMane, strCurrentMenu) . "|"
+	GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
 }
 
 GuiControl, Enable, btnGuiSave
@@ -1130,7 +1135,7 @@ IniDelete, %strIniFile%, Folders
 Gui, 1:ListView, lvFoldersList
 
 intIndex := 0
-SaveOneMenu(lMainMenuMane) ; recursive function
+SaveOneMenu(lMainMenuName) ; recursive function
 
 IniDelete, %strIniFile%, Dialogs
 Gui, 1:ListView, lvDialogsList
@@ -1160,10 +1165,10 @@ SaveOneMenu(strMenu)
 	
 	Loop, % arrMenus[strMenu].MaxIndex()
 	{
-		strValue := arrMenus[strMenu][A_Index].MenuName
+		strValue := SubStr(arrMenus[strMenu][A_Index].MenuName, StrLen(lMainMenuName) + 1) ; remove main menu name for ini file
 			. "|" . arrMenus[strMenu][A_Index].FolderName 
 			. "|" . arrMenus[strMenu][A_Index].FolderLocation 
-			. "|" . arrMenus[strMenu][A_Index].SubmenuFullName
+			. "|" . SubStr(arrMenus[strMenu][A_Index].SubmenuFullName, StrLen(lMainMenuName) + 1) ; remove main menu name for ini file
 		intIndex := intIndex + 1
 		IniWrite, %strValue%, %strIniFile%, Folders, Folder%intIndex%
 		if StrLen(arrMenus[strMenu][A_Index].SubmenuFullName)
@@ -1177,7 +1182,7 @@ SaveOneMenu(strMenu)
 GuiShow:
 ;------------------------------------------------------------
 
-strCurrentMenu := lMainMenuMane
+strCurrentMenu := lMainMenuName
 Gosub, LoadSettingsToGui
 Gui, 1:Show, w455 ; h455
 
@@ -1485,6 +1490,10 @@ else
 	intRowToEdit := 0 ;  used when saving to flag to insert a new row
 	if (A_ThisLabel = GuiAddFromPopup)
 		strCurrentName := GetDeepestFolderName(strCurrentLocation) ; value received from AddThisFolder
+	else
+		strCurrentName := ""
+	strCurrentLocation := ""
+	strCurrentSubmenuFullName := ""
 }
 	
 intGui1WinID := WinExist("A")
@@ -1494,7 +1503,7 @@ Gui, 2:+Owner1
 Gui, 2:+OwnDialogs
 
 Gui, 2:Add, Text, x10 y10 vlblFolderParentMenu, %lDialogFolderParentMenu%
-Gui, 2:Add, DropDownList, % "x10 w250 vdrpParentMenu " .  (A_ThisLabel = "GuiAddFolder" ? "Disabled" : ""), % BuildMenuTreeDropDown(lMainMenuMane, strCurrentMenu) . "|"
+Gui, 2:Add, DropDownList, % "x10 w250 vdrpParentMenu " .  (A_ThisLabel = "GuiAddFolder" ? "Disabled" : ""), % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
 
 if (A_ThisLabel = "GuiAddFolder")
 {
@@ -1625,7 +1634,7 @@ LV_ModifyCol(2, "AutoHdr")
 if (blnRadioSubmenu or StrLen(strCurrentSubmenuFullName))
 {
 	Gosub, SaveCurrentListviewToMenuObject ; save current LV tbefore update the dropdown menu
-	GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuMane, strCurrentMenu) . "|"
+	GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
 }
 
 GuiControl, Enable, btnGuiSave
@@ -2129,7 +2138,7 @@ LV_Modify(1, "Select Focus")
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
 
-GuiControl, , drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuMane, strCurrentMenu) . "|"
+GuiControl, , drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
 
 return
 ;------------------------------------------------------------

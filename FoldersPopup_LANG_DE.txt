@@ -16,7 +16,7 @@
 !lGuiSubmenuDropdownLabel	Menu to edit:
 !lGuiSubmenuLocation	>
 !lGuiSubmenuSeparator	>
-!lMainMenuMane	Main
+!lMainMenuName	Main
 !lOptionsDisplayRecentFolders	Display Recent Folders
 !lOptionsDisplaySwitchMenu	Display Switch Menu
 %%%lDialogFolderNamePrompt	Name of the new folder:
