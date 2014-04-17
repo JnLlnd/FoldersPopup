@@ -4,6 +4,9 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: FoldersPopup v1.2.4 (2014-04-17)
+	* Fix shortcut (hotkey) assignments error (not a valid key name error) on Windows system with keyboard regional settings supporting Cyrillic letters (Russian and others)
+
 	Version: FoldersPopup v1.2.3 (2014-02-25)
 	* Windows XP only: revert to pre-1.2.2 state due to a different behaviour of Winddows Explorer in XP
 
@@ -279,12 +282,14 @@ LoadIniHotkeys:
 ; Read the values and set hotkey shortcuts
 loop, % arrIniKeyNames%0%
 {
-	IniRead, arrHotkeyVarNames%A_Index%, %strIniFile%, Global, % arrIniKeyNames%A_Index%, % arrHotkeyDefaults%A_Index%
-	; example: Hotkey, $MButton, PopupMenuMouse
-	Hotkey, % "$" . arrHotkeyVarNames%A_Index%, % arrHotkeyLabels%A_Index%, On
 	; Prepare global arrays used by GuiHotkey function
+	IniRead, arrHotkeyVarNames%A_Index%, %strIniFile%, Global, % arrIniKeyNames%A_Index%, % arrHotkeyDefaults%A_Index%
 	SplitHotkey(arrHotkeyVarNames%A_Index%, strMouseButtons
 		, strModifiers%A_Index%, strOptionsKey%A_Index%, strMouseButton%A_Index%, strMouseButtonsWithDefault%A_Index%)
+	; example: Hotkey, $MButton, PopupMenuMouse
+	Hotkey, % "$" . arrHotkeyVarNames%A_Index%, % arrHotkeyLabels%A_Index%, On UseErrorLevel
+	if (ErrorLevel)
+		Oops(lDialogInvalidHotkey, Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%), arrOptionsTitles%A_Index%)
 }
 
 return
@@ -1505,7 +1510,7 @@ strHotkey := Trim(strOptionsKey . strOptionsMouse)
 
 if StrLen(strHotkey)
 {
-	Hotkey, % "$" . arrHotkeyVarNames%intIndex%, Off
+	Hotkey, % "$" . arrHotkeyVarNames%intIndex%, Off, UseErrorLevel ; UseErrorLevel in case we had an invalid key name in the ini file
 
 	if (blnOptionsWin)
 		strHotkey := "#" . strHotkey
