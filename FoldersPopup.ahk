@@ -1,6 +1,6 @@
 /*
 BUG
-- cannot move submenu under itself
+- if move a folder or submenu to a folder that already contain an item of this name
 
 TODO
 
@@ -823,8 +823,6 @@ return
 BuildGui:
 ;------------------------------------------------------------
 
-Gosub, BackupMenuObjects
-
 Gui, 1:New, , % L(lGuiTitle, strAppName, strAppVersion)
 Gui, 1:Font, s12 w700, Verdana
 Gui, 1:Add, Text, x10 y10 w490 h25, %strAppName%
@@ -1192,6 +1190,7 @@ GuiShow:
 ;------------------------------------------------------------
 
 strCurrentMenu := lMainMenuName
+Gosub, BackupMenuObjects
 Gosub, LoadSettingsToGui
 Gui, 1:Show, w455 ; h455
 
@@ -1617,7 +1616,7 @@ Gui, 2:+Owner1
 Gui, 2:+OwnDialogs
 
 Gui, 2:Add, Text, x10 y10 vlblFolderParentMenu, %lDialogFolderParentMenu%
-Gui, 2:Add, DropDownList, x10 w250 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
+Gui, 2:Add, DropDownList, x10 w250 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
 
 Gui, 2:Add, Text, x10 y+10 vlblShortName, % (StrLen(strCurrentSubmenuFullName) ? lDialogSubmenuShortName : lDialogFolderShortName)
 Gui, 2:Add, Edit, x10 w250 vstrFolderShortName, %strCurrentName%
@@ -2267,7 +2266,7 @@ return
 
 
 ;------------------------------------------------------------
-BuildMenuTreeDropDown(strMenu, strDefaultMenu)
+BuildMenuTreeDropDown(strMenu, strDefaultMenu, strSkipSubmenu := "")
 ; recursive function
 ;------------------------------------------------------------
 {
@@ -2277,7 +2276,8 @@ BuildMenuTreeDropDown(strMenu, strDefaultMenu)
 	
 	Loop, % arrMenus[strMenu].MaxIndex()
 		if StrLen(arrMenus[strMenu][A_Index].SubmenuFullName) ; this is a submenu
-			strList := strList . "|" . BuildMenuTreeDropDown(arrMenus[strMenu][A_Index].SubmenuFullName, strDefaultMenu) ; recursive call
+			if (arrMenus[strMenu][A_Index].SubmenuFullName <> strSkipSubmenu) ; skip if under edited submenu
+				strList := strList . "|" . BuildMenuTreeDropDown(arrMenus[strMenu][A_Index].SubmenuFullName, strDefaultMenu, strSkipSubmenu) ; recursive call
 	
 	return strList
 }
