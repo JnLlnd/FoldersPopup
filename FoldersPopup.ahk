@@ -1,6 +1,5 @@
 /*
 BUG
-- if move a folder or submenu to a folder that already contain an item of this name
 
 TODO
 
@@ -1655,11 +1654,11 @@ if  (blnRadioFolder and !StrLen(strFolderLocation))
 }
 
 if !FolderNameIsNew(strFolderShortName, (strParentMenu = strCurrentMenu ? "" : strParentMenu))
-	and (strFolderShortName <> strCurrentName)
-{
-	Oops(lDialogFolderNameNotNew, strFolderShortName)
-	return
-}
+	if ((strParentMenu <> strCurrentMenu) or (strFolderShortName <> strCurrentName))
+	{
+		Oops(lDialogFolderNameNotNew, strFolderShortName)
+		return
+	}
 
 if (blnRadioSubmenu)
 {
@@ -1787,15 +1786,8 @@ FolderNameIsNew(strCandidateName, strMenu := "")
 	}
 	else
 		Loop, % arrMenus[strMenu].MaxIndex()
-		{
-			if !StrLen(arrMenus[strMenu][A_Index].FolderLocation) ; then this is a new submenu
-				strThisName := SubMenuDisplayName(arrMenus[strMenu][A_Index].FolderName)
-			else
-				strThisName := arrMenus[strMenu][A_Index].FolderName
-
-			if (strCandidateName = strThisName)
+			if (strCandidateName = arrMenus[strMenu][A_Index].FolderName)
 				return False
-		}
 
 	return True
 }
@@ -2280,17 +2272,6 @@ BuildMenuTreeDropDown(strMenu, strDefaultMenu, strSkipSubmenu := "")
 				strList := strList . "|" . BuildMenuTreeDropDown(arrMenus[strMenu][A_Index].SubmenuFullName, strDefaultMenu, strSkipSubmenu) ; recursive call
 	
 	return strList
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-SubMenuDisplayName(strMenu)
-;------------------------------------------------------------
-{
-	StringSplit, arrMenu, strMenu, _
-	
-	return arrMenu%arrMenu0%
 }
 ;------------------------------------------------------------
 
