@@ -25,7 +25,12 @@ TODO
 	* display full folder names in recent folders
 	* add swith submenu to activate any other open Explorer
 	* add DisplayRecentFolders and DisplaySwitchMenu options in Options dialog box and ini file
-	
+
+	Version: FoldersPopup v1.2.5 (2014-04-19)
+	* Support for FreeCommander XE
+	* Compatible with Clover (opens the folder in a new tab)
+	* Fix wrong error message issue #28
+
 	Version: FoldersPopup v1.2.4 (2014-04-17)
 	* Fix shortcut (hotkey) assignements error (not a valid key namse error) on Windows system with keyboard regional settings supporting Cyrillic letters (Russian and others)
 	
