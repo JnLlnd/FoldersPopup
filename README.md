@@ -13,6 +13,11 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### 2014-04-19 v1.2.5
+* Support for FreeCommander XE
+* Compatible with Clover (opens the folder in a new tab)
+* Fix wrong error message issue #28
+
 ### 2014-04-17 v1.2.4
 * Fix shortcut (hotkey) assignments error (not a valid key name error) on Windows system with keyboard regional settings supporting Cyrillic letters (Russian and others)
 
