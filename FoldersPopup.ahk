@@ -15,6 +15,22 @@ TODO
 	- complete language switching in Options
 	- complete submenus
 
+	Version: v1.6 ALPHA (not to be released) (2014-04-19)
+	* implement submenus ini file data structure and objects for folders
+	* v1 ini file format automatic upgrade to v2 (all v1 folders placed in main menu)
+	* load and save folders and submenus to ini file
+	* display popup menus with submenus, disable empty submenus
+	* add a dropdown menu to settings window to select the menu to edit
+	* settings pugrade to add, edit, remove, move up or down submenus
+	* add folder to the current submenu
+	* add folder from popup menu to main menu
+	* move folders or menus to other submenus
+	* double-click an folder or submenu item in settings to edit it
+	* update popup menus as settings are changed, backup available if user cancel settings changes
+	* support numeric shortcuts for submenus
+	* error checking: avoid duplicate names when moving an item to another submenu
+	* error checking: avoid moving a submenu under itself
+
 	Version: v1.5 ALPHA (not to be released) (2014-03-22)
 	* add recent folders sub-menu
 	* add ini variable RecentFolders
@@ -122,7 +138,7 @@ TODO
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 1.5.2 ALPHA
+;@Ahk2Exe-SetVersion 1.6.1 ALPHA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -139,7 +155,7 @@ SetWorkingDir, %A_ScriptDir%
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "1.5.2 ALPHA" ; "major.minor.bugs"
+global strCurrentVersion := "1.6.1 ALPHA" ; "major.minor.bugs"
 global strAppVersion := "v" . strCurrentVersion
 global blnDiagMode := False
 global strDiagFile := A_ScriptDir . "\" . strAppName . "-DIAG.txt"
