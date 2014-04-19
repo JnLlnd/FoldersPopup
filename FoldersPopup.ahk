@@ -1925,17 +1925,20 @@ http://msdn.microsoft.com/en-us/library/windows/desktop/bb774096%28v=vs.85%29.as
 http://msdn.microsoft.com/en-us/library/aa752094
 */
 {
+	intCountMatch := 0
 	For pExp in ComObjCreate("Shell.Application").Windows
 	{
 		if (pExp.hwnd = strWinId)
 			if varPath is integer ; ShellSpecialFolderConstant
 			{
+				intCountMatch := intCountMatch + 1
 				try pExp.Navigate2(varPath)
 				catch, objErr
 					Oops(lNavigateSpecialError, varPath)
 			}
 			else
 			{
+				intCountMatch := intCountMatch + 1
 				; Was "try pExp.Navigate("file:///" . varPath)" - removed "file:///" to allow UNC (e.g. \\my.server.com@SSL\DavWWWRoot\Folder\Subfolder)
 				try pExp.Navigate(varPath)
 				catch, objErr
@@ -1944,6 +1947,11 @@ http://msdn.microsoft.com/en-us/library/aa752094
 					Oops(lNavigateFileError, varPath)
 			}
 	}
+	if !(intCountMatch) ; for Explorer add-ons like Clover (verified - it now opens the folder in a new tab), others?
+		if varPath is integer ; ShellSpecialFolderConstant
+			ComObjCreate("Shell.Application").Explore(varPath)
+		else
+			Run, %varPath%
 }
 ;------------------------------------------------------------
 
