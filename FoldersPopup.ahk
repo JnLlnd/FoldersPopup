@@ -4,6 +4,11 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: FoldersPopup v1.2.5 (2014-04-19)
+	* Support for FreeCommander XE
+	* Compatible with Clover (opens the folder in a new tab)
+	* Fix wrong error message issue #28
+	
 	Version: FoldersPopup v1.2.4 (2014-04-17)
 	* Fix shortcut (hotkey) assignments error (not a valid key name error) on Windows system with keyboard regional settings supporting Cyrillic letters (Russian and others)
 
@@ -377,29 +382,29 @@ Gosub, SetMenuPosition
 if (blnDisplaySpecialFolders)
 {
 	Menu, menuSpecialFolders
-		, % WindowIsConsole(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
+		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
 		, %lMenuMyComputer%
 	Menu, menuSpecialFolders
-		, % WindowIsConsole(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
+		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
 		, %lMenuNetworkNeighborhood%
 
-	; There is no point to navigate a dialog box or console to Control Panel or Recycle Bin
+	; There is no point to navigate a dialog box or console to Control Panel or Recycle Bin, unknown for FreeCommander
 	Menu, menuSpecialFolders
-		, % WindowIsConsole(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
+		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
 		, %lMenuControlPanel%
 	Menu, menuSpecialFolders
-		, % WindowIsConsole(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
+		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
 		, %lMenuRecycleBin%
 }
 
-if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass) or DialogIsSupported(strTargetWinId))
+if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass) or DialogIsSupported(strTargetWinId))
 {
 	; Enable Add This Folder only if the mouse is over an Explorer (tested on WIN_XP and WIN_7) or a dialog box (works on WIN_7, not on WIN_XP)
 	; Other tests shown that WIN_8 behaves like WIN_7. So, I assume WIN_8 to work. If someone could confirm (until I can test it myself)?
 	if (blnDiagMode)
 		Diag("ShowMenu", "Folders Menu " . (WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT") . " Add this folder")
 	Menu, menuFolders
-		, % WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
+		, % WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 		, %lMenuAddThisFolder%
 	Menu, menuFolders, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
 }
@@ -930,15 +935,36 @@ if (blnDiagMode)
 else
 	intTries := 3
 
-Loop, %intTries%
+if WindowIsFreeCommander(strTargetClass)
 {
-	Sleep, intWaitTimeIncrement * A_Index
-	Send {F4}{Esc} ; F4 move the caret the "Go To A Different Folder box" and {Esc} select it content ({Esc} could be replaced by ^a to Select All)
-	Sleep, intWaitTimeIncrement * A_Index
-	Send ^c ; Copy
-	Sleep, intWaitTimeIncrement * A_Index
-	intTries := A_Index
-} Until (StrLen(ClipBoard))
+	if (WinExist("A") <> strWinId) ; in case that some window just popped out, and initialy active window lost focus
+	{
+		WinActivate, ahk_id %strWinId% ; we'll activate initialy active window
+		Sleep, intWaitTimeIncrement
+	}
+	MouseGetPos, , , , strCommanderControl, 1
+	Sleep, intWaitTimeIncrement
+	ControlFocus, %strCommanderControl%
+	Loop, %intTries%
+	{
+		Sleep, intWaitTimeIncrement * A_Index
+		Send, !g
+		Sleep, intWaitTimeIncrement * A_Index
+		Send, ^c
+		intTries := A_Index
+		Sleep, intWaitTimeIncrement
+	} Until (StrLen(ClipBoard))
+}
+else
+	Loop, %intTries%
+	{
+		Sleep, intWaitTimeIncrement * A_Index
+		Send {F4}{Esc} ; F4 move the caret the "Go To A Different Folder box" and {Esc} select it content ({Esc} could be replaced by ^a to Select All)
+		Sleep, intWaitTimeIncrement * A_Index
+		Send ^c ; Copy
+		Sleep, intWaitTimeIncrement * A_Index
+		intTries := A_Index
+	} Until (StrLen(ClipBoard))
 
 strCurrentFolder := ClipBoard
 Clipboard := objPrevClipboard ; Restore the original clipboard
@@ -1658,6 +1684,16 @@ else if WindowIsConsole(strTargetClass)
 	if (blnDiagMode)
 		Diag("NavigateResult", ErrorLevel)
 }
+else if WindowIsFreeCommander(strTargetClass)
+{
+	if (blnDiagMode)
+		Diag("Navigate", "NavigateFreeCommander")
+	
+	NavigateFreeCommander(strPath, strTargetWinId)
+
+	if (blnDiagMode)
+		Diag("NavigateResult", ErrorLevel)
+}
 else
 {
 	if (blnDiagMode)
@@ -1708,7 +1744,7 @@ if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetCla
 	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 else if WindowIsAnExplorer(strTargetClass)
 	NavigateExplorer(intSpecialFolder, strTargetWinId)
-else ; this is the console or a dialog box
+else ; this is the console, FreeCommander or a dialog box
 {
 	if (intSpecialFolder = 0)
 		strPath := A_Desktop
@@ -1730,6 +1766,8 @@ else ; this is the console or a dialog box
 
 	if WindowIsConsole(strTargetClass)
 		NavigateConsole(strPath, strTargetWinId)
+	else if WindowIsFreeCommander(strTargetClass)
+		NavigateFreeCommander(strPath, strTargetWinId)
 	else
 		NavigateDialog(strPath, strTargetWinId, strTargetClass)
 }
@@ -1800,7 +1838,7 @@ CanOpenFavorite(strMouseOrKeyboard, ByRef strWinId, ByRef strClass)
 		strWinId := WinExist("A")
 	WinGetClass strClass, % "ahk_id " . strWinId
 
-	blnCanOpenFavorite := WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or WindowIsConsole(strClass) or WindowIsDialog(strClass)
+	blnCanOpenFavorite := WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or WindowIsConsole(strClass) or WindowIsDialog(strClass) or WindowIsFreeCommander(strClass)
 
 	if (blnDiagMode)
 	{
@@ -1848,6 +1886,15 @@ WindowIsDialog(strClass)
 ;------------------------------------------------------------
 {
 	return (strClass = "#32770") or InStr(strClass, "bosa_sdm_")
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+WindowIsFreeCommander(strClass)
+;------------------------------------------------------------
+{
+	return InStr(strClass, "FreeCommanderXE")
 }
 ;------------------------------------------------------------
 
@@ -1908,6 +1955,28 @@ NavigateConsole(strPath, strWinId)
 	if (WinExist("A") <> strWinId) ; in case that some window just popped out, and initialy active window lost focus
 		WinActivate, ahk_id %strWinId% ; we'll activate initialy active window
 	SendInput, CD /D %strPath%{Enter}
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+NavigateFreeCommander(strPath, strWinId)
+;------------------------------------------------------------
+{
+	if (WinExist("A") <> strWinId) ; in case that some window just popped out, and initialy active window lost focus
+	{
+		WinActivate, ahk_id %strWinId% ; we'll activate initialy active window
+		Sleep, 200
+	}
+	MouseGetPos, , , , strCommanderControl, 1
+	Sleep, 200
+	ControlFocus, %strCommanderControl%
+	SetKeyDelay, 200
+	Send, !g
+	SetKeyDelay, 0
+	Send, %strPath%
+	Sleep, 200
+	Send, {Enter}
 }
 ;------------------------------------------------------------
 
