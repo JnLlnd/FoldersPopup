@@ -2653,9 +2653,11 @@ http://msdn.microsoft.com/en-us/library/aa752094
 					Oops(lNavigateFileError, varPath)
 			}
 	}
-	if !(intCountMatch)
-		Run, %varPath% ; for Explorer add-ons like Clover (verified - it now opens the folder in a new tab), others?
-
+	if !(intCountMatch) ; for Explorer add-ons like Clover (verified - it now opens the folder in a new tab), others?
+		if varPath is integer ; ShellSpecialFolderConstant
+			ComObjCreate("Shell.Application").Explore(varPath)
+		else
+			Run, %varPath%
 }
 ;------------------------------------------------------------
 

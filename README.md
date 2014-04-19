@@ -20,6 +20,14 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 * add GetDeepestFolderName as function
 * add ValueInObject function
 
+### 2014-04-19 v1.2.5
+* Support for FreeCommander XE
+* Compatible with Clover (opens the folder in a new tab)
+* Fix wrong error message issue #28
+
+### 2014-04-17 v1.2.4
+* Fix shortcut (hotkey) assignments error (not a valid key name error) on Windows system with keyboard regional settings supporting Cyrillic letters (Russian and others)
+
 ### 2014-02-25 v1.2.3
 * For Windows XP users only, revert to v1.2.1 state due to unwanted behavior of FP v1.2.2 in Windows Explorer XP
 
