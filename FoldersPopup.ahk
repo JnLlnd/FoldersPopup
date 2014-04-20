@@ -2,6 +2,8 @@
 BUG
 
 TODO
+- Use icons in Gui for add, remove, edit, separator, move up and move down
+- Switch dialog boxes to folders opened in opened Explorer
 
 */
 
@@ -11,9 +13,7 @@ TODO
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	To-do
-	- complete language switching in Options
-	- complete submenus
+	Version: v1.7 ALPHA (not to be released) (2014-0n-nn)
 
 	Version: v1.6 ALPHA (not to be released) (2014-04-19)
 	* implement submenus ini file data structure and objects for folders
@@ -138,7 +138,7 @@ TODO
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 1.6.1 ALPHA
+;@Ahk2Exe-SetVersion 1.7 ALPHA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -155,7 +155,7 @@ SetWorkingDir, %A_ScriptDir%
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "1.6.1 ALPHA" ; "major.minor.bugs"
+global strCurrentVersion := "1.7 ALPHA" ; "major.minor.bugs"
 global strAppVersion := "v" . strCurrentVersion
 global blnDiagMode := False
 global strDiagFile := A_ScriptDir . "\" . strAppName . "-DIAG.txt"
