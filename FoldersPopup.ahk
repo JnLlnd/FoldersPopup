@@ -171,8 +171,8 @@ else if InStr(A_ComputerName, "STIC") ; for my work hotkeys
 
 ; Keep gosubs in this order
 Gosub, InitSystemArrays
-Gosub, LoadIniFile
 Gosub, InitLanguage
+Gosub, LoadIniFile
 ; build even if blnDisplaySpecialFolders, blnDisplaySwitchMenu or blnDisplaySwitchMenu are false because they could become true
 Gosub, BuildSpecialFoldersMenu
 Gosub, BuildRecentFoldersMenu
@@ -304,7 +304,6 @@ IniRead, blnDiagMode, %strIniFile%, Global, DiagMode, 0
 IniRead, intStartups, %strIniFile%, Global, Startups, 1
 IniRead, blnDonator, %strIniFile%, Global, Donator, 0 ; Please, be fair. Don't cheat with this.
 IniRead, intRecentFolders, %strIniFile%, Global, RecentFolders, 10
-IniRead, strLanguageCode, %strIniFile%, Global, LanguageCode, EN
 
 Loop
 {
@@ -368,6 +367,7 @@ return
 InitLanguage:
 ;------------------------------------------------------------
 
+IniRead, strLanguageCode, %strIniFile%, Global, LanguageCode, EN
 strLanguageFile := strAppName . "_LANG_" . strLanguageCode . ".txt"
 
 if FileExist(strLanguageFile)
@@ -387,7 +387,8 @@ else
 ; Init Language Arrays
 StringSplit, arrOptionsTitles, lOptionsTitles, |
 StringSplit, arrOptionsTitlesLong, lOptionsTitlesLong, |
-StringSplit, arrOptionsLanguageCodes, EN|FR|DE, |
+strOptionsLanguageCodes := "EN|FR|DE"
+StringSplit, arrOptionsLanguageCodes, strOptionsLanguageCodes, |
 StringSplit, arrOptionsLanguageLabels, lOptionsLanguageLabels, |
 
 loop, %arrOptionsLanguageCodes0%
@@ -2055,18 +2056,6 @@ if (blnOptionsRunAtStartup)
 	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%strAppName%.lnk
 Menu, Tray, % blnOptionsRunAtStartup ? "Check" : "Uncheck", %lMenuRunAtStartup%
 
-strLanguageLabel := drpLanguage
-loop, %arrOptionsLanguageLabels0%
-	if (arrOptionsLanguageLabels%A_Index% = strLanguageLabel)
-		{
-			strLanguageCode := arrOptionsLanguageCodes%A_Index%
-			break
-		}
-IniWrite, %strLanguageCode%, %strIniFile%, Global, LanguageCode
-
-Gosub, InitLanguageVariables ; re-init initial EN variables as a backup for the selected language
-Gosub, InitLanguage
-
 IniWrite, %blnDisplayTrayTip%, %strIniFile%, Global, DisplayTrayTip
 IniWrite, %blnDisplaySpecialFolders%, %strIniFile%, Global, DisplaySpecialFolders
 IniWrite, %blnDisplayRecentFolders%, %strIniFile%, Global, DisplayRecentFolders
@@ -2078,7 +2067,29 @@ IniWrite, %strPopupFixPositionX%`,%strPopupFixPositionY%, %strIniFile%, Global, 
 arrPopupFixPosition1 := strPopupFixPositionX
 arrPopupFixPosition2 := strPopupFixPositionY
 
-; rebuild Folders menus w/ or w/o optional folders and shortcuts
+strLanguageCodePrev := strLanguageCode
+strLanguageLabel := drpLanguage
+loop, %arrOptionsLanguageLabels0%
+	if (arrOptionsLanguageLabels%A_Index% = strLanguageLabel)
+		{
+			strLanguageCode := arrOptionsLanguageCodes%A_Index%
+			break
+		}
+IniWrite, %strLanguageCode%, %strIniFile%, Global, LanguageCode
+
+; if language changed, offer to restart the app
+if (strLanguageCodePrev <> strLanguageCode)
+{
+	MsgBox, 52, %strAppName%, % L(lReloadPrompt, strLanguageLabel, strAppName)
+	IfMsgBox, Yes
+	{
+		Gosub, RestoreBackupMenuObjects
+		Reload
+	}
+}	
+
+; else rebuild Folders menus w/ or w/o optional folders and shortcuts
+
 for strMenuName, arrMenu in arrMenus
 {
 	Menu, %strMenuName%, Add

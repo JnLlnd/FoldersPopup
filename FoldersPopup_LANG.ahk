@@ -131,6 +131,7 @@ global lOptionsTitles := "Mouse - Folders Popup|Mouse - New Explorer|Keyboard - 
 global lOptionsTrayTip := "&Display Startup Tray Tip"
 global lOptionsTriggerFor := "Trigger for:"
 global lOptionsWin := "Win"
+global lReloadPrompt := "Language changed to ~1~. Do you want to reload ~2~ in ~1~ now? Unsaved changes to the folders menu will be lost."
 global lTrayTipInstalledDetail := "To show ~1~ menu, press:`n`n~2~ / ~3~`nin Windows Explorer or in a Dialog box`n`n~4~ / ~5~`nto open a New Explorer window"
 global lTrayTipinstalledTitle := "~1~ ~2~ ready!"
 global lUpdatePrompt := "Update ~1~ from v~2~ to v~3~?"

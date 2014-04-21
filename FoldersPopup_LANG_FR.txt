@@ -130,6 +130,7 @@ lOptionsTitles	Souris - Popup|Souris - Nouvel explorateur|Keyboard - Popup|Keybo
 lOptionsTrayTip	Afficher la notification au démarrage
 lOptionsTriggerFor	Déclencheur pour:
 lOptionsWin	Win
+lReloadPrompt	Changement de langue enregistré: ~1~. Voulez-vous relancer ~2~ en ~1~ maintenant? Les changements non sauvegardés dans le menu des dossiers seront perdus.
 lTrayTipInstalledDetail	Pour afficher le menu de ~1~, appuyez sur:`n`n~2~ / ~3~`ndans un Explorateur de fichiersou dans une boîte de dialogue`n`n~4~ / ~5~`npour ouvrir un nouvel Explorateur
 lTrayTipinstalledTitle	~1~ ~2~ prêt!
 lUpdatePrompt	Mettre à jour ~1~ de la version v~2~ à la version v~3~?
