@@ -387,7 +387,7 @@ else
 ; Init Language Arrays
 StringSplit, arrOptionsTitles, lOptionsTitles, |
 StringSplit, arrOptionsTitlesLong, lOptionsTitlesLong, |
-StringSplit, arrOptionsLanguageCodes, lOptionsLanguageCodes, |
+StringSplit, arrOptionsLanguageCodes, EN|FR|DE, |
 StringSplit, arrOptionsLanguageLabels, lOptionsLanguageLabels, |
 
 loop, %arrOptionsLanguageCodes0%

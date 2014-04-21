@@ -3,71 +3,71 @@ lAboutText2	FoldersPopup est développé par Jean Lalonde`nsur la plateforme <a hr
 lAboutText3	~1~ Jean Lalonde 2013-2014. Gratuiciel.
 lAboutText4	Soutien en ligne: <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	À propos - ~1~ ~2~
-lAppTagline	Jump instantly from one folder to another
-lButtonRemind	Remind me
-lDiagModeCaution	~1~ is running in diagnostic mode.`n`nInformation about the app's execution will be collected in the file:`n~2~`n`nNothing will be sent without your consent.`n`nDo you want to keep diagnostic mode ON?
-lDiagModeExit	~1~ colleted diagnostic information in the file ~2~.
-lDiagModeIntro	Send this file to ahk@jeanlalonde.ca with a description of the situation requiring diagnostic.
-lDiagModeSee	Do you want to see the diagnostic file?
-lDialodAdd	Add
-lDialogAddDialogAlready	This dialog box type is already supported.
-lDialogAddDialogPrompt	Enter the new dialog box name`n(or part of the name):
-lDialogAddDialogTitle	Add Dialog Box - ~1~ ~2~
-lDialogAddEditFolderTitle	~1~ folder - ~2~ ~3~
-lDialogAddFolderManuallyPrompt	Sorry, we can't detect the current folder in this type of window.`n`nDo you want to add it manually now?
-lDialogAddFolderManuallyTitle	Add This Folder - ~1~ ~2~
-lDialogAddFolderSelect	Choose or create the new folder:
-lDialogBrowseButton	Browse
-lDialogCancelButton	Cancel
-lDialogCancelPrompt	Discard changes?
-lDialogCancelTitle	Cancel - ~1~ ~2~
-lDialogEditDialogPrompt	Enter the new dialog box name`n(or part of the name):
-lDialogEditDialogTitle	Edit Dialog box - ~1~ ~2~
-lDialogEditFolderPrompt	Enter the name for this foler:
-lDialogEditFolderSelect	Choose or create the new folder:
-lDialogEditFolderTitle	Edit Folder - ~1~ ~2~
-lDialogFolderLabel	Folder
-lDialogFolderLocationEmpty	The location is empty. Please, choose a location.
-lDialogFolderNameNoSeparator	The submenu name cannot include the reserved character "~1~".
-lDialogFolderNameNotNew	The name ~1~ is already used in this menu. Please, choose a new name.
-lDialogFolderNameEmpty	The folder name is empty. Please, choose a short name.
-lDialogFolderParentMenu	Folder parent menu
-lDialogFolderRemovePrompt	Remove the folder "~1~"`nand ALL its content (folders and submenus)?
-lDialogFolderRemoveTitle	Remove Folder - ~1~
-lDialogFolderShortName	Folder short name for menu
-lDialogInvalidHotkey	With your current system keyboard layout, the hotkey "~1~" could not be used as a trigger for the popup menu (not a valid key namse error).`n`nPlease, open the "Folders Popup Settings" window from the Tray menu and click "Options". In this dialog box, choose another shortcut for "~2~".
-lDialogSave	Save
-lDialogSelectItemToEdit	Please, select the item to edit.
-lDialogSelectItemToRemove	Please, select the item to remove.
-lDialogSubmenuLabel	Submenu
-lDialogSubmenuShortName	Submenu short name
-lDonateButton	Support Freeware!
-lDonatePrompt	Are you happy with ~1~?`n`n~1~ is not only FREE of charge but also FREE of nasty advertising or adware that you never know if they carry spyware or malware.`n`n~2~ times so far, ~1~ has helped you in your daily work. How about supporting freeware now?
-lDonateThankyou	Thank you for being fair and support freeware!
-lDonateTitle	~1~ times! - ~2~
-lGui2Close	Close
-lGuiAbout	A&bout
-lGuiAddDialog	A&dd
-lGuiAddFolder	&Add
-lGuiAddSubMenu	Subme&nu
-lGuiCancel	&Cancel
-lGuiClose	&Close
-lGuiEditDialog	Ed&it
-lGuiEditFolder	&Edit
-lGuiHelp	&Help
-lGuiLvDialogsHeader	Supported Dialog Boxes (part of names)
-lGuiLvFoldersHeader	Name|Path
-lGuiMoveFolderDown	Move D&own
-lGuiMoveFolderUp	Move &Up
-lGuiOptions	Op&tions
-lGuiRemoveDialog	Re&move
-lGuiRemoveFolder	&Remove
-lGuiSave	&Save
-lGuiSeparator	Se&parator
-lGuiSubmenuDropdownLabel	Menu to edit:
+lAppTagline	Sautez instantanément d'un dossier à l'autre
+lButtonRemind	Rappelez-moi
+lDiagModeCaution	~1~ roule en mode de diagnostique.`n`nDes renseignements à propos de l'exécution de cette application seront colligées dans le fichier:`n~2~`n`nAucune information ne sera transmise sans votre consentement.`n`nVoulez-vous rester en mode diagnostique?
+lDiagModeExit	~1~ a colligé des renseignements à des fins de diagnostique dans le fichier ~2~.
+lDiagModeIntro	Envoyez ce fichier à ahk@jeanlalonde.ca avec une description de la situation nécessitant un diasnostique.
+lDiagModeSee	Voulez-vous consulter le fichier de diagnostique?
+lDialodAdd	Ajouter
+lDialogAddDialogAlready	Ce type de boîte de dialogue est déjà pris en charge.
+lDialogAddDialogPrompt	Entrez le nom de la nouvelle boîte de dialogue`n(ou une partie du nom):
+lDialogAddDialogTitle	Ajouter Boîte de dialogue - ~1~ ~2~
+lDialogAddEditFolderTitle	~1~ Dossier - ~2~ ~3~
+lDialogAddFolderManuallyPrompt	Désolé, nous ne pouvons détecter automatiquement le dossier actif dans ce type de fenêtre.`n`nVoulez-vous ajouter ce dossier manuellement?
+lDialogAddFolderManuallyTitle	Ajouter Dossier - ~1~ ~2~
+lDialogAddFolderSelect	Choisir ou créer un nouveau dossier:
+lDialogBrowseButton	Parcourir
+lDialogCancelButton	Annuler
+lDialogCancelPrompt	Annuler les changements?
+lDialogCancelTitle	Annuler - ~1~ ~2~
+lDialogEditDialogPrompt	Entrez le nouveau nom de la boîte de dialogue`n(ou une partie du nom):
+lDialogEditDialogTitle	Modifier Boîte de dialogue - ~1~ ~2~
+lDialogEditFolderPrompt	Entrez le nom de ce dossier:
+lDialogEditFolderSelect	Choisissez ou créez le nouveau dossier:
+lDialogEditFolderTitle	Modifier Dossier - ~1~ ~2~
+lDialogFolderLabel	Dossier
+lDialogFolderLocationEmpty	L'emplacement est vide. Veuillez indiquer l'emplacement du dossier.
+lDialogFolderNameEmpty	Le nom du dossier est vide. Veuillez indiquer un nom court pour ce dossier.
+lDialogFolderNameNoSeparator	Le nom du sous-menu ne doit pas inclure le caractère réservé "~1~".
+lDialogFolderNameNotNew	Le nom "~1~" est déjà présent dans ce menu. Veuillez choisir un nouveau nom.
+lDialogFolderParentMenu	Menu contenant ce dossier
+lDialogFolderRemovePrompt	Supprimer le dossier "~1~"`net TOUT son contenu (dossiers et sous-menus)?
+lDialogFolderRemoveTitle	Supprimer Dossier - ~1~
+lDialogFolderShortName	Nom court du dossier pour les menus
+lDialogInvalidHotkey	Avec votre configuration actuelle de clavier, la touche de raccourci "~1~" ne peut être utilisée comme un déclencheur pour le menu popup.`n`nVeuillez ouvrir la fenêtre "Paramètres de Folders Popup" dans la zone de notification et cliquez sur "Options". Dans cette boîte de dialogue, choisissez une autre touche de raccourci pour "~2~".
+lDialogSave	Enregistrer
+lDialogSelectItemToEdit	Veuillez sélectionner l'item à modifier.
+lDialogSelectItemToRemove	Veuillez sélectionner l'item à supprimer.
+lDialogSubmenuLabel	Sous-menu
+lDialogSubmenuShortName	Nom court du sous-menu
+lDonateButton	Soutenez ce gratuiciel!
+lDonatePrompt	Vous aimez ~1~?`n`n~1~ n'est pas seulement GRATUIT mais aussi distribué SANS ces attrapes publicitaires dont on ne sait jamais si elles transportent des virus ou encore des logiciels espions ou malveillants.`n`nCela fait maintenant ~2~ fois que ~1~ est appelé pour faciliter votre travail quotidien. Que diriez-vous de soutenir ce gratuiciel à votre tour?
+lDonateThankyou	Merci pour cette marque d'appréciation!
+lDonateTitle	~1~ fois! - ~2~
+lGui2Close	Fermer
+lGuiAbout	À propos
+lGuiAddDialog	Ajouter
+lGuiAddFolder	Ajouter
+lGuiAddSubMenu	Sous-menu
+lGuiCancel	Annuler
+lGuiClose	Fermer
+lGuiEditDialog	Modifier
+lGuiEditFolder	Modifier
+lGuiHelp	Aide
+lGuiLvDialogsHeader	Types de boîtes de dialogue prises en charge (partie du nom)
+lGuiLvFoldersHeader	Nom|Emplacement
+lGuiMoveFolderDown	En bas
+lGuiMoveFolderUp	En haut
+lGuiOptions	Options
+lGuiRemoveDialog	Supprimer
+lGuiRemoveFolder	Supprimer
+lGuiSave	Enregistrer
+lGuiSeparator	Séparation
+lGuiSubmenuDropdownLabel	Menu à modifier:
 lGuiSubmenuLocation	>
 lGuiSubmenuSeparator	>
-lGuiTitle	Settings - ~1~ ~2~
+lGuiTitle	Paramètres - ~1~ ~2~
 lHelpText1	At its launch, FoldersPopup add an icon in the System Tray and await your orders. When you need to change folder in Windows Explorer or in a file dialog box, just click the Middle mouse button or press Windows-K and, in the popup menu, select the desired folder. FoldersPopup will take you there this instantly!
 lHelpText2	Choose Settings to open the FoldersPopup settings window where you can add folders to your menu, delete, move or rename them. Click Save to save your changes.
 lHelpText3	You can quickly add new folders to the popup menu:`n1) Go to a frequently used folder.`n2) Click the Middle mouse button (or press Windows-K) and choose Add This Folder.`n3) Give the folder a short name, click OK and Save in the settings window.
@@ -77,66 +77,61 @@ lHelpText6	Support on FoldersPopup is available at`n<a href="http://www.code.jea
 lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware!
 lHelpTextLead	FoldersPopup lets you move like a breeze between your frequently used folders!
 lHelpTitle	Help - ~1~ ~2~
-lMainMenuName	Main
-lMenuAbout	A&bout
-lMenuAddThisDialog	&Add This Dialog Box to the supported list
-lMenuAddThisFolder	&Add This Folder
-lMenuControlPanel	&Control Panel
-lMenuDesktop	&Desktop
-lMenuDialogNotSupported	This dialog box type is not supported yet
-lMenuDocuments	D&ocuments
-lMenuEditFoldersMenu	&Edit Folders Menu
-lMenuHelp	Help
-lMenuMyComputer	&My Computer
-lMenuNetworkNeighborhood	&Network Neighborhood
-lMenuPictures	&Pictures
-lMenuRecentFolders	&Recent folders
-lMenuRecycleBin	&Recycle Bin
-lMenuReservedShortcuts	ARPSW
-lMenuRunAtStartup	&Run at Startup
+lMainMenuName	Principal
+lMenuAbout	À propos
+lMenuAddThisDialog	Prendre en charge ce type de boîte de dialogue
+lMenuAddThisFolder	Ajouter ce dossier
+lMenuControlPanel	Panneau de configuration
+lMenuDesktop	Bureau
+lMenuDialogNotSupported	Ce type de boîte de dialogue n'est pas encore pris en charge
+lMenuDocuments	Documents
+lMenuHelp	Aide
+lMenuMyComputer	Ordinateur
+lMenuNetworkNeighborhood	Réseau
+lMenuPictures	Images
+lMenuRecentFolders	Emplacements récents
+lMenuRecycleBin	Corbeille
+lMenuReservedShortcuts	###ARPSW
+lMenuRunAtStartup	Exécuter au démarrage
 lMenuSeparator	----------------
-lMenuSettings	Folders &Popup Settings
-lMenuSpecialFolders	&Special Folders
-lMenuSwitchExplorer	S&witch
-lMenuUpdate	Check for &update
-lNavigateFileError	An error occured while opening the folder:`n~1~.
-lNavigateSpecialError	An error occured while opening the special folder #~1~.
-lNavigateUNCError	An error occured while opening the folder:`n~1~`n`nYou may need to login to this folder manually before opening it again with ~2~.
-lNotImplementedYet	Not implemented yet$This feature is still under development.
+lMenuSettings	Paramètres de Folders Popup
+lMenuSpecialFolders	Dossiers spéciaux
+lMenuSwitchExplorer	Basculer
+lMenuUpdate	Mettre à jour
+lNavigateFileError	Une erreur s'est produite lors de l'ouverture du dossier:`n~1~.
+lNavigateSpecialError	Une erreur s'est produite lors de l'ouverture du dossier spécial #~1~.
 lOptionsAlt	Alt
-lOptionsArrDescriptions1	Choose the MOUSE button and modifiers combination that will open the folders popup menu in Windows Explorer or file dialog boxes. By default, this is the middle mouse button (MButton) without any modifier key.
-lOptionsArrDescriptions2	Choose the MOUSE button and modifiers combination that will open the folders popup menu in ANY window and navigate to the selected folder in a NEW Windows Explorer window. By default, this is the middle mouse button (MButton) while the Shift key is pressed.
-lOptionsArrDescriptions3	Choose the KEYBOARD hotkey combination that will open the folders popup menu in the active Windows Explorer or file dialog box. By default, this is Win+K (the K letter while the Windows key is pressed).
-lOptionsArrDescriptions4	Choose the KEYBOARD hotkey combination that will open the folders popup menu in ANY window and navigate to the selected folder in a NEW Windows Explorer window. By default, this is Shift+Win+K (the K letter while the Shift and Windows keys are pressed).
-lOptionsArrDescriptions5	Choose the hotkey or mouse button combination that will open the Folders Popup setting dialog box. By default, this is Shift+Windows+F.
-lOptionsChangeHotkey	Change
-lOptionsChangeHotkeyTitle	Change hotkey - ~1~ ~2~
+lOptionsArrDescriptions1	Choisissez le bouton de la SOURIS et la touche de combinaison qui ouvrira le menu popup dans l'Explorateur de fichier de Windows ou dans des boîtes de dialogue de fichier. Par défaut, il s'agit du bouton du milieu de la souris (MButton) sans touche de modification.
+lOptionsArrDescriptions2	Choisissez le bouton de la SOURIS et la touche de combinaison qui ouvrira le menu popup dans N'IMPORTE QUELLE fenêtre et ouvrira le dossier sélectionné dans une NOUVELLE fenêtre de l'Explorateur de fichiers. Par défaut, il s'agit du bouton du milieu de la souris (MButton) avec la touche de modification Maj (Shift).
+lOptionsArrDescriptions3	Choisissez la combinaison de touches du CLAVIER qui ouvrira le menu popup dans l'Explorateur de fichier de Windows ou dans des boîtes de dialogue de fichier. Par défaut, il s'agit de la combinaisons Win-K (la lettre K pendant que la touche Windows est pressée).
+lOptionsArrDescriptions4	Choisissez la combinaison de touches du CLAVIER qui ouvrira le menu popup dans N'IMPORTE QUELLE fenêtre et ouvrira le dossier sélectionné dans une NOUVELLE fenêtre de l'Explorateur de fichiers. Par défaut, il s'agit de la combinaisons Maj-Win-K (la lettre K pendant que les touches Windows et Maj sont presséee).
+lOptionsArrDescriptions5	Choisissez la combinaison de touches du clavier ou le bouton de la souris qui ouvrira la boîte de dialogue Paramètres de Folders Popup. Par défaut, il s'agit de Maj+Windows+F.
+lOptionsChangeHotkey	Modifier
+lOptionsChangeHotkeyTitle	Modification de déclencheur - ~1~ ~2~
 lOptionsCtrl	Ctrl
-lOptionsDisplayMenuShortcuts	Display &Numeric Menu Shortcuts
-lOptionsDisplayRecentFolders	Display Recent Folders
-lOptionsDisplaySpecialFolders	Display S&pecial Folders
-lOptionsDisplaySwitchMenu	Display Switch Menu
-lOptionsGuiIntro	Define the mouse buttons and keyboard hotkeys that will trigger  . lAppName . .
+lOptionsDisplayMenuShortcuts	Afficher les raccourcis numériques de menu
+lOptionsDisplayRecentFolders	Afficher les emplacements récents
+lOptionsDisplaySpecialFolders	Afficher les dossiers spéciaux
+lOptionsDisplaySwitchMenu	Afficher le menu Basculer
+lOptionsGuiIntro	Choisisr les boutons de la souris et les raccourcis du clavier qui vont déclencher ~1~.
 lOptionsGuiTitle	Options - ~1~ ~2~
-lOptionsKeyboard	Keyboard
+lOptionsKeyboard	Clavier
 lOptionsLanguage	Langue
-lOptionsLanguageCodes	EN|FR|DE
 lOptionsLanguageLabels	Anglais|Français|Allemand
-lOptionsMouse	Mouse
-lOptionsNoKeyOrMouseSpecified	No Key or Mouse Button specified. The existing ~1~ hotkey is unchanged.
-lOptionsOtherOptions	Other Options
-lOptionsPopupFix	Popup &Menu at Fix Position
+lOptionsMouse	Souris
+lOptionsNoKeyOrMouseSpecified	Aucune touche du clavier ou bouton de la souris n'a été sélectionné. La sélection actuelle ~1~ est inchangée.
+lOptionsOtherOptions	Autres options
+lOptionsPopupFix	Menu popup à une position fixe
 lOptionsPopupFixPositionX	Position X:
 lOptionsPopupFixPositionY	Y:
-lOptionsRunAtStartup	&Run at Startup
-lOptionsShift	Shift
-lOptionsTitles	Mouse - Folders Popup|Mouse - New Explorer|Keyboard - Folders Popup|Keyboard - New Explorer|Settings window
-lOptionsTrayTip	&Display Startup Tray Tip
-lOptionsTriggerFor	Trigger for:
-lOptionsUnloadTitle	Unload - ~1~
+lOptionsRunAtStartup	Exécuter au démarrage
+lOptionsShift	Maj
+lOptionsTitles	Souris - Popup|Souris - Nouvel explorateur|Keyboard - Popup|Keyboard - Nouvel explorateur|Paramètres
+lOptionsTrayTip	Afficher la notification au démarrage
+lOptionsTriggerFor	Déclencheur pour:
 lOptionsWin	Win
-lTrayTipInstalledDetail	To show ~1~ menu, press:`n`n~2~ / ~3~`nin Windows Explorer or in a Dialog box`n`n~4~ / ~5~`nto open a New Explorer window
-lTrayTipinstalledTitle	~1~ ~2~ ready!
-lUpdatePrompt	Update ~1~ from v~2~ to v~3~?
-lUpdateTitle	Update ~1~?
-lUpdateYouHaveLatest	You have the latest version: ~1~.`n`nVisit the ~2~ web page anyway?
+lTrayTipInstalledDetail	Pour afficher le menu de ~1~, appuyez sur:`n`n~2~ / ~3~`ndans un Explorateur de fichiersou dans une boîte de dialogue`n`n~4~ / ~5~`npour ouvrir un nouvel Explorateur
+lTrayTipinstalledTitle	~1~ ~2~ prêt!
+lUpdatePrompt	Mettre à jour ~1~ de la version v~2~ à la version v~3~?
+lUpdateTitle	Mettre à jour ~1~?
+lUpdateYouHaveLatest	Vous avez la version la plus récente: ~1~.`n`nVisiter la page web de ~2~ quand même?
