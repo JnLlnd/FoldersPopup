@@ -1,5 +1,8 @@
 /*
 BUG
+- bug when dropdown change to come back to main
+- bug when renaming submenu in main?
+- bug when cancel, does not keep changes already saved
 
 TODO
 - Use icons in Gui for add, remove, edit, separator, move up and move down
@@ -178,6 +181,7 @@ Gosub, BuildSpecialFoldersMenu
 Gosub, BuildRecentFoldersMenu
 Gosub, BuildSwitchMenu
 Gosub, BuildFoldersMenus ; need to be initialized here - will be updated at each call to popup menu
+Gosub, LoadTheme
 Gosub, BuildGui
 Gosub, BuildAddDialogMenu
 Gosub, Check4Update
@@ -202,6 +206,8 @@ if (blnDisplayTrayTip)
 		, , 1
 
 OnExit, ExitDiagMode
+
+gosub, GuiShow ; ###
 
 return
 
@@ -764,6 +770,7 @@ BuildFoldersMenus:
 
 Menu, %lMainMenuName%, Add
 Menu, %lMainMenuName%, DeleteAll
+Menu, %lMainMenuName%, Color, Blue
 
 BuildOneMenu(lMainMenuName) ; and recurse for submenus
 
@@ -841,41 +848,92 @@ return
 
 
 ;------------------------------------------------------------
+LoadTheme:
+;------------------------------------------------------------
+IniRead, strGuiWindowColor, %strIniFile%, Gui, WindowColor, White
+IniRead, strGuiControlColor, %strIniFile%, Gui, ControlColor, White
+IniRead, strGuiListviewBackgroundColor, %strIniFile%, Gui, ListviewBackground, White
+IniRead, strGuiListviewTextColor, %strIniFile%, Gui, ListviewText, White
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 BuildGui:
 ;------------------------------------------------------------
 
 Gui, 1:New, , % L(lGuiTitle, strAppName, strAppVersion)
+Gui, Margin, 10, 10
+Gui, Color, %strGuiWindowColor%, %strGuiControlColor%
+
+intCol := 480
+intWidth := 460
+
 Gui, 1:Font, s12 w700, Verdana
-Gui, 1:Add, Text, x10 y10 w490 h25, %strAppName%
-Gui, 1:Font, s8 w400, Arial
-Gui, 1:Add, Button, y10 x315 w45 h22 gGuiAbout, % L(lGuiAbout)
+Gui, 1:Add, Text, xm ym w%intWidth% h25, %strAppName% %strAppVersion%
+Gui, 1:Font, s10 w400, Verdana
+Gui, 1:Add, Text, xm y+1, %lAppTagline%
 Gui, 1:Font, s8 w400, Verdana
-Gui, 1:Add, Button, x+10 w75 gGuiHelp, %lGuiHelp%
-Gui, 1:Add, Text, x10 y30, %lAppTagline%
-
-Gui, 1:Add, Text, x10, %lGuiSubmenuDropdownLabel%
-Gui, 1:Add, DropDownList, x10 w350 vdrpMenusList gGuiMenusListChanged ; Sort
+Gui, 1:Add, Text, xm, %lGuiSubmenuDropdownLabel%
+Gui, 1:Add, DropDownList, xm y+5 w350 vdrpMenusList gGuiMenusListChanged ; Sort
 
 Gui, 1:Font, s8 w400, Verdana
-Gui, 1:Add, ListView, x10 w350 h220 Count32 -Multi NoSortHdr LV0x10 vlvFoldersList gGuiFoldersListEvent, %lGuiLvFoldersHeader%|TEMP MENU NAME|TEMP SUBMENU
+Gui, 1:Add, ListView, xm+30 w320 h220 Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFoldersList gGuiFoldersListEvent, %lGuiLvFoldersHeader%||
 LV_ModifyCol(3, 0) ; hide 3rd column
 LV_ModifyCol(4, 0) ; hide 4th column
-Gui, 1:Add, Button, x+10 w75 gGuiAddFolder, %lGuiAddFolder%
-Gui, 1:Add, Button, w75 gGuiRemoveFolder, %lGuiRemoveFolder%
-Gui, 1:Add, Button, w75 gGuiEditFolder, %lGuiEditFolder%
-Gui, 1:Add, Button, w75 gGuiAddSeparator, %lGuiSeparator%
-Gui, 1:Add, Button, w75 gGuiMoveFolderUp, %lGuiMoveFolderUp%
-Gui, 1:Add, Button, w75 gGuiMoveFolderDown, %lGuiMoveFolderDown%
 
-Gui, 1:Add, ListView
-	, x10 w350 h120 Count16 -Multi NoSortHdr +0x10 LV0x10 vlvDialogsList, %lGuiLvDialogsHeader%
-Gui, 1:Add, Button, x+10 w75 gGuiAddDialog, %lGuiAddDialog%
-Gui, 1:Add, Button, w75 gGuiRemoveDialog, %lGuiRemoveDialog%
-Gui, 1:Add, Button, w75 gGuiEditDialog, %lGuiEditDialog%
+Gui, 1:Add, Text, Section x+0 yp
 
-Gui, 1:Add, Button, x100 w75 r1 Disabled Default vbtnGuiSave gGuiSave, %lGuiSave%
-Gui, 1:Add, Button, x+40 w75 r1 vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur
-Gui, 1:Add, Button, x+80 w75 gGuiOptions, %lGuiOptions%
+Gui, 1:Add, Picture, xm ys gGuiMoveFolderUp, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\up_circular\up_circular-26.png
+Gui, 1:Add, Picture, xm ys+30 gGuiMoveFolderDown, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\down_circular\down_circular-26.png
+Gui, 1:Add, Picture, xm ys+60 gGuiAddSeparator, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\divide2\separator-26.png
+
+Gui, 1:Add, Text, Section xs ys
+
+Gui, 1:Add, Picture, xs+10 ys gGuiAddFolder, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\add_property\add_property-48.png
+Gui, 1:Font, s8 w400, Arial ; button legend
+Gui, 1:Add, Text, xs y+0 w68 center gGuiAddFolder, %lGuiAddFolder%
+
+Gui, 1:Add, Picture, xs+10 gGuiEditFolder, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\edit_property\edit_property-48.png
+Gui, 1:Font, s8 w400, Arial ; button legend
+Gui, 1:Add, Text, xs y+0 w68 center gGuiEditFolder, %lGuiEditFolder%
+
+Gui, 1:Add, Picture, xs+10 gGuiRemoveFolder, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\delete_property\delete_property-48.png
+Gui, 1:Font, s8 w400, Arial ; button legend
+Gui, 1:Add, Text, xs y+0 w68 center gGuiRemoveFolder, %lGuiRemoveFolder%
+
+Gui, 1:Add, Text, xs+90 ys h220 0x11
+
+GuiControlGet, arrLvPos, Pos, lvFoldersList
+
+Gui, 1:Font, s8 w400, Verdana
+Gui, 1:Add, Text, Section x%intCol% y%arrLvPosY% w220, %lGuiLvDialogsHeader%
+Gui, 1:Add, ListView, xs w220 h150 Count16 -Hdr -Multi NoSortHdr +0x10 LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvDialogsList, Header
+
+Gui, 1:Add, Picture, xs+70 y+5 gGuiAddDialog, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\add_image\add_image-26.png
+Gui, 1:Add, Picture, x+10 yp gGuiEditDialog, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\edit_image\edit_image-26.png
+Gui, 1:Add, Picture, x+10 yp gGuiRemoveDialog, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\remove_image\remove_image-26.png
+
+Gui, 1:Add, Text, Section xs+60 ym
+
+Gui, 1:Add, Picture, xs+10 ym gGuiHelp, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\help\help-32.png
+Gui, 1:Font, s8 w400, Arial ; button legend
+Gui, 1:Add, Text, xs y+0 w52 center gGuiHelp, %lGuiHelp%
+
+Gui, 1:Add, Picture, Section x+10 ym gGuiAbout, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\about\about-32.png
+Gui, 1:Font, s8 w400, Arial ; button legend
+Gui, 1:Add, Text, xs-10 y+0 w52 center, %lGuiAbout%
+
+Gui, 1:Add, Picture, Section x+10 ym gGuiOptions, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\settings\settings-32.png
+Gui, 1:Font, s8 w400, Arial ; button legend
+Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiOptions, %lGuiOptions%
+
+Gui, 1:Add, Text, xm y350 h1 w690
+Gui, 1:Font, s9 w600, Verdana
+Gui, 1:Add, Button, x260 w100 h48 Disabled Default vbtnGuiSave gGuiSave, %lGuiSave%
+Gui, 1:Add, Button, x+20 w100 h48 vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur
+Gui, 1:Font, s6 w400, Verdana
 
 return
 ;------------------------------------------------------------
@@ -1015,6 +1073,9 @@ GuiAddSeparator:
 GuiControl, Focus, lvFoldersList
 Gui, 1:ListView, lvFoldersList
 LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", lMenuSeparator, lMenuSeparator . lMenuSeparator, strCurrentMenu)
+LV_Modify(LV_GetNext(), "Vis")
+LV_ModifyCol(1, "AutoHdr")
+LV_ModifyCol(2, "AutoHdr")
 
 GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lGuiCancel%
@@ -1213,7 +1274,7 @@ GuiShow:
 strCurrentMenu := lMainMenuName
 Gosub, BackupMenuObjects
 Gosub, LoadSettingsToGui
-Gui, 1:Show, w455 ; h455
+Gui, 1:Show ; , w455 ; , h455
 
 return
 ;------------------------------------------------------------

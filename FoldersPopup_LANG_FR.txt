@@ -3,7 +3,7 @@ lAboutText2	FoldersPopup est développé par Jean Lalonde`nsur la plateforme <a hr
 lAboutText3	~1~ Jean Lalonde 2013-2014. Gratuiciel.
 lAboutText4	Soutien en ligne: <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	À propos - ~1~ ~2~
-lAppTagline	Sautez instantanément d'un dossier à l'autre
+lAppTagline	Naviguez instantanément d'un dossier à l'autre
 lButtonRemind	Rappelez-moi
 lDiagModeCaution	~1~ roule en mode de diagnostique.`n`nDes renseignements à propos de l'exécution de cette application seront colligées dans le fichier:`n~2~`n`nAucune information ne sera transmise sans votre consentement.`n`nVoulez-vous rester en mode diagnostique?
 lDiagModeExit	~1~ a colligé des renseignements à des fins de diagnostique dans le fichier ~2~.
@@ -55,7 +55,7 @@ lGuiClose	Fermer
 lGuiEditDialog	Modifier
 lGuiEditFolder	Modifier
 lGuiHelp	Aide
-lGuiLvDialogsHeader	Types de boîtes de dialogue prises en charge (partie du nom)
+lGuiLvDialogsHeader	Boîtes de dialogue prises en charge`n(une partie du nom suffit)
 lGuiLvFoldersHeader	Nom|Emplacement
 lGuiMoveFolderDown	En bas
 lGuiMoveFolderUp	En haut
@@ -132,7 +132,7 @@ lOptionsTriggerFor	Déclencheur pour:
 lOptionsWin	Win
 lReloadPrompt	Changement de langue enregistré: ~1~. Voulez-vous relancer ~2~ en ~1~ maintenant? Les changements non sauvegardés dans le menu des dossiers seront perdus.
 lTrayTipInstalledDetail	Pour afficher le menu de ~1~, appuyez sur:`n`n~2~ / ~3~`ndans un Explorateur de fichiersou dans une boîte de dialogue`n`n~4~ / ~5~`npour ouvrir un nouvel Explorateur
-lTrayTipinstalledTitle	~1~ ~2~ prêt!
+lTrayTipinstalledTitle	~1~ ~2~ est prêt!
 lUpdatePrompt	Mettre à jour ~1~ de la version v~2~ à la version v~3~?
 lUpdateTitle	Mettre à jour ~1~?
 lUpdateYouHaveLatest	Vous avez la version la plus récente: ~1~.`n`nVisiter la page web de ~2~ quand même?
