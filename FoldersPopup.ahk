@@ -1130,6 +1130,7 @@ else if Time2Donate(intStartups, blnDonator)
 IniWrite, % (intStartups + 1), %strIniFile%, Global, Startups
 
 strLatestVersion := Url2Var("https://raw.github.com/JnLlnd/FoldersPopup/master/latest-version.txt")
+strLatestVersion := Trim(strLatestVersion, "`n`l") ; remove en-of-line if present
 
 if RegExMatch(strCurrentVersion, "(alpha|beta)")
 	or (FirstVsSecondIs(strLatestSkipped, strLatestVersion) >= 0 and (A_ThisMenuItem <> lMenuUpdate))
