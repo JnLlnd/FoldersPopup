@@ -4,6 +4,9 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: FoldersPopup v1.2.7 (2014-04-25)
+	* Workaround to make the "Run" command work on some system
+
 	Version: FoldersPopup v1.2.6 (2014-04-24)
 	* Workaround for the hash (aka Sharp / "#") bug in Shell.Application that occurs only when navigatin in the current Explorer window to a subfolder including # in its parent path (eg.: C:\C#\Project)
 	* Windows XP only: fix a bug when navigating to special folder "My Pictures" in dialog boxes
@@ -1658,7 +1661,7 @@ if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetCla
 	if (A_OSVersion = "WIN_XP")
 		ComObjCreate("Shell.Application").Explore(strPath)
 	else
-		Run, %strPath%
+		Run, Explorer %strPath%
 	; http://msdn.microsoft.com/en-us/library/bb774094http://msdn.microsoft.com/en-us/library/bb774094
 	; ComObjCreate("Shell.Application").Explore(strPath)
 	; ComObjCreate("WScript.Shell").Exec("Explorer.exe /e /select," . strPath) ; not tested on XP
@@ -1981,7 +1984,7 @@ http://msdn.microsoft.com/en-us/library/aa752094
 			if varPath is integer ; ShellSpecialFolderConstant
 				ComObjCreate("Shell.Application").Explore(varPath)
 			else
-				Run, %varPath%
+				Run, Explorer %varPath%
 	}
 	else
 	{
@@ -2069,7 +2072,7 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 		if (A_OSVersion = "WIN_XP")
 			ComObjCreate("Shell.Application").Explore(strPath)
 		else
-			Run, %strPath%
+			Run, Explorer %strPath%
 		; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 		if (blnDiagMode)
 			Diag("NavigateDialog", "Not #32770 or bosa_sdm: open New Explorer")
