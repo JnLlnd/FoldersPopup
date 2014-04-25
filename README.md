@@ -13,6 +13,10 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### 2014-04-24 v1.2.6
+* Workaround for the hash (aka Sharp or #) bug in Shell.Application that occurs only when navigating in the current Explorer window to a subfolder including “#” in its parent path (e.g.: C:\C#\Project)
+* Windows XP only: fix a bug when navigating to the special folder “My Pictures” in dialog boxes
+
 ### 2014-04-19 v1.2.5
 * Support for FreeCommander XE
 * Compatible with Clover (opens the folder in a new tab)
