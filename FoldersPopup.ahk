@@ -45,6 +45,10 @@ TODO
 	* add swith submenu to activate any other open Explorer
 	* add DisplayRecentFolders and DisplaySwitchMenu options in Options dialog box and ini file
 
+	Version: FoldersPopup v1.2.6 (2014-04-24)
+	* Workaround for the hash (aka Sharp / "#") bug in Shell.Application that occurs only when navigatin in the current Explorer window to a subfolder including # in its parent path (eg.: C:\C#\Project)
+	* Windows XP only: fix a bug when navigating to special folder "My Pictures" in dialog boxes
+
 	Version: FoldersPopup v1.2.5 (2014-04-19)
 	* Support for FreeCommander XE
 	* Compatible with Clover (opens the folder in a new tab)
@@ -2515,10 +2519,27 @@ else ; this is the console, FreeCommander or a dialog box
 		strLocation := A_MyDocuments
 	else if (intSpecialFolder = 39)
 	{
-		; do not use: StringReplace, strLocation, A_MyDocuments, Documents, Pictures
-		; because A_MyDocument could contain a "Documents" string before the final folder
-		StringLeft, strLocation, A_MyDocuments, % StrLen(A_MyDocuments) - StrLen("Documents")
-		strLocation := strLocation . "Pictures"
+		if (A_OSVersion = "WIN_XP")
+		{
+			strLanguage := SubStr(A_Language, 3, 2) ; "040C" -> "0C"
+			; For A_Language values locale list see http://msdn.microsoft.com/en-ca/goglobal/bb895996.aspx
+			; "09" English, "0C" French, "0A" spanish, "07" German
+			if (strLanguage = "0C") ; French
+				strLocation := A_MyDocuments . "\Mes images"
+			else if (strLanguage = "0A") ; Spanish
+				strLocation := A_MyDocuments . "\My imágenes"
+			else if (strLanguage = "09") ; English
+				strLocation := A_MyDocuments . "\My Pictures"
+			else ; will work only for locales using "My Pictures" - check if folder exists
+				strLocation := A_MyDocuments . "\My Pictures"
+		}
+		else ; WIN_7+
+		{
+			; do not use: StringReplace, strPath, A_MyDocuments, Documents, Pictures
+			; because A_MyDocument could contain a "Documents" string before the final folder
+			StringLeft, strLocation, A_MyDocuments, % StrLen(A_MyDocuments) - StrLen("Documents")
+			strLocation := strLocation . "Pictures" ; should work with all languages - tested in En and Fr
+		}
 	}	
 	else ; we do not support this special folder
 	{
@@ -2526,6 +2547,13 @@ else ; this is the console, FreeCommander or a dialog box
 			Diag("NavigateResult", "SpecialFolderNotSupported")
 		return
 	}
+
+	if !StrLen(FileExist(strLocation))
+		strLocation := A_MyDocuments
+		; Replace wrong path bby My Documents path. 
+		; Draft of message for user:
+		; This special folder is not supported in your current language settings.
+		; To improve this, you could post a message to ~1~ support mentioning your language code (~2~) and the path of the selected special folder on your system.
 
 	if WindowIsConsole(strTargetClass)
 		NavigateConsole(strLocation, strTargetWinId)
@@ -2719,33 +2747,45 @@ http://msdn.microsoft.com/en-us/library/windows/desktop/bb774096%28v=vs.85%29.as
 http://msdn.microsoft.com/en-us/library/aa752094
 */
 {
-	intCountMatch := 0
-	For pExp in ComObjCreate("Shell.Application").Windows
+	if !InStr(varPath, "#") ; prevent the hash bug in Shell.Application
 	{
-		if (pExp.hwnd = strWinId)
+		intCountMatch := 0
+		For pExp in ComObjCreate("Shell.Application").Windows
+		{
+			if (pExp.hwnd = strWinId)
+				if varPath is integer ; ShellSpecialFolderConstant
+				{
+					intCountMatch := intCountMatch + 1
+					try pExp.Navigate2(varPath)
+					catch, objErr
+						Oops(lNavigateSpecialError, varPath)
+				}
+				else
+				{
+					intCountMatch := intCountMatch + 1
+					; Was "try pExp.Navigate("file:///" . varPath)" - removed "file:///" to allow UNC (e.g. \\my.server.com@SSL\DavWWWRoot\Folder\Subfolder)
+					try pExp.Navigate(varPath)
+					catch, objErr
+						; Note: If an error occurs in Navigate, the error message is given by Navigate itself and this script does not
+						; receive an error notification. From my experience, the following line would never be executed.
+						Oops(lNavigateFileError, varPath)
+				}
+		}
+		if !(intCountMatch) ; for Explorer add-ons like Clover (verified - it now opens the folder in a new tab), others?
 			if varPath is integer ; ShellSpecialFolderConstant
-			{
-				intCountMatch := intCountMatch + 1
-				try pExp.Navigate2(varPath)
-				catch, objErr
-					Oops(lNavigateSpecialError, varPath)
-			}
+				ComObjCreate("Shell.Application").Explore(varPath)
 			else
-			{
-				intCountMatch := intCountMatch + 1
-				; Was "try pExp.Navigate("file:///" . varPath)" - removed "file:///" to allow UNC (e.g. \\my.server.com@SSL\DavWWWRoot\Folder\Subfolder)
-				try pExp.Navigate(varPath)
-				catch, objErr
-					; Note: If an error occurs in Navigate, the error message is given by Navigate itself and this script does not
-					; receive an error notification. From my experience, the following line would never be executed.
-					Oops(lNavigateFileError, varPath)
-			}
+				Run, %varPath%
 	}
-	if !(intCountMatch) ; for Explorer add-ons like Clover (verified - it now opens the folder in a new tab), others?
-		if varPath is integer ; ShellSpecialFolderConstant
-			ComObjCreate("Shell.Application").Explore(varPath)
-		else
-			Run, %varPath%
+	else
+	{
+		; Workaround for the hash (aka Sharp / "#") bug in Shell.Application - occurs only when navigatin in the current Explorer window
+		; see http://stackoverflow.com/questions/22868546/navigate-shell-command-not-working-when-the-path-includes-an-hash
+		Send, {F4}{Esc}
+		Sleep, 500
+		ControlSetText, Edit1, %varPath%, A
+		ControlSend, Edit1, {Enter}, A
+	}
 }
 ;------------------------------------------------------------
 
