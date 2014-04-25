@@ -6,6 +6,7 @@
 
 	Version: FoldersPopup v1.2.7 (2014-04-25)
 	* Workaround to make the "Run" command work on some system
+	* Fix end-of-line at end of version number bug
 
 	Version: FoldersPopup v1.2.6 (2014-04-24)
 	* Workaround for the hash (aka Sharp / "#") bug in Shell.Application that occurs only when navigatin in the current Explorer window to a subfolder including # in its parent path (eg.: C:\C#\Project)
@@ -107,7 +108,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 1.2.5
+;@Ahk2Exe-SetVersion 1.2.7
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -120,7 +121,7 @@
 #KeyHistory 0
 ListLines, Off
 
-strCurrentVersion := "1.2.5" ; "major.minor.bugs"
+strCurrentVersion := "1.2.7" ; "major.minor.bugs"
 #Include %A_ScriptDir%\FoldersPopup_LANG.ahk
 SetWorkingDir, %A_ScriptDir%
 global blnDiagMode := False
@@ -1133,6 +1134,7 @@ else if Time2Donate(intStartups, blnDonator)
 IniWrite, % (intStartups + 1), %strIniFile%, Global, Startups
 
 strLatestVersion := Url2Var("https://raw.github.com/JnLlnd/FoldersPopup/master/latest-version.txt")
+strLatestVersion := Trim(strLatestVersion, "`n`l") ; remove en-of-line if present
 
 if RegExMatch(strCurrentVersion, "(alpha|beta)")
 	or (FirstVsSecondIs(strLatestSkipped, strLatestVersion) >= 0 and (A_ThisMenuItem <> lMenuUpdate))
