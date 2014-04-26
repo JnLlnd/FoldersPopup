@@ -45,6 +45,10 @@ TODO
 	* add swith submenu to activate any other open Explorer
 	* add DisplayRecentFolders and DisplaySwitchMenu options in Options dialog box and ini file
 
+	Version: FoldersPopup v1.2.7 (2014-04-25)
+	* Workaround to make the "Run" command work on some system
+	* Fix end-of-line at end of version number bug
+
 	Version: FoldersPopup v1.2.6 (2014-04-24)
 	* Workaround for the hash (aka Sharp / "#") bug in Shell.Application that occurs only when navigatin in the current Explorer window to a subfolder including # in its parent path (eg.: C:\C#\Project)
 	* Windows XP only: fix a bug when navigating to special folder "My Pictures" in dialog boxes
@@ -1480,6 +1484,7 @@ else if Time2Donate(intStartups, blnDonator)
 IniWrite, % (intStartups + 1), %strIniFile%, Global, Startups
 
 strLatestVersion := Url2Var("https://raw.github.com/JnLlnd/FoldersPopup/master/latest-version.txt")
+strLatestVersion := Trim(strLatestVersion, "`n`l") ; remove en-of-line if present
 
 if RegExMatch(strCurrentVersion, "(alpha|beta)")
 	or (FirstVsSecondIs(strLatestSkipped, strLatestVersion) >= 0 and (A_ThisMenuItem <> lMenuUpdate))
@@ -2421,7 +2426,7 @@ if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetCla
 	if (A_OSVersion = "WIN_XP")
 		ComObjCreate("Shell.Application").Explore(strLocation)
 	else
-		Run, %strLocation%
+		Run, Explorer %strLocation%
 	; http://msdn.microsoft.com/en-us/library/bb774094http://msdn.microsoft.com/en-us/library/bb774094
 	; ComObjCreate("Shell.Application").Explore(strLocation)
 	; ComObjCreate("WScript.Shell").Exec("Explorer.exe /e /select," . strLocation) ; not tested on XP
@@ -2775,7 +2780,7 @@ http://msdn.microsoft.com/en-us/library/aa752094
 			if varPath is integer ; ShellSpecialFolderConstant
 				ComObjCreate("Shell.Application").Explore(varPath)
 			else
-				Run, %varPath%
+				Run, Explorer %varPath%
 	}
 	else
 	{
@@ -2862,7 +2867,7 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 		if (A_OSVersion = "WIN_XP")
 			ComObjCreate("Shell.Application").Explore(strLocation)
 		else
-			Run, %strLocation%
+			Run, Explorer %strLocation%
 		; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 		if (blnDiagMode)
 			Diag("NavigateDialog", "Not #32770 or bosa_sdm: open New Explorer")
