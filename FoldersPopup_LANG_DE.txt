@@ -1,139 +1,136 @@
 lAboutText1	~1~ ~2~ (~3~ bits)
-lAboutText2	DEUTCH FoldersPopup is written by Jean Lalonde using the`n<a href="http://ahkscript.org/">AutoHotkey</a> programming language.`n`nIcon by: <a href="http://www.visualpharm.com">Visual Pharm</a>`nAutoHotkey_L v1.1 sources: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText2	DEUTSCH FoldersPopup wird entwickelt von Jean Lalonde unter Verwendung der`n<a href="http://ahkscript.org/">AutoHotkey</a> Programmiersprache.`n`nGerman translation: Edgar ""Fast Edi"" Hoffmann`nFrench translation: Jean Lalonde`nEnglish proof checking: (help welcomed)`n`nIcons von: <a href="http://www.visualpharm.com">Visual Pharm</a>`nAutoHotkey_L v1.1 Sourcen: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
-lAboutText4	Support on <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
-lAboutTitle	About - ~1~ ~2~
-lAppTagline	Jump instantly from one folder to another
-lButtonRemind	Remind me
-lDiagModeCaution	~1~ is running in diagnostic mode.`n`nInformation about the app's execution will be collected in the file:`n~2~`n`nNothing will be sent without your consent.`n`nDo you want to keep diagnostic mode ON?
-lDiagModeExit	~1~ colleted diagnostic information in the file ~2~.
-lDiagModeIntro	Send this file to ahk@jeanlalonde.ca with a description of the situation requiring diagnostic.
-lDiagModeSee	Do you want to see the diagnostic file?
-lDialodAdd	Add
-lDialogAddDialogAlready	This dialog box type is already supported.
-lDialogAddDialogPrompt	Enter the new dialog box name`n(or part of the name):
-lDialogAddDialogTitle	Add Dialog Box - ~1~ ~2~
-lDialogAddEditFolderTitle	~1~ folder - ~2~ ~3~
-lDialogAddFolderManuallyPrompt	Sorry, we can't detect the current folder in this type of window.`n`nDo you want to add it manually now?
-lDialogAddFolderManuallyTitle	Add This Folder - ~1~ ~2~
-lDialogAddFolderSelect	Choose or create the new folder:
-lDialogBrowseButton	Browse
-lDialogCancelButton	Cancel
-lDialogCancelPrompt	Discard changes?
-lDialogCancelTitle	Cancel - ~1~ ~2~
-lDialogEditDialogPrompt	Enter the new dialog box name`n(or part of the name):
-lDialogEditDialogTitle	Edit Dialog box - ~1~ ~2~
-lDialogEditFolderPrompt	Enter the name for this foler:
-lDialogEditFolderSelect	Choose or create the new folder:
-lDialogEditFolderTitle	Edit Folder - ~1~ ~2~
-lDialogFolderLabel	Folder
-lDialogFolderLocationEmpty	The location is empty. Please, choose a location.
-lDialogFolderNameEmpty	The folder name is empty. Please, choose a short name.
-lDialogFolderNameNoSeparator	The submenu name cannot include the reserved character "~1~".
-lDialogFolderNameNotNew	The name ~1~ is already used in this menu. Please, choose a new name.
-lDialogFolderParentMenu	Folder parent menu
-lDialogFolderParentMenu	Folder parent menu
-lDialogFolderRemovePrompt	Remove the folder "~1~"`nand ALL its content (folders and submenus)?
-lDialogFolderShortName	Folder short name for menu
-lDialogInvalidHotkey	With your current system keyboard layout, the hotkey "~1~" could not be used as a trigger for the popup menu (not a valid key namse error).`n`nPlease, open the "Folders Popup Settings" window from the Tray menu and click "Options". In this dialog box, choose another shortcut for "~2~".
-lDialogSave	Save
-lDialogSelectItemToEdit	Please, select the item to edit.
-lDialogSelectItemToRemove	Please, select the item to remove.
-lDialogSubmenuLabel	Submenu
-lDialogSubmenuShortName	Submenu short name
-lDonateButton	Support Freeware!
-lDonatePrompt	Are you happy with ~1~?`n`n~1~ is not only FREE of charge but also FREE of nasty advertising or adware that you never know if they carry spyware or malware.`n`n~2~ times so far, ~1~ has helped you in your daily work. How about supporting freeware now?
-lDonateThankyou	Thank you for being fair and support freeware!
-lDonateTitle	~1~ times! - ~2~
-lGui2Close	Close
-lGuiAbout	A&bout
-lGuiAddDialog	A&dd
-lGuiAddFolder	&Add
-lGuiAddSubMenu	Subme&nu
-lGuiCancel	&Cancel
-lGuiClose	&Close
-lGuiEditDialog	Ed&it
-lGuiEditFolder	&Edit
-lGuiHelp	&Help
-lGuiLvDialogsHeader	Supported Dialog Boxes (part of names)
-lGuiLvFoldersHeader	Name|Path
-lGuiMoveFolderDown	Move D&own
-lGuiMoveFolderUp	Move &Up
-lGuiOptions	Op&tions
-lGuiRemoveDialog	Re&move
-lGuiRemoveFolder	&Remove
-lGuiSave	&Save
+lAboutText4	Support unter <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
+lAboutTitle	Über - ~1~ ~2~
+lAppTagline	Springe sofort von einem Ordner zum Anderen
+lButtonRemind	Erinnere mich
+lDiagModeCaution	~1~ läuft im Diagnose-Modus.`n`nInformationen über die Anwendungsausführung werden in der Datei:`n~2~`n gesammelt`nEs wird nichts ohne Ihr Einverständnis versendet.`n`nWollen Sie den Diagnose-Modus beibehalten?
+lDiagModeExit	~1~ gesammelte Diagnose-Informationen in Datei ~2~.
+lDiagModeIntro	Schicken Sie diese Datei an ahk@jeanlalonde.ca mit einer Beschreibung der Situation, welche die Diagnose ausgelöst hat.
+lDiagModeSee	Wollen Sie die Diagnosedatei sehen?
+lDialodAdd	Hinzufügen
+lDialogAddDialogAlready	Diese Dialogbox-Typ wird schon unterstützt.
+lDialogAddDialogPrompt	Geben Sie den neuen Namen für die Dialogbox an`n(oder einen Teil des Namens):
+lDialogAddDialogTitle	Dialogbox hinzufügen - ~1~ ~2~
+lDialogAddEditFolderTitle	~1~ Ordner - ~2~ ~3~
+lDialogAddFolderManuallyPrompt	Entschuldigung, der aktuelle Ordner kann in diesem Fenstertyp nicht ermittelt werden.`n`nWollen Sie es jetzt von Hand hinzufügen?
+lDialogAddFolderManuallyTitle	Diesen Ordner hinzufügen - ~1~ ~2~
+lDialogAddFolderSelect	Auswählen oder Erstellen des neuen Ordners:
+lDialogBrowseButton	Durchsuchen
+lDialogCancelButton	Abbrechen
+lDialogCancelPrompt	Änderungen verwerfen?
+lDialogCancelTitle	Abbrechen - ~1~ ~2~
+lDialogEditDialogPrompt	Geben Sie den neuen Namen für die Dialogbox ein`n(oder einen Teil des Namens):
+lDialogEditDialogTitle	Dialogbox bearbeiten - ~1~ ~2~
+lDialogEditFolderPrompt	Geben Sie den Namen für diesen Ordner an:
+lDialogEditFolderSelect	Auswählen oder Erstellen des neuen Ordners:
+lDialogEditFolderTitle	Ordner bearbeiten - ~1~ ~2~
+lDialogFolderLabel	Ordner
+lDialogFolderLocationEmpty	Dieser Ort ist leer. Bitte wählen Sie einen Ort.
+lDialogFolderNameEmpty	Der Name des Ordners ist leer. Bitte wählen Sie einen kurzen Namen.
+lDialogFolderNameNoSeparator	Das Untermenü darf das reservierte Zeichen "~1~" nicht enthalten.
+lDialogFolderNameNotNew	Der Name ~1~ wird bereits in diesem Menü verwendet. Bitte wählen Sie einen anderen Namen.
+lDialogFolderParentMenu	Ordner Hauptmenü
+lDialogFolderRemovePrompt	entfernen des Ordners "~1~"`nund ALL seines Inhalts (Ordner und Untermenüs)?
+lDialogFolderShortName	Kurzname des Ordners für das Menü
+lDialogInvalidHotkey	Mit dem derzeitigen Tastaturlayout kann das Tastenkürzel "~1~" nicht verwendet werden, um das Popup-Menü aufzurufen (kein gültiger Tasten Name).`n`nBitte öffnen Sie das Einstellungsfenster aus dem Tray-Menü und klicken Sie auf "Optionen". Wählen Sie in diesem Dialog ein anderes Tastenkürzel für "~2~".
+lDialogSave	Speichern
+lDialogSelectItemToEdit	Bitte wählen Sie das zu bearbeitende Element.
+lDialogSelectItemToRemove	Bitte wählen Sie das zu entfernende Element.
+lDialogSubmenuLabel	Untermenü
+lDialogSubmenuShortName	Kurzname des Untermenüs
+lDonateButton	Unterstützen Sie Freeware!
+lDonatePrompt	Sind Sie zufrieden mit ~1~?`n`n~1~ ist nicht nur kostenlos, sondern enthält auch keine Werbung, bei der Sie nie wissen, ob diese Spyware oder Schadsoftware enthält.`n`n~2~ mal bisher, hat Ihnen ~1~ bei der täglichen Arbeit geholfen. Wie wär's jetzt mit ein wenig Unterstützung für Freeware?
+lDonateThankyou	Vielen Dank für die Unterstützung von Freeware!
+lDonateTitle	~1~ mal! - ~2~
+lGui2Close	Schliessen
+lGuiAbout	Ü&ber
+lGuiAddDialog	H&inzufügen
+lGuiAddFolder	&Hinzufügen
+lGuiAddSubMenu	Unterme&nü
+lGuiCancel	&Abbrechen
+lGuiClose	&Schliessen
+lGuiEditDialog	Bearbe&iten
+lGuiEditFolder	&Bearbeiten
+lGuiHelp	&Hilfe
+lGuiLvDialogsHeader	Unterstützte Dialoge`n(Teile der Namen)
+lGuiLvFoldersHeader	Name|Pfad
+lGuiMoveFolderDown	Nach u&nten bewegen
+lGuiMoveFolderUp	Nach o&ben bewegen
+lGuiOptions	Op&tionen
+lGuiRemoveDialog	&Entfernen
+lGuiRemoveFolder	Entfe&rnen
+lGuiSave	&Speichern
 lGuiSeparator	Se&parator
-lGuiSubmenuDropdownLabel	Menu to edit:
+lGuiSubmenuDropdownLabel	Zu bearbeitendes Menü:
 lGuiSubmenuLocation	>
 lGuiSubmenuSeparator	>
-lGuiTitle	Settings - ~1~ ~2~
-lHelpText1	At its launch, FoldersPopup add an icon in the System Tray and await your orders. When you need to change folder in Windows Explorer or in a file dialog box, just click the Middle mouse button or press Windows-K and, in the popup menu, select the desired folder. FoldersPopup will take you there this instantly!
-lHelpText2	Choose Settings to open the FoldersPopup settings window where you can add folders to your menu, delete, move or rename them. Click Save to save your changes.
-lHelpText3	You can quickly add new folders to the popup menu:`n1) Go to a frequently used folder.`n2) Click the Middle mouse button (or press Windows-K) and choose Add This Folder.`n3) Give the folder a short name, click OK and Save in the settings window.
-lHelpText4	By default, FoldersPopup supports regular dialog boxes (Open, Save, etc.). You can easily teach FoldersPopup to recognize other types of dialog box:`n1) When you are in an unsupported dialog box, click the Middle mouse button (or press Windows-K) and choose Add this dialog to the supported list.`n2 ) Click OK and Save in the settings window.
-lHelpText5	TIPS AND TRICKS`n- In the Tray menu, check the Run at Startup option to launch FoldersPopup automatically at startup.`n- Need to open a favorite folder in a New Explorer window? Just press Shift-Middle mouse button (or Shift-Windows-K).`n- Configure your popup menu triggers: choose your preferred mouse buttons or keyboard shortcuts in Settings, Options.`n- Also in Options: pin the popup menu at a fix position and add numeric keyboard shortcuts to the folders menu.
-lHelpText6	Support on FoldersPopup is available at`n<a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
+lGuiTitle	Einstellungen - ~1~ ~2~
+lHelpText1	Beim Start platziert FoldersPopup ein Symbol im System Tray und wartet auf Arbeit. Wenn Sie im Explorer oder einer Dateiauswahlbox den Ordner wechseln müssen, klicken Sie einfach mit der mittleren Maustaste oder drücken Sie Win+K und wählen Sie im erscheinenden Popup-Menü den gewünschten Ordner. FoldersPopup bringt Sie ohne Umwege direkt dorthin!
+lHelpText2	Wählen Sie Einstellungen, um das Einstellungsmenü von FoldersPopup aufzurufen. Hier können Sie Ordner zum Menü hinzufügen, löschen, verschieben oder umbenennen. Klicken Sie Speichern um die Änderungen zu sichern.
+lHelpText3	Sie können sehr schnell Ordner zum Popup-Menü hinzufügen:`n1) Wechseln Sie in einen oft benutzten Ordner.`n2) Klicken Sie die mittlere Maustaste (oder Windows-K) und wählen Sie Diesen Ordner hinzufügen.`n3) Vergeben Sie einen kurzen Namen, klicken Sie OK und speichern Sie im Einstellungsfenster.
+lHelpText4	Standardmäßig unterstützt FoldersPopup normale Dialoge (Öffnen, Speichern, usw.). Sie können FoldersPopup jedoch sehr einfach "beibringen", auch andere Dialoge zu erkennen:`n1) Wenn Sie sich in einem nicht unterstützten Dialog befinden, klicken Sie mit der mittleren Maustaste (oder drücken Sie die Tasten Windows-K) und wählen Sie "Diesen Dialog zur unterstützten Liste hinzufügen".`n2 ) Klicken Sie OK und speichern Sie im Einstellungsfenster.
+lHelpText5	TIPS UND TRICKS`n- Aktivieren Sie im Tray-Menü die Option "Beim Start ausführen", um FoldersPopup automatisch zu starten.`n- Sie wollen einen oft verwendeten Ordner in einem neuen Expolrer-Fenster öffnen? Drücken Sie einfach Shift und die mittlere Maustaste (oder Shift-Windows-K).`n- Konfigurieren Sie Ihre Menü-Tastenkürzel: wählen Sie die bevorzugte Maustaste oder das Tastenkürzel in "Einstellungen-Optionen".`n- Ebenfalls in den Optionen verfügbar: Pinnen Sie das Popup-Menü an einer Stelle fest und fügen Sie Tastenkürzel des Nummernblocks zum Ordnermenü hinzu.
+lHelpText6	Support für FoldersPopup gibt es auf`n<a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
 lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware!
-lHelpTextLead	FoldersPopup lets you move like a breeze between your frequently used folders!
-lHelpTitle	Help - ~1~ ~2~
-lMainMenuName	Main
-lMenuAbout	A&bout
-lMenuAddThisDialog	&Add This Dialog Box to the supported list
-lMenuAddThisFolder	&Add This Folder
-lMenuControlPanel	&Control Panel
+lHelpTextLead	FoldersPopup ermöglicht es, auf schnelle Weise zwischen häufig verwendeten Verzeichnissen zu wechseln!
+lHelpTitle	Hilfe - ~1~ ~2~
+lMainMenuName	Haupt
+lMenuAbout	Ü&ber
+lMenuAddThisDialog	Diese Di&alogbox zur Liste unterstützter Dialogboxen hinzufügen
+lMenuAddThisFolder	&Diesen Ordner hinzufügen
+lMenuControlPanel	&Systemsteuerung
 lMenuDesktop	&Desktop
-lMenuDialogNotSupported	This dialog box type is not supported yet
-lMenuDocuments	D&ocuments
-lMenuHelp	Help
-lMenuMyComputer	&My Computer
-lMenuNetworkNeighborhood	&Network Neighborhood
-lMenuPictures	&Pictures
-lMenuRecentFolders	&Recent folders
-lMenuRecycleBin	&Recycle Bin
+lMenuDialogNotSupported	Diese Dialogbox wird momentan noch nicht unterstützt
+lMenuDocuments	D&okumente
+lMenuHelp	Hilfe
+lMenuMyComputer	&Mein Computer
+lMenuNetworkNeighborhood	&Netzwerkumgebung
+lMenuPictures	&Bilder
+lMenuRecentFolders	Kü&rzlich verwendete Ordner
+lMenuRecycleBin	&Papierkorb
 lMenuReservedShortcuts	ARPSW
-lMenuRunAtStartup	&Run at Startup
+lMenuRunAtStartup	&Beim Start von Windows ausführen
 lMenuSeparator	----------------
-lMenuSettings	Folders &Popup Settings
-lMenuSpecialFolders	&Special Folders
-lMenuSwitchExplorer	S&witch
-lMenuUpdate	Check for &update
-lNavigateFileError	An error occured while opening the folder:`n~1~.
-lNavigateSpecialError	An error occured while opening the special folder #~1~.
-lNotImplementedYet	Not implemented yet$This feature is still under development.
+lMenuSettings	Folder&Popups Einstellungen
+lMenuSpecialFolders	&Spezielle Ordner
+lMenuSwitchExplorer	&Wechseln
+lMenuUpdate	Nach &Update suchen
+lNavigateFileError	Beim Öffnen des Ordners `n~1~ trat ein Fehler auf.
+lNavigateSpecialError	Beim Öffnen des Speziellen Ordners #~1~ trat ein Fehler auf.
 lOptionsAlt	Alt
-lOptionsArrDescriptions1	Choose the MOUSE button and modifiers combination that will open the folders popup menu in Windows Explorer or file dialog boxes. By default, this is the middle mouse button (MButton) without any modifier key.
-lOptionsArrDescriptions2	Choose the MOUSE button and modifiers combination that will open the folders popup menu in ANY window and navigate to the selected folder in a NEW Windows Explorer window. By default, this is the middle mouse button (MButton) while the Shift key is pressed.
-lOptionsArrDescriptions3	Choose the KEYBOARD hotkey combination that will open the folders popup menu in the active Windows Explorer or file dialog box. By default, this is Win+K (the K letter while the Windows key is pressed).
-lOptionsArrDescriptions4	Choose the KEYBOARD hotkey combination that will open the folders popup menu in ANY window and navigate to the selected folder in a NEW Windows Explorer window. By default, this is Shift+Win+K (the K letter while the Shift and Windows keys are pressed).
-lOptionsArrDescriptions5	Choose the hotkey or mouse button combination that will open the Folders Popup setting dialog box. By default, this is Shift+Windows+F.
-lOptionsChangeHotkey	Change
-lOptionsChangeHotkeyTitle	Change hotkey - ~1~ ~2~
-lOptionsCtrl	Ctrl
-lOptionsDisplayMenuShortcuts	Display &Numeric Menu Shortcuts
-lOptionsDisplayRecentFolders	Display Recent Folders
-lOptionsDisplaySpecialFolders	Display S&pecial Folders
-lOptionsDisplaySwitchMenu	Display Switch Menu
-lOptionsGuiIntro	Define the mouse buttons and keyboard hotkeys that will trigger ~1~.
-lOptionsGuiTitle	Options - ~1~ ~2~
-lOptionsKeyboard	Keyboard
-lOptionsLanguage	Language
-lOptionsLanguageLabels	English|French|German
-lOptionsMouse	Mouse
-lOptionsNoKeyOrMouseSpecified	No Key or Mouse Button specified. The existing ~1~ hotkey is unchanged.
-lOptionsOtherOptions	Other Options
-lOptionsPopupFix	Popup &Menu at Fix Position
+lOptionsArrDescriptions1	Wählen Sie die MAUStaste und die Kombitasten, welche das FoldersPopup Menü im Windows Explorer oder Dateidialogboxen aufruft. Standardmäßig ist dies die mittlere Maustaste ohne zusätzliche Kombitaste.
+lOptionsArrDescriptions2	Wählen Sie die MAUStaste und die Kombitasten, welche das FoldersPopup Menü in JEDEM Fenster öffnet und zum gewählten Ordner in einem NEUEN Explorer-Fenster navigiert. Standardmäßig ist dies die mittlere Maustaste mit gedrückter Shift-Taste.
+lOptionsArrDescriptions3	Wählen Sie die TASTENkombination, welche das FoldersPopup Menü im Windows Explorer oder Dateidialogboxen aufruft. Standardmäßig ist dies Win+K (Taste K, während die Windows-Taste gdrückt wird).
+lOptionsArrDescriptions4	Wählen Sie die TASTENkombination, welche das FoldersPopup Menü in JEDEM Fenster öffnet und zum gewählten Ordner in einem NEUEN Explorer-Fenster navigiert. Standardmäßig ist dies Shift+Win+K (Tasten Shift und K, während die Windows-Taste gedrückt wird).
+lOptionsArrDescriptions5	Wählen Sie die Tastenkombination oder Maustasten-Kombination, welche den FoldersPopup Einstellungsdialog aufruft. Standardmäßig ist dies Shift+Windows+F.
+lOptionsChangeHotkey	Ändern
+lOptionsChangeHotkeyTitle	Tastenkürzel ändern - ~1~ ~2~
+lOptionsCtrl	Strg
+lOptionsDisplayMenuShortcuts	Zeige &numerische Menü-Tastenkürzel
+lOptionsDisplayRecentFolders	Zeige kürzlich verwendete Ordner
+lOptionsDisplaySpecialFolders	Zeige S&pezielle Ordner
+lOptionsDisplaySwitchMenu	Zeige Switch Menü
+lOptionsGuiIntro	Legen Sie die Maustasten und Tastenkürzel fest, welche ~1~ auslösen.
+lOptionsGuiTitle	Optionen - ~1~ ~2~
+lOptionsKeyboard	Tastatur
+lOptionsLanguage	Sprache
+lOptionsLanguageLabels	English|Francaise|Deutsch
+lOptionsMouse	Maus
+lOptionsNoKeyOrMouseSpecified	Kein Tastenkürzel oder Maustaste definiert. Der bestehende Hotkey ~1~ ist unverändert.
+lOptionsOtherOptions	Weitere einstellungen
+lOptionsPopupFix	Popup-&Menü an fester Position
 lOptionsPopupFixPositionX	Position X:
 lOptionsPopupFixPositionY	Y:
-lOptionsRunAtStartup	&Run at Startup
+lOptionsRunAtStartup	Beim Sta&rt ausführen
 lOptionsShift	Shift
-lOptionsTitles	Mouse - Folders Popup|Mouse - New Explorer|Keyboard - Folders Popup|Keyboard - New Explorer|Settings window
-lOptionsTrayTip	&Display Startup Tray Tip
-lOptionsTriggerFor	Trigger for:
+lOptionsTitles	Maus - Ordner Popup|Maus - Neu Explorer|Tastatur - Ordner Popup|Tastatur - Neu Explorer|Einstellungsfenster
+lOptionsTrayTip	Beim Start &Tray-Tip anzeigen
+lOptionsTriggerFor	Auslöser für:
 lOptionsWin	Win
-lReloadPrompt	Language changed to ~1~. Do you want to reload ~2~ in ~1~ now? Unsaved changes to the folders menu will be lost.
-lTrayTipInstalledDetail	To show ~1~ menu, press:`n`n~2~ / ~3~`nin Windows Explorer or in a Dialog box`n`n~4~ / ~5~`nto open a New Explorer window
-lTrayTipinstalledTitle	~1~ ~2~ ready!
-lUpdatePrompt	Update ~1~ from v~2~ to v~3~?
+lTrayTipInstalledDetail	Zur Anzeige des ~1~ Menüs`nim Windows Explorer oder einer Dialogbox`n~2~ oder ~3~ drücken.`n`n~4~ oder ~5~`num ein neues Explorer-Fenster zu öffnen.
+lTrayTipinstalledTitle	~1~ ~2~ bereit!
+lUpdatePrompt	Update ~1~ von v~2~ auf v~3~?
 lUpdateTitle	Update ~1~?
-lUpdateYouHaveLatest	You have the latest version: ~1~.`n`nVisit the ~2~ web page anyway?
+lUpdateYouHaveLatest	Sie verwenden die aktuellste Version: ~1~.`n`nTrotzdem die ~2~ Webseite besuchen?

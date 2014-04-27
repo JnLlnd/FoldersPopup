@@ -8,6 +8,7 @@ BUG
 
 TODO
 - Adjust controls to longer translated language
+- add doubleclick to dialogs listview
 - Switch dialog boxes to folders opened in opened Explorer
 
 */
@@ -1201,7 +1202,7 @@ intRowToEdit := LV_GetNext()
 LV_GetText(strCurrentDialog, intRowToEdit, 1)
 
 InputBox strNewDialog, % L(lDialogEditDialogTitle, strAppName, strAppVersion)
-	, %lDialogEditDialogPrompt%, , 250, 120, , , , , %strCurrentDialog%
+	, %lDialogEditDialogPrompt%, , 350, 150, , , , , %strCurrentDialog%
 if (ErrorLevel) or !StrLen(strNewDialog) or (strNewDialog = strCurrentDialog)
 	return
 
@@ -1431,7 +1432,7 @@ AddDialog(strCurrentDialogTitle)
 	Gui, 1:+OwnDialogs
 	GuiControl, Focus, lvDialogsList
 
-	InputBox, strNewDialog, % L(lDialogAddDialogTitle, strAppName, strAppVersion), %lDialogAddDialogPrompt%, , 250, 150, , , , , %strCurrentDialogTitle%
+	InputBox, strNewDialog, % L(lDialogAddDialogTitle, strAppName, strAppVersion), %lDialogAddDialogPrompt%, , 350, 150, , , , , %strCurrentDialogTitle%
 	if (ErrorLevel) or !StrLen(strNewDialog)
 		return
 	
@@ -1631,13 +1632,13 @@ else
 }
 
 Gui, 2:Add, Text, x10 y+10 vlblShortName, %lDialogFolderShortName%
-Gui, 2:Add, Edit, x10 w250 vstrFolderShortName, %strCurrentName%
+Gui, 2:Add, Edit, x10 w200 vstrFolderShortName, %strCurrentName%
 
 Gui, 2:Add, Text, x10 vlblFolder, %lDialogFolderLabel%
-Gui, 2:Add, Edit, x10 w200 vstrFolderLocation, %strCurrentLocation%
-Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation w45 default, %lDialogBrowseButton%
+Gui, 2:Add, Edit, x10 w300 vstrFolderLocation, %strCurrentLocation%
+Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation default, %lDialogBrowseButton%
 
-Gui, 2:Add, Button, x100 gGuiAddFolderSave, %lDialodAdd%
+Gui, 2:Add, Button, x150 gGuiAddFolderSave, %lDialodAdd%
 Gui, 2:Add, Button, x+20 yp gGuiAddFolderCancel, %lGuiCancel%
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
@@ -1738,11 +1739,11 @@ Gui, 2:Add, Text, x10 y10 vlblFolderParentMenu, %lDialogFolderParentMenu%
 Gui, 2:Add, DropDownList, x10 w250 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
 
 Gui, 2:Add, Text, x10 y+10 vlblShortName, % (StrLen(strCurrentSubmenuFullName) ? lDialogSubmenuShortName : lDialogFolderShortName)
-Gui, 2:Add, Edit, x10 w250 vstrFolderShortName, %strCurrentName%
+Gui, 2:Add, Edit, x10 w200 vstrFolderShortName, %strCurrentName%
 
 Gui, 2:Add, Text, % "x10 vlblFolder " . (strCurrentLocation = lGuiSubmenuLocation ? "hidden" : ""), %lDialogFolderLabel%
-Gui, 2:Add, Edit, % "x10 w200 vstrFolderLocation " . (strCurrentLocation = lGuiSubmenuLocation ? "hidden" : ""), %strCurrentLocation%
-Gui, 2:Add, Button, % "x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation w45 " . (strCurrentLocation = lGuiSubmenuLocation ? "hidden" : "default"), %lDialogBrowseButton%
+Gui, 2:Add, Edit, % "x10 w300 vstrFolderLocation " . (strCurrentLocation = lGuiSubmenuLocation ? "hidden" : ""), %strCurrentLocation%
+Gui, 2:Add, Button, % "x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation " . (strCurrentLocation = lGuiSubmenuLocation ? "hidden" : "default"), %lDialogBrowseButton%
 
 Gui, 2:Add, Button, x100 gGuiEditFolderSave, %lDialogSave%
 Gui, 2:Add, Button, x+20 yp gGuiEditFolderCancel, %lGuiCancel%
@@ -1980,9 +1981,9 @@ Gui, 1:Submit, NoHide
 Gui, 2:New, , % L(lOptionsGuiTitle, strAppName, strAppVersion)
 Gui, 2:+Owner1
 Gui, 2:Font, s10 w700, Verdana
-Gui, 2:Add, Text, x10 y10 w410 center, % L(lOptionsGuiTitle, strAppName)
+Gui, 2:Add, Text, x10 y10 w430 center, % L(lOptionsGuiTitle, strAppName)
 Gui, 2:Font
-Gui, 2:Add, Text, x10 y+10 w410 center, % L(lOptionsGuiIntro, strAppName)
+Gui, 2:Add, Text, x10 y+10 w430 center, % L(lOptionsGuiIntro, strAppName)
 
 ; Build Hotkey Gui lines
 loop, % arrIniKeyNames%0%
@@ -1990,9 +1991,9 @@ loop, % arrIniKeyNames%0%
 	Gui, 2:Font, s8 w700
 	Gui, 2:Add, Text, x15 y+10, % arrOptionsTitles%A_Index%
 	Gui, 2:Font, s9 w500, Courier New
-	Gui, 2:Add, Text, x175 yp w200 center 0x1000 vlblHotkeyText%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
+	Gui, 2:Add, Text, x175 yp w220 center 0x1000 vlblHotkeyText%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
 	Gui, 2:Font
-	Gui, 2:Add, Button, h20 yp x380 vbtnChangeHotkey%A_Index% gButtonOptionsChangeHotkey%A_Index%, %lOptionsChangeHotkey%
+	Gui, 2:Add, Button, h20 yp x400 vbtnChangeHotkey%A_Index% gButtonOptionsChangeHotkey%A_Index%, %lOptionsChangeHotkey%
 }
 
 Gui, 2:Add, Text, x10 y+15 h2 w410 0x10 ; Horizontal Line > Etched Gray

@@ -1,5 +1,5 @@
 lAboutText1	~1~ ~2~ (~3~ bits)
-lAboutText2	FoldersPopup est développé par Jean Lalonde`nsur la plateforme <a href="http://ahkscript.org/">AutoHotkey</a>.`n`nIcônes par: <a href="http://www.visualpharm.com">Visual Pharm</a>`nSources AutoHotkey_L v1.1: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText2	FoldersPopup est développé par Jean Lalonde`nsur la plateforme <a href="http://ahkscript.org/">AutoHotkey</a>.`n`nTraduction allemande: Edgar ""Fast Edi"" Hoffmann`nTraduction française: Jean Lalonde`nRévision anglaise: (aide bienvenue)`n`nIcônes par: <a href="http://www.visualpharm.com">Visual Pharm</a>`nSources AutoHotkey_L v1.1: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Gratuiciel.
 lAboutText4	Soutien en ligne: <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	À propos - ~1~ ~2~
@@ -109,11 +109,11 @@ lOptionsArrDescriptions5	Choisissez la combinaison de touches du clavier ou le b
 lOptionsChangeHotkey	Modifier
 lOptionsChangeHotkeyTitle	Modification de déclencheur - ~1~ ~2~
 lOptionsCtrl	Ctrl
-lOptionsDisplayMenuShortcuts	Afficher les raccourcis numériques de menu
+lOptionsDisplayMenuShortcuts	Afficher les raccourcis numériques
 lOptionsDisplayRecentFolders	Afficher les emplacements récents
 lOptionsDisplaySpecialFolders	Afficher les dossiers spéciaux
 lOptionsDisplaySwitchMenu	Afficher le menu Basculer
-lOptionsGuiIntro	Choisisr les boutons de la souris et les raccourcis du clavier qui vont déclencher ~1~.
+lOptionsGuiIntro	Choisisr les boutons de la souris et les raccourcis du clavier déclenchant ~1~.
 lOptionsGuiTitle	Options - ~1~ ~2~
 lOptionsKeyboard	Clavier
 lOptionsLanguage	Langue
