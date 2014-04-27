@@ -1,11 +1,13 @@
 /*
 BUG
-- bug when dropdown change to come back to main
-- bug when renaming submenu in main?
-- bug when cancel, does not keep changes already saved
+- when dropdown change to come back to main
+- when renaming submenu in main?
+- when cancel, does not keep changes already saved
+- when AddThisFolder a special folder, not the correct path
+- when AddThisFolder from PDF Complete: copies a cell form XL
 
 TODO
-- Use icons in Gui for add, remove, edit, separator, move up and move down
+- Adjust controls to longer translated language
 - Switch dialog boxes to folders opened in opened Explorer
 
 */
@@ -46,8 +48,8 @@ TODO
 	* add DisplayRecentFolders and DisplaySwitchMenu options in Options dialog box and ini file
 
 	Version: FoldersPopup v1.2.7 (2014-04-25)
-	* Workaround to make the "Run" command work on some system
-	* Fix end-of-line at end of version number bug
+	* Workaround to make the "Run Explorer" command work in rare configuration
+	* Fix a bug in the check for update command
 
 	Version: FoldersPopup v1.2.6 (2014-04-24)
 	* Workaround for the hash (aka Sharp / "#") bug in Shell.Application that occurs only when navigatin in the current Explorer window to a subfolder including # in its parent path (eg.: C:\C#\Project)
@@ -184,12 +186,12 @@ else if InStr(A_ComputerName, "STIC") ; for my work hotkeys
 Gosub, InitSystemArrays
 Gosub, InitLanguage
 Gosub, LoadIniFile
+Gosub, LoadTheme
 ; build even if blnDisplaySpecialFolders, blnDisplaySwitchMenu or blnDisplaySwitchMenu are false because they could become true
 Gosub, BuildSpecialFoldersMenu
 Gosub, BuildRecentFoldersMenu
 Gosub, BuildSwitchMenu
 Gosub, BuildFoldersMenus ; need to be initialized here - will be updated at each call to popup menu
-Gosub, LoadTheme
 Gosub, BuildGui
 Gosub, BuildAddDialogMenu
 Gosub, Check4Update
@@ -778,7 +780,7 @@ BuildFoldersMenus:
 
 Menu, %lMainMenuName%, Add
 Menu, %lMainMenuName%, DeleteAll
-Menu, %lMainMenuName%, Color, Blue
+; Menu, %lMainMenuName%, Color, %strMenuBackgroundColor% ; only later when icons will be added
 
 BuildOneMenu(lMainMenuName) ; and recurse for submenus
 
@@ -857,11 +859,15 @@ return
 
 ;------------------------------------------------------------
 LoadTheme:
+; colors for themes
+; skin: WindowColor=FFC495
+; Note: implement menu background color only when icons are implemented
 ;------------------------------------------------------------
-IniRead, strGuiWindowColor, %strIniFile%, Gui, WindowColor, White
-IniRead, strGuiControlColor, %strIniFile%, Gui, ControlColor, White
-IniRead, strGuiListviewBackgroundColor, %strIniFile%, Gui, ListviewBackground, White
-IniRead, strGuiListviewTextColor, %strIniFile%, Gui, ListviewText, White
+
+IniRead, strGuiWindowColor, %strIniFile%, Gui, WindowColor, E0E0E0
+IniRead, strGuiListviewBackgroundColor, %strIniFile%, Gui, ListviewBackground, FFFFFF
+IniRead, strGuiListviewTextColor, %strIniFile%, Gui, ListviewText, 000000
+IniRead, strMenuBackgroundColor, %strIniFile%, Gui, MenuBackgroundColor, FFFFFF
 
 return
 ;------------------------------------------------------------
@@ -873,7 +879,7 @@ BuildGui:
 
 Gui, 1:New, , % L(lGuiTitle, strAppName, strAppVersion)
 Gui, Margin, 10, 10
-Gui, Color, %strGuiWindowColor%, %strGuiControlColor%
+Gui, Color, %strGuiWindowColor%, %strGuiWindowColor%
 
 intCol := 480
 intWidth := 460
