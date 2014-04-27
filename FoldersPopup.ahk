@@ -1,15 +1,8 @@
 /*
 BUG
-- when dropdown change to come back to main
-- when renaming submenu in main?
-- when cancel, does not keep changes already saved
-- when AddThisFolder a special folder, not the correct path
 - when AddThisFolder from PDF Complete: copies a cell form XL
 
 TODO
-- Adjust controls to longer translated language
-- add doubleclick to dialogs listview
-- Switch dialog boxes to folders opened in opened Explorer
 
 */
 
@@ -218,7 +211,7 @@ if (blnDisplayTrayTip)
 
 OnExit, ExitDiagMode
 
-gosub, GuiShow ; ###
+; gosub, GuiShow ; ### only when debugging Gui
 
 return
 
@@ -890,19 +883,20 @@ Gui, 1:Add, Text, xm ym w%intWidth% h25, %strAppName% %strAppVersion%
 Gui, 1:Font, s10 w400, Verdana
 Gui, 1:Add, Text, xm y+1, %lAppTagline%
 Gui, 1:Font, s8 w400, Verdana
-Gui, 1:Add, Text, xm, %lGuiSubmenuDropdownLabel%
-Gui, 1:Add, DropDownList, xm y+5 w350 vdrpMenusList gGuiMenusListChanged ; Sort
+Gui, 1:Add, Text, xm+30, %lGuiSubmenuDropdownLabel%
+Gui, 1:Add, Picture, xm y+5 gGuiGotoPreviousMenu vpicPreviousMenu hidden, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\left_circular\left_circular-26.png
+Gui, 1:Add, DropDownList, xm+30 yp w320 vdrpMenusList gGuiMenusListChanged ; Sort
 
 Gui, 1:Font, s8 w400, Verdana
-Gui, 1:Add, ListView, xm+30 w320 h220 Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFoldersList gGuiFoldersListEvent, %lGuiLvFoldersHeader%||
+Gui, 1:Add, ListView, xm+30 w320 h220 Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFoldersList gGuiFoldersListEvent, %lGuiLvFoldersHeader%|Hidden Menu|Hidden Submenu
 LV_ModifyCol(3, 0) ; hide 3rd column
 LV_ModifyCol(4, 0) ; hide 4th column
 
 Gui, 1:Add, Text, Section x+0 yp
 
-Gui, 1:Add, Picture, xm ys gGuiMoveFolderUp, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\up_circular\up_circular-26.png
-Gui, 1:Add, Picture, xm ys+30 gGuiMoveFolderDown, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\down_circular\down_circular-26.png
-Gui, 1:Add, Picture, xm ys+60 gGuiAddSeparator, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\divide2\separator-26.png
+Gui, 1:Add, Picture, xm ys+25 gGuiMoveFolderUp, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\up_circular\up_circular-26.png
+Gui, 1:Add, Picture, xm ys+55 gGuiMoveFolderDown, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\down_circular\down_circular-26.png
+Gui, 1:Add, Picture, xm ys+85 gGuiAddSeparator, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\divide2\separator-26.png
 
 Gui, 1:Add, Text, Section xs ys
 
@@ -924,7 +918,7 @@ GuiControlGet, arrLvPos, Pos, lvFoldersList
 
 Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, Text, Section x%intCol% y%arrLvPosY% w220, %lGuiLvDialogsHeader%
-Gui, 1:Add, ListView, xs w220 h150 Count16 -Hdr -Multi NoSortHdr +0x10 LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvDialogsList, Header
+Gui, 1:Add, ListView, xs w220 h150 Count16 -Hdr -Multi NoSortHdr +0x10 LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvDialogsList gGuiDialogsListEvent, Header
 
 Gui, 1:Add, Picture, xs+70 y+5 gGuiAddDialog, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\add_image\add_image-26.png
 Gui, 1:Add, Picture, x+10 yp gGuiEditDialog, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\edit_image\edit_image-26.png
@@ -1017,11 +1011,30 @@ return
 
 
 ;------------------------------------------------------------
-GuiMenusListChanged:
+GuiDialogsListEvent:
+;------------------------------------------------------------
+Gui, 1:ListView, lvDialogsList
+
+if (A_GuiEvent = "DoubleClick")
+	gosub, GuiEditDialog
+
+return
 ;------------------------------------------------------------
 
+
+;------------------------------------------------------------
+GuiMenusListChanged:
+GuiGotoPreviousMenu:
+;------------------------------------------------------------
+; ####
 Gosub, SaveCurrentListviewToMenuObject ; save current LV before changing strCurrentMenu
-GuiControlGet, strCurrentMenu, , drpMenusList
+strSavedMenu := strCurrentMenu
+if (A_ThisLabel = "GuiMenusListChanged")
+	GuiControlGet, strCurrentMenu, , drpMenusList
+else
+	strCurrentMenu := strPreviousMenu
+strPreviousMenu := strSavedMenu
+GuiControl, % StrLen(strPreviousMenu) ? "Show" : "Hide", picPreviousMenu
 Gosub, LoadOneMenuToGui
 
 return
@@ -1393,12 +1406,7 @@ if (blnDiagMode)
 	Diag("AddedFolder", strCurrentLocation)
 }
 
-If StrLen(strCurrentLocation)
-{
-	Gosub, GuiShow
-	Gosub, GuiAddFromPopup
-}
-else
+If !StrLen(strCurrentLocation) or !InStr(strCurrentLocation, ":")
 {
 	Gui, 1:+OwnDialogs 
 	MsgBox, 52, % L(lDialogAddFolderManuallyTitle, strAppName, strAppVersion), %lDialogAddFolderManuallyPrompt%
@@ -1407,6 +1415,11 @@ else
 		Gosub, GuiShow
 		Gosub, GuiAddFolder
 	}
+}
+else
+{
+	Gosub, GuiShow
+	Gosub, GuiAddFromPopup
 }
 
 return
@@ -2380,9 +2393,9 @@ Loop % LV_GetCount()
 	objFolder := Object() ; new menu item
 	objFolder.FolderName := strName ; display name of this menu item
 	objFolder.FolderLocation := strLocation ; path for this menu item
-	objFolder.MenuName := strMenu ; parent menu of this menu item
+	objFolder.MenuName := strCurrentMenu ; parent menu of this menu item - do not use strMenu because lack of lMainMenuName
 	objFolder.SubmenuFullName := strSubmenu ; if menu, full name of the submenu
-	arrMenus[strMenu].Insert(objFolder) ; add this menu item to parent menu
+	arrMenus[strCurrentMenu].Insert(objFolder) ; add this menu item to parent menu - do not use strMenu because lack of lMainMenuName
 }
 
 return
@@ -2397,12 +2410,11 @@ BuildMenuTreeDropDown(strMenu, strDefaultMenu, strSkipSubmenu := "")
 	strList := strMenu
 	if (strMenu = strDefaultMenu)
 		strList := strList . "|" ; default value
-	
+
 	Loop, % arrMenus[strMenu].MaxIndex()
 		if StrLen(arrMenus[strMenu][A_Index].SubmenuFullName) ; this is a submenu
 			if (arrMenus[strMenu][A_Index].SubmenuFullName <> strSkipSubmenu) ; skip if under edited submenu
 				strList := strList . "|" . BuildMenuTreeDropDown(arrMenus[strMenu][A_Index].SubmenuFullName, strDefaultMenu, strSkipSubmenu) ; recursive call
-	
 	return strList
 }
 ;------------------------------------------------------------

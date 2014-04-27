@@ -13,9 +13,9 @@ lDialodAdd	Ajouter
 lDialogAddDialogAlready	Ce type de boîte de dialogue est déjà pris en charge.
 lDialogAddDialogPrompt	Entrez le nom de la nouvelle boîte de dialogue`n(ou une partie du nom):
 lDialogAddDialogTitle	Ajouter Boîte de dialogue - ~1~ ~2~
-lDialogAddEditFolderTitle	~1~ Dossier - ~2~ ~3~
+lDialogAddEditFolderTitle	~1~ un dossier - ~2~ ~3~
 lDialogAddFolderManuallyPrompt	Désolé, nous ne pouvons détecter automatiquement le dossier actif dans ce type de fenêtre.`n`nVoulez-vous ajouter ce dossier manuellement?
-lDialogAddFolderManuallyTitle	Ajouter Dossier - ~1~ ~2~
+lDialogAddFolderManuallyTitle	Ajouter un dossier - ~1~ ~2~
 lDialogAddFolderSelect	Choisir ou créer un nouveau dossier:
 lDialogBrowseButton	Parcourir
 lDialogCancelButton	Annuler
@@ -25,7 +25,7 @@ lDialogEditDialogPrompt	Entrez le nouveau nom de la boîte de dialogue`n(ou une p
 lDialogEditDialogTitle	Modifier Boîte de dialogue - ~1~ ~2~
 lDialogEditFolderPrompt	Entrez le nom de ce dossier:
 lDialogEditFolderSelect	Choisissez ou créez le nouveau dossier:
-lDialogEditFolderTitle	Modifier Dossier - ~1~ ~2~
+lDialogEditFolderTitle	Modifier un dossier - ~1~ ~2~
 lDialogFolderLabel	Dossier
 lDialogFolderLocationEmpty	L'emplacement est vide. Veuillez indiquer l'emplacement du dossier.
 lDialogFolderNameEmpty	Le nom du dossier est vide. Veuillez indiquer un nom court pour ce dossier.
@@ -33,7 +33,7 @@ lDialogFolderNameNoSeparator	Le nom du sous-menu ne doit pas inclure le caractèr
 lDialogFolderNameNotNew	Le nom "~1~" est déjà présent dans ce menu. Veuillez choisir un nouveau nom.
 lDialogFolderParentMenu	Menu contenant ce dossier
 lDialogFolderRemovePrompt	Supprimer le dossier "~1~"`net TOUT son contenu (dossiers et sous-menus)?
-lDialogFolderRemoveTitle	Supprimer Dossier - ~1~
+lDialogFolderRemoveTitle	Supprimer un dossier - ~1~
 lDialogFolderShortName	Nom court du dossier pour les menus
 lDialogInvalidHotkey	Avec votre configuration actuelle de clavier, la touche de raccourci "~1~" ne peut être utilisée comme un déclencheur pour le menu popup.`n`nVeuillez ouvrir la fenêtre "Paramètres de Folders Popup" dans la zone de notification et cliquez sur "Options". Dans cette boîte de dialogue, choisissez une autre touche de raccourci pour "~2~".
 lDialogSave	Enregistrer
@@ -96,7 +96,7 @@ lMenuRunAtStartup	Exécuter au démarrage
 lMenuSeparator	----------------
 lMenuSettings	Paramètres de Folders Popup
 lMenuSpecialFolders	Dossiers spéciaux
-lMenuSwitchExplorer	Basculer
+lMenuSwitchExplorer	Basculer vers l'Explorateur
 lMenuUpdate	Mettre à jour
 lNavigateFileError	Une erreur s'est produite lors de l'ouverture du dossier:`n~1~.
 lNavigateSpecialError	Une erreur s'est produite lors de l'ouverture du dossier spécial #~1~.

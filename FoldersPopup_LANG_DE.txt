@@ -95,7 +95,7 @@ lMenuRunAtStartup	&Beim Start von Windows ausführen
 lMenuSeparator	----------------
 lMenuSettings	Folder&Popups Einstellungen
 lMenuSpecialFolders	&Spezielle Ordner
-lMenuSwitchExplorer	&Wechseln
+lMenuSwitchExplorer	&Wechseln Sie in Explorer
 lMenuUpdate	Nach &Update suchen
 lNavigateFileError	Beim Öffnen des Ordners `n~1~ trat ein Fehler auf.
 lNavigateSpecialError	Beim Öffnen des Speziellen Ordners #~1~ trat ein Fehler auf.
