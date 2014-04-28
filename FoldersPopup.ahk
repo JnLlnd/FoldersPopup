@@ -174,6 +174,7 @@ else if InStr(A_ComputerName, "STIC") ; for my work hotkeys
 	strIniFile := A_ScriptDir . "\" . strAppName . "-WORK.ini"
 ; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
+global arrSubmenuStack := Object()
 
 ; Keep gosubs in this order
 Gosub, InitSystemArrays
@@ -1025,15 +1026,24 @@ return
 GuiMenusListChanged:
 GuiGotoPreviousMenu:
 ;------------------------------------------------------------
-; ####
+
 Gosub, SaveCurrentListviewToMenuObject ; save current LV before changing strCurrentMenu
+
 strSavedMenu := strCurrentMenu
 if (A_ThisLabel = "GuiMenusListChanged")
+{
+	arrSubmenuStack.Insert(1, strSavedMenu) ; push the current menu to the left arrow stack
 	GuiControlGet, strCurrentMenu, , drpMenusList
+}
 else
-	strCurrentMenu := strPreviousMenu
+{
+	strCurrentMenu := arrSubmenuStack[1] ; pull the top menu from the left arrow stack
+	arrSubmenuStack.Remove(1) ; remove the top menu from the left arrow stack
+}
 strPreviousMenu := strSavedMenu
-GuiControl, % StrLen(strPreviousMenu) ? "Show" : "Hide", picPreviousMenu
+
+GuiControl, % arrSubmenuStack.MaxIndex() ? "Show" : "Hide", picPreviousMenu
+
 Gosub, LoadOneMenuToGui
 
 return
