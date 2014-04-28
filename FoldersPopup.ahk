@@ -2,6 +2,7 @@
 BUG
 
 TODO
+- translate help to French
 
 */
 
@@ -11,8 +12,16 @@ TODO
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: v1.7 ALPHA (not to be released) (2014-0n-nn)
-
+	Version: v1.7 ALPHA (not to be released) (2014-04-27)
+	* new settings dialog box layout with icons to add, edit or remove folders or dialog boxes
+	* icons to open help, about and settings dialog boxes
+	* dropdown to select the submenu to edit
+	* left arrow to go back to edit the menu(s) previously displayed
+	* double-click to edit folders or supported dialog boxes
+	* adjustments to dialog boxes for German and French translation
+	* updated about and help dialog boxes
+	* solved a bug when Add this folder in some type of dialog boxes
+	
 	Version: v1.6 ALPHA (not to be released) (2014-04-19)
 	* implement submenus ini file data structure and objects for folders
 	* v1 ini file format automatic upgrade to v2 (all v1 folders placed in main menu)
@@ -1642,7 +1651,7 @@ strCurrentSubmenuFullName := ""
 
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
-Gui, 2:New, , % L(lDialogAddEditFolderTitle, lDialodAdd, strAppName, strAppVersion)
+Gui, 2:New, , % L(lDialogAddEditFolderTitle, lDialogAdd, strAppName, strAppVersion)
 Gui, 2:+Owner1
 Gui, 2:+OwnDialogs
 
@@ -1665,7 +1674,7 @@ Gui, 2:Add, Text, x10 vlblFolder, %lDialogFolderLabel%
 Gui, 2:Add, Edit, x10 w300 vstrFolderLocation, %strCurrentLocation%
 Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation default, %lDialogBrowseButton%
 
-Gui, 2:Add, Button, x150 gGuiAddFolderSave, %lDialodAdd%
+Gui, 2:Add, Button, x150 gGuiAddFolderSave, %lDialogAdd%
 Gui, 2:Add, Button, x+20 yp gGuiAddFolderCancel, %lGuiCancel%
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
@@ -1977,7 +1986,7 @@ intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
 Gui, 2:New, , % L(lHelpTitle, strAppName, strAppVersion)
 Gui, 2:+Owner1
-intWidth := 450
+intWidth := 600
 Gui, 2:Font, s12 w700, Verdana
 Gui, 2:Add, Text, x10 y10, %strAppName%
 Gui, 2:Font, s10 w400, Verdana
@@ -1986,8 +1995,8 @@ Gui, 2:Font, s8 w400, Verdana
 loop, 6
 	Gui, 2:Add, Link, w%intWidth%, % lHelpText%A_Index%
 Gui, 2:Add, Link, w%intWidth%, % L(lHelpText7, chr(169))
-Gui, 2:Add, Button, x100 y+20 gButtonOptionsDonate, %lDonateButton%
-Gui, 2:Add, Button, x320 yp g2GuiClose vbtnHelpClose, %lGui2Close%
+Gui, 2:Add, Button, x180 y+20 gButtonOptionsDonate, %lDonateButton%
+Gui, 2:Add, Button, x+80 yp g2GuiClose vbtnHelpClose, %lGui2Close%
 GuiControl, Focus, btnHelpClose
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled

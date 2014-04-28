@@ -1,5 +1,5 @@
 lAboutText1	~1~ ~2~ (~3~ bits)
-lAboutText2	DEUTSCH FoldersPopup wird entwickelt von Jean Lalonde unter Verwendung der`n<a href="http://ahkscript.org/">AutoHotkey</a> Programmiersprache.`n`nGerman translation: Edgar ""Fast Edi"" Hoffmann`nFrench translation: Jean Lalonde`nEnglish proof checking: (help welcomed)`n`nIcons von: <a href="http://www.visualpharm.com">Visual Pharm</a>`nAutoHotkey_L v1.1 Sourcen: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText2	FoldersPopup wird entwickelt von Jean Lalonde unter Verwendung der`n<a href="http://ahkscript.org/">AutoHotkey</a> Programmiersprache.`n`nGerman translation: Edgar ""Fast Edi"" Hoffmann`nFrench translation: Jean Lalonde`nEnglish proof checking: (help welcomed)`n`nIcons von: <a href="http://www.visualpharm.com">Visual Pharm</a>`nAutoHotkey_L v1.1 Sourcen: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
 lAboutText4	Support unter <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	Über - ~1~ ~2~
@@ -9,7 +9,7 @@ lDiagModeCaution	~1~ läuft im Diagnose-Modus.`n`nInformationen über die Anwendun
 lDiagModeExit	~1~ gesammelte Diagnose-Informationen in Datei ~2~.
 lDiagModeIntro	Schicken Sie diese Datei an ahk@jeanlalonde.ca mit einer Beschreibung der Situation, welche die Diagnose ausgelöst hat.
 lDiagModeSee	Wollen Sie die Diagnosedatei sehen?
-lDialodAdd	Hinzufügen
+lDialogAdd	Hinzufügen
 lDialogAddDialogAlready	Diese Dialogbox-Typ wird schon unterstützt.
 lDialogAddDialogPrompt	Geben Sie den neuen Namen für die Dialogbox an`n(oder einen Teil des Namens):
 lDialogAddDialogTitle	Dialogbox hinzufügen - ~1~ ~2~
@@ -45,22 +45,19 @@ lDonatePrompt	Sind Sie zufrieden mit ~1~?`n`n~1~ ist nicht nur kostenlos, sonder
 lDonateThankyou	Vielen Dank für die Unterstützung von Freeware!
 lDonateTitle	~1~ mal! - ~2~
 lGui2Close	Schliessen
-lGuiAbout	Ü&ber
-lGuiAddDialog	H&inzufügen
-lGuiAddFolder	&Hinzufügen
-lGuiAddSubMenu	Unterme&nü
+lGuiAbout	Über
+lGuiAddDialog	Hinzufügen
+lGuiAddFolder	Hinzufügen
 lGuiCancel	&Abbrechen
 lGuiClose	&Schliessen
-lGuiEditDialog	Bearbe&iten
-lGuiEditFolder	&Bearbeiten
-lGuiHelp	&Hilfe
+lGuiEditFolder	Bearbeiten
+lGuiHelp	Hilfe
 lGuiLvDialogsHeader	Unterstützte Dialoge`n(Teile der Namen)
 lGuiLvFoldersHeader	Name|Pfad
 lGuiMoveFolderDown	Nach u&nten bewegen
 lGuiMoveFolderUp	Nach o&ben bewegen
-lGuiOptions	Op&tionen
-lGuiRemoveDialog	&Entfernen
-lGuiRemoveFolder	Entfe&rnen
+lGuiOptions	Optionen
+lGuiRemoveFolder	Entfernen
 lGuiSave	&Speichern
 lGuiSeparator	Se&parator
 lGuiSubmenuDropdownLabel	Zu bearbeitendes Menü:
@@ -116,7 +113,7 @@ lOptionsGuiIntro	Legen Sie die Maustasten und Tastenkürzel fest, welche ~1~ ausl
 lOptionsGuiTitle	Optionen - ~1~ ~2~
 lOptionsKeyboard	Tastatur
 lOptionsLanguage	Sprache
-lOptionsLanguageLabels	English|Francaise|Deutsch
+lOptionsLanguageLabels	Englisch|Französisch|Deutsch
 lOptionsMouse	Maus
 lOptionsNoKeyOrMouseSpecified	Kein Tastenkürzel oder Maustaste definiert. Der bestehende Hotkey ~1~ ist unverändert.
 lOptionsOtherOptions	Weitere einstellungen
