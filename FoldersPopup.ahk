@@ -12,6 +12,8 @@ TODO
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: v1.8 ALPHA (not to be released) (2014-05-nn)
+
 	Version: v1.7 ALPHA (not to be released) (2014-04-27)
 	* new settings dialog box layout with icons to add, edit or remove folders or dialog boxes
 	* icons to open help, about and settings dialog boxes
@@ -153,7 +155,7 @@ TODO
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 1.7 ALPHA
+;@Ahk2Exe-SetVersion 1.8 ALPHA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -170,7 +172,7 @@ SetWorkingDir, %A_ScriptDir%
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "1.7 ALPHA" ; "major.minor.bugs"
+global strCurrentVersion := "1.8 ALPHA" ; "major.minor.bugs"
 global strAppVersion := "v" . strCurrentVersion
 global blnDiagMode := False
 global strDiagFile := A_ScriptDir . "\" . strAppName . "-DIAG.txt"
