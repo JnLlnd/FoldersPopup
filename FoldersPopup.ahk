@@ -1,6 +1,5 @@
 /*
 BUG
-- when AddThisFolder from PDF Complete: copies a cell form XL
 
 TODO
 
@@ -1351,7 +1350,12 @@ objPrevClipboard := ClipboardAll ; Save the entire clipboard
 ClipBoard := ""
 
 ; Add This folder menu is active only if we are in Explorer (WIN_XP, WIN_7 or WIN_8) or in a Dialog box (WIN_7 or WIN_8).
-; In all these OS, the key sequence {F4}{Esc} selects the current location of the window.
+; In all these OS, with Explorer, the key sequence {F4}{Esc} selects the current location of the window.
+; With dialog boxes, the key sequence {F4}{Esc} generally selects the current location of the window. But, in some
+; dialog boxes, the {Esc} key closes the dialog box. We will check window title to detect this behavior.
+
+WinGetTitle, strWindowTitle, A ; to check later if this window is closed unexpectedly
+
 if (strTargetClass = "#32770")
 	intWaitTimeIncrement := 300 ; time allowed for dialog boxes
 else
@@ -1391,8 +1395,8 @@ else
 		Send ^c ; Copy
 		Sleep, intWaitTimeIncrement * A_Index
 		intTries := A_Index
-	} Until (StrLen(ClipBoard))
-
+		WinGetTitle, strWindowThisTitle, A ; to check if the window was closed unexpectedly
+	} Until (StrLen(ClipBoard) or (strWindowTitle <> strWindowThisTitle))
 
 strCurrentLocation := ClipBoard
 Clipboard := objPrevClipboard ; Restore the original clipboard
@@ -1406,7 +1410,7 @@ if (blnDiagMode)
 	Diag("AddedFolder", strCurrentLocation)
 }
 
-If !StrLen(strCurrentLocation) or !InStr(strCurrentLocation, ":")
+If !StrLen(strCurrentLocation) or !InStr(strCurrentLocation, ":")  or (strWindowTitle <> strWindowThisTitle)
 {
 	Gui, 1:+OwnDialogs 
 	MsgBox, 52, % L(lDialogAddFolderManuallyTitle, strAppName, strAppVersion), %lDialogAddFolderManuallyPrompt%
