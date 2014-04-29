@@ -77,7 +77,7 @@ lHelpTitle	Help - ~1~ ~2~
 lMainMenuName	Principal
 lMenuAbout	À propos
 lMenuAddThisDialog	Prendre en charge ce type de boîte de dialogue
-lMenuAddThisFolder	Ajouter ce dossier
+lMenuAddThisFolder	Ajouter ce dossier au menu
 lMenuControlPanel	Panneau de configuration
 lMenuDesktop	Bureau
 lMenuDialogNotSupported	Ce type de boîte de dialogue n'est pas encore pris en charge

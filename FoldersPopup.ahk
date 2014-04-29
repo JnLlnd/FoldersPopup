@@ -3,7 +3,9 @@ BUG
 
 TODO
 - translate help to French
-
+- “direct access in save dialog for example to the other windows already opened in explorer”
+- add Support freeware to popup menu
+- button to sort current menu
 */
 
 ;===============================================
@@ -826,6 +828,7 @@ BuildOneMenu(strMenu)
 			strSubMenuFullName := arrThisMenu[A_Index].SubmenuFullName
 			strSubMenuDisplayName := arrThisMenu[A_Index].FolderName
 			strSubMenuParent := arrThisMenu[A_Index].MenuName
+			
 			BuildOneMenu(strSubMenuFullName) ; recursive call
 			
 			try Menu, %strSubMenuParent%, Add
@@ -1340,6 +1343,13 @@ if (blnSaveEnabled)
 	IfMsgBox, Yes
 	{
 		Gosub, RestoreBackupMenuObjects
+		
+		; restore popup menu
+		Gosub, BuildSpecialFoldersMenu
+		Gosub, BuildRecentFoldersMenu
+		Gosub, BuildSwitchMenu
+		Gosub, BuildFoldersMenus ; need to be initialized here - will be updated at each call to popup menu
+
 		GuiControl, Disable, btnGuiSave
 		GuiControl, , btnGuiCancel, %lGuiClose%
 	}
@@ -1874,16 +1884,17 @@ UpdateMenuNameInSubmenus(strOldMenu, strNewMenu)
 ;------------------------------------------------------------
 {
 	arrMenus.Insert(strNewMenu, arrMenus[strOldMenu])
-	arrMenus.Remove(strOldMenu)
 	Loop, % arrMenus[strNewMenu].MaxIndex()
 	{
 		arrMenus[strNewMenu][A_Index].MenuName := strNewMenu
 		if StrLen(arrMenus[strNewMenu][A_Index].SubmenuFullName)
 		{
 			arrMenus[strNewMenu][A_Index].SubmenuFullName := strNewMenu . lGuiSubmenuSeparator . arrMenus[strNewMenu][A_Index].FolderName
-			UpdateMenuNameInSubmenus(strOldMenu . lGuiSubmenuSeparator . arrMenus[strOldMenu][A_Index].FolderName, arrMenus[strNewMenu][A_Index].SubmenuFullName) ; recursive call
+			UpdateMenuNameInSubmenus(strOldMenu . lGuiSubmenuSeparator . arrMenus[strOldMenu][A_Index].FolderName
+				, arrMenus[strNewMenu][A_Index].SubmenuFullName) ; recursive call
 		}
 	}
+	arrMenus.Remove(strOldMenu)
 }
 ;------------------------------------------------------------
 
