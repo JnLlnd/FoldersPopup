@@ -6,7 +6,6 @@ TODO
 - add Support freeware to popup menu
 - add button to sort current menu
 - add button up to menu dropdown
-- check lMenuReservedShortcuts in French and German
 */
 
 ;===============================================
