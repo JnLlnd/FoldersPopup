@@ -380,7 +380,7 @@ loop, % arrIniKeyNames%0%
 	; example: Hotkey, $MButton, PopupMenuMouse
 	Hotkey, % "$" . arrHotkeyVarNames%A_Index%, % arrHotkeyLabels%A_Index%, On UseErrorLevel
 	if (ErrorLevel)
-		Oops(lDialogInvalidHotkey, Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%), arrOptionsTitles%A_Index%)
+		Oops(lDialogInvalidHotkey, Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%), strAppName, arrOptionsTitles%A_Index%)
 }
 
 return
@@ -421,6 +421,13 @@ loop, %arrOptionsLanguageCodes0%
 			strLanguageLabel := arrOptionsLanguageLabels%A_Index%
 			break
 		}
+
+if (blnDisplayRecentFolders)
+	lMenuReservedShortcuts := lMenuReservedShortcuts . lMenuReservedShortcutsRecent
+if (blnDisplaySpecialFolders)
+	lMenuReservedShortcuts := lMenuReservedShortcuts . lMenuReservedShortcutsSpecial
+if (blnDisplaySwitchMenu)
+	lMenuReservedShortcuts := lMenuReservedShortcuts . lMenuReservedShortcutsSwitch
 
 return
 ;------------------------------------------------------------
@@ -672,14 +679,14 @@ Menu, Tray, Icon, %A_ScriptDir%\Folders-Likes-icon-192-RED-center.ico, 1
 ; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
 Menu, Tray, Add
-Menu, Tray, Add, %lMenuSettings%, GuiShow
+Menu, Tray, Add, % L(lMenuSettings, strAppName), GuiShow
 Menu, Tray, Add
 Menu, Tray, Add, %lMenuRunAtStartup%, RunAtStartup
 Menu, Tray, Add
 Menu, Tray, Add, %lMenuUpdate%, Check4Update
 Menu, Tray, Add, %lMenuHelp%, GuiHelp
 Menu, Tray, Add, %lMenuAbout%, GuiAbout
-Menu, Tray, Default, %lMenuSettings%
+Menu, Tray, Default, % L(lMenuSettings, strAppName)
 
 return
 ;------------------------------------------------------------
@@ -816,8 +823,8 @@ if (blnDisplaySwitchMenu)
 }
 
 Menu, %lMainMenuName%, Add
-Menu, %lMainMenuName%, Add, %lMenuSettings%, GuiShow
-Menu, %lMainMenuName%, Default, %lMenuSettings%
+Menu, %lMainMenuName%, Add, % L(lMenuSettings, strAppName), GuiShow
+Menu, %lMainMenuName%, Default, % L(lMenuSettings, strAppName)
 Menu, %lMainMenuName%, Add, %lMenuAddThisFolder%, AddThisFolder
 
 return
@@ -873,7 +880,7 @@ Menu, menuAddDialog, Add, %lMenuDialogNotSupported%, AddThisDialog
 Menu, menuAddDialog, Disable, %lMenuDialogNotSupported%
 Menu, menuAddDialog, Add, %lMenuAddThisDialog%, AddThisDialog
 Menu, menuAddDialog, Add
-Menu, menuAddDialog, Add, %lMenuSettings%, GuiShow
+Menu, menuAddDialog, Add, % L(lMenuSettings, strAppName), GuiShow
 Menu, menuAddDialog, Default, %lMenuAddThisDialog%
 
 return
@@ -1989,9 +1996,9 @@ Gui, 2:New, , % L(lAboutTitle, strAppName, strAppVersion)
 Gui, 2:+Owner1
 str32or64 := A_PtrSize  * 8
 Gui, 2:Font, s12 w700, Verdana
-Gui, 2:Add, Link, y10 vlblAboutText1, % L(lAboutText1, strAppName, strAppVersion, str32or64)
+Gui, 2:Add, Link, y10 w350 vlblAboutText1, % L(lAboutText1, strAppName, strAppVersion, str32or64)
 Gui, 2:Font, s8 w400, Verdana
-Gui, 2:Add, Link, , % L(lAboutText2)
+Gui, 2:Add, Link, , % L(lAboutText2, strAppName)
 Gui, 2:Add, Link, , % L(lAboutText3, chr(169))
 Gui, 2:Font, s10 w400, Verdana
 Gui, 2:Add, Link, , % L(lAboutText4)
@@ -2055,7 +2062,7 @@ loop, % arrIniKeyNames%0%
 	Gui, 2:Font, s8 w700
 	Gui, 2:Add, Text, x15 y+10, % arrOptionsTitles%A_Index%
 	Gui, 2:Font, s9 w500, Courier New
-	Gui, 2:Add, Text, x175 yp w220 center 0x1000 vlblHotkeyText%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
+	Gui, 2:Add, Text, x200 yp w220 center 0x1000 vlblHotkeyText%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
 	Gui, 2:Font
 	Gui, 2:Add, Button, h20 yp x400 vbtnChangeHotkey%A_Index% gButtonOptionsChangeHotkey%A_Index%, %lOptionsChangeHotkey%
 }

@@ -1,5 +1,5 @@
 lAboutText1	~1~ ~2~ (~3~ bits)
-lAboutText2	FoldersPopup est développé par Jean Lalonde`nsur la plateforme <a href="http://ahkscript.org/">AutoHotkey</a>.`n`nTraduction allemande: Edgar ""Fast Edi"" Hoffmann`nTraduction française: Jean Lalonde`nRévision anglaise: (aide bienvenue)`n`nIcônes par: <a href="http://www.visualpharm.com">Visual Pharm</a>`nSources AutoHotkey_L v1.1: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText2	~1~ est développé par Jean Lalonde`nsur la plateforme <a href="http://ahkscript.org/">AutoHotkey</a>.`n`nTraduction allemande: Edgar ""Fast Edi"" Hoffmann`nTraduction française: Jean Lalonde`nRévision anglaise: (aide bienvenue)`n`nIcônes par: <a href="http://www.visualpharm.com">Visual Pharm</a>`nSources AutoHotkey_L v1.1: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Gratuiciel.
 lAboutText4	Soutien en ligne: <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	À propos - ~1~ ~2~
@@ -35,7 +35,7 @@ lDialogFolderParentMenu	Menu contenant ce dossier
 lDialogFolderRemovePrompt	Supprimer le dossier "~1~"`net TOUT son contenu (dossiers et sous-menus)?
 lDialogFolderRemoveTitle	Supprimer un dossier - ~1~
 lDialogFolderShortName	Nom court du dossier pour les menus
-lDialogInvalidHotkey	Avec votre configuration actuelle de clavier, la touche de raccourci "~1~" ne peut être utilisée comme un déclencheur pour le menu popup.`n`nVeuillez ouvrir la fenêtre "Paramètres de Folders Popup" dans la zone de notification et cliquez sur "Options". Dans cette boîte de dialogue, choisissez une autre touche de raccourci pour "~2~".
+lDialogInvalidHotkey	Avec votre configuration actuelle de clavier, la touche de raccourci "~1~" ne peut être utilisée comme un déclencheur pour le menu popup.`n`nVeuillez ouvrir la fenêtre "Paramètres de ~2~" dans la zone de notification et cliquez sur "Options". Dans cette boîte de dialogue, choisissez une autre touche de raccourci pour "~3~".
 lDialogSave	Enregistrer
 lDialogSelectItemToEdit	Veuillez sélectionner l'item à modifier.
 lDialogSelectItemToRemove	Veuillez sélectionner l'item à supprimer.
@@ -77,7 +77,7 @@ lHelpTitle	Help - ~1~ ~2~
 lMainMenuName	Principal
 lMenuAbout	À propos
 lMenuAddThisDialog	Prendre en charge ce type de boîte de dialogue
-lMenuAddThisFolder	Ajouter ce dossier au menu
+lMenuAddThisFolder	&Ajouter ce dossier au menu
 lMenuControlPanel	Panneau de configuration
 lMenuDesktop	Bureau
 lMenuDialogNotSupported	Ce type de boîte de dialogue n'est pas encore pris en charge
@@ -86,18 +86,18 @@ lMenuHelp	Aide
 lMenuMyComputer	Ordinateur
 lMenuNetworkNeighborhood	Réseau
 lMenuPictures	Images
-lMenuRecentFolders	Emplacements récents
+lMenuRecentFolders	Emplacements &récents
 lMenuRecycleBin	Corbeille
-lMenuReservedShortcuts	###AP
-lMenuReservedShortcutsRecent	###R
-lMenuReservedShortcutsSpecial	###S
-lMenuReservedShortcutsSwitch	###WI
+lMenuReservedShortcuts	AP
+lMenuReservedShortcutsRecent	R
+lMenuReservedShortcutsSpecial	S
+lMenuReservedShortcutsSwitch	BE
 lMenuRunAtStartup	Exécuter au démarrage
 lMenuSeparator	----------------
-lMenuSettings	Paramètres de Folders Popup
-lMenuSpecialFolders	Dossiers spéciaux
-lMenuSwitchDialog	Basculer dans cette boîte de dialogue
-lMenuSwitchExplorer	Basculer vers l'Explorateur
+lMenuSettings	Paramètres de &~1~
+lMenuSpecialFolders	Dossiers &spéciaux
+lMenuSwitchDialog	Basculer dans cette &boîte de dialogue
+lMenuSwitchExplorer	Basculer vers l'&Explorateur
 lMenuUpdate	Mettre à jour
 lNavigateFileError	Une erreur s'est produite lors de l'ouverture du dossier:`n~1~.
 lNavigateSpecialError	Une erreur s'est produite lors de l'ouverture du dossier spécial #~1~.
@@ -106,7 +106,7 @@ lOptionsArrDescriptions1	Choisissez le bouton de la SOURIS et la touche de combi
 lOptionsArrDescriptions2	Choisissez le bouton de la SOURIS et la touche de combinaison qui ouvrira le menu popup dans N'IMPORTE QUELLE fenêtre et ouvrira le dossier sélectionné dans une NOUVELLE fenêtre de l'Explorateur de fichiers. Par défaut, il s'agit du bouton du milieu de la souris (MButton) avec la touche de modification Maj (Shift).
 lOptionsArrDescriptions3	Choisissez la combinaison de touches du CLAVIER qui ouvrira le menu popup dans l'Explorateur de fichier de Windows ou dans des boîtes de dialogue de fichier. Par défaut, il s'agit de la combinaisons Win-K (la lettre K pendant que la touche Windows est pressée).
 lOptionsArrDescriptions4	Choisissez la combinaison de touches du CLAVIER qui ouvrira le menu popup dans N'IMPORTE QUELLE fenêtre et ouvrira le dossier sélectionné dans une NOUVELLE fenêtre de l'Explorateur de fichiers. Par défaut, il s'agit de la combinaisons Maj-Win-K (la lettre K pendant que les touches Windows et Maj sont presséee).
-lOptionsArrDescriptions5	Choisissez la combinaison de touches du clavier ou le bouton de la souris qui ouvrira la boîte de dialogue Paramètres de Folders Popup. Par défaut, il s'agit de Maj+Windows+F.
+lOptionsArrDescriptions5	Choisissez la combinaison de touches du clavier ou le bouton de la souris qui ouvrira la boîte de dialogue Paramètres de FoldersPopup. Par défaut, il s'agit de Maj+Windows+F.
 lOptionsChangeHotkey	Modifier
 lOptionsChangeHotkeyTitle	Modification de déclencheur - ~1~ ~2~
 lOptionsCtrl	Ctrl
