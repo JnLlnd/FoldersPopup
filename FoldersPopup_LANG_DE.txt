@@ -1,5 +1,5 @@
 lAboutText1	~1~ ~2~ (~3~ bits)
-lAboutText2	FoldersPopup wird entwickelt von Jean Lalonde unter Verwendung der`n<a href="http://ahkscript.org/">AutoHotkey</a> Programmiersprache.`n`nGerman translation: Edgar ""Fast Edi"" Hoffmann`nFrench translation: Jean Lalonde`nEnglish proof checking: (help welcomed)`n`nIcons von: <a href="http://www.visualpharm.com">Visual Pharm</a>`nAutoHotkey_L v1.1 Sourcen: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText2	FoldersPopup wird entwickelt von Jean Lalonde unter`nVerwendung der`n<a href="http://ahkscript.org/">AutoHotkey</a> Programmiersprache.`n`nDeutsche Übersetzung: Edgar ""Fast Edi"" Hoffmann`nFranzösische Übersetzung: Jean Lalonde`nEnglische Gegenleser: (Hilfe willkommen)`n`nIcons von: <a href="http://www.visualpharm.com">Visual Pharm</a>`nAutoHotkey_L v1.1 Sourcen: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
 lAboutText4	Support unter <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	Über - ~1~ ~2~
@@ -68,7 +68,7 @@ lHelpText1	Beim Start platziert FoldersPopup ein Symbol im System Tray und warte
 lHelpText2	Wählen Sie Einstellungen, um das Einstellungsmenü von FoldersPopup aufzurufen. Hier können Sie Ordner zum Menü hinzufügen, löschen, verschieben oder umbenennen. Klicken Sie Speichern um die Änderungen zu sichern.
 lHelpText3	Sie können sehr schnell Ordner zum Popup-Menü hinzufügen:`n1) Wechseln Sie in einen oft benutzten Ordner.`n2) Klicken Sie die mittlere Maustaste (oder Windows-K) und wählen Sie Diesen Ordner hinzufügen.`n3) Vergeben Sie einen kurzen Namen, klicken Sie OK und speichern Sie im Einstellungsfenster.
 lHelpText4	Standardmäßig unterstützt FoldersPopup normale Dialoge (Öffnen, Speichern, usw.). Sie können FoldersPopup jedoch sehr einfach "beibringen", auch andere Dialoge zu erkennen:`n1) Wenn Sie sich in einem nicht unterstützten Dialog befinden, klicken Sie mit der mittleren Maustaste (oder drücken Sie die Tasten Windows-K) und wählen Sie "Diesen Dialog zur unterstützten Liste hinzufügen".`n2 ) Klicken Sie OK und speichern Sie im Einstellungsfenster.
-lHelpText5	TIPS UND TRICKS`n- Aktivieren Sie im Tray-Menü die Option "Beim Start ausführen", um FoldersPopup automatisch zu starten.`n- Sie wollen einen oft verwendeten Ordner in einem neuen Expolrer-Fenster öffnen? Drücken Sie einfach Shift und die mittlere Maustaste (oder Shift-Windows-K).`n- Konfigurieren Sie Ihre Menü-Tastenkürzel: wählen Sie die bevorzugte Maustaste oder das Tastenkürzel in "Einstellungen-Optionen".`n- Ebenfalls in den Optionen verfügbar: Pinnen Sie das Popup-Menü an einer Stelle fest und fügen Sie Tastenkürzel des Nummernblocks zum Ordnermenü hinzu.
+lHelpText5	TIPS UND TRICKS`n- Aktivieren Sie im Tray-Menü die Option "Beim Start ausführen", um FoldersPopup automatisch zu starten.`n- Sie wollen einen oft verwendeten Ordner in einem neuen Explorer-Fenster öffnen? Drücken Sie einfach Shift und die mittlere Maustaste (oder Shift-Windows-K).`n- Konfigurieren Sie Ihre Menü-Tastenkürzel: wählen Sie die bevorzugte Maustaste oder das Tastenkürzel in "Einstellungen-Optionen".`n- Ebenfalls in den Optionen verfügbar: Pinnen Sie das Popup-Menü an einer Stelle fest und fügen Sie Tastenkürzel des Nummernblocks zum Ordnermenü hinzu.
 lHelpText6	Support für FoldersPopup gibt es auf`n<a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
 lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware!
 lHelpTextLead	FoldersPopup ermöglicht es, auf schnelle Weise zwischen häufig verwendeten Verzeichnissen zu wechseln!
@@ -87,11 +87,16 @@ lMenuNetworkNeighborhood	&Netzwerkumgebung
 lMenuPictures	&Bilder
 lMenuRecentFolders	Kü&rzlich verwendete Ordner
 lMenuRecycleBin	&Papierkorb
+lMenuReservedShortcuts	###AP
 lMenuReservedShortcuts	ARPSW
+lMenuReservedShortcutsRecent	###R
+lMenuReservedShortcutsSpecial	###S
+lMenuReservedShortcutsSwitch	###WI
 lMenuRunAtStartup	&Beim Start von Windows ausführen
 lMenuSeparator	----------------
 lMenuSettings	Folder&Popups Einstellungen
 lMenuSpecialFolders	&Spezielle Ordner
+lMenuSwitchDialog	Sw&itch in dialog box
 lMenuSwitchExplorer	&Wechseln Sie in Explorer
 lMenuUpdate	Nach &Update suchen
 lNavigateFileError	Beim Öffnen des Ordners `n~1~ trat ein Fehler auf.

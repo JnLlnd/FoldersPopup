@@ -88,11 +88,15 @@ lMenuNetworkNeighborhood	Réseau
 lMenuPictures	Images
 lMenuRecentFolders	Emplacements récents
 lMenuRecycleBin	Corbeille
-lMenuReservedShortcuts	###ARPSW
+lMenuReservedShortcuts	###AP
+lMenuReservedShortcutsRecent	###R
+lMenuReservedShortcutsSpecial	###S
+lMenuReservedShortcutsSwitch	###WI
 lMenuRunAtStartup	Exécuter au démarrage
 lMenuSeparator	----------------
 lMenuSettings	Paramètres de Folders Popup
 lMenuSpecialFolders	Dossiers spéciaux
+lMenuSwitchDialog	Basculer dans cette boîte de dialogue
 lMenuSwitchExplorer	Basculer vers l'Explorateur
 lMenuUpdate	Mettre à jour
 lNavigateFileError	Une erreur s'est produite lors de l'ouverture du dossier:`n~1~.

@@ -3,9 +3,10 @@ BUG
 
 TODO
 - translate help to French
-- “direct access in save dialog for example to the other windows already opened in explorer”
 - add Support freeware to popup menu
-- button to sort current menu
+- add button to sort current menu
+- add button up to menu dropdown
+- check lMenuReservedShortcuts in French and German
 */
 
 ;===============================================
@@ -194,7 +195,7 @@ Gosub, InitSystemArrays
 Gosub, InitLanguage
 Gosub, LoadIniFile
 Gosub, LoadTheme
-; build even if blnDisplaySpecialFolders, blnDisplaySwitchMenu or blnDisplaySwitchMenu are false because they could become true
+; build even if blnDisplaySpecialFolders, blnDisplayRecentFolders or blnDisplaySwitchMenu are false because they could become true
 Gosub, BuildSpecialFoldersMenu
 Gosub, BuildRecentFoldersMenu
 Gosub, BuildSwitchMenu
@@ -535,6 +536,9 @@ if (blnDisplaySwitchMenu)
 	Menu, %lMainMenuName%
 		, % (intExplorersIndex ? "Enable" : "Disable")
 		, %lMenuSwitchExplorer%
+	Menu, %lMainMenuName%
+		, % (intExplorersIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
+		, %lMenuSwitchDialog%
 }
 
 if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass) or DialogIsSupported(strTargetWinId))
@@ -602,6 +606,9 @@ if (blnDisplaySwitchMenu)
 	Menu, %lMainMenuName%
 		, % (intExplorersIndex ? "Enable" : "Disable")
 		, %lMenuSwitchExplorer%
+	Menu, %lMainMenuName%
+		, % (intExplorersIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
+		, %lMenuSwitchDialog%
 }
 
 ; Enable "Add This Folder" only if the target window is an Explorer (tested on WIN_XP and WIN_7)
@@ -752,8 +759,11 @@ BuildSwitchMenu:
 
 Menu, menuSwitchExplorer, Add
 Menu, menuSwitchExplorer, DeleteAll
+Menu, menuSwitchDialog, Add
+Menu, menuSwitchDialog, DeleteAll
 
-objExplorers := Object()
+objExplorersWinId := Object()
+objExplorersLocation := Object()
 intExplorersIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
 intShortcut := 0
 
@@ -765,7 +775,8 @@ For pExp in ComObjCreate("Shell.Application").Windows
 	if !StrLen(strType)
 	{
 		intExplorersIndex := intExplorersIndex + 1
-		objExplorers.Insert(intExplorersIndex, pExp.HWND)
+		objExplorersWinId.Insert(intExplorersIndex, pExp.HWND)
+		objExplorersLocation.Insert(intExplorersIndex, pExp.LocationURL) ; also .LocationName see http://msdn.microsoft.com/en-us/library/aa752084#properties
 		
 		strLocation :=  UriDecode(pExp.LocationURL)
 		StringReplace, strLocation, strLocation, file:///
@@ -774,6 +785,7 @@ For pExp in ComObjCreate("Shell.Application").Windows
 			strLocation := pExp.LocationName
 
 		Menu, menuSwitchExplorer, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strLocation, SwitchExplorer
+		Menu, menuSwitchDialog, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strLocation, SwitchDialog
 	}
 }
 
@@ -798,7 +810,10 @@ if (blnDisplaySpecialFolders)
 if (blnDisplayRecentFolders)
 	Menu, %lMainMenuName%, Add, %lMenuRecentFolders%, :menuRecentFolders
 if (blnDisplaySwitchMenu)
+{
 	Menu, %lMainMenuName%, Add, %lMenuSwitchExplorer%, :menuSwitchExplorer
+	Menu, %lMainMenuName%, Add, %lMenuSwitchDialog%, :menuSwitchDialog
+}
 
 Menu, %lMainMenuName%, Add
 Menu, %lMainMenuName%, Add, %lMenuSettings%, GuiShow
@@ -2482,7 +2497,7 @@ if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetCla
 		ComObjCreate("Shell.Application").Explore(strLocation)
 	else
 		Run, Explorer %strLocation%
-	; http://msdn.microsoft.com/en-us/library/bb774094http://msdn.microsoft.com/en-us/library/bb774094
+	; http://msdn.microsoft.com/en-us/library/bb774094
 	; ComObjCreate("Shell.Application").Explore(strLocation)
 	; ComObjCreate("WScript.Shell").Exec("Explorer.exe /e /select," . strLocation) ; not tested on XP
 	; ComObjCreate("Shell.Application").Open(strLocation)
@@ -2655,7 +2670,17 @@ return
 SwitchExplorer:
 ;------------------------------------------------------------
 
-WinActivate, % "ahk_id " . objExplorers[A_ThisMenuItemPos]
+WinActivate, % "ahk_id " . objExplorersWinId[A_ThisMenuItemPos]
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+SwitchDialog:
+;------------------------------------------------------------
+
+NavigateDialog(objExplorersLocation[A_ThisMenuItemPos], strTargetWinId, strTargetClass)
 
 return
 ;------------------------------------------------------------
