@@ -41,6 +41,7 @@ lDialogSelectItemToRemove	Bitte wählen Sie das zu entfernende Element.
 lDialogSubmenuLabel	Untermenü
 lDialogSubmenuShortName	Kurzname des Untermenüs
 lDonateButton	Unterstützen Sie Freeware!
+lDonateMenu	&Unterstützen Sie Freeware!
 lDonatePrompt	Sind Sie zufrieden mit ~1~?`n`n~1~ ist nicht nur kostenlos, sondern enthält auch keine Werbung, bei der Sie nie wissen, ob diese Spyware oder Schadsoftware enthält.`n`n~2~ mal bisher, hat Ihnen ~1~ bei der täglichen Arbeit geholfen. Wie wär's jetzt mit ein wenig Unterstützung für Freeware?
 lDonateThankyou	Vielen Dank für die Unterstützung von Freeware!
 lDonateTitle	~1~ mal! - ~2~
@@ -65,10 +66,10 @@ lGuiSubmenuLocation	>
 lGuiSubmenuSeparator	>
 lGuiTitle	Einstellungen - ~1~ ~2~
 lHelpText1	Beim Start platziert FoldersPopup ein Symbol im System Tray und wartet auf Arbeit. Wenn Sie im Explorer oder einer Dateiauswahlbox den Ordner wechseln müssen, klicken Sie einfach mit der mittleren Maustaste oder drücken Sie Win+K und wählen Sie im erscheinenden Popup-Menü den gewünschten Ordner. FoldersPopup bringt Sie ohne Umwege direkt dorthin!
-lHelpText2	Wählen Sie Einstellungen, um das Einstellungsmenü von FoldersPopup aufzurufen. Hier können Sie Ordner zum Menü hinzufügen, löschen, verschieben oder umbenennen. Klicken Sie Speichern um die Änderungen zu sichern.
-lHelpText3	Sie können sehr schnell Ordner zum Popup-Menü hinzufügen:`n1) Wechseln Sie in einen oft benutzten Ordner.`n2) Klicken Sie die mittlere Maustaste (oder Windows-K) und wählen Sie Diesen Ordner hinzufügen.`n3) Vergeben Sie einen kurzen Namen, klicken Sie OK und speichern Sie im Einstellungsfenster.
+lHelpText2	Wählen Sie Einstellungen, um das Einstellungsmenü von FoldersPopup aufzurufen. Hier können Sie Ordner zum Menü hinzufügen, löschen, verschieben oder umbenennen. Sie können ebenfalls Untermenüs hinzufügen, löschen oder verschieben. Wählen Sie hierzu "Zu bearbeitendes Menü:" in der Auswahlliste. Klicken Sie Speichern um die Änderungen zu sichern.
+lHelpText3	Sie können sehr schnell Ordner zum Popup-Menü hinzufügen:`n1) Wechseln Sie in einen oft benutzten Ordner.`n2) Klicken Sie die mittlere Maustaste (oder Windows-K) und wählen Sie Diesen Ordner hinzufügen.`n3) Vergeben Sie einen kurzen Namen, klicken Sie OK und speichern Sie im Einstellungsfenster.`nDieser neue Ordner wird im Hauptmenü angelegt. Bearbeiten Sie diesen, um ihn an einen anderen Ort zu verschieben.
 lHelpText4	Standardmäßig unterstützt FoldersPopup normale Dialoge (Öffnen, Speichern, usw.). Sie können FoldersPopup jedoch sehr einfach "beibringen", auch andere Dialoge zu erkennen:`n1) Wenn Sie sich in einem nicht unterstützten Dialog befinden, klicken Sie mit der mittleren Maustaste (oder drücken Sie die Tasten Windows-K) und wählen Sie "Diesen Dialog zur unterstützten Liste hinzufügen".`n2 ) Klicken Sie OK und speichern Sie im Einstellungsfenster.
-lHelpText5	TIPS UND TRICKS`n- Aktivieren Sie im Tray-Menü die Option "Beim Start ausführen", um FoldersPopup automatisch zu starten.`n- Sie wollen einen oft verwendeten Ordner in einem neuen Explorer-Fenster öffnen? Drücken Sie einfach Shift und die mittlere Maustaste (oder Shift-Windows-K).`n- Konfigurieren Sie Ihre Menü-Tastenkürzel: wählen Sie die bevorzugte Maustaste oder das Tastenkürzel in "Einstellungen-Optionen".`n- Ebenfalls in den Optionen verfügbar: Pinnen Sie das Popup-Menü an einer Stelle fest und fügen Sie Tastenkürzel des Nummernblocks zum Ordnermenü hinzu.
+lHelpText5	TIPS UND TRICKS`n- Aktivieren Sie im Tray-Menü die Option "Beim Start ausführen", um FoldersPopup automatisch zu starten.`n- Sie wollen einen oft verwendeten Ordner in einem neuen Explorer-Fenster öffnen? Drücken Sie einfach Shift und die mittlere Maustaste (oder Shift-Windows-K).Dies ermöglicht es auch, einen bevorzugten Ordner aus einer beliebigen Anwendung heraus aufzurufen.`n- Konfigurieren Sie Ihre Menü-Tastenkürzel: wählen Sie die bevorzugte Maustaste oder das Tastenkürzel in "Einstellungen-Optionen".`n- Ebenfalls in den Optionen verfügbar: Bevorzugte Sprache wählen, Bevorzugte Ordner anzeigen, Popup-Menü an einer bestimmten Stelle festpinnen und fügen Sie Tastenkürzel des Nummernblocks zum Ordnermenü hinzu.
 lHelpText6	Support für FoldersPopup gibt es auf`n<a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
 lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware!
 lHelpTextLead	FoldersPopup ermöglicht es, auf schnelle Weise zwischen häufig verwendeten Verzeichnissen zu wechseln!
@@ -82,21 +83,20 @@ lMenuDesktop	&Desktop
 lMenuDialogNotSupported	Diese Dialogbox wird momentan noch nicht unterstützt
 lMenuDocuments	D&okumente
 lMenuHelp	Hilfe
+lMenuMore	&Mehr...
 lMenuMyComputer	&Mein Computer
 lMenuNetworkNeighborhood	&Netzwerkumgebung
 lMenuPictures	&Bilder
 lMenuRecentFolders	&Kürzlich verwendete Ordner
 lMenuRecycleBin	&Papierkorb
-lMenuReservedShortcuts	OF
-lMenuReservedShortcutsRecent	K
-lMenuReservedShortcutsSpecial	S
-lMenuReservedShortcutsSwitch	ED
+lMenuReservedShortcuts	M
+lMenuReservedShortcutsDonate	U
 lMenuRunAtStartup	&Beim Start von Windows ausführen
 lMenuSeparator	----------------
 lMenuSettings	&~1~ Einstellungen
 lMenuSpecialFolders	&Spezielle Ordner
 lMenuSwitchDialog	Sw&itch in &Dialogbox
-lMenuSwitchExplorer	Wechseln Sie in &Explorer
+lMenuSwitchExplorer	Zum &Explorer wechseln
 lMenuUpdate	Nach &Update suchen
 lNavigateFileError	Beim Öffnen des Ordners `n~1~ trat ein Fehler auf.
 lNavigateSpecialError	Beim Öffnen des Speziellen Ordners #~1~ trat ein Fehler auf.
@@ -130,7 +130,7 @@ lOptionsTitles	Maus - Ordner Popup|Maus - Neu Explorer|Tastatur - Ordner Popup|T
 lOptionsTrayTip	Beim Start &Tray-Tip anzeigen
 lOptionsTriggerFor	Auslöser für:
 lOptionsWin	Win
-lReloadPrompt	Language changed to ~1~. Do you want to reload ~2~ in ~1~ now? Unsaved changes to the folders menu will be lost.
+lReloadPrompt	Sprache wurde in ~1~ geändert. Wollen Sie jetzt ~2~ in ~1~ neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
 lTrayTipInstalledDetail	Zur Anzeige des ~1~ Menüs`nim Windows Explorer oder einer Dialogbox`n~2~ oder ~3~ drücken.`n`n~4~ oder ~5~`num ein neues Explorer-Fenster zu öffnen.
 lTrayTipinstalledTitle	~1~ ~2~ bereit!
 lUpdatePrompt	Update ~1~ von v~2~ auf v~3~?

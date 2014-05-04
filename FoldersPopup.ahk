@@ -2,10 +2,6 @@
 BUG
 
 TODO
-- translate help to French
-- add Support freeware to popup menu
-- add button to sort current menu
-- add button up to menu dropdown
 */
 
 ;===============================================
@@ -171,6 +167,8 @@ TODO
 ListLines, Off
 SetWorkingDir, %A_ScriptDir%
 
+blnMenuReady := false
+
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
@@ -223,6 +221,8 @@ if (blnDisplayTrayTip)
 		, , 1
 
 OnExit, ExitDiagMode
+
+blnMenuReady := true
 
 ; gosub, GuiShow ; ### only when debugging Gui
 
@@ -292,7 +292,7 @@ IfNotExist, %strIniFile%
 			DisplayMenuShortcuts=0
 			PopupFix=0
 			PopupFixPosition=20,20
-			RecentFolders=10
+			RecentFolders=5
 			DiagMode=0
 			Startups=1
 			LanguageCode=EN
@@ -326,7 +326,9 @@ IniRead, strLatestSkipped, %strIniFile%, Global, LatestVersionSkipped, 0.0
 IniRead, blnDiagMode, %strIniFile%, Global, DiagMode, 0
 IniRead, intStartups, %strIniFile%, Global, Startups, 1
 IniRead, blnDonator, %strIniFile%, Global, Donator, 0 ; Please, be fair. Don't cheat with this.
-IniRead, intRecentFolders, %strIniFile%, Global, RecentFolders, 10
+if !(blnDonator)
+	lMenuReservedShortcuts := lMenuReservedShortcuts . lMenuReservedShortcutsDonate
+IniRead, intRecentFolders, %strIniFile%, Global, RecentFolders, 5
 
 Loop
 {
@@ -421,13 +423,6 @@ loop, %arrOptionsLanguageCodes0%
 			break
 		}
 
-if (blnDisplayRecentFolders)
-	lMenuReservedShortcuts := lMenuReservedShortcuts . lMenuReservedShortcutsRecent
-if (blnDisplaySpecialFolders)
-	lMenuReservedShortcuts := lMenuReservedShortcuts . lMenuReservedShortcutsSpecial
-if (blnDisplaySwitchMenu)
-	lMenuReservedShortcuts := lMenuReservedShortcuts . lMenuReservedShortcutsSwitch
-
 return
 ;------------------------------------------------------------
 
@@ -492,6 +487,9 @@ PopupMenuMouse: ; default MButton
 PopupMenuKeyboard: ; default #k
 ;------------------------------------------------------------
 
+if !(blnMenuReady)
+	return
+
 If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass)
 {
 	StringReplace, strThisHotkey, A_ThisHotkey, $ ; remove $ from hotkey
@@ -531,7 +529,7 @@ if (blnDisplaySpecialFolders)
 if (blnDisplayRecentFolders)
 {
 	Gosub, BuildRecentFoldersMenu
-	Menu, %lMainMenuName%
+	Menu, menuMore
 		, % (intRecentFoldersIndex ? "Enable" : "Disable")
 		, %lMenuRecentFolders%
 }
@@ -539,10 +537,10 @@ if (blnDisplayRecentFolders)
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
-	Menu, %lMainMenuName%
+	Menu, menuMore
 		, % (intExplorersIndex ? "Enable" : "Disable")
 		, %lMenuSwitchExplorer%
-	Menu, %lMainMenuName%
+	Menu, menuMore
 		, % (intExplorersIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
 		, %lMenuSwitchDialog%
 }
@@ -553,7 +551,7 @@ if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or Win
 	; Other tests shown that WIN_8 behaves like WIN_7. So, I assume WIN_8 to work. If someone could confirm (until I can test it myself)?
 	if (blnDiagMode)
 		Diag("ShowMenu", "Folders Menu " . (WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT") . " Add this folder")
-	Menu, %lMainMenuName%
+	Menu, menuMore
 		, % WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 		, %lMenuAddThisFolder%
 	Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
@@ -573,6 +571,10 @@ return
 PopupMenuNewWindowMouse: ; default +MButton::
 PopupMenuNewWindowKeyboard: ; default +#k
 ;------------------------------------------------------------
+
+if !(blnMenuReady)
+	return
+
 blnMouse := InStr(A_ThisLabel, "Mouse")
 blnNewWindow := true
 Gosub, SetMenuPosition
@@ -601,7 +603,7 @@ if (blnDisplaySpecialFolders)
 if (blnDisplayRecentFolders)
 {
 	Gosub, BuildRecentFoldersMenu
-	Menu, %lMainMenuName%
+	Menu, menuMore
 		, % (intRecentFoldersIndex ? "Enable" : "Disable")
 		, %lMenuRecentFolders%
 }
@@ -609,10 +611,10 @@ if (blnDisplayRecentFolders)
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
-	Menu, %lMainMenuName%
+	Menu, menuMore
 		, % (intExplorersIndex ? "Enable" : "Disable")
 		, %lMenuSwitchExplorer%
-	Menu, %lMainMenuName%
+	Menu, menuMore
 		, % (intExplorersIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
 		, %lMenuSwitchDialog%
 }
@@ -620,7 +622,7 @@ if (blnDisplaySwitchMenu)
 ; Enable "Add This Folder" only if the target window is an Explorer (tested on WIN_XP and WIN_7)
 ; or a dialog box under WIN_7 (does not work under WIN_XP).
 ; Other tests shown that WIN_8 behaves like WIN_7.
-Menu, %lMainMenuName%
+Menu, menuMore
 	, % WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 	, %lMenuAddThisFolder%
 Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
@@ -809,22 +811,29 @@ Menu, %lMainMenuName%, DeleteAll
 
 BuildOneMenu(lMainMenuName) ; and recurse for submenus
 
-if (blnDisplaySpecialFolders or blnDisplayRecentFolders or blnDisplaySwitchMenu)
-	Menu, %lMainMenuName%, Add
+Menu, menuMore, Add
+Menu, menuMore, DeleteAll
+
 if (blnDisplaySpecialFolders)
-	Menu, %lMainMenuName%, Add, %lMenuSpecialFolders%, :menuSpecialFolders
+	Menu, menuMore, Add, %lMenuSpecialFolders%, :menuSpecialFolders
 if (blnDisplayRecentFolders)
-	Menu, %lMainMenuName%, Add, %lMenuRecentFolders%, :menuRecentFolders
+	Menu, menuMore, Add, %lMenuRecentFolders%, :menuRecentFolders
 if (blnDisplaySwitchMenu)
 {
-	Menu, %lMainMenuName%, Add, %lMenuSwitchExplorer%, :menuSwitchExplorer
-	Menu, %lMainMenuName%, Add, %lMenuSwitchDialog%, :menuSwitchDialog
+	Menu, menuMore, Add, %lMenuSwitchExplorer%, :menuSwitchExplorer
+	Menu, menuMore, Add, %lMenuSwitchDialog%, :menuSwitchDialog
 }
 
+if (blnDisplaySpecialFolders or blnDisplayRecentFolders or blnDisplaySwitchMenu)
+	Menu, menuMore, Add
+
+Menu, menuMore, Add, % L(lMenuSettings, strAppName), GuiShow
+Menu, menuMore, Add, %lMenuAddThisFolder%, AddThisFolder
+
 Menu, %lMainMenuName%, Add
-Menu, %lMainMenuName%, Add, % L(lMenuSettings, strAppName), GuiShow
-Menu, %lMainMenuName%, Default, % L(lMenuSettings, strAppName)
-Menu, %lMainMenuName%, Add, %lMenuAddThisFolder%, AddThisFolder
+Menu, %lMainMenuName%, Add, %lMenuMore%, :menuMore
+if !(blnDonator)
+	Menu, %lMainMenuName%, Add, %lDonateMenu%, GuiDonate
 
 return
 ;------------------------------------------------------------
@@ -919,7 +928,8 @@ Gui, 1:Font, s10 w400, Verdana
 Gui, 1:Add, Text, xm y+1, %lAppTagline%
 Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, Text, xm+30, %lGuiSubmenuDropdownLabel%
-Gui, 1:Add, Picture, xm y+5 gGuiGotoPreviousMenu vpicPreviousMenu hidden, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\left_circular\left_circular-26.png
+Gui, 1:Add, Picture, xm y+5 gGuiGotoPreviousMenu vpicPreviousMenu hidden, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\left-12.png
+Gui, 1:Add, Picture, xm+15 yp gGuiGotoUpMenu vpicUpMenu hidden, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\up-12.png
 Gui, 1:Add, DropDownList, xm+30 yp w320 vdrpMenusList gGuiMenusListChanged ; Sort
 
 Gui, 1:Font, s8 w400, Verdana
@@ -932,6 +942,7 @@ Gui, 1:Add, Text, Section x+0 yp
 Gui, 1:Add, Picture, xm ys+25 gGuiMoveFolderUp, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\up_circular\up_circular-26.png
 Gui, 1:Add, Picture, xm ys+55 gGuiMoveFolderDown, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\down_circular\down_circular-26.png
 Gui, 1:Add, Picture, xm ys+85 gGuiAddSeparator, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\divide2\separator-26.png
+Gui, 1:Add, Picture, xm+1 ys+175 gGuiSortFolders, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\generic_sorting2\generic_sorting2-26-grey.png
 
 Gui, 1:Add, Text, Section xs ys
 
@@ -1059,6 +1070,7 @@ return
 
 ;------------------------------------------------------------
 GuiMenusListChanged:
+GuiGotoUpMenu:
 GuiGotoPreviousMenu:
 ;------------------------------------------------------------
 
@@ -1070,7 +1082,12 @@ if (A_ThisLabel = "GuiMenusListChanged")
 	arrSubmenuStack.Insert(1, strSavedMenu) ; push the current menu to the left arrow stack
 	GuiControlGet, strCurrentMenu, , drpMenusList
 }
-else
+else if (A_ThisLabel = "GuiGotoUpMenu")
+{
+	arrSubmenuStack.Insert(1, strSavedMenu) ; push the current menu to the left arrow stack
+	strCurrentMenu := SubStr(strCurrentMenu, 1, InStr(strCurrentMenu, lGuiSubmenuSeparator, , 0) - 1) 
+}
+else ; GuiGotoPreviousMenu
 {
 	strCurrentMenu := arrSubmenuStack[1] ; pull the top menu from the left arrow stack
 	arrSubmenuStack.Remove(1) ; remove the top menu from the left arrow stack
@@ -1078,6 +1095,7 @@ else
 strPreviousMenu := strSavedMenu
 
 GuiControl, % arrSubmenuStack.MaxIndex() ? "Show" : "Hide", picPreviousMenu
+GuiControl, % arrSubmenuStack.MaxIndex() ? "Show" : "Hide", picUpMenu
 
 Gosub, LoadOneMenuToGui
 
@@ -1148,6 +1166,20 @@ LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Fo
 LV_Modify(LV_GetNext(), "Vis")
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
+
+GuiControl, Enable, btnGuiSave
+GuiControl, , btnGuiCancel, %lGuiCancel%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiSortFolders:
+;------------------------------------------------------------
+
+Gui, 1:ListView, lvFoldersList
+LV_ModifyCol(1, "Sort")
 
 GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lGuiCancel%
@@ -1290,6 +1322,8 @@ return
 GuiSave:
 ;------------------------------------------------------------
 
+blnMenuReady := false
+
 Gosub, SaveCurrentListviewToMenuObject ; save current LV before saving
 
 IniDelete, %strIniFile%, Folders
@@ -1310,7 +1344,9 @@ Gosub, LoadIniFile
 Gosub, BuildFoldersMenus
 GuiControl, Disable, %lGuiSave%
 GuiControl, , %lGuiCancel%, %lGuiClose%
+
 Gosub, GuiCancel
+blnMenuReady := TRUE
 
 return
 ;------------------------------------------------------------
@@ -1363,6 +1399,7 @@ if (blnSaveEnabled)
 	MsgBox, 36, % L(lDialogCancelTitle, strAppName, strAppVersion), %lDialogCancelPrompt%
 	IfMsgBox, Yes
 	{
+		blnMenuReady := false
 		Gosub, RestoreBackupMenuObjects
 		
 		; restore popup menu
@@ -1373,6 +1410,7 @@ if (blnSaveEnabled)
 
 		GuiControl, Disable, btnGuiSave
 		GuiControl, , btnGuiCancel, %lGuiClose%
+		blnMenuReady := true
 	}
 	IfMsgBox, No
 		return
@@ -1546,16 +1584,11 @@ Check4Update:
 ;------------------------------------------------------------
 Gui, 1:+OwnDialogs
 
-if GetKeyState("Shift") and GetKeyState("LWin")
-{
-	IniWrite, 1, %strIniFile%, Global, Donator ; stop Freeware donation nagging
-	MsgBox, 64, %strAppName%, %lDonateThankyou%
-}
-else if Time2Donate(intStartups, blnDonator)
+if Time2Donate(intStartups, blnDonator)
 {
 	MsgBox, 36, % l(lDonateTitle, intStartups, strAppName), % l(lDonatePrompt, strAppName, intStartups)
 	IfMsgBox, Yes
-		Gosub, ButtonOptionsDonate
+		Gosub, GuiDonate
 }
 IniWrite, % (intStartups + 1), %strIniFile%, Global, Startups
 
@@ -1722,6 +1755,8 @@ GuiAddFolderSave:
 Gui, 2:Submit, NoHide
 Gui, 2:+OwnDialogs
 
+blnMenuReady := false
+
 if !StrLen(strFolderShortName)
 {
 	Oops(lDialogFolderNameEmpty)
@@ -1776,6 +1811,8 @@ Gosub, BuildFoldersMenus ; update menus
 GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lDialogCancelButton%
 
+blnMenuReady := true
+
 return
 ;------------------------------------------------------------
 
@@ -1828,6 +1865,8 @@ GuiEditFolderSave:
 ;------------------------------------------------------------
 Gui, 2:Submit, NoHide
 Gui, 2:+OwnDialogs
+
+blnMenuReady := false
 
 GuiControlGet, strParentMenu, , drpParentMenu
 	
@@ -1894,6 +1933,8 @@ Gosub, BuildFoldersMenus ; update menus
 
 GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lDialogCancelButton%
+
+blnMenuReady := true
 
 return
 ;------------------------------------------------------------
@@ -2002,7 +2043,7 @@ Gui, 2:Add, Link, , % L(lAboutText3, chr(169))
 Gui, 2:Font, s10 w400, Verdana
 Gui, 2:Add, Link, , % L(lAboutText4)
 Gui, 2:Font, s8 w400, Verdana
-Gui, 2:Add, Button, x115 y+20 gButtonOptionsDonate, %lDonateButton%
+Gui, 2:Add, Button, x115 y+20 gGuiDonate, %lDonateButton%
 Gui, 2:Add, Button, x150 y+20 g2GuiClose vbtnAboutClose, %lGui2Close%
 GuiControl, Focus, btnAboutClose
 Gui, 2:Show, AutoSize Center
@@ -2029,7 +2070,7 @@ Gui, 2:Font, s8 w400, Verdana
 loop, 6
 	Gui, 2:Add, Link, w%intWidth%, % lHelpText%A_Index%
 Gui, 2:Add, Link, w%intWidth%, % L(lHelpText7, chr(169))
-Gui, 2:Add, Button, x180 y+20 gButtonOptionsDonate, %lDonateButton%
+Gui, 2:Add, Button, x180 y+20 gGuiDonate, %lDonateButton%
 Gui, 2:Add, Button, x+80 yp g2GuiClose vbtnHelpClose, %lGui2Close%
 GuiControl, Focus, btnHelpClose
 Gui, 2:Show, AutoSize Center
@@ -2197,6 +2238,8 @@ ButtonOptionsSave:
 ;------------------------------------------------------------
 Gui, 2:Submit
 
+blnMenuReady := false
+
 IfExist, %A_Startup%\%strAppName%.lnk
 	FileDelete, %A_Startup%\%strAppName%.lnk
 if (blnOptionsRunAtStartup)
@@ -2247,12 +2290,14 @@ Gosub, BuildFoldersMenus
 
 Goto, 2GuiClose
 
+blnMenuReady := true
+
 return
 ;------------------------------------------------------------
 
 
 ;------------------------------------------------------------
-ButtonOptionsDonate:
+GuiDonate:
 ;------------------------------------------------------------
 Run, https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AJNCXKWKYAXLCV
 return
