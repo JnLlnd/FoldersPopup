@@ -10,7 +10,9 @@ TODO
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: v1.8 ALPHA (not to be released) (2014-05-04)
+	Version: v1.9 BETA (not to be released) (2014-05-nn)
+
+	Version: v1.8 BETA (not to be released) (2014-05-04)
 	* add switch in dialog box to other explorer windows already opened
 	* lMenuReservedShortcuts management with translations
 	* sort folders button
