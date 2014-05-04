@@ -10,7 +10,14 @@ TODO
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: v1.8 ALPHA (not to be released) (2014-05-nn)
+	Version: v1.8 ALPHA (not to be released) (2014-05-04)
+	* add switch in dialog box to other explorer windows already opened
+	* lMenuReservedShortcuts management with translations
+	* sort folders button
+	* folder up button
+	* translated help to French
+	* support freeware to popup menu
+	* blnMenuReady before popup
 
 	Version: v1.7 ALPHA (not to be released) (2014-04-27)
 	* new settings dialog box layout with icons to add, edit or remove folders or dialog boxes
@@ -1346,7 +1353,7 @@ GuiControl, Disable, %lGuiSave%
 GuiControl, , %lGuiCancel%, %lGuiClose%
 
 Gosub, GuiCancel
-blnMenuReady := TRUE
+blnMenuReady := true
 
 return
 ;------------------------------------------------------------
@@ -2102,7 +2109,7 @@ loop, % arrIniKeyNames%0%
 	Gui, 2:Font, s8 w700
 	Gui, 2:Add, Text, x15 y+10, % arrOptionsTitles%A_Index%
 	Gui, 2:Font, s9 w500, Courier New
-	Gui, 2:Add, Text, x200 yp w220 center 0x1000 vlblHotkeyText%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
+	Gui, 2:Add, Text, x200 yp w220 h20 center 0x1000 vlblHotkeyText%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
 	Gui, 2:Font
 	Gui, 2:Add, Button, h20 yp x400 vbtnChangeHotkey%A_Index% gButtonOptionsChangeHotkey%A_Index%, %lOptionsChangeHotkey%
 }
