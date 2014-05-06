@@ -113,7 +113,7 @@ lOptionsCtrl	Ctrl
 lOptionsDisplayMenuShortcuts	Afficher les raccourcis numériques
 lOptionsDisplayRecentFolders	Afficher les emplacements récents
 lOptionsDisplaySpecialFolders	Afficher les dossiers spéciaux
-lOptionsDisplaySwitchMenu	Afficher le menu Basculer
+lOptionsDisplaySwitchMenu	Afficher les menus Basculer
 lOptionsGuiIntro	Choisisr les boutons de la souris et les raccourcis du clavier déclenchant ~1~.
 lOptionsGuiTitle	Options - ~1~ ~2~
 lOptionsKeyboard	Clavier

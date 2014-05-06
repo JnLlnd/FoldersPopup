@@ -162,7 +162,7 @@ TODO
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 1.8 ALPHA
+;@Ahk2Exe-SetVersion 1.8.3 ALPHA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -181,7 +181,7 @@ blnMenuReady := false
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "1.8 ALPHA" ; "major.minor.bugs"
+global strCurrentVersion := "1.8.3 ALPHA" ; "major.minor.bugs"
 global strAppVersion := "v" . strCurrentVersion
 global blnDiagMode := False
 global strDiagFile := A_ScriptDir . "\" . strAppName . "-DIAG.txt"
@@ -535,14 +535,6 @@ if (blnDisplaySpecialFolders)
 		, %lMenuRecycleBin%
 }
 
-if (blnDisplayRecentFolders)
-{
-	Gosub, BuildRecentFoldersMenu
-	Menu, menuMore
-		, % (intRecentFoldersIndex ? "Enable" : "Disable")
-		, %lMenuRecentFolders%
-}
-
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
@@ -552,6 +544,14 @@ if (blnDisplaySwitchMenu)
 	Menu, menuMore
 		, % (intExplorersIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
 		, %lMenuSwitchDialog%
+}
+
+if (blnDisplayRecentFolders)
+{
+	Gosub, BuildRecentFoldersMenu
+	Menu, menuMore
+		, % (intRecentFoldersIndex ? "Enable" : "Disable")
+		, %lMenuRecentFolders%
 }
 
 if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass) or DialogIsSupported(strTargetWinId))
@@ -609,14 +609,6 @@ if (blnDisplaySpecialFolders)
 	Menu, menuSpecialFolders, Enable, %lMenuRecycleBin%
 }
 
-if (blnDisplayRecentFolders)
-{
-	Gosub, BuildRecentFoldersMenu
-	Menu, menuMore
-		, % (intRecentFoldersIndex ? "Enable" : "Disable")
-		, %lMenuRecentFolders%
-}
-
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
@@ -626,6 +618,14 @@ if (blnDisplaySwitchMenu)
 	Menu, menuMore
 		, % (intExplorersIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
 		, %lMenuSwitchDialog%
+}
+
+if (blnDisplayRecentFolders)
+{
+	Gosub, BuildRecentFoldersMenu
+	Menu, menuMore
+		, % (intRecentFoldersIndex ? "Enable" : "Disable")
+		, %lMenuRecentFolders%
 }
 
 ; Enable "Add This Folder" only if the target window is an Explorer (tested on WIN_XP and WIN_7)
@@ -1774,7 +1774,7 @@ if !StrLen(strFolderShortName)
 
 if  (blnRadioFolder and !StrLen(strFolderLocation))
 {
-	Oops(lDialogLocationEmpty)
+	Oops(lDialogFolderLocationEmpty)
 	return
 }
 
@@ -1887,7 +1887,7 @@ if !StrLen(strFolderShortName)
 
 if  (blnRadioFolder and !StrLen(strFolderLocation))
 {
-	Oops(lDialogLocationEmpty)
+	Oops(lDialogFolderLocationEmpty)
 	return
 }
 
