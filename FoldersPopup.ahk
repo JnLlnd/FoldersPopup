@@ -11,8 +11,12 @@ TODO
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
 	Version: v1.9 BETA (not to be released) (2014-05-nn)
+	* fix strange bug with Special folders menu disappearing after Recent or Swith menus refresh because of DeleteAll command
+	* fix bug missing error message and other language minor changes
+	* reorder popup menu and place settings, add this folder and support freeware menus at the end of main menu
+	* reorder checkboxes in GuiOptions
 
-	Version: v1.8 BETA (not to be released) (2014-05-04)
+	Version: v1.8 ALPHA (not to be released) (2014-05-04)
 	* add switch in dialog box to other explorer windows already opened
 	* lMenuReservedShortcuts management with translations
 	* sort folders button
@@ -162,7 +166,7 @@ TODO
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 1.8.3 ALPHA
+;@Ahk2Exe-SetVersion 1.9.1 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -181,7 +185,7 @@ blnMenuReady := false
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "1.8.3 ALPHA" ; "major.minor.bugs"
+global strCurrentVersion := "1.9.1 BETA" ; "major.minor.bugs"
 global strAppVersion := "v" . strCurrentVersion
 global blnDiagMode := False
 global strDiagFile := A_ScriptDir . "\" . strAppName . "-DIAG.txt"
@@ -297,11 +301,11 @@ IfNotExist, %strIniFile%
 			DisplayTrayTip=1
 			DisplaySpecialFolders=1
 			DisplayRecentFolders=1
+			RecentFolders=5
 			DisplaySwitchMenu=1
 			DisplayMenuShortcuts=0
 			PopupFix=0
 			PopupFixPosition=20,20
-			RecentFolders=5
 			DiagMode=0
 			Startups=1
 			LanguageCode=EN
@@ -535,6 +539,14 @@ if (blnDisplaySpecialFolders)
 		, %lMenuRecycleBin%
 }
 
+if (blnDisplayRecentFolders)
+{
+	Gosub, BuildRecentFoldersMenu
+	Menu, menuMore
+		, % (intRecentFoldersIndex ? "Enable" : "Disable")
+		, %lMenuRecentFolders%
+}
+
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
@@ -546,21 +558,13 @@ if (blnDisplaySwitchMenu)
 		, %lMenuSwitchDialog%
 }
 
-if (blnDisplayRecentFolders)
-{
-	Gosub, BuildRecentFoldersMenu
-	Menu, menuMore
-		, % (intRecentFoldersIndex ? "Enable" : "Disable")
-		, %lMenuRecentFolders%
-}
-
 if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass) or DialogIsSupported(strTargetWinId))
 {
 	; Enable Add This Folder only if the mouse is over an Explorer (tested on WIN_XP and WIN_7) or a dialog box (works on WIN_7, not on WIN_XP)
 	; Other tests shown that WIN_8 behaves like WIN_7. So, I assume WIN_8 to work. If someone could confirm (until I can test it myself)?
 	if (blnDiagMode)
 		Diag("ShowMenu", "Folders Menu " . (WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT") . " Add this folder")
-	Menu, menuMore
+	Menu, %lMainMenuName%
 		, % WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 		, %lMenuAddThisFolder%
 	Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
@@ -609,6 +613,14 @@ if (blnDisplaySpecialFolders)
 	Menu, menuSpecialFolders, Enable, %lMenuRecycleBin%
 }
 
+if (blnDisplayRecentFolders)
+{
+	Gosub, BuildRecentFoldersMenu
+	Menu, menuMore
+		, % (intRecentFoldersIndex ? "Enable" : "Disable")
+		, %lMenuRecentFolders%
+}
+
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
@@ -620,18 +632,10 @@ if (blnDisplaySwitchMenu)
 		, %lMenuSwitchDialog%
 }
 
-if (blnDisplayRecentFolders)
-{
-	Gosub, BuildRecentFoldersMenu
-	Menu, menuMore
-		, % (intRecentFoldersIndex ? "Enable" : "Disable")
-		, %lMenuRecentFolders%
-}
-
 ; Enable "Add This Folder" only if the target window is an Explorer (tested on WIN_XP and WIN_7)
 ; or a dialog box under WIN_7 (does not work under WIN_XP).
 ; Other tests shown that WIN_8 behaves like WIN_7.
-Menu, menuMore
+Menu, %lMainMenuName%
 	, % WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 	, %lMenuAddThisFolder%
 Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
@@ -725,7 +729,8 @@ BuildRecentFoldersMenu:
 ;------------------------------------------------------------
 
 Menu, menuRecentFolders, Add
-Menu, menuRecentFolders, DeleteAll
+; Menu, menuRecentFolders, DeleteAll ; do not use, because it makes the Special menu to disappear 1/2 times
+Menu, menuRecentFolders, Delete
 
 objRecentFolders := Object()
 intRecentFoldersIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
@@ -733,7 +738,7 @@ intRecentFoldersIndex := 0 ; used in PopupMenu... to check if we disable the men
 strRecentsFolder := A_AppData . "\Microsoft\Windows\Recent"
 strDirList := ""
 	
-Loop, %strRecentsFolder%\*.*
+Loop, %strRecentsFolder%\*.* ; tried to limit to number of recent but no good because not sorted chronologically
 	strDirList := strDirList . A_LoopFileTimeModified . "`t`" . A_LoopFileFullPath . "`n"
 Sort, strDirList, R
 
@@ -766,6 +771,10 @@ Loop, parse, strDirList, `n
 	}
 }
 
+if !(intRecentFoldersIndex) ; recreate the menu because it was deleted
+	Menu, menuRecentFolders, Add
+Menu, menuMore, Add, %lMenuRecentFolders%, :menuRecentFolders ; re-add to More menu because it was deleted
+
 return
 ;------------------------------------------------------------
 
@@ -775,9 +784,11 @@ BuildSwitchMenu:
 ;------------------------------------------------------------
 
 Menu, menuSwitchExplorer, Add
-Menu, menuSwitchExplorer, DeleteAll
+; Menu, menuSwitchExplorer, DeleteAll ; do not use, because it makes the Special menu to disappear
+Menu, menuSwitchExplorer, Delete
 Menu, menuSwitchDialog, Add
-Menu, menuSwitchDialog, DeleteAll
+; Menu, menuSwitchDialog, DeleteAll ; do not use, because it makes the Special menu to disappear
+Menu, menuSwitchDialog, Delete
 
 objExplorersWinId := Object()
 objExplorersLocation := Object()
@@ -801,10 +812,22 @@ For pExp in ComObjCreate("Shell.Application").Windows
 		if !StrLen(strLocation)
 			strLocation := pExp.LocationName
 
-		Menu, menuSwitchExplorer, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strLocation, SwitchExplorer
-		Menu, menuSwitchDialog, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strLocation, SwitchDialog
+		Menu, menuSwitchExplorer, Add
+			, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strLocation
+			, SwitchExplorer
+		Menu, menuSwitchDialog, Add
+			, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strLocation
+			, SwitchDialog
 	}
 }
+
+if !(intExplorersIndex) ; recreate the menu because it was deleted
+{
+	Menu, menuSwitchExplorer, Add
+	Menu, menuSwitchDialog, Add
+}
+Menu, menuMore, Add, %lMenuSwitchExplorer%, :menuSwitchExplorer ; re-add to More menu because it was deleted
+Menu, menuMore, Add, %lMenuSwitchDialog%, :menuSwitchDialog ; re-add to More menu because it was deleted
 
 return
 ;------------------------------------------------------------
@@ -833,16 +856,18 @@ if (blnDisplaySwitchMenu)
 	Menu, menuMore, Add, %lMenuSwitchDialog%, :menuSwitchDialog
 }
 
-if (blnDisplaySpecialFolders or blnDisplayRecentFolders or blnDisplaySwitchMenu)
-	Menu, menuMore, Add
-
-Menu, menuMore, Add, % L(lMenuSettings, strAppName), GuiShow
-Menu, menuMore, Add, %lMenuAddThisFolder%, AddThisFolder
-
 Menu, %lMainMenuName%, Add
 Menu, %lMainMenuName%, Add, %lMenuMore%, :menuMore
+Menu, %lMainMenuName%, Add
+Menu, %lMainMenuName%, Add, % L(lMenuSettings, strAppName), GuiShow
+Menu, %lMainMenuName%, Default, % L(lMenuSettings, strAppName)
+Menu, %lMainMenuName%, Add, %lMenuAddThisFolder%, AddThisFolder
+
 if !(blnDonator)
+{
+	Menu, %lMainMenuName%, Add
 	Menu, %lMainMenuName%, Add, %lDonateMenu%, GuiDonate
+}
 
 return
 ;------------------------------------------------------------
@@ -2126,31 +2151,32 @@ Gui, 2:Add, Text, y+10 x40, %lOptionsLanguage%
 Gui, 2:Add, DropDownList, yp x+10 vdrpLanguage Sort, %lOptionsLanguageLabels%
 GuiControl, ChooseString, drpLanguage, %strLanguageLabel%
 
+
 Gui, 2:Add, CheckBox, y+10 x40 vblnOptionsRunAtStartup, %lOptionsRunAtStartup%
 GuiControl, , blnOptionsRunAtStartup, % FileExist(A_Startup . "\" . strAppName . ".lnk") ? 1 : 0
 
-Gui, 2:Add, CheckBox, yp x250 vblnDisplayMenuShortcuts, %lOptionsDisplayMenuShortcuts%
+Gui, 2:Add, CheckBox, yp x250 vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
+GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
+
+Gui, 2:Add, CheckBox, y+10 x40 vblnDisplayMenuShortcuts, %lOptionsDisplayMenuShortcuts%
 GuiControl, , blnDisplayMenuShortcuts, %blnDisplayMenuShortcuts%
+
+Gui, 2:Add, CheckBox, yp x250 vblnDisplayRecentFolders, %lOptionsDisplayRecentFolders%
+GuiControl, , blnDisplayRecentFolders, %blnDisplayRecentFolders%
 
 Gui, 2:Add, CheckBox, y+10 x40 vblnDisplayTrayTip, %lOptionsTrayTip%
 GuiControl, , blnDisplayTrayTip, %blnDisplayTrayTip%
 
-Gui, 2:Add, CheckBox, yp x250 vblnPopupFix gPopupFixClicked, %lOptionsPopupFix%
+Gui, 2:Add, CheckBox, yp x250 vblnDisplaySwitchMenu, %lOptionsDisplaySwitchMenu%
+GuiControl, , blnDisplaySwitchMenu, %blnDisplaySwitchMenu%
+
+Gui, 2:Add, CheckBox, y+10 x40 vblnPopupFix gPopupFixClicked, %lOptionsPopupFix%
 GuiControl, , blnPopupFix, %blnPopupFix%
 
-Gui, 2:Add, CheckBox, y+10 x40 vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
-GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
-
-Gui, 2:Add, Text, % "yp x268 vlblPopupFixPositionX " . (blnPopupFix ? "" : "hidden"), %lOptionsPopupFixPositionX%
+Gui, 2:Add, Text, % "y+10 x58 vlblPopupFixPositionX " . (blnPopupFix ? "" : "hidden"), %lOptionsPopupFixPositionX%
 Gui, 2:Add, Edit, % "yp x+5 w36 h15 vstrPopupFixPositionX center " . (blnPopupFix ? "" : "hidden"), %arrPopupFixPosition1%
 Gui, 2:Add, Text, % "yp x+5 vlblPopupFixPositionY " . (blnPopupFix ? "" : "hidden"), %lOptionsPopupFixPositionY%
 Gui, 2:Add, Edit, % "yp x+5 w36 h15 vstrPopupFixPositionY center " . (blnPopupFix ? "" : "hidden"), %arrPopupFixPosition2%
-
-Gui, 2:Add, CheckBox, y+10 x40 vblnDisplayRecentFolders, %lOptionsDisplayRecentFolders%
-GuiControl, , blnDisplayRecentFolders, %blnDisplayRecentFolders%
-
-Gui, 2:Add, CheckBox, y+10 x40 vblnDisplaySwitchMenu, %lOptionsDisplaySwitchMenu%
-GuiControl, , blnDisplaySwitchMenu, %blnDisplaySwitchMenu%
 
 ; Build Gui footer
 Gui, 2:Add, Button, y+20 x180 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
@@ -2297,7 +2323,7 @@ for strMenuName, arrMenu in arrMenus
 }
 Gosub, BuildFoldersMenus
 
-Goto, 2GuiClose
+Gosub, 2GuiClose
 
 blnMenuReady := true
 
@@ -2408,7 +2434,7 @@ Gosub, LoadIniHotkeys ; reload ini variables and reset hotkeys
 
 GuiControl, 2:, lblHotkeyText%intIndex%, % Hotkey2Text(strModifiers%intIndex%, strMouseButton%intIndex%, strOptionsKey%intIndex%)
 
-Goto, 3GuiClose
+Gosub, 3GuiClose
 
 return
 ;------------------------------------------------------------
