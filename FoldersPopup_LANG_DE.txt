@@ -32,7 +32,8 @@ lDialogFolderNameEmpty	Der Name des Ordners ist leer. Bitte wählen Sie einen kur
 lDialogFolderNameNoSeparator	Das Untermenü darf das reservierte Zeichen "~1~" nicht enthalten.
 lDialogFolderNameNotNew	Der Name ~1~ wird bereits in diesem Menü verwendet. Bitte wählen Sie einen anderen Namen.
 lDialogFolderParentMenu	Ordner Hauptmenü
-lDialogFolderRemovePrompt	entfernen des Ordners "~1~"`nund ALL seines Inhalts (Ordner und Untermenüs)?
+lDialogFolderRemovePrompt	Entfernen des Ordners "~1~"`nund ALL seines Inhalts (Ordner und Untermenüs)?
+lDialogFolderRemoveTitle	Entfernen des Ordners - ~1~
 lDialogFolderShortName	Kurzname des Ordners für das Menü
 lDialogInvalidHotkey	Mit dem derzeitigen Tastaturlayout kann das Tastenkürzel "~1~" nicht verwendet werden, um das Popup-Menü aufzurufen (kein gültiger Tasten Name).`n`nBitte öffnen Sie das "~2~ Einstellungen" aus dem Tray-Menü und klicken Sie auf "Optionen". Wählen Sie in diesem Dialog ein anderes Tastenkürzel für "~3~".
 lDialogSave	Speichern
