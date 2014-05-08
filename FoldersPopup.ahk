@@ -735,7 +735,17 @@ Menu, menuRecentFolders, Delete
 objRecentFolders := Object()
 intRecentFoldersIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
 
-strRecentsFolder := A_AppData . "\Microsoft\Windows\Recent"
+if (A_OSVersion = "WIN_XP")
+{
+	strRecentsFolder := SubStr(A_AppData, 1, InStr(A_AppData, "\", , 0) - 1) . "\Recent"
+	if !FileExist(strRecentsFolder)
+		strRecentsFolder := SubStr(A_AppData, 1, InStr(A_AppData, "\", , 0) - 1) . "\My Recent Documents"
+}
+else
+	strRecentsFolder := A_AppData . "\Microsoft\Windows\Recent"
+
+blnDisplayRecentFolders := (StrLen(FileExist(strRecentsFolder)) > 0) ; turn recent menu off if recent folder not found
+
 strDirList := ""
 	
 Loop, %strRecentsFolder%\*.* ; tried to limit to number of recent but no good because not sorted chronologically
