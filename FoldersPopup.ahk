@@ -180,7 +180,25 @@ TODO
 ListLines, Off
 SetWorkingDir, %A_ScriptDir%
 
-blnMenuReady := false
+strTempDir := "_temp"
+FileCreateDir, %strTempDir%
+FileInstall, FileInstall\FoldersPopup_LANG_DE.txt, %strTempDir%\FoldersPopup_LANG_DE.txt, 1
+FileInstall, FileInstall\FoldersPopup_LANG_FR.txt, %strTempDir%\FoldersPopup_LANG_FR.txt, 1
+FileInstall, FileInstall\about-32.png, %strTempDir%\about-32.png
+FileInstall, FileInstall\add_image-26.png, %strTempDir%\add_image-26.png
+FileInstall, FileInstall\add_property-48.png, %strTempDir%\add_property-48.png
+FileInstall, FileInstall\delete_property-48.png, %strTempDir%\delete_property-48.png
+FileInstall, FileInstall\separator-26.png, %strTempDir%\separator-26.png
+FileInstall, FileInstall\down_circular-26.png, %strTempDir%\down_circular-26.png
+FileInstall, FileInstall\edit_image-26.png, %strTempDir%\edit_image-26.png
+FileInstall, FileInstall\edit_property-48.png, %strTempDir%\edit_property-48.png
+FileInstall, FileInstall\generic_sorting2-26-grey.png, %strTempDir%\generic_sorting2-26-grey.png
+FileInstall, FileInstall\help-32.png, %strTempDir%\help-32.png
+FileInstall, FileInstall\left-12.png, %strTempDir%\left-12.png
+FileInstall, FileInstall\remove_image-26.png, %strTempDir%\remove_image-26.png
+FileInstall, FileInstall\settings-32.png, %strTempDir%\settings-32.png
+FileInstall, FileInstall\up-12.png, %strTempDir%\up-12.png
+FileInstall, FileInstall\up_circular-26.png, %strTempDir%\up_circular-26.png
 
 Gosub, InitLanguageVariables
 
@@ -190,8 +208,11 @@ global strAppVersion := "v" . strCurrentVersion
 global blnDiagMode := False
 global strDiagFile := A_ScriptDir . "\" . strAppName . "-DIAG.txt"
 global strIniFile := A_ScriptDir . "\" . strAppName . ".ini"
+blnMenuReady := false
+
 ;@Ahk2Exe-IgnoreBegin
 ; Piece of code for developement phase only - won't be compiled
+; http://fincs.ahk4.net/Ahk2ExeDirectives.htm
 if (A_ComputerName = "JEAN-PC") ; for my home PC
 	strIniFile := A_ScriptDir . "\" . strAppName . "-HOME.ini"
 else if InStr(A_ComputerName, "STIC") ; for my work hotkeys
@@ -233,7 +254,7 @@ if (blnDisplayTrayTip)
 			, Hotkey2Text(strModifiers4, strMouseButton4, strOptionsKey4))
 		, , 1
 
-OnExit, ExitDiagMode
+OnExit, CleanUpBeforeExit
 
 blnMenuReady := true
 
@@ -406,7 +427,7 @@ InitLanguage:
 ;------------------------------------------------------------
 
 IniRead, strLanguageCode, %strIniFile%, Global, LanguageCode, EN
-strLanguageFile := strAppName . "_LANG_" . strLanguageCode . ".txt"
+strLanguageFile := strTempDir . "\" . strAppName . "_LANG_" . strLanguageCode . ".txt"
 
 if FileExist(strLanguageFile)
 {
@@ -477,8 +498,11 @@ return
 
 
 ;-----------------------------------------------------------
-ExitDiagMode:
+CleanUpBeforeExit:
 ;-----------------------------------------------------------
+
+FileRemoveDir, %strTempDir%, 1 ; Remove all files and subdirectories
+
 if (blnDiagMode)
 {
 	MsgBox, 52, %strAppName%, % L(lDiagModeExit, strAppName, strDiagFile) . "`n`n" . lDiagModeIntro . "`n`n" . lDiagModeSee
@@ -972,8 +996,8 @@ Gui, 1:Font, s10 w400, Verdana
 Gui, 1:Add, Text, xm y+1, %lAppTagline%
 Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, Text, xm+30, %lGuiSubmenuDropdownLabel%
-Gui, 1:Add, Picture, xm y+5 gGuiGotoPreviousMenu vpicPreviousMenu hidden, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\left-12.png
-Gui, 1:Add, Picture, xm+15 yp gGuiGotoUpMenu vpicUpMenu hidden, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\up-12.png
+Gui, 1:Add, Picture, xm y+5 gGuiGotoPreviousMenu vpicPreviousMenu hidden, %strTempDir%\left-12.png
+Gui, 1:Add, Picture, xm+15 yp gGuiGotoUpMenu vpicUpMenu hidden, %strTempDir%\up-12.png
 Gui, 1:Add, DropDownList, xm+30 yp w320 vdrpMenusList gGuiMenusListChanged ; Sort
 
 Gui, 1:Font, s8 w400, Verdana
@@ -983,22 +1007,22 @@ LV_ModifyCol(4, 0) ; hide 4th column
 
 Gui, 1:Add, Text, Section x+0 yp
 
-Gui, 1:Add, Picture, xm ys+25 gGuiMoveFolderUp, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\up_circular\up_circular-26.png
-Gui, 1:Add, Picture, xm ys+55 gGuiMoveFolderDown, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\down_circular\down_circular-26.png
-Gui, 1:Add, Picture, xm ys+85 gGuiAddSeparator, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\divide2\separator-26.png
-Gui, 1:Add, Picture, xm+1 ys+175 gGuiSortFolders, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\generic_sorting2\generic_sorting2-26-grey.png
+Gui, 1:Add, Picture, xm ys+25 gGuiMoveFolderUp, %strTempDir%\up_circular-26.png
+Gui, 1:Add, Picture, xm ys+55 gGuiMoveFolderDown, %strTempDir%\down_circular-26.png
+Gui, 1:Add, Picture, xm ys+85 gGuiAddSeparator, %strTempDir%\separator-26.png
+Gui, 1:Add, Picture, xm+1 ys+175 gGuiSortFolders, %strTempDir%\generic_sorting2-26-grey.png
 
 Gui, 1:Add, Text, Section xs ys
 
-Gui, 1:Add, Picture, xs+10 ys gGuiAddFolder, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\add_property\add_property-48.png
+Gui, 1:Add, Picture, xs+10 ys gGuiAddFolder, %strTempDir%\add_property-48.png
 Gui, 1:Font, s8 w400, Arial ; button legend
 Gui, 1:Add, Text, xs y+0 w68 center gGuiAddFolder, %lGuiAddFolder%
 
-Gui, 1:Add, Picture, xs+10 gGuiEditFolder, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\edit_property\edit_property-48.png
+Gui, 1:Add, Picture, xs+10 gGuiEditFolder, %strTempDir%\edit_property-48.png
 Gui, 1:Font, s8 w400, Arial ; button legend
 Gui, 1:Add, Text, xs y+0 w68 center gGuiEditFolder, %lGuiEditFolder%
 
-Gui, 1:Add, Picture, xs+10 gGuiRemoveFolder, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\delete_property\delete_property-48.png
+Gui, 1:Add, Picture, xs+10 gGuiRemoveFolder, %strTempDir%\delete_property-48.png
 Gui, 1:Font, s8 w400, Arial ; button legend
 Gui, 1:Add, Text, xs y+0 w68 center gGuiRemoveFolder, %lGuiRemoveFolder%
 
@@ -1010,21 +1034,21 @@ Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, Text, Section x%intCol% y%arrLvPosY% w220, %lGuiLvDialogsHeader%
 Gui, 1:Add, ListView, xs w220 h150 Count16 -Hdr -Multi NoSortHdr +0x10 LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvDialogsList gGuiDialogsListEvent, Header
 
-Gui, 1:Add, Picture, xs+70 y+5 gGuiAddDialog, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\add_image\add_image-26.png
-Gui, 1:Add, Picture, x+10 yp gGuiEditDialog, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\edit_image\edit_image-26.png
-Gui, 1:Add, Picture, x+10 yp gGuiRemoveDialog, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\remove_image\remove_image-26.png
+Gui, 1:Add, Picture, xs+70 y+5 gGuiAddDialog, %strTempDir%\add_image-26.png
+Gui, 1:Add, Picture, x+10 yp gGuiEditDialog, %strTempDir%\edit_image-26.png
+Gui, 1:Add, Picture, x+10 yp gGuiRemoveDialog, %strTempDir%\remove_image-26.png
 
 Gui, 1:Add, Text, Section xs+60 ym
 
-Gui, 1:Add, Picture, xs+10 ym gGuiHelp, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\help\help-32.png
+Gui, 1:Add, Picture, xs+10 ym gGuiHelp, %strTempDir%\help-32.png
 Gui, 1:Font, s8 w400, Arial ; button legend
 Gui, 1:Add, Text, xs y+0 w52 center gGuiHelp, %lGuiHelp%
 
-Gui, 1:Add, Picture, Section x+10 ym gGuiAbout, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\about\about-32.png
+Gui, 1:Add, Picture, Section x+10 ym gGuiAbout, %strTempDir%\about-32.png
 Gui, 1:Font, s8 w400, Arial ; button legend
 Gui, 1:Add, Text, xs-10 y+0 w52 center, %lGuiAbout%
 
-Gui, 1:Add, Picture, Section x+10 ym gGuiOptions, C:\Dropbox\AutoHotkey\FoldersPopup\img\icon8\v2\settings\settings-32.png
+Gui, 1:Add, Picture, Section x+10 ym gGuiOptions, %strTempDir%\settings-32.png
 Gui, 1:Font, s8 w400, Arial ; button legend
 Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiOptions, %lGuiOptions%
 
@@ -2160,7 +2184,6 @@ Gui, 2:Font
 Gui, 2:Add, Text, y+10 x40, %lOptionsLanguage%
 Gui, 2:Add, DropDownList, yp x+10 vdrpLanguage Sort, %lOptionsLanguageLabels%
 GuiControl, ChooseString, drpLanguage, %strLanguageLabel%
-
 
 Gui, 2:Add, CheckBox, y+10 x40 vblnOptionsRunAtStartup, %lOptionsRunAtStartup%
 GuiControl, , blnOptionsRunAtStartup, % FileExist(A_Startup . "\" . strAppName . ".lnk") ? 1 : 0
