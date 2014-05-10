@@ -21,6 +21,7 @@ lDialogBrowseButton	Parcourir
 lDialogCancelButton	Annuler
 lDialogCancelPrompt	Annuler les changements?
 lDialogCancelTitle	Annuler - ~1~ ~2~
+lDialogEdit	Modifier
 lDialogEditDialogPrompt	Entrez le nouveau nom de la boîte de dialogue`n(ou une partie du nom):
 lDialogEditDialogTitle	Modifier Boîte de dialogue - ~1~ ~2~
 lDialogEditFolderPrompt	Entrez le nom de ce dossier:

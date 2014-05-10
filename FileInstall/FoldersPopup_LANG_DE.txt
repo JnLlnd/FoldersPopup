@@ -21,6 +21,7 @@ lDialogBrowseButton	Durchsuchen
 lDialogCancelButton	Abbrechen
 lDialogCancelPrompt	Änderungen verwerfen?
 lDialogCancelTitle	Abbrechen - ~1~ ~2~
+lDialogEdit	Bearbeiten
 lDialogEditDialogPrompt	Geben Sie den neuen Namen für die Dialogbox ein`n(oder einen Teil des Namens):
 lDialogEditDialogTitle	Dialogbox bearbeiten - ~1~ ~2~
 lDialogEditFolderPrompt	Geben Sie den Namen für diesen Ordner an:
