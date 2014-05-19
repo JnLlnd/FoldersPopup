@@ -43,10 +43,26 @@ lDialogSelectItemToRemove	Bitte wählen Sie das zu entfernende Element.
 lDialogSubmenuLabel	Untermenü
 lDialogSubmenuShortName	Kurzname des Untermenüs
 lDonateButton	Unterstützen Sie Freeware!
+lDonateCheckPrompt	Sind Sie zufrieden mit ~1~?`n`n~1~ ist nicht nur kostenlos, sondern enthält auch keine Werbung, bei der Sie nie wissen, ob diese Spyware oder Schadsoftware enthält.`n`n~2~ mal bisher, hat Ihnen ~1~ bei der täglichen Arbeit geholfen. Wie wär's jetzt mit ein wenig Unterstützung für Freeware?
+lDonateCheckTitle	~1~ mal! - ~2~
 lDonateMenu	&Unterstützen Sie Freeware!
-lDonatePrompt	Sind Sie zufrieden mit ~1~?`n`n~1~ ist nicht nur kostenlos, sondern enthält auch keine Werbung, bei der Sie nie wissen, ob diese Spyware oder Schadsoftware enthält.`n`n~2~ mal bisher, hat Ihnen ~1~ bei der täglichen Arbeit geholfen. Wie wär's jetzt mit ein wenig Unterstützung für Freeware?
+lDonatePlatformComment1	The most flexible way using your PayPal account or your credit card
+lDonatePlatformComment2	Receive an official invoice if you need it to be refunded
+lDonatePlatformComment3	Want to know more about <a href="~1~">microdonations</a>?
+lDonatePlatformName1	Using Paypal
+lDonatePlatformName2	Using Share-it
+lDonatePlatformName3	Using Flattr
+lDonateReviewName1	Download.com
+lDonateReviewName2	PortableFreeware.com
+lDonateReviewName3	Softpedia.com
+lDonateReviewName4	BetaNews.com
+lDonateReviewName5	FileCluster.com
+lDonateText1	Support ~1~ development!
+lDonateText2	<a href="~1~">Why support freeware?</a>
+lDonateText3	... or support freeware for free!
+lDonateText4	Give a favorable review to ~1~ on:
 lDonateThankyou	Vielen Dank für die Unterstützung von Freeware!
-lDonateTitle	~1~ mal! - ~2~
+lDonateTitle	Unterstützen Sie Freeware! - ~1~ ~2~
 lGui2Close	Schliessen
 lGuiAbout	Über
 lGuiAddDialog	Hinzufügen
@@ -102,6 +118,9 @@ lMenuSwitchExplorer	Zum &Explorer wechseln
 lMenuUpdate	Nach &Update suchen
 lNavigateFileError	Beim Öffnen des Ordners `n~1~ trat ein Fehler auf.
 lNavigateSpecialError	Beim Öffnen des Speziellen Ordners #~1~ trat ein Fehler auf.
+lOopsTitle	~1~ (~2~)
+lOopsWriteProtectedError	It appears that ~1~ is running from a WRITE-PROTECTED folder where the configuration file "~1~.ini" could not be created.`n`nMove the ~1~ .EXE file to the REGULAR folder of your choice and re-run it from this folder.`n`n~1~ will quit.
+lOopsZipFileError	It appears that ~1~ is running directly from a .ZIP file.`n`nYou must extract the ~1~ .EXE file from the .ZIP file to the folder of your choice before running it.`n`n~1~ will quit.
 lOptionsAlt	Alt
 lOptionsArrDescriptions1	Wählen Sie die MAUStaste und die Kombitasten, welche das FoldersPopup Menü im Windows Explorer oder Dateidialogboxen aufruft. Standardmäßig ist dies die mittlere Maustaste ohne zusätzliche Kombitaste.
 lOptionsArrDescriptions2	Wählen Sie die MAUStaste und die Kombitasten, welche das FoldersPopup Menü in JEDEM Fenster öffnet und zum gewählten Ordner in einem NEUEN Explorer-Fenster navigiert. Standardmäßig ist dies die mittlere Maustaste mit gedrückter Shift-Taste.

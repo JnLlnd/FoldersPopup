@@ -2,6 +2,10 @@
 BUG
 
 TODO
+- remove the More submenu
+- keep the Switch submenus in a "Switch" submenu
+- add donate button in Settings and Options windows
+
 */
 
 ;===============================================
@@ -166,7 +170,7 @@ TODO
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 1.9.1 BETA
+;@Ahk2Exe-SetVersion 1.9.2 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -203,13 +207,20 @@ FileInstall, FileInstall\up_circular-26.png, %strTempDir%\up_circular-26.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "1.9.1 BETA" ; "major.minor.bugs"
+global strCurrentVersion := "1.9.2 BETA" ; "major.minor.bugs"
 global strAppVersion := "v" . strCurrentVersion
 global blnDiagMode := False
 global strDiagFile := A_ScriptDir . "\" . strAppName . "-DIAG.txt"
 global strIniFile := A_ScriptDir . "\" . strAppName . ".ini"
 blnMenuReady := false
 
+if InStr(A_ScriptDir, A_Temp) ; must be positioned after strAppName is created
+; if the app runs from a zip file, the script directory is created under the system Temp folder
+{
+	Oops(lOopsZipFileError, strAppName)
+	Gosub, CleanUpBeforeExit
+}
+	
 ;@Ahk2Exe-IgnoreBegin
 ; Piece of code for developement phase only - won't be compiled
 ; http://fincs.ahk4.net/Ahk2ExeDirectives.htm
@@ -396,6 +407,12 @@ Loop
 	if (strIniLine = "ERROR")
 		Break
 	arrDialogs.Insert(strIniLine)
+}
+
+IfNotExist, %strIniFile%
+{
+	Oops(lOopsWriteProtectedError, strAppName)
+	Gosub, CleanUpBeforeExit
 }
 
 return
@@ -1654,7 +1671,7 @@ Gui, 1:+OwnDialogs
 
 if Time2Donate(intStartups, blnDonator)
 {
-	MsgBox, 36, % l(lDonateTitle, intStartups, strAppName), % l(lDonatePrompt, strAppName, intStartups)
+	MsgBox, 36, % l(lDonateCheckTitle, intStartups, strAppName), % l(lDonateCheckPrompt, strAppName, intStartups)
 	IfMsgBox, Yes
 		Gosub, GuiDonate
 }
@@ -2122,6 +2139,65 @@ return
 
 
 ;------------------------------------------------------------
+GuiDonate:
+;------------------------------------------------------------
+
+intGui1WinID := WinExist("A")
+Gui, 1:Submit, NoHide
+Gui, 2:New, , % L(lDonateTitle, strAppName, strAppVersion)
+Gui, 2:+Owner1
+Gui, 2:Font, s12 w700, Verdana
+Gui, 2:Add, Link, y10 w420, % L(lDonateText1, strAppName)
+Gui, 2:Font, s8 w400, Verdana
+Gui, 2:Add, Link, x175 w185 y+10, % L(lDonateText2, "http://code.jeanlalonde.ca/support-freeware/")
+loop, 3
+{
+	Gui, 2:Add, Button, % (A_Index = 1 ? "y+10 Default vbtnDonateDefault " : "") . " xm w150 gButtonDonate" . A_Index, % lDonatePlatformName%A_Index%
+	Gui, 2:Add, Link, x+10 w235 yp, % L(lDonatePlatformComment%A_Index%, (A_Index = 3 ? "https://flattr.com/" : ""))
+}
+
+Gui, 2:Font, s10 w700, Verdana
+Gui, 2:Add, Link, xm y+20 w420, %lDonateText3%
+Gui, 2:Font, s8 w400, Verdana
+Gui, 2:Add, Link, xm y+10 w420, % L(lDonateText4, strAppName)
+
+strDonateReviewUrl1 := "http://download.cnet.com/FoldersPopup/3000-2344_4-76062382.html"
+strDonateReviewUrl2 := "http://www.portablefreeware.com/index.php?id=2557"
+strDonateReviewUrl3 := "http://www.softpedia.com/get/System/OS-Enhancements/FoldersPopup.shtml"
+strDonateReviewUrl4 := "http://fileforum.betanews.com/detail/Folders-Popup/1385175626/1"
+strDonateReviewUrl5 := "http://www.filecluster.com/System-Utilities/Other-Utilities/Download-FoldersPopup.html"
+
+loop, 5
+	Gui, 2:Add, Link, % (A_Index = 1 ? "y+10" : "") . " x175 w185", % "<a href=""" . strDonateReviewUrl%A_Index% . """>" . lDonateReviewName%A_Index% . "</a>"
+
+Gui, 2:Font, s8 w400, Verdana
+Gui, 2:Add, Button, x175 y+20 g2GuiClose vbtnDonateClose, %lGui2Close%
+GuiControl, Focus, btnDonateDefault
+Gui, 2:Show, AutoSize Center
+Gui, 1:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ButtonDonate1:
+ButtonDonate2:
+ButtonDonate3:
+;------------------------------------------------------------
+
+strDonatePlatformUrl1 := "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AJNCXKWKYAXLCV"
+strDonatePlatformUrl2 := "http://www.shareit.com/product.html?productid=300628012"
+strDonatePlatformUrl3 := "http://code.jeanlalonde.ca/?flattrss_redirect&id=19&md5=e1767c143c9bde02b4e7f8d9eb362b71"
+
+StringReplace, strButton, A_ThisLabel, ButtonDonate
+Run, % strDonatePlatformUrl%strButton%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 GuiHelp:
 ;------------------------------------------------------------
 
@@ -2360,14 +2436,6 @@ Gosub, 2GuiClose
 
 blnMenuReady := true
 
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiDonate:
-;------------------------------------------------------------
-Run, https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AJNCXKWKYAXLCV
 return
 ;------------------------------------------------------------
 
@@ -2789,7 +2857,11 @@ return
 SwitchExplorer:
 ;------------------------------------------------------------
 
-WinActivate, % "ahk_id " . objExplorersWinId[A_ThisMenuItemPos]
+if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
+	ComObjCreate("Shell.Application").Explore(objExplorersLocation[A_ThisMenuItemPos])
+	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
+else
+	WinActivate, % "ahk_id " . objExplorersWinId[A_ThisMenuItemPos]
 
 return
 ;------------------------------------------------------------
@@ -3288,7 +3360,7 @@ Oops(strMessage, objVariables*)
 ;------------------------------------------------
 {
 	Gui, 1:+OwnDialogs
-	MsgBox, 48, % L(lFuncOopsTitle, strAppName, strAppVersion), % L(strMessage, objVariables*)
+	MsgBox, 48, % L(lOopsTitle, strAppName, strAppVersion), % L(strMessage, objVariables*)
 }
 ; ------------------------------------------------
 

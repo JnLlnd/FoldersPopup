@@ -43,10 +43,26 @@ lDialogSelectItemToRemove	Veuillez sélectionner l'item à supprimer.
 lDialogSubmenuLabel	Sous-menu
 lDialogSubmenuShortName	Nom court du sous-menu
 lDonateButton	Soutenez ce gratuiciel!
+lDonateCheckPrompt	Vous aimez ~1~?`n`n~1~ n'est pas seulement GRATUIT mais aussi distribué SANS ces attrapes publicitaires dont on ne sait jamais si elles transportent des virus ou encore des logiciels espions ou malveillants.`n`nCela fait maintenant ~2~ fois que ~1~ est appelé pour faciliter votre travail quotidien. Que diriez-vous de soutenir ce gratuiciel à votre tour?
+lDonateCheckTitle	~1~ fois! - ~2~
 lDonateMenu	&Soutenez ce gratuiciel!
-lDonatePrompt	Vous aimez ~1~?`n`n~1~ n'est pas seulement GRATUIT mais aussi distribué SANS ces attrapes publicitaires dont on ne sait jamais si elles transportent des virus ou encore des logiciels espions ou malveillants.`n`nCela fait maintenant ~2~ fois que ~1~ est appelé pour faciliter votre travail quotidien. Que diriez-vous de soutenir ce gratuiciel à votre tour?
+lDonatePlatformComment1	La façon la plus flexible avec votre compte PayPal ou votre carte de crédit
+lDonatePlatformComment2	Recevez une facture officielle si vous en avez besoin pour un remboursement
+lDonatePlatformComment3	Vous voulez en apprendre plus à propos des <a href="~1~">microdons</a>?
+lDonatePlatformName1	Avec Paypal
+lDonatePlatformName2	Avec Share-it
+lDonatePlatformName3	Avec Flattr
+lDonateReviewName1	Download.com
+lDonateReviewName2	PortableFreeware.com
+lDonateReviewName3	Softpedia.com
+lDonateReviewName4	BetaNews.com
+lDonateReviewName5	FileCluster.com
+lDonateText1	Soutenez le développement de ~1~ !
+lDonateText2	<a href="~1~">Pourquoi soutenir ce gratuiciel?</a>
+lDonateText3	... ou soutenez ce gratuiciel gratuitement !
+lDonateText4	Rédigez un avis favorable à ~1~ sur :
 lDonateThankyou	Merci pour cette marque d'appréciation!
-lDonateTitle	~1~ fois! - ~2~
+lDonateTitle	Soutenez ce gratuiciel! - ~1~ ~2~
 lGui2Close	Fermer
 lGuiAbout	À propos
 lGuiAddDialog	Ajouter
@@ -102,6 +118,9 @@ lMenuSwitchExplorer	Basculer vers l'&Explorateur
 lMenuUpdate	Mettre à jour
 lNavigateFileError	Une erreur s'est produite lors de l'ouverture du dossier:`n~1~.
 lNavigateSpecialError	Une erreur s'est produite lors de l'ouverture du dossier spécial #~1~.
+lOopsTitle	~1~ (~2~)
+lOopsWriteProtectedError	Il semble que ~1~ a été lancé depuis un dossier en ÉCRITURE SEULEMENT où il est impossible de créer le fichier de configuration "~1~.ini".`n`nDéplacez le fichier .EXE de ~1~ dans un dossier RÉGULIER de votre choix, puis exécutez l'application à nouveau depuis ce dossier.`n`n~1~ va être fermé.
+lOopsZipFileError	Il semble que ~1~ a été lancé directement depuis un fichier compressé (ZIP).`n`nVous devez extraire le fichier .EXE de ~1~ du fichier ZIP dans un dossier de votre choix, puis exécuter l'application à nouveau depuis ce dossier.`n`n~1~ va être fermé.
 lOptionsAlt	Alt
 lOptionsArrDescriptions1	Choisissez le bouton de la SOURIS et la touche de combinaison qui ouvrira le menu popup dans l'Explorateur de fichier de Windows ou dans des boîtes de dialogue de fichier. Par défaut, il s'agit du bouton central de la souris (MButton) sans touche de modification.
 lOptionsArrDescriptions2	Choisissez le bouton de la SOURIS et la touche de combinaison qui ouvrira le menu popup dans N'IMPORTE QUELLE fenêtre et ouvrira le dossier sélectionné dans une NOUVELLE fenêtre de l'Explorateur de fichiers. Par défaut, il s'agit du bouton central de la souris (MButton) avec la touche de modification Maj (Shift).
