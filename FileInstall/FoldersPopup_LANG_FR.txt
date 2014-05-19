@@ -69,6 +69,7 @@ lGuiAddDialog	Ajouter
 lGuiAddFolder	Ajouter
 lGuiCancel	Annuler
 lGuiClose	Fermer
+lGuiDonate	Soutien
 lGuiEditFolder	Modifier
 lGuiHelp	Aide
 lGuiLvDialogsHeader	Boîtes de dialogue prises en charge`n(une partie du nom suffit)

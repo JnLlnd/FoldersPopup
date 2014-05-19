@@ -2,7 +2,6 @@
 BUG
 
 TODO
-- add donate button in Settings and Options windows
 - move version checking file to my site
 
 */
@@ -202,6 +201,12 @@ FileInstall, FileInstall\remove_image-26.png, %strTempDir%\remove_image-26.png
 FileInstall, FileInstall\settings-32.png, %strTempDir%\settings-32.png
 FileInstall, FileInstall\up-12.png, %strTempDir%\up-12.png
 FileInstall, FileInstall\up_circular-26.png, %strTempDir%\up_circular-26.png
+
+FileInstall, FileInstall\thumbs_up-32.png, %strTempDir%\thumbs_up-32.png
+FileInstall, FileInstall\solutions-32.png, %strTempDir%\solutions-32.png
+FileInstall, FileInstall\handshake-32.png, %strTempDir%\handshake-32.png
+FileInstall, FileInstall\conference-32.png, %strTempDir%\conference-32.png
+FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 
 Gosub, InitLanguageVariables
 
@@ -1040,15 +1045,23 @@ Gui, 1:Add, Picture, xs+70 y+5 gGuiAddDialog, %strTempDir%\add_image-26.png
 Gui, 1:Add, Picture, x+10 yp gGuiEditDialog, %strTempDir%\edit_image-26.png
 Gui, 1:Add, Picture, x+10 yp gGuiRemoveDialog, %strTempDir%\remove_image-26.png
 
-Gui, 1:Add, Text, Section xs+60 ym
+Gui, 1:Add, Text, Section xs+18 ym
 
-Gui, 1:Add, Picture, xs+10 ym gGuiHelp, %strTempDir%\help-32.png
+strDonateButtons := "thumbs_up|solutions|handshake|conference|gift"
+StringSplit, arrDonateButtons, strDonateButtons, |
+Random, intDonateButton, 1, 5
+
+Gui, 1:Add, Picture, xs+10 ym gGuiDonate, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png"
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs y+0 w52 center gGuiHelp, %lGuiHelp%
+Gui, 1:Add, Text, xs y+0 w52 center gGuiDonate, %lGuiDonate%
+
+Gui, 1:Add, Picture, Section x+10 ym gGuiHelp, %strTempDir%\help-32.png
+Gui, 1:Font, s8 w400, Arial ; button legend
+Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiHelp, %lGuiHelp%
 
 Gui, 1:Add, Picture, Section x+10 ym gGuiAbout, %strTempDir%\about-32.png
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs-10 y+0 w52 center, %lGuiAbout%
+Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiAbout, %lGuiAbout%
 
 Gui, 1:Add, Picture, Section x+10 ym gGuiOptions, %strTempDir%\settings-32.png
 Gui, 1:Font, s8 w400, Arial ; button legend
@@ -2273,6 +2286,7 @@ Gui, 2:Add, Text, % "yp x+5 vlblPopupFixPositionY " . (blnPopupFix ? "" : "hidde
 Gui, 2:Add, Edit, % "yp x+5 w36 h15 vstrPopupFixPositionY center " . (blnPopupFix ? "" : "hidden"), %arrPopupFixPosition2%
 
 ; Build Gui footer
+Gui, 2:Add, Button, x180 y+20 gGuiDonate, %lDonateButton%
 Gui, 2:Add, Button, y+20 x180 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
 Gui, 2:Add, Button, yp x+15 vbtnOptionsCancel gButtonOptionsCancel, %lGuiCancel%
 Gui, 2:Add, Text

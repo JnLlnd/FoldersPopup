@@ -69,6 +69,7 @@ lGuiAddDialog	Hinzufügen
 lGuiAddFolder	Hinzufügen
 lGuiCancel	&Abbrechen
 lGuiClose	&Schliessen
+lGuiDonate	Unterstützen
 lGuiEditFolder	Bearbeiten
 lGuiHelp	Hilfe
 lGuiLvDialogsHeader	Unterstützte Dialoge`n(Teile der Namen)
