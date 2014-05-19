@@ -101,7 +101,6 @@ lMenuDesktop	&Desktop
 lMenuDialogNotSupported	Diese Dialogbox wird momentan noch nicht unterstützt
 lMenuDocuments	D&okumente
 lMenuHelp	Hilfe
-lMenuMore	&Mehr...
 lMenuMyComputer	&Mein Computer
 lMenuNetworkNeighborhood	&Netzwerkumgebung
 lMenuPictures	&Bilder
@@ -113,6 +112,7 @@ lMenuRunAtStartup	&Beim Start von Windows ausführen
 lMenuSeparator	----------------
 lMenuSettings	&~1~ Einstellungen
 lMenuSpecialFolders	&Spezielle Ordner
+lMenuSwitch	Switch
 lMenuSwitchDialog	Sw&itch in &Dialogbox
 lMenuSwitchExplorer	Zum &Explorer wechseln
 lMenuUpdate	Nach &Update suchen

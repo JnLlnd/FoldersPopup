@@ -101,7 +101,6 @@ lMenuDesktop	Bureau
 lMenuDialogNotSupported	Ce type de boîte de dialogue n'est pas encore pris en charge
 lMenuDocuments	Documents
 lMenuHelp	Aide
-lMenuMore	&Plus...
 lMenuMyComputer	Ordinateur
 lMenuNetworkNeighborhood	Réseau
 lMenuPictures	Images
@@ -113,6 +112,7 @@ lMenuRunAtStartup	Exécuter au démarrage
 lMenuSeparator	----------------
 lMenuSettings	Paramètres de &~1~
 lMenuSpecialFolders	Dossiers &spéciaux
+lMenuSwitch	Basculer
 lMenuSwitchDialog	Basculer dans cette &boîte de dialogue
 lMenuSwitchExplorer	Basculer vers l'&Explorateur
 lMenuUpdate	Mettre à jour

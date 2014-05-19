@@ -2,9 +2,8 @@
 BUG
 
 TODO
-- remove the More submenu
-- keep the Switch submenus in a "Switch" submenu
 - add donate button in Settings and Options windows
+- move version checking file to my site
 
 */
 
@@ -583,18 +582,18 @@ if (blnDisplaySpecialFolders)
 if (blnDisplayRecentFolders)
 {
 	Gosub, BuildRecentFoldersMenu
-	Menu, menuMore
+	Menu, %lMainMenuName%
 		, % (intRecentFoldersIndex ? "Enable" : "Disable")
-		, %lMenuRecentFolders%
+		, %lMenuRecentFolders%...
 }
 
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
-	Menu, menuMore
+	Menu, menuSwitch
 		, % (intExplorersIndex ? "Enable" : "Disable")
 		, %lMenuSwitchExplorer%
-	Menu, menuMore
+	Menu, menuSwitch
 		, % (intExplorersIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
 		, %lMenuSwitchDialog%
 }
@@ -657,18 +656,18 @@ if (blnDisplaySpecialFolders)
 if (blnDisplayRecentFolders)
 {
 	Gosub, BuildRecentFoldersMenu
-	Menu, menuMore
+	Menu, %lMainMenuName%
 		, % (intRecentFoldersIndex ? "Enable" : "Disable")
-		, %lMenuRecentFolders%
+		, %lMenuRecentFolders%...
 }
 
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
-	Menu, menuMore
+	Menu, menuSwitch
 		, % (intExplorersIndex ? "Enable" : "Disable")
 		, %lMenuSwitchExplorer%
-	Menu, menuMore
+	Menu, menuSwitch
 		, % (intExplorersIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
 		, %lMenuSwitchDialog%
 }
@@ -770,8 +769,7 @@ BuildRecentFoldersMenu:
 ;------------------------------------------------------------
 
 Menu, menuRecentFolders, Add
-; Menu, menuRecentFolders, DeleteAll ; do not use, because it makes the Special menu to disappear 1/2 times
-Menu, menuRecentFolders, Delete
+Menu, menuRecentFolders, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
 
 objRecentFolders := Object()
 intRecentFoldersIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
@@ -822,10 +820,6 @@ Loop, parse, strDirList, `n
 	}
 }
 
-if !(intRecentFoldersIndex) ; recreate the menu because it was deleted
-	Menu, menuRecentFolders, Add
-Menu, menuMore, Add, %lMenuRecentFolders%, :menuRecentFolders ; re-add to More menu because it was deleted
-
 return
 ;------------------------------------------------------------
 
@@ -835,11 +829,9 @@ BuildSwitchMenu:
 ;------------------------------------------------------------
 
 Menu, menuSwitchExplorer, Add
-; Menu, menuSwitchExplorer, DeleteAll ; do not use, because it makes the Special menu to disappear
-Menu, menuSwitchExplorer, Delete
+Menu, menuSwitchExplorer, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
 Menu, menuSwitchDialog, Add
-; Menu, menuSwitchDialog, DeleteAll ; do not use, because it makes the Special menu to disappear
-Menu, menuSwitchDialog, Delete
+Menu, menuSwitchDialog, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
 
 objExplorersWinId := Object()
 objExplorersLocation := Object()
@@ -872,14 +864,6 @@ For pExp in ComObjCreate("Shell.Application").Windows
 	}
 }
 
-if !(intExplorersIndex) ; recreate the menu because it was deleted
-{
-	Menu, menuSwitchExplorer, Add
-	Menu, menuSwitchDialog, Add
-}
-Menu, menuMore, Add, %lMenuSwitchExplorer%, :menuSwitchExplorer ; re-add to More menu because it was deleted
-Menu, menuMore, Add, %lMenuSwitchDialog%, :menuSwitchDialog ; re-add to More menu because it was deleted
-
 return
 ;------------------------------------------------------------
 
@@ -894,21 +878,22 @@ Menu, %lMainMenuName%, DeleteAll
 
 BuildOneMenu(lMainMenuName) ; and recurse for submenus
 
-Menu, menuMore, Add
-Menu, menuMore, DeleteAll
+Menu, %lMainMenuName%, Add
 
 if (blnDisplaySpecialFolders)
-	Menu, menuMore, Add, %lMenuSpecialFolders%, :menuSpecialFolders
+	Menu, %lMainMenuName%, Add, %lMenuSpecialFolders%..., :menuSpecialFolders
 if (blnDisplayRecentFolders)
-	Menu, menuMore, Add, %lMenuRecentFolders%, :menuRecentFolders
+	Menu, %lMainMenuName%, Add, %lMenuRecentFolders%..., :menuRecentFolders
+
 if (blnDisplaySwitchMenu)
 {
-	Menu, menuMore, Add, %lMenuSwitchExplorer%, :menuSwitchExplorer
-	Menu, menuMore, Add, %lMenuSwitchDialog%, :menuSwitchDialog
+	Menu, menuSwitch, Add
+	Menu, menuSwitch, DeleteAll
+	Menu, menuSwitch, Add, %lMenuSwitchExplorer%, :menuSwitchExplorer
+	Menu, menuSwitch, Add, %lMenuSwitchDialog%, :menuSwitchDialog
 }
 
-Menu, %lMainMenuName%, Add
-Menu, %lMainMenuName%, Add, %lMenuMore%, :menuMore
+Menu, %lMainMenuName%, Add, %lMenuSwitch%..., :menuSwitch
 Menu, %lMainMenuName%, Add
 Menu, %lMainMenuName%, Add, % L(lMenuSettings, strAppName), GuiShow
 Menu, %lMainMenuName%, Default, % L(lMenuSettings, strAppName)
