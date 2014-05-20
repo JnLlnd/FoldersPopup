@@ -2,7 +2,6 @@
 BUG
 
 TODO
-- move version checking file to my site
 
 */
 
@@ -211,8 +210,9 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "1.9.2 BETA" ; "major.minor.bugs"
-global strAppVersion := "v" . strCurrentVersion
+global strCurrentVersion := "1.9.2" ; "major.minor.bugs"
+global strCurrentBranch := "beta" ; "prod" or "beta", alway lowercase for filename
+global strAppVersion := "v" . strCurrentVersion . " " . strCurrentBranch
 global blnDiagMode := False
 global strDiagFile := A_ScriptDir . "\" . strAppName . "-DIAG.txt"
 global strIniFile := A_ScriptDir . "\" . strAppName . ".ini"
@@ -745,6 +745,7 @@ Menu, Tray, Add
 Menu, Tray, Add, %lMenuUpdate%, Check4Update
 Menu, Tray, Add, %lMenuHelp%, GuiHelp
 Menu, Tray, Add, %lMenuAbout%, GuiAbout
+Menu, Tray, Add, %lDonateMenu%, GuiDonate
 Menu, Tray, Default, % L(lMenuSettings, strAppName)
 
 return
@@ -1675,11 +1676,20 @@ if Time2Donate(intStartups, blnDonator)
 }
 IniWrite, % (intStartups + 1), %strIniFile%, Global, Startups
 
-strLatestVersion := Url2Var("https://raw.github.com/JnLlnd/FoldersPopup/master/latest-version.txt")
+; strLatestVersion := Url2Var("https://raw.github.com/JnLlnd/FoldersPopup/master/latest-version.txt")
+
+strLatestVersion := Url2Var("http://code.jeanlalonde.ca/ahk/folderspopup/latest-version/latest-version-" . strCurrentBranch . ".php")
+strLatestVersion := SubStr(strLatestVersion, InStr(strLatestVersion, "[[") + 2) 
+strLatestVersion := SubStr(strLatestVersion, 1, InStr(strLatestVersion, "]]") - 1) 
 strLatestVersion := Trim(strLatestVersion, "`n`l") ; remove en-of-line if present
 
-if RegExMatch(strCurrentVersion, "(alpha|beta)")
-	or (FirstVsSecondIs(strLatestSkipped, strLatestVersion) >= 0 and (A_ThisMenuItem <> lMenuUpdate))
+Loop, Parse, strLatestVersion, , 0123456789. ; strLatestVersion should only contain digits and dots
+	if (A_ThisMenuItem <> lMenuUpdate)
+		return
+	else
+		strLatestVersion := "0.0.0"
+
+if (FirstVsSecondIs(strLatestSkipped, strLatestVersion) >= 0 and (A_ThisMenuItem <> lMenuUpdate))
 	return
 
 if FirstVsSecondIs(strLatestVersion, strCurrentVersion) = 1
