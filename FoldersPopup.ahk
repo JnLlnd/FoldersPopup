@@ -167,7 +167,7 @@ TODO
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 1.9.2 BETA
+;@Ahk2Exe-SetVersion 1.9.3 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -210,7 +210,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "1.9.2" ; "major.minor.bugs"
+global strCurrentVersion := "1.9.3" ; "major.minor.bugs"
 global strCurrentBranch := "beta" ; "prod" or "beta", alway lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . " " . strCurrentBranch
 global blnDiagMode := False
@@ -2167,19 +2167,22 @@ loop, 3
 Gui, 2:Font, s10 w700, Verdana
 Gui, 2:Add, Link, xm y+20 w420, %lDonateText3%
 Gui, 2:Font, s8 w400, Verdana
-Gui, 2:Add, Link, xm y+10 w420, % L(lDonateText4, strAppName)
+Gui, 2:Add, Link, xm y+10 w420 Section, % L(lDonateText4, strAppName)
 
-strDonateReviewUrl1 := "http://download.cnet.com/FoldersPopup/3000-2344_4-76062382.html"
-strDonateReviewUrl2 := "http://www.portablefreeware.com/index.php?id=2557"
-strDonateReviewUrl3 := "http://www.softpedia.com/get/System/OS-Enhancements/FoldersPopup.shtml"
-strDonateReviewUrl4 := "http://fileforum.betanews.com/detail/Folders-Popup/1385175626/1"
-strDonateReviewUrl5 := "http://www.filecluster.com/System-Utilities/Other-Utilities/Download-FoldersPopup.html"
+strDonateReviewUrlLeft1 := "http://download.cnet.com/FoldersPopup/3000-2344_4-76062382.html"
+strDonateReviewUrlLeft2 := "http://www.portablefreeware.com/index.php?id=2557"
+strDonateReviewUrlLeft3 := "http://www.softpedia.com/get/System/OS-Enhancements/FoldersPopup.shtml"
+strDonateReviewUrlRight1 := "http://fileforum.betanews.com/detail/Folders-Popup/1385175626/1"
+strDonateReviewUrlRight2 := "http://www.filecluster.com/System-Utilities/Other-Utilities/Download-FoldersPopup.html"
 
-loop, 5
-	Gui, 2:Add, Link, % (A_Index = 1 ? "y+10" : "") . " x175 w185", % "<a href=""" . strDonateReviewUrl%A_Index% . """>" . lDonateReviewName%A_Index% . "</a>"
+loop, 3
+	Gui, 2:Add, Link, % (A_Index = 1 ? "ys+20" : "y+5") . " x25 w150", % "<a href=""" . strDonateReviewUrlLeft%A_Index% . """>" . lDonateReviewNameLeft%A_Index% . "</a>"
+
+loop, 2
+	Gui, 2:Add, Link, % (A_Index = 1 ? "ys+20" : "y+5") . " x175 w150", % "<a href=""" . strDonateReviewUrlRight%A_Index% . """>" . lDonateReviewNameRight%A_Index% . "</a>"
 
 Gui, 2:Font, s8 w400, Verdana
-Gui, 2:Add, Button, x175 y+20 g2GuiClose vbtnDonateClose, %lGui2Close%
+Gui, 2:Add, Button, x175 y+40 g2GuiClose vbtnDonateClose, %lGui2Close%
 GuiControl, Focus, btnDonateDefault
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled

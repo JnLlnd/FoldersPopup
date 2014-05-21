@@ -52,11 +52,11 @@ lDonatePlatformComment3	Vous voulez en apprendre plus à propos des <a href="~1~"
 lDonatePlatformName1	Avec Paypal
 lDonatePlatformName2	Avec Share-it
 lDonatePlatformName3	Avec Flattr
-lDonateReviewName1	Download.com
-lDonateReviewName2	PortableFreeware.com
-lDonateReviewName3	Softpedia.com
-lDonateReviewName4	BetaNews.com
-lDonateReviewName5	FileCluster.com
+lDonateReviewNameLeft1	Download.com
+lDonateReviewNameLeft2	PortableFreeware.com
+lDonateReviewNameLeft3	Softpedia.com
+lDonateReviewNameRight1	BetaNews.com
+lDonateReviewNameRight2	FileCluster.com
 lDonateText1	Soutenez le développement de ~1~ !
 lDonateText2	<a href="~1~">Pourquoi soutenir ce gratuiciel?</a>
 lDonateText3	... ou soutenez ce gratuiciel gratuitement !

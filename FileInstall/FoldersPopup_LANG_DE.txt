@@ -52,11 +52,11 @@ lDonatePlatformComment3	Want to know more about <a href="~1~">microdonations</a>
 lDonatePlatformName1	Using Paypal
 lDonatePlatformName2	Using Share-it
 lDonatePlatformName3	Using Flattr
-lDonateReviewName1	Download.com
-lDonateReviewName2	PortableFreeware.com
-lDonateReviewName3	Softpedia.com
-lDonateReviewName4	BetaNews.com
-lDonateReviewName5	FileCluster.com
+lDonateReviewNameLeft1	Download.com
+lDonateReviewNameLeft2	PortableFreeware.com
+lDonateReviewNameLeft3	Softpedia.com
+lDonateReviewNameRight1	BetaNews.com
+lDonateReviewNameRight2	FileCluster.com
 lDonateText1	Support ~1~ development!
 lDonateText2	<a href="~1~">Why support freeware?</a>
 lDonateText3	... or support freeware for free!
