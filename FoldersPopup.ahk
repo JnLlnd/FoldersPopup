@@ -212,7 +212,7 @@ Gosub, InitLanguageVariables
 global strAppName := "FoldersPopup"
 global strCurrentVersion := "1.9.3" ; "major.minor.bugs"
 global strCurrentBranch := "beta" ; "prod" or "beta", alway lowercase for filename
-global strAppVersion := "v" . strCurrentVersion . " " . strCurrentBranch
+global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch <> "prod" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
 global strDiagFile := A_ScriptDir . "\" . strAppName . "-DIAG.txt"
 global strIniFile := A_ScriptDir . "\" . strAppName . ".ini"
@@ -1699,7 +1699,10 @@ if FirstVsSecondIs(strLatestVersion, strCurrentVersion) = 1
 
 	MsgBox, 3, % l(lUpdateTitle, strAppName), % l(lUpdatePrompt, strAppName, strCurrentVersion, strLatestVersion), 30
 	IfMsgBox, Yes
-		Run, http://code.jeanlalonde.ca/folderspopup/
+		if (strCurrentBranch = "prod")
+			Run, http://code.jeanlalonde.ca/folderspopup/
+		else
+			Run, http://code.jeanlalonde.ca/folderspopup20beta/
 	IfMsgBox, No
 		IniWrite, %strLatestVersion%, %strIniFile%, Global, LatestVersionSkipped
 	IfMsgBox, Cancel ; Remind me
@@ -1711,7 +1714,10 @@ else if (A_ThisMenuItem = lMenuUpdate)
 {
 	MsgBox, 4, % l(lUpdateTitle, strAppName), % l(lUpdateYouHaveLatest, strAppVersion, strAppName), 30
 	IfMsgBox, Yes
-		Run, http://code.jeanlalonde.ca/folderspopup/
+		if (strCurrentBranch = "prod")
+			Run, http://code.jeanlalonde.ca/folderspopup/
+		else
+			Run, http://code.jeanlalonde.ca/folderspopup20beta/
 }
 
 return 
