@@ -2,6 +2,7 @@
 BUG
 
 TODO
+- check reserved shortcuts in main menu
 
 */
 
@@ -12,10 +13,16 @@ TODO
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
 	Version: v1.9 BETA (not to be released) (2014-05-nn)
-	* fix strange bug with Special folders menu disappearing after Recent or Swith menus refresh because of DeleteAll command
 	* fix bug missing error message and other language minor changes
 	* reorder popup menu and place settings, add this folder and support freeware menus at the end of main menu
 	* reorder checkboxes in GuiOptions
+	* support recent folders on Win XP
+	* loading language files and images to the exe files
+	* create a "Switch..." submenu for "Switch to Explorer" and "Switch in dialog box"options
+	* allow "Switch to Explorer" menu to open a new window (with combining Middle mouse button with the Shift key)
+	* prevent app from running directly from the zip file or running in a write-protected folder
+	* new "Support freeware" dialog box and options
+	* internal changes in the check for update function
 
 	Version: v1.8 ALPHA (not to be released) (2014-05-04)
 	* add switch in dialog box to other explorer windows already opened
@@ -167,7 +174,7 @@ TODO
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 1.9.3 BETA
+;@Ahk2Exe-SetVersion 1.9.4 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -210,7 +217,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "1.9.3" ; "major.minor.bugs"
+global strCurrentVersion := "1.9.4" ; "major.minor.bugs"
 global strCurrentBranch := "beta" ; "prod" or "beta", alway lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch <> "prod" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
