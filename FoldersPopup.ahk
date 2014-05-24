@@ -23,6 +23,7 @@ TODO
 	* prevent app from running directly from the zip file or running in a write-protected folder
 	* new "Support freeware" dialog box and options
 	* internal changes in the check for update function
+	* better error handling if error occurs during ComObjCreate, situation occurring when Directory Opus is running (tested with v11.4)
 
 	Version: v1.8 ALPHA (not to be released) (2014-05-04)
 	* add switch in dialog box to other explorer windows already opened
@@ -556,7 +557,7 @@ PopupMenuKeyboard: ; default #k
 if !(blnMenuReady)
 	return
 
-If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass)
+If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass, strTargetControl)
 {
 	StringReplace, strThisHotkey, A_ThisHotkey, $ ; remove $ from hotkey
 	if (A_ThisLabel = "PopupMenuMouse")
@@ -577,18 +578,22 @@ Gosub, SetMenuPosition
 if (blnDisplaySpecialFolders)
 {
 	Menu, menuSpecialFolders
-		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
+		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+		or WindowIsDirectoryOpus(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
 		, %lMenuMyComputer%
 	Menu, menuSpecialFolders
-		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
+		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+		or WindowIsDirectoryOpus(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
 		, %lMenuNetworkNeighborhood%
 
-	; There is no point to navigate a dialog box or console to Control Panel or Recycle Bin, unknown for FreeCommander
+	; There is no point to navigate a dialog box or console to Control Panel or Recycle Bin, unknown for FreeCommander and DirectoryOpus
 	Menu, menuSpecialFolders
-		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
+		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+		or WindowIsDirectoryOpus(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
 		, %lMenuControlPanel%
 	Menu, menuSpecialFolders
-		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
+		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+		or WindowIsDirectoryOpus(strTargetClass) or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
 		, %lMenuRecycleBin%
 }
 
@@ -607,18 +612,22 @@ if (blnDisplaySwitchMenu)
 		, % (intExplorersIndex ? "Enable" : "Disable")
 		, %lMenuSwitchExplorer%
 	Menu, menuSwitch
-		, % (intExplorersIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
+		, % (intDialogsIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
 		, %lMenuSwitchDialog%
 }
 
-if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass) or DialogIsSupported(strTargetWinId))
+if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass)
+	or WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass) or DialogIsSupported(strTargetWinId))
 {
 	; Enable Add This Folder only if the mouse is over an Explorer (tested on WIN_XP and WIN_7) or a dialog box (works on WIN_7, not on WIN_XP)
 	; Other tests shown that WIN_8 behaves like WIN_7. So, I assume WIN_8 to work. If someone could confirm (until I can test it myself)?
 	if (blnDiagMode)
-		Diag("ShowMenu", "Folders Menu " . (WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT") . " Add this folder")
+		Diag("ShowMenu", "Folders Menu " 
+			. (WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT")
+			. " Add this folder")
 	Menu, %lMainMenuName%
-		, % WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
+		, % WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
+		or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 		, %lMenuAddThisFolder%
 	Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
 }
@@ -681,7 +690,7 @@ if (blnDisplaySwitchMenu)
 		, % (intExplorersIndex ? "Enable" : "Disable")
 		, %lMenuSwitchExplorer%
 	Menu, menuSwitch
-		, % (intExplorersIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
+		, % (intDialogsIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
 		, %lMenuSwitchDialog%
 }
 
@@ -849,6 +858,7 @@ Menu, menuSwitchDialog, DeleteAll ; had problem with DeleteAll making the Specia
 
 objExplorersWinId := Object()
 objExplorersLocation := Object()
+intDialogsIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
 intExplorersIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
 intShortcut := 0
 
@@ -868,22 +878,29 @@ For pExp in ComObjCreate("Shell.Application").Windows
 
 	if !StrLen(strType)
 	{
-		intExplorersIndex := intExplorersIndex + 1
-		objExplorersWinId.Insert(intExplorersIndex, pExp.HWND)
-		objExplorersLocation.Insert(intExplorersIndex, pExp.LocationURL) ; also .LocationName see http://msdn.microsoft.com/en-us/library/aa752084#properties
-		
-		strLocation :=  UriDecode(pExp.LocationURL)
-		StringReplace, strLocation, strLocation, file:///
-		StringReplace, strLocation, strLocation, /, \, A
-		if !StrLen(strLocation)
-			strLocation := pExp.LocationName
-
-		Menu, menuSwitchExplorer, Add
-			, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strLocation
-			, SwitchExplorer
-		Menu, menuSwitchDialog, Add
-			, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strLocation
-			, SwitchDialog
+		if StrLen(pExp.LocationURL)
+		{
+			intDialogsIndex := intDialogsIndex + 1
+			objExplorersLocation.Insert(intDialogsIndex, pExp.LocationURL) ; also .LocationName see http://msdn.microsoft.com/en-us/library/aa752084#properties
+			strLocation :=  UriDecode(pExp.LocationURL)
+			StringReplace, strLocation, strLocation, file:///
+			StringReplace, strLocation, strLocation, /, \, A
+			if !StrLen(strLocation)
+				strLocation := pExp.LocationName
+			Menu, menuSwitchDialog, Add
+				, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strLocation
+				, SwitchDialog
+		}
+		else
+			strLocation := "???"
+		if StrLen(pExp.HWND)
+		{
+			intExplorersIndex := intExplorersIndex + 1
+			objExplorersWinId.Insert(intExplorersIndex, pExp.HWND)
+			Menu, menuSwitchExplorer, Add
+				, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strLocation
+				, SwitchExplorer
+		}
 	}
 }
 
@@ -1557,24 +1574,24 @@ if (blnDiagMode)
 else
 	intTries := 3
 
-if WindowIsFreeCommander(strTargetClass)
+if WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
 {
-	if (WinExist("A") <> strWinId) ; in case that some window just popped out, and initialy active window lost focus
+	if (WinExist("A") <> strTargetWinId) ; in case that some window just popped out, and initialy active window lost focus
 	{
-		WinActivate, ahk_id %strWinId% ; we'll activate initialy active window
+		WinActivate, ahk_id %strTargetWinId% ; we'll activate initialy active window
 		Sleep, intWaitTimeIncrement
 	}
-	MouseGetPos, , , , strCommanderControl, 1
-	Sleep, intWaitTimeIncrement
-	ControlFocus, %strCommanderControl%
+	if StrLen(strTargetControl)
+		ControlFocus, %strTargetControl%, ahk_id %strTargetWinId%
 	Loop, %intTries%
 	{
 		Sleep, intWaitTimeIncrement * A_Index
-		Send, !g
+		Send, % (WindowIsFreeCommander(strTargetClass) ? "!g" : "+{Enter}") ; goto shortcut for FreeCommander or DirectoryOpus
 		Sleep, intWaitTimeIncrement * A_Index
 		Send, ^c
+		Sleep, intWaitTimeIncrement * A_Index
 		intTries := A_Index
-		Sleep, intWaitTimeIncrement
+		WinGetTitle, strWindowThisTitle, A ; to check if the window was closed unexpectedly
 	} Until (StrLen(ClipBoard))
 }
 else
@@ -1694,11 +1711,13 @@ if Time2Donate(intStartups, blnDonator)
 IniWrite, % (intStartups + 1), %strIniFile%, Global, Startups
 
 strLatestVersion := Url2Var("http://code.jeanlalonde.ca/ahk/folderspopup/latest-version/latest-version-" . strCurrentBranch . ".php")
+
 if !StrLen(strLatestVersion)
-{
-	Oops(lUpdateError)
-	return ; an error occured during ComObjCreate
-}
+	if (A_ThisMenuItem = lMenuUpdate)
+	{
+		Oops(lUpdateError)
+		return ; an error occured during ComObjCreate
+	}
 strLatestVersion := SubStr(strLatestVersion, InStr(strLatestVersion, "[[") + 2) 
 strLatestVersion := SubStr(strLatestVersion, 1, InStr(strLatestVersion, "]]") - 1) 
 strLatestVersion := Trim(strLatestVersion, "`n`l") ; remove en-of-line if present
@@ -2759,12 +2778,12 @@ else if WindowIsConsole(strTargetClass)
 	if (blnDiagMode)
 		Diag("NavigateResult", ErrorLevel)
 }
-else if WindowIsFreeCommander(strTargetClass)
+else if WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
 {
 	if (blnDiagMode)
-		Diag("Navigate", "NavigateFreeCommander")
+		Diag("Navigate", "NavigateFreeCommanderOrDirectoryOpus")
 	
-	NavigateFreeCommander(strLocation, strTargetWinId)
+	NavigateFreeCommanderOrDirectoryOpus(strLocation, strTargetWinId, strTargetClass, strTargetControl)
 
 	if (blnDiagMode)
 		Diag("NavigateResult", ErrorLevel)
@@ -2819,7 +2838,7 @@ if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetCla
 	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 else if WindowIsAnExplorer(strTargetClass)
 	NavigateExplorer(intSpecialFolder, strTargetWinId)
-else ; this is the console, FreeCommander or a dialog box
+else ; this is the console, FreeCommander, DirectoryOpus or a dialog box
 {
 	if (intSpecialFolder = 0)
 		strLocation := A_Desktop
@@ -2865,8 +2884,8 @@ else ; this is the console, FreeCommander or a dialog box
 
 	if WindowIsConsole(strTargetClass)
 		NavigateConsole(strLocation, strTargetWinId)
-	else if WindowIsFreeCommander(strTargetClass)
-		NavigateFreeCommander(strLocation, strTargetWinId)
+	else if WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
+		NavigateFreeCommanderOrDirectoryOpus(strLocation, strTargetWinId, strTargetClass, strTargetControl)
 	else
 		NavigateDialog(strLocation, strTargetWinId, strTargetClass)
 }
@@ -2887,11 +2906,11 @@ if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetCla
 	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 else if WindowIsAnExplorer(strTargetClass)
 	NavigateExplorer(objRecentFolders[A_ThisMenuItemPos], strTargetWinId)
-else ; this is the console, FreeCommander or a dialog box
+else ; this is the console, FreeCommander, DirectoryOpus or a dialog box
 	if WindowIsConsole(strTargetClass)
 		NavigateConsole(objRecentFolders[A_ThisMenuItemPos], strTargetWinId)
-	else if WindowIsFreeCommander(strTargetClass)
-		NavigateFreeCommander(objRecentFolders[A_ThisMenuItemPos], strTargetWinId)
+	else if WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
+		NavigateFreeCommanderOrDirectoryOpus(objRecentFolders[A_ThisMenuItemPos], strTargetWinId, strTargetClass, strTargetControl)
 	else
 		NavigateDialog(objRecentFolders[A_ThisMenuItemPos], strTargetWinId, strTargetClass)
 
@@ -2966,7 +2985,7 @@ GetPathFor(strMenu, strName)
 
 
 ;------------------------------------------------------------
-CanOpenFavorite(strMouseOrKeyboard, ByRef strWinId, ByRef strClass)
+CanOpenFavorite(strMouseOrKeyboard, ByRef strWinId, ByRef strClass, ByRef strControlID)
 ;------------------------------------------------------------
 ; "CabinetWClass" and "ExploreWClass" -> Explorer
 ; "ProgMan" -> Desktop
@@ -2977,12 +2996,16 @@ CanOpenFavorite(strMouseOrKeyboard, ByRef strWinId, ByRef strClass)
 {
 	
 	if (strMouseOrKeyboard = "PopupMenuMouse")
-		MouseGetPos, , , strWinId
+		MouseGetPos, , , strWinId, strControlID
 	else
+	{
 		strWinId := WinExist("A")
+		strControlID := ""
+	}
 	WinGetClass strClass, % "ahk_id " . strWinId
 
-	blnCanOpenFavorite := WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or WindowIsConsole(strClass) or WindowIsDialog(strClass) or WindowIsFreeCommander(strClass)
+	blnCanOpenFavorite := WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or WindowIsConsole(strClass)
+		or WindowIsDialog(strClass) or WindowIsFreeCommander(strClass) or WindowIsDirectoryOpus(strClass)
 
 	if (blnDiagMode)
 	{
@@ -2990,6 +3013,7 @@ CanOpenFavorite(strMouseOrKeyboard, ByRef strWinId, ByRef strClass)
 		WinGetTitle strDiag, % "ahk_id " . strWinId
 		Diag("WinTitle", strDiag)
 		Diag("WinId", strWinId)
+		Diag("ControlID", strControlID)
 		Diag("Class", strClass)
 		Diag("CanOpenFavorite", blnCanOpenFavorite)
 	}
@@ -3039,6 +3063,15 @@ WindowIsFreeCommander(strClass)
 ;------------------------------------------------------------
 {
 	return InStr(strClass, "FreeCommanderXE")
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+WindowIsDirectoryOpus(strClass)
+;------------------------------------------------------------
+{
+	return InStr(strClass, "dopus")
 }
 ;------------------------------------------------------------
 
@@ -3124,7 +3157,7 @@ NavigateConsole(strLocation, strWinId)
 
 
 ;------------------------------------------------------------
-NavigateFreeCommander(strLocation, strWinId)
+NavigateFreeCommanderOrDirectoryOpus(strLocation, strWinId, strClass, strControl)
 ;------------------------------------------------------------
 {
 	if (WinExist("A") <> strWinId) ; in case that some window just popped out, and initialy active window lost focus
@@ -3132,11 +3165,9 @@ NavigateFreeCommander(strLocation, strWinId)
 		WinActivate, ahk_id %strWinId% ; we'll activate initialy active window
 		Sleep, 200
 	}
-	MouseGetPos, , , , strCommanderControl, 1
-	Sleep, 200
-	ControlFocus, %strCommanderControl%
+	ControlFocus, %strControl%
 	SetKeyDelay, 200
-	Send, !g
+	Send, % (WindowIsFreeCommander(strClass) ? "!g" : "+{Enter}") ; goto shortcut for FreeCommander or DirectoryOpus
 	SetKeyDelay, 0
 	Send, %strLocation%
 	Sleep, 200
