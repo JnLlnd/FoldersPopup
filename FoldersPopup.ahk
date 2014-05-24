@@ -187,6 +187,7 @@ TODO
 #KeyHistory 0
 ListLines, Off
 SetWorkingDir, %A_ScriptDir%
+ComObjError(False) ; we will do our own error handling
 
 strTempDir := "_temp"
 FileCreateDir, %strTempDir%
@@ -852,10 +853,19 @@ intExplorersIndex := 0 ; used in PopupMenu... to check if we disable the menu wh
 intShortcut := 0
 
 For pExp in ComObjCreate("Shell.Application").Windows
+; see http://msdn.microsoft.com/en-us/library/windows/desktop/aa752084(v=vs.85).aspx
 {
+	if (A_LastError)
+		; an error occurred during ComObjCreate (A_LastError probably is E_UNEXPECTED = -2147418113 #0x8000FFFFL)
+		break
+
+	if (blnDiagMode)
+		Diag("BuildSwitchMenu_pExp.HWND", pExp.HWND)
+	
 	strType := ""
 	try
-		strType := pExp.Type
+		strType := pExp.Type ; Gets the user type name of the contained document object. "Document HTML" for IE windows. Should be empty for file Explorer windows.
+
 	if !StrLen(strType)
 	{
 		intExplorersIndex := intExplorersIndex + 1
@@ -1683,18 +1693,25 @@ if Time2Donate(intStartups, blnDonator)
 }
 IniWrite, % (intStartups + 1), %strIniFile%, Global, Startups
 
-; strLatestVersion := Url2Var("https://raw.github.com/JnLlnd/FoldersPopup/master/latest-version.txt")
-
 strLatestVersion := Url2Var("http://code.jeanlalonde.ca/ahk/folderspopup/latest-version/latest-version-" . strCurrentBranch . ".php")
+if !StrLen(strLatestVersion)
+{
+	Oops(lUpdateError)
+	return ; an error occured during ComObjCreate
+}
 strLatestVersion := SubStr(strLatestVersion, InStr(strLatestVersion, "[[") + 2) 
 strLatestVersion := SubStr(strLatestVersion, 1, InStr(strLatestVersion, "]]") - 1) 
 strLatestVersion := Trim(strLatestVersion, "`n`l") ; remove en-of-line if present
 
 Loop, Parse, strLatestVersion, , 0123456789. ; strLatestVersion should only contain digits and dots
+	; if we get here, the content returned by the URL above is wrong
 	if (A_ThisMenuItem <> lMenuUpdate)
-		return
+		return ; return silently
 	else
-		strLatestVersion := "0.0.0"
+	{
+		Oops(lUpdateError) ; return with an error message
+		return
+	}
 
 if (FirstVsSecondIs(strLatestSkipped, strLatestVersion) >= 0 and (A_ThisMenuItem <> lMenuUpdate))
 	return
@@ -1771,8 +1788,12 @@ return
 Url2Var(strUrl)
 ;------------------------------------------------------------
 {
-	ComObjError(False)
 	objWebRequest := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+	/*
+	if (A_LastError)
+		; an error occurred during ComObjCreate (A_LastError probably is E_UNEXPECTED = -2147418113 #0x8000FFFFL)
+		BUT DO NOT ABORT because the following commands will be executed even if an error occurred in ComObjCreate (!)
+	*/
 	objWebRequest.Open("GET", strUrl)
 	objWebRequest.Send()
 
