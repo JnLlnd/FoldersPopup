@@ -24,6 +24,7 @@ TODO
 	* new "Support freeware" dialog box and options
 	* internal changes in the check for update function
 	* better error handling if error occurs during ComObjCreate, situation occurring when Directory Opus is running (tested with v11.4)
+	* basic support for Directory Opus v11.4 (navigate and add this folder) similar to FreeCommander XE, fix bugs in FreeCommanderXE support
 
 	Version: v1.8 ALPHA (not to be released) (2014-05-04)
 	* add switch in dialog box to other explorer windows already opened
