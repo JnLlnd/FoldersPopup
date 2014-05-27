@@ -176,7 +176,7 @@ TODO
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 1.9.4 BETA
+;@Ahk2Exe-SetVersion 1.9.5 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -220,7 +220,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "1.9.4" ; "major.minor.bugs"
+global strCurrentVersion := "1.9.5" ; "major.minor.bugs"
 global strCurrentBranch := "beta" ; "prod" or "beta", alway lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch <> "prod" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
@@ -355,6 +355,7 @@ IfNotExist, %strIniFile%
 			DiagMode=0
 			Startups=1
 			LanguageCode=EN
+			DirectoryOpusPath=
 			[Folders]
 			Folder1=C:\|C:\
 			Folder2=Windows|%A_WinDir%
@@ -388,6 +389,7 @@ IniRead, blnDonator, %strIniFile%, Global, Donator, 0 ; Please, be fair. Don't c
 if !(blnDonator)
 	lMenuReservedShortcuts := lMenuReservedShortcuts . lMenuReservedShortcutsDonate
 IniRead, intRecentFolders, %strIniFile%, Global, RecentFolders, 5
+IniRead, strDirectoryOpusPath, %strIniFile%, Global, DirectoryOpusPath, %A_Space% ; empty string if not found
 
 Loop
 {
@@ -624,7 +626,8 @@ if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or Win
 	; Other tests shown that WIN_8 behaves like WIN_7. So, I assume WIN_8 to work. If someone could confirm (until I can test it myself)?
 	if (blnDiagMode)
 		Diag("ShowMenu", "Folders Menu " 
-			. (WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT")
+			. (WindowIsAnExplorer(strTargetClass)  or WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
+			or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT")
 			. " Add this folder")
 	Menu, %lMainMenuName%
 		, % WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
@@ -664,7 +667,8 @@ if (blnDiagMode)
 	Diag("WinTitle", strDiag)
 	Diag("WinId", strTargetWinId)
 	Diag("Class", strTargetClass)
-	Diag("ShowMenu", "Folders Menu " . (WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT") . " Add this folder")
+	Diag("ShowMenu", "Folders Menu " . (WindowIsAnExplorer(strTargetClass)  or WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
+		or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT") . " Add this folder")
 }
 
 if (blnDisplaySpecialFolders)
@@ -699,7 +703,8 @@ if (blnDisplaySwitchMenu)
 ; or a dialog box under WIN_7 (does not work under WIN_XP).
 ; Other tests shown that WIN_8 behaves like WIN_7.
 Menu, %lMainMenuName%
-	, % WindowIsAnExplorer(strTargetClass) or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
+	, % WindowIsAnExplorer(strTargetClass)  or WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
+	or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 	, %lMenuAddThisFolder%
 Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
 
@@ -2748,6 +2753,11 @@ if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetCla
 	
 	if (A_OSVersion = "WIN_XP")
 		ComObjCreate("Shell.Application").Explore(strLocation)
+	else if StrLen(strDirectoryOpusPath)
+		if if FileExist(strDirectoryOpusPath)
+			Run, %strDirectoryOpusPath% "%strLocation%"
+		else
+			Oops(lOopsWrongDirectoryOpusPath, strAppName, strDirectoryOpusPath)
 	else
 		Run, Explorer %strLocation%
 	; http://msdn.microsoft.com/en-us/library/bb774094

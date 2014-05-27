@@ -121,6 +121,7 @@ lNavigateFileError	Beim Öffnen des Ordners `n~1~ trat ein Fehler auf.
 lNavigateSpecialError	Beim Öffnen des Speziellen Ordners #~1~ trat ein Fehler auf.
 lOopsTitle	~1~ (~2~)
 lOopsWriteProtectedError	It appears that ~1~ is running from a WRITE-PROTECTED folder where the configuration file "~1~.ini" could not be created.`n`nMove the ~1~ .EXE file to the REGULAR folder of your choice and re-run it from this folder.`n`n~1~ will quit.
+lOopsWrongDirectoryOpusPath	Wrong Directory Opus path or file name in ~1~.ini file:`n"~2~"`n`nEnter the full path and name of the DOpus.exe file, for example (without the quotes):`n"DirectoryOpusPath=C:\Program Files\GPSoftware\Directory Opus\dopus.exe"
 lOopsZipFileError	It appears that ~1~ is running directly from a .ZIP file.`n`nYou must extract the ~1~ .EXE file from the .ZIP file to the folder of your choice before running it.`n`n~1~ will quit.
 lOptionsAlt	Alt
 lOptionsArrDescriptions1	Wählen Sie die MAUStaste und die Kombitasten, welche das FoldersPopup Menü im Windows Explorer oder Dateidialogboxen aufruft. Standardmäßig ist dies die mittlere Maustaste ohne zusätzliche Kombitaste.
