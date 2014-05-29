@@ -1,17 +1,13 @@
-/*
-BUG
-
-TODO
-
-*/
-
 ;===============================================
 /*
 	FoldersPopup
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: v1.9 BETA (not to be released) (2014-05-nn)
+	Version: 2.0.0 (2014-05-28)
+	* see all additions from v1.5 ALPHA to v1.9 BETA
+	
+	Version: v1.9 BETA (not to be released) (2014-05-27)
 	* fix bug missing error message and other language minor changes
 	* reorder popup menu and place settings, add this folder and support freeware menus at the end of main menu
 	* reorder checkboxes in GuiOptions
@@ -175,7 +171,7 @@ TODO
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 1.9.5 BETA
+;@Ahk2Exe-SetVersion 2.0.0 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -219,9 +215,9 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "1.9.5" ; "major.minor.bugs"
-global strCurrentBranch := "beta" ; "prod" or "beta", alway lowercase for filename
-global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch <> "prod" ? " " . strCurrentBranch : "")
+global strCurrentVersion := "2.0.0" ; "major.minor.bugs"
+global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
+global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
 global strDiagFile := A_ScriptDir . "\" . strAppName . "-DIAG.txt"
 global strIniFile := A_ScriptDir . "\" . strAppName . ".ini"
