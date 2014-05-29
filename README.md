@@ -13,13 +13,12 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
-### 2014-04-25 v1.2.7
-* Workaround to make the "Run" command work on some system
-* Fix end-of-line at end of version number bug
-
-### 2014-04-24 v1.2.6
-* Workaround for the hash (aka Sharp or #) bug in Shell.Application that occurs only when navigating in the current Explorer window to a subfolder including “#” in its parent path (e.g.: C:\C#\Project)
-* Windows XP only: fix a bug when navigating to the special folder “My Pictures” in dialog boxes
+### 2014-##-## v1.5 ALPHA (not to be released)
+* add recent folders sub-menu
+* add ini variable RecentFolders
+* when blnDisplayMenuShortcuts reserve shortcut chars for app's items in menus
+* add GetDeepestFolderName as function
+* add ValueInObject function
 
 ### 2014-04-19 v1.2.5
 * Support for FreeCommander XE

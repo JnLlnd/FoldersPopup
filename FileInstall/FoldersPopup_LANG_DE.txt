@@ -1,0 +1,162 @@
+lAboutText1	~1~ ~2~ (~3~ bits)
+lAboutText2	~1~ wird entwickelt von Jean Lalonde unter`nVerwendung der <a href="http://ahkscript.org/">AutoHotkey</a> Programmiersprache.`n`nDeutsche Übersetzung: Edgar ""Fast Edi"" Hoffmann`nFranzösische Übersetzung: Jean Lalonde`nEnglische Gegenleser: (Hilfe willkommen)`n`nIcons von: <a href="http://www.visualpharm.com">Visual Pharm</a>`nAutoHotkey_L v1.1 Sourcen: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
+lAboutText4	Support unter <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
+lAboutTitle	Über - ~1~ ~2~
+lAppTagline	Springe sofort von einem Ordner zum Anderen
+lButtonRemind	Erinnere mich
+lDiagModeCaution	~1~ läuft im Diagnose-Modus.`n`nInformationen über die Anwendungsausführung werden in der Datei:`n~2~`n gesammelt`nEs wird nichts ohne Ihr Einverständnis versendet.`n`nWollen Sie den Diagnose-Modus beibehalten?
+lDiagModeExit	~1~ gesammelte Diagnose-Informationen in Datei ~2~.
+lDiagModeIntro	Schicken Sie diese Datei an ahk@jeanlalonde.ca mit einer Beschreibung der Situation, welche die Diagnose ausgelöst hat.
+lDiagModeSee	Wollen Sie die Diagnosedatei sehen?
+lDialogAdd	Hinzufügen
+lDialogAddDialogAlready	Diese Dialogbox-Typ wird schon unterstützt.
+lDialogAddDialogPrompt	Geben Sie den neuen Namen für die Dialogbox an`n(oder einen Teil des Namens):
+lDialogAddDialogTitle	Dialogbox hinzufügen - ~1~ ~2~
+lDialogAddEditFolderTitle	~1~ Ordner - ~2~ ~3~
+lDialogAddFolderManuallyPrompt	Entschuldigung, der aktuelle Ordner kann in diesem Fenstertyp nicht ermittelt werden.`n`nWollen Sie es jetzt von Hand hinzufügen?
+lDialogAddFolderManuallyTitle	Diesen Ordner hinzufügen - ~1~ ~2~
+lDialogAddFolderSelect	Auswählen oder Erstellen des neuen Ordners:
+lDialogBrowseButton	Durchsuchen
+lDialogCancelButton	Abbrechen
+lDialogCancelPrompt	Änderungen verwerfen?
+lDialogCancelTitle	Abbrechen - ~1~ ~2~
+lDialogEdit	Bearbeiten
+lDialogEditDialogPrompt	Geben Sie den neuen Namen für die Dialogbox ein`n(oder einen Teil des Namens):
+lDialogEditDialogTitle	Dialogbox bearbeiten - ~1~ ~2~
+lDialogEditFolderPrompt	Geben Sie den Namen für diesen Ordner an:
+lDialogEditFolderSelect	Auswählen oder Erstellen des neuen Ordners:
+lDialogEditFolderTitle	Ordner bearbeiten - ~1~ ~2~
+lDialogFolderLabel	Ordner
+lDialogFolderLocationEmpty	Dieser Ort ist leer. Bitte wählen Sie einen Ort.
+lDialogFolderNameEmpty	Der Name des Ordners ist leer. Bitte wählen Sie einen kurzen Namen.
+lDialogFolderNameNoSeparator	Das Untermenü darf das reservierte Zeichen "~1~" nicht enthalten.
+lDialogFolderNameNotNew	Der Name ~1~ wird bereits in diesem Menü verwendet. Bitte wählen Sie einen anderen Namen.
+lDialogFolderParentMenu	Ordner Hauptmenü
+lDialogFolderRemovePrompt	Entfernen des Ordners "~1~"`nund ALL seines Inhalts (Ordner und Untermenüs)?
+lDialogFolderRemoveTitle	Entfernen des Ordners - ~1~
+lDialogFolderShortName	Kurzname des Ordners für das Menü
+lDialogInvalidHotkey	Mit dem derzeitigen Tastaturlayout kann das Tastenkürzel "~1~" nicht verwendet werden, um das Popup-Menü aufzurufen (kein gültiger Tasten Name).`n`nBitte öffnen Sie das "~2~ Einstellungen" aus dem Tray-Menü und klicken Sie auf "Optionen". Wählen Sie in diesem Dialog ein anderes Tastenkürzel für "~3~".
+lDialogSave	Speichern
+lDialogSelectItemToEdit	Bitte wählen Sie das zu bearbeitende Element.
+lDialogSelectItemToRemove	Bitte wählen Sie das zu entfernende Element.
+lDialogSubmenuLabel	Untermenü
+lDialogSubmenuShortName	Kurzname des Untermenüs
+lDonateButton	Unterstützen Sie Freeware!
+lDonateCheckPrompt	Sind Sie zufrieden mit ~1~?`n`n~1~ ist nicht nur kostenlos, sondern enthält auch keine Werbung, bei der Sie nie wissen, ob diese Spyware oder Schadsoftware enthält.`n`n~2~ mal bisher, hat Ihnen ~1~ bei der täglichen Arbeit geholfen. Wie wär's jetzt mit ein wenig Unterstützung für Freeware?
+lDonateCheckTitle	~1~ mal! - ~2~
+lDonateMenu	&Unterstützen Sie Freeware!
+lDonatePlatformComment1	The most flexible way using your PayPal account or your credit card
+lDonatePlatformComment2	Receive an official invoice if you need it to be refunded
+lDonatePlatformComment3	Want to know more about <a href="~1~">microdonations</a>?
+lDonatePlatformName1	Using Paypal
+lDonatePlatformName2	Using Share-it
+lDonatePlatformName3	Using Flattr
+lDonateReviewNameLeft1	Download.com
+lDonateReviewNameLeft2	PortableFreeware.com
+lDonateReviewNameLeft3	Softpedia.com
+lDonateReviewNameRight1	BetaNews.com
+lDonateReviewNameRight2	FileCluster.com
+lDonateText1	Support ~1~ development!
+lDonateText2	<a href="~1~">Why support freeware?</a>
+lDonateText3	... or support freeware for free!
+lDonateText4	Give a favorable review to ~1~ on:
+lDonateThankyou	Vielen Dank für die Unterstützung von Freeware!
+lDonateTitle	Unterstützen Sie Freeware! - ~1~ ~2~
+lGui2Close	Schliessen
+lGuiAbout	Über
+lGuiAddDialog	Hinzufügen
+lGuiAddFolder	Hinzufügen
+lGuiCancel	&Abbrechen
+lGuiClose	&Schliessen
+lGuiDonate	Unterstützen
+lGuiEditFolder	Bearbeiten
+lGuiHelp	Hilfe
+lGuiLvDialogsHeader	Unterstützte Dialoge`n(Teile der Namen)
+lGuiLvFoldersHeader	Name|Pfad
+lGuiMoveFolderDown	Nach u&nten bewegen
+lGuiMoveFolderUp	Nach o&ben bewegen
+lGuiOptions	Optionen
+lGuiRemoveFolder	Entfernen
+lGuiSave	&Speichern
+lGuiSeparator	Se&parator
+lGuiSubmenuDropdownLabel	Zu bearbeitendes Menü:
+lGuiSubmenuLocation	>
+lGuiSubmenuSeparator	>
+lGuiTitle	Einstellungen - ~1~ ~2~
+lHelpText1	Beim Start platziert FoldersPopup ein Symbol im System Tray und wartet auf Arbeit. Wenn Sie im Explorer oder einer Dateiauswahlbox den Ordner wechseln müssen, klicken Sie einfach mit der mittleren Maustaste oder drücken Sie Win+K und wählen Sie im erscheinenden Popup-Menü den gewünschten Ordner. FoldersPopup bringt Sie ohne Umwege direkt dorthin!
+lHelpText2	Wählen Sie Einstellungen, um das Einstellungsmenü von FoldersPopup aufzurufen. Hier können Sie Ordner zum Menü hinzufügen, löschen, verschieben oder umbenennen. Sie können ebenfalls Untermenüs hinzufügen, löschen oder verschieben. Wählen Sie hierzu "Zu bearbeitendes Menü:" in der Auswahlliste. Klicken Sie Speichern um die Änderungen zu sichern.
+lHelpText3	Sie können sehr schnell Ordner zum Popup-Menü hinzufügen:`n1) Wechseln Sie in einen oft benutzten Ordner.`n2) Klicken Sie die mittlere Maustaste (oder Windows-K) und wählen Sie Diesen Ordner hinzufügen.`n3) Vergeben Sie einen kurzen Namen, klicken Sie OK und speichern Sie im Einstellungsfenster.`nDieser neue Ordner wird im Hauptmenü angelegt. Bearbeiten Sie diesen, um ihn an einen anderen Ort zu verschieben.
+lHelpText4	Standardmäßig unterstützt FoldersPopup normale Dialoge (Öffnen, Speichern, usw.). Sie können FoldersPopup jedoch sehr einfach "beibringen", auch andere Dialoge zu erkennen:`n1) Wenn Sie sich in einem nicht unterstützten Dialog befinden, klicken Sie mit der mittleren Maustaste (oder drücken Sie die Tasten Windows-K) und wählen Sie "Diesen Dialog zur unterstützten Liste hinzufügen".`n2 ) Klicken Sie OK und speichern Sie im Einstellungsfenster.
+lHelpText5	TIPS UND TRICKS`n- Aktivieren Sie im Tray-Menü die Option "Beim Start ausführen", um FoldersPopup automatisch zu starten.`n- Sie wollen einen oft verwendeten Ordner in einem neuen Explorer-Fenster öffnen? Drücken Sie einfach Shift und die mittlere Maustaste (oder Shift-Windows-K).Dies ermöglicht es auch, einen bevorzugten Ordner aus einer beliebigen Anwendung heraus aufzurufen.`n- Konfigurieren Sie Ihre Menü-Tastenkürzel: wählen Sie die bevorzugte Maustaste oder das Tastenkürzel in "Einstellungen-Optionen".`n- Ebenfalls in den Optionen verfügbar: Bevorzugte Sprache wählen, Bevorzugte Ordner anzeigen, Popup-Menü an einer bestimmten Stelle festpinnen und fügen Sie Tastenkürzel des Nummernblocks zum Ordnermenü hinzu.
+lHelpText6	Support für FoldersPopup gibt es auf`n<a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
+lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware!
+lHelpTextLead	FoldersPopup ermöglicht es, auf schnelle Weise zwischen häufig verwendeten Verzeichnissen zu wechseln!
+lHelpTitle	Hilfe - ~1~ ~2~
+lMainMenuName	Haupt
+lMenuAbout	Ü&ber
+lMenuAddThisDialog	Diese Di&alogbox zur Liste unterstützter Dialogboxen hinzufügen
+lMenuAddThisFolder	&Diesen Ordner hinzufügen
+lMenuControlPanel	&Systemsteuerung
+lMenuDesktop	&Desktop
+lMenuDialogNotSupported	Diese Dialogbox wird momentan noch nicht unterstützt
+lMenuDocuments	D&okumente
+lMenuHelp	Hilfe
+lMenuMyComputer	&Mein Computer
+lMenuNetworkNeighborhood	&Netzwerkumgebung
+lMenuPictures	&Bilder
+lMenuRecentFolders	&Kürzlich verwendete Ordner
+lMenuRecycleBin	&Papierkorb
+lMenuReservedShortcuts	SKWFD
+lMenuReservedShortcutsDonate	U
+lMenuRunAtStartup	&Beim Start von Windows ausführen
+lMenuSeparator	----------------
+lMenuSettings	&~1~ Einstellungen
+lMenuSpecialFolders	&Spezielle Ordner
+lMenuSwitch	S&witch
+lMenuSwitchDialog	Sw&itch in &Dialogbox
+lMenuSwitchExplorer	Zum &Explorer wechseln
+lMenuUpdate	Nach &Update suchen
+lNavigateFileError	Beim Öffnen des Ordners `n~1~ trat ein Fehler auf.
+lNavigateSpecialError	Beim Öffnen des Speziellen Ordners #~1~ trat ein Fehler auf.
+lOopsTitle	~1~ (~2~)
+lOopsWriteProtectedError	It appears that ~1~ is running from a WRITE-PROTECTED folder where the configuration file "~1~.ini" could not be created.`n`nMove the ~1~ .EXE file to the REGULAR folder of your choice and re-run it from this folder.`n`n~1~ will quit.
+lOopsWrongDirectoryOpusPath	Wrong Directory Opus path or file name in ~1~.ini file:`n"~2~"`n`nEnter the full path and name of the DOpus.exe file, for example (without the quotes):`n"DirectoryOpusPath=C:\Program Files\GPSoftware\Directory Opus\dopus.exe"
+lOopsZipFileError	It appears that ~1~ is running directly from a .ZIP file.`n`nYou must extract the ~1~ .EXE file from the .ZIP file to the folder of your choice before running it.`n`n~1~ will quit.
+lOptionsAlt	Alt
+lOptionsArrDescriptions1	Wählen Sie die MAUStaste und die Kombitasten, welche das FoldersPopup Menü im Windows Explorer oder Dateidialogboxen aufruft. Standardmäßig ist dies die mittlere Maustaste ohne zusätzliche Kombitaste.
+lOptionsArrDescriptions2	Wählen Sie die MAUStaste und die Kombitasten, welche das FoldersPopup Menü in JEDEM Fenster öffnet und zum gewählten Ordner in einem NEUEN Explorer-Fenster navigiert. Standardmäßig ist dies die mittlere Maustaste mit gedrückter Shift-Taste.
+lOptionsArrDescriptions3	Wählen Sie die TASTENkombination, welche das popup menü im Windows Explorer oder Dateidialogboxen aufruft. Standardmäßig ist dies Win+K (Taste K, während die Windows-Taste gdrückt wird).
+lOptionsArrDescriptions4	Wählen Sie die TASTENkombination, welche das popup menu Menü in JEDEM Fenster öffnet und zum gewählten Ordner in einem NEUEN Explorer-Fenster navigiert. Standardmäßig ist dies Shift+Win+K (Tasten Shift und K, während die Windows-Taste gedrückt wird).
+lOptionsArrDescriptions5	Wählen Sie die Tastenkombination oder Maustasten-Kombination, welche den FoldersPopup Einstellungsdialog aufruft. Standardmäßig ist dies Shift+Windows+F.
+lOptionsChangeHotkey	Ändern
+lOptionsChangeHotkeyTitle	Tastenkürzel ändern - ~1~ ~2~
+lOptionsCtrl	Strg
+lOptionsDisplayMenuShortcuts	Zeige &numerische Menü-Tastenkürzel
+lOptionsDisplayRecentFolders	Zeige kürzlich verwendete Ordner
+lOptionsDisplaySpecialFolders	Zeige S&pezielle Ordner
+lOptionsDisplaySwitchMenu	Zeige Switch Menü
+lOptionsGuiIntro	Legen Sie die Maustasten und Tastenkürzel fest, welche ~1~ auslösen.
+lOptionsGuiTitle	Optionen - ~1~ ~2~
+lOptionsKeyboard	Tastatur
+lOptionsLanguage	Sprache
+lOptionsLanguageLabels	Englisch|Französisch|Deutsch
+lOptionsMouse	Maus
+lOptionsNoKeyOrMouseSpecified	Kein Tastenkürzel oder Maustaste definiert. Der bestehende Hotkey ~1~ ist unverändert.
+lOptionsOtherOptions	Weitere einstellungen
+lOptionsPopupFix	Popup-&Menü an fester Position
+lOptionsPopupFixPositionX	Position X:
+lOptionsPopupFixPositionY	Y:
+lOptionsRunAtStartup	Beim Sta&rt ausführen
+lOptionsShift	Shift
+lOptionsTitles	Maus - Ordner Popup|Maus - Neu Explorer|Tastatur - Ordner Popup|Tastatur - Neu Explorer|Einstellungsfenster
+lOptionsTrayTip	Beim Start &Tray-Tip anzeigen
+lOptionsTriggerFor	Auslöser für:
+lOptionsWin	Win
+lReloadPrompt	Sprache wurde in ~1~ geändert. Wollen Sie jetzt ~2~ in ~1~ neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
+lTrayTipInstalledDetail	Zur Anzeige des ~1~ Menüs`nim Windows Explorer oder einer Dialogbox`n~2~ oder ~3~ drücken.`n`n~4~ oder ~5~`num ein neues Explorer-Fenster zu öffnen.
+lTrayTipinstalledTitle	~1~ ~2~ bereit!
+lUpdateError	An error occurred while accessing the latest version number. Checking for update interrupted.
+lUpdatePrompt	Update ~1~ von v~2~ auf v~3~?
+lUpdateTitle	Update ~1~?
+lUpdateYouHaveLatest	Sie verwenden die aktuellste Version: ~1~.`n`nTrotzdem die ~2~ Webseite besuchen?
