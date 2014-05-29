@@ -13,12 +13,76 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
-### 2014-##-## v1.5 ALPHA (not to be released)
+### 2014-05-28 2.0.0
+* see all additions from v1.5 ALPHA to v1.9 BETA
+
+### 2014-05-27 v1.9 BETA (not to be released)
+* fix bug missing error message and other language minor changes
+* reorder popup menu and place settings, add this folder and support freeware menus at the end of main menu
+* reorder checkboxes in GuiOptions
+* support recent folders on Win XP
+* loading language files and images to the exe files
+* create a "Switch..." submenu for "Switch to Explorer" and "Switch in dialog box"options
+* allow "Switch to Explorer" menu to open a new window (with combining Middle mouse button with the Shift key)
+* prevent app from running directly from the zip file or running in a write-protected folder
+* new "Support freeware" dialog box and options
+* internal changes in the check for update function
+* better error handling if error occurs during ComObjCreate, situation occurring when Directory Opus is running (tested with v11.4)
+* basic support for Directory Opus v11.4 (navigate and add this folder) similar to FreeCommander XE, fix bugs in FreeCommanderXE support
+
+### 2014-05-04 v1.8 ALPHA (not to be released)
+* add switch in dialog box to other explorer windows already opened
+* lMenuReservedShortcuts management with translations
+* sort folders button
+* folder up button
+* translated help to French
+* support freeware to popup menu
+* blnMenuReady before popup
+
+### 2014-04-27 v1.7 ALPHA (not to be released)
+* new settings dialog box layout with icons to add, edit or remove folders or dialog boxes
+* icons to open help, about and settings dialog boxes
+* dropdown to select the submenu to edit
+* left arrow to go back to edit the menu(s) previously displayed
+* double-click to edit folders or supported dialog boxes
+* adjustments to dialog boxes for German and French translation
+* updated about and help dialog boxes
+* solved a bug when Add this folder in some type of dialog boxes
+
+### 2014-04-19 v1.6 ALPHA (not to be released)
+* implement submenus ini file data structure and objects for folders
+* v1 ini file format automatic upgrade to v2 (all v1 folders placed in main menu)
+* load and save folders and submenus to ini file
+* display popup menus with submenus, disable empty submenus
+* add a dropdown menu to settings window to select the menu to edit
+* settings pugrade to add, edit, remove, move up or down submenus
+* add folder to the current submenu
+* add folder from popup menu to main menu
+* move folders or menus to other submenus
+* double-click an folder or submenu item in settings to edit it
+* update popup menus as settings are changed, backup available if user cancel settings changes
+* support numeric shortcuts for submenus
+* error checking: avoid duplicate names when moving an item to another submenu
+* error checking: avoid moving a submenu under itself
+
+### 2014-03-22 v1.5 ALPHA (not to be released)
 * add recent folders sub-menu
 * add ini variable RecentFolders
 * when blnDisplayMenuShortcuts reserve shortcut chars for app's items in menus
 * add GetDeepestFolderName as function
-* add ValueInObject function
+* add ValueIsInObject function
+* add language dropdown
+* display full folder names in recent folders
+* add swith submenu to activate any other open Explorer
+* add DisplayRecentFolders and DisplaySwitchMenu options in Options dialog box and ini file
+
+### 2014-04-25 v1.2.7
+* Workaround to make the "Run" command work on some system
+* Fix end-of-line at end of version number bug
+
+### 2014-04-24 v1.2.6
+* Workaround for the hash (aka Sharp or #) bug in Shell.Application that occurs only when navigating in the current Explorer window to a subfolder including “#” in its parent path (e.g.: C:\C#\Project)
+* Windows XP only: fix a bug when navigating to the special folder “My Pictures” in dialog boxes
 
 ### 2014-04-19 v1.2.5
 * Support for FreeCommander XE
