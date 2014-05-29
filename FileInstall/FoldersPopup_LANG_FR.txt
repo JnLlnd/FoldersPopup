@@ -105,15 +105,15 @@ lMenuHelp	Aide
 lMenuMyComputer	Ordinateur
 lMenuNetworkNeighborhood	Réseau
 lMenuPictures	Images
-lMenuRecentFolders	Emplacements &récents
+lMenuRecentFolders	&Emplacements récents
 lMenuRecycleBin	Corbeille
-lMenuReservedShortcuts	P
+lMenuReservedShortcuts	DEBPA
 lMenuReservedShortcutsDonate	S
 lMenuRunAtStartup	Exécuter au démarrage
 lMenuSeparator	----------------
-lMenuSettings	Paramètres de &~1~
-lMenuSpecialFolders	Dossiers &spéciaux
-lMenuSwitch	Basculer
+lMenuSettings	&Paramètres de ~1~
+lMenuSpecialFolders	&Dossiers spéciaux
+lMenuSwitch	&Basculer
 lMenuSwitchDialog	Basculer dans cette &boîte de dialogue
 lMenuSwitchExplorer	Basculer vers l'&Explorateur
 lMenuUpdate	Mettre à jour

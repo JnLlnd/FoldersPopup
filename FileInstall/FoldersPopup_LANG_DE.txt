@@ -96,7 +96,7 @@ lHelpTitle	Hilfe - ~1~ ~2~
 lMainMenuName	Haupt
 lMenuAbout	Ü&ber
 lMenuAddThisDialog	Diese Di&alogbox zur Liste unterstützter Dialogboxen hinzufügen
-lMenuAddThisFolder	Diesen &Ordner hinzufügen
+lMenuAddThisFolder	&Diesen Ordner hinzufügen
 lMenuControlPanel	&Systemsteuerung
 lMenuDesktop	&Desktop
 lMenuDialogNotSupported	Diese Dialogbox wird momentan noch nicht unterstützt
@@ -107,13 +107,13 @@ lMenuNetworkNeighborhood	&Netzwerkumgebung
 lMenuPictures	&Bilder
 lMenuRecentFolders	&Kürzlich verwendete Ordner
 lMenuRecycleBin	&Papierkorb
-lMenuReservedShortcuts	M
+lMenuReservedShortcuts	SKWFD
 lMenuReservedShortcutsDonate	U
 lMenuRunAtStartup	&Beim Start von Windows ausführen
 lMenuSeparator	----------------
 lMenuSettings	&~1~ Einstellungen
 lMenuSpecialFolders	&Spezielle Ordner
-lMenuSwitch	Switch
+lMenuSwitch	S&witch
 lMenuSwitchDialog	Sw&itch in &Dialogbox
 lMenuSwitchExplorer	Zum &Explorer wechseln
 lMenuUpdate	Nach &Update suchen

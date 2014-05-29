@@ -2,7 +2,6 @@
 BUG
 
 TODO
-- check reserved shortcuts in main menu
 
 */
 
