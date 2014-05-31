@@ -4,6 +4,9 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: 2.0.1 (2014-05-31)
+	* fix language typos
+	
 	Version: 2.0.0 (2014-05-28)
 	* see all additions from v1.5 ALPHA to v1.9 BETA
 	
@@ -171,7 +174,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 2.0.0 BETA
+;@Ahk2Exe-SetVersion 2.0.1
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -215,7 +218,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "2.0.0" ; "major.minor.bugs"
+global strCurrentVersion := "2.0.1" ; "major.minor.bugs"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
@@ -369,6 +372,14 @@ IfNotExist, %strIniFile%
 	
 Gosub, LoadIniHotkeys
 
+; fix language error
+IniRead, blnDonor, %strIniFile%, Global, Donator, -1
+if (blnDonor >= 0)
+{
+	IniWrite, %blnDonor%, %strIniFile%, Global, Donor
+	IniDelete, %strIniFile%, Global, Donator
+}
+
 IniRead, blnDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip, 1
 IniRead, blnDisplaySpecialFolders, %strIniFile%, Global, DisplaySpecialFolders, 1
 IniRead, blnDisplayRecentFolders, %strIniFile%, Global, DisplayRecentFolders, 1
@@ -380,8 +391,8 @@ IniRead, blnDisplayMenuShortcuts, %strIniFile%, Global, DisplayMenuShortcuts, 0
 IniRead, strLatestSkipped, %strIniFile%, Global, LatestVersionSkipped, 0.0
 IniRead, blnDiagMode, %strIniFile%, Global, DiagMode, 0
 IniRead, intStartups, %strIniFile%, Global, Startups, 1
-IniRead, blnDonator, %strIniFile%, Global, Donator, 0 ; Please, be fair. Don't cheat with this.
-if !(blnDonator)
+IniRead, blnDonor, %strIniFile%, Global, Donor, 0 ; Please, be fair. Don't cheat with this.
+if !(blnDonor)
 	lMenuReservedShortcuts := lMenuReservedShortcuts . lMenuReservedShortcutsDonate
 IniRead, intRecentFolders, %strIniFile%, Global, RecentFolders, 5
 IniRead, strDirectoryOpusPath, %strIniFile%, Global, DirectoryOpusPath, %A_Space% ; empty string if not found
@@ -940,7 +951,7 @@ Menu, %lMainMenuName%, Add, % L(lMenuSettings, strAppName), GuiShow
 Menu, %lMainMenuName%, Default, % L(lMenuSettings, strAppName)
 Menu, %lMainMenuName%, Add, %lMenuAddThisFolder%, AddThisFolder
 
-if !(blnDonator)
+if !(blnDonor)
 {
 	Menu, %lMainMenuName%, Add
 	Menu, %lMainMenuName%, Add, %lDonateMenu%, GuiDonate
@@ -1083,15 +1094,18 @@ Gui, 1:Add, Picture, x+10 yp gGuiRemoveDialog, %strTempDir%\remove_image-26.png
 
 Gui, 1:Add, Text, Section xs+18 ym
 
-strDonateButtons := "thumbs_up|solutions|handshake|conference|gift"
-StringSplit, arrDonateButtons, strDonateButtons, |
-Random, intDonateButton, 1, 5
+if !(blnDonor)
+{
+	strDonateButtons := "thumbs_up|solutions|handshake|conference|gift"
+	StringSplit, arrDonateButtons, strDonateButtons, |
+	Random, intDonateButton, 1, 5
 
-Gui, 1:Add, Picture, xs+10 ym gGuiDonate, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png"
-Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs y+0 w52 center gGuiDonate, %lGuiDonate%
+	Gui, 1:Add, Picture, xs+10 ym gGuiDonate, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png"
+	Gui, 1:Font, s8 w400, Arial ; button legend
+	Gui, 1:Add, Text, xs y+0 w52 center gGuiDonate, %lGuiDonate%
+}
 
-Gui, 1:Add, Picture, Section x+10 ym gGuiHelp, %strTempDir%\help-32.png
+Gui, 1:Add, Picture, % "Section x+" . (blnDonor ? "42" : "10") . " ym gGuiHelp", %strTempDir%\help-32.png
 Gui, 1:Font, s8 w400, Arial ; button legend
 Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiHelp, %lGuiHelp%
 
@@ -1703,7 +1717,7 @@ Check4Update:
 ;------------------------------------------------------------
 Gui, 1:+OwnDialogs
 
-if Time2Donate(intStartups, blnDonator)
+if Time2Donate(intStartups, blnDonor)
 {
 	MsgBox, 36, % l(lDonateCheckTitle, intStartups, strAppName), % l(lDonateCheckPrompt, strAppName, intStartups)
 	IfMsgBox, Yes
@@ -1823,7 +1837,7 @@ Url2Var(strUrl)
 
 
 ;------------------------------------------------------------
-Time2Donate(intStartups, blnDonator)
+Time2Donate(intStartups, blnDonor)
 ;------------------------------------------------------------
 {
 	if (intStartups > 100)
@@ -1834,7 +1848,7 @@ Time2Donate(intStartups, blnDonator)
 		intDivisor := 15
 	else intDivisor := 10
 		
-	return !Mod(intStartups, intDivisor) and !(blnDonator)
+	return !Mod(intStartups, intDivisor) and !(blnDonor)
 }
 ;------------------------------------------------------------
 
