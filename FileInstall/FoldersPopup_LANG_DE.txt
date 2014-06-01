@@ -46,21 +46,22 @@ lDonateButton	Unterstützen Sie Freeware!
 lDonateCheckPrompt	Sind Sie zufrieden mit ~1~?`n`n~1~ ist nicht nur kostenlos, sondern enthält auch keine Werbung, bei der Sie nie wissen, ob diese Spyware oder Schadsoftware enthält.`n`n~2~ mal bisher, hat Ihnen ~1~ bei der täglichen Arbeit geholfen. Wie wär's jetzt mit ein wenig Unterstützung für Freeware?
 lDonateCheckTitle	~1~ mal! - ~2~
 lDonateMenu	&Unterstützen Sie Freeware!
-lDonatePlatformComment1	The most flexible way using your PayPal account or your credit card
-lDonatePlatformComment2	Receive an official invoice if you need it to be refunded
-lDonatePlatformComment3	Want to know more about <a href="~1~">microdonations</a>?
-lDonatePlatformName1	Using Paypal
-lDonatePlatformName2	Using Share-it
-lDonatePlatformName3	Using Flattr
+lDonatePlatformComment1	Die flexibelste Möglichkeit ist Ihr PayPal-Konto oder Ihre Kreditkarte zu nutzen
+lDonatePlatformComment2	Sie könen eine offizielle Rechnung für die Steuer bekommen
+lDonatePlatformComment3	Wollen Sie mehr zu <a href="~1~">microdonations</a> erfahren?
+lDonatePlatformName1	Mit Paypal
+lDonatePlatformName2	Mit Share-it
+lDonatePlatformName3	Mit Flattr
 lDonateReviewNameLeft1	Download.com
 lDonateReviewNameLeft2	PortableFreeware.com
 lDonateReviewNameLeft3	Softpedia.com
 lDonateReviewNameRight1	BetaNews.com
 lDonateReviewNameRight2	FileCluster.com
-lDonateText1	Support ~1~ development!
-lDonateText2	<a href="~1~">Why support freeware?</a>
-lDonateText3	... or support freeware for free!
-lDonateText4	Give a favorable review to ~1~ on:
+lDonateText1	Unterstützen Sie die Entwicklung von ~1~ !
+lDonateText2	<a href="~1~">Warum sollte ich Freeware unterstützen?</a>
+lDonateText3	... oder unterstützen Sie Freeware umsonst!
+lDonateText4	Schreiben Sie eine gute Beurteilung über ~1~ auf:
+lDonateText5	Schicken Sie mir Ihren Link
 lDonateThankyou	Vielen Dank für die Unterstützung von Freeware!
 lDonateTitle	Unterstützen Sie Freeware! - ~1~ ~2~
 lGui2Close	Schliessen
@@ -120,9 +121,9 @@ lMenuUpdate	Nach &Update suchen
 lNavigateFileError	Beim Öffnen des Ordners `n~1~ trat ein Fehler auf.
 lNavigateSpecialError	Beim Öffnen des Speziellen Ordners #~1~ trat ein Fehler auf.
 lOopsTitle	~1~ (~2~)
-lOopsWriteProtectedError	It appears that ~1~ is running from a WRITE-PROTECTED folder where the configuration file "~1~.ini" could not be created.`n`nMove the ~1~ .EXE file to the REGULAR folder of your choice and re-run it from this folder.`n`n~1~ will quit.
-lOopsWrongDirectoryOpusPath	Wrong Directory Opus path or file name in ~1~.ini file:`n"~2~"`n`nEnter the full path and name of the DOpus.exe file, for example (without the quotes):`n"DirectoryOpusPath=C:\Program Files\GPSoftware\Directory Opus\dopus.exe"
-lOopsZipFileError	It appears that ~1~ is running directly from a .ZIP file.`n`nYou must extract the ~1~ .EXE file from the .ZIP file to the folder of your choice before running it.`n`n~1~ will quit.
+lOopsWriteProtectedError	Es scheint, daß ~1~ aus einem SCHREIBGESCHÜTZTEN ORDNER heraus ausgeführt wird, in dem die Konfigurationsdatei "~1~.ini" nicht erstellt werden kann.`n`nVerschieben Sie die ~1~ .EXE Datei in einen STANDARD Ordner Ihrer Wahl und führen Sie es daraus nochmals aus.`n`n~1~ wird beendet.
+lOopsWrongDirectoryOpusPath	Falsches Verzeichnis, Opus-Pfad oder Dateiname in der ~1~.ini Konfigurationsdatei:`n"~2~"`n`nGeben Sie den vollen Pfad und Namen der DOpus.exe Datei an, z.B. (ohne Anführungszeichen):`n"DirectoryOpusPath=C:\Program Files\GPSoftware\Directory Opus\dopus.exe"
+lOopsZipFileError	Es scheint, daß ~1~ direkt aus einer .ZIP Datei ausgeführt wird.`n`nSie müssen zuerst die Datei ~1~ .EXE aus dem Archiv in ein Verzeichnis Ihrer Wahl entpacken und dann ausführen.`n`n~1~ wird beendet.
 lOptionsAlt	Alt
 lOptionsArrDescriptions1	Wählen Sie die MAUStaste und die Kombitasten, welche das FoldersPopup Menü im Windows Explorer oder Dateidialogboxen aufruft. Standardmäßig ist dies die mittlere Maustaste ohne zusätzliche Kombitaste.
 lOptionsArrDescriptions2	Wählen Sie die MAUStaste und die Kombitasten, welche das FoldersPopup Menü in JEDEM Fenster öffnet und zum gewählten Ordner in einem NEUEN Explorer-Fenster navigiert. Standardmäßig ist dies die mittlere Maustaste mit gedrückter Shift-Taste.
@@ -156,7 +157,7 @@ lOptionsWin	Win
 lReloadPrompt	Sprache wurde in ~1~ geändert. Wollen Sie jetzt ~2~ in ~1~ neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
 lTrayTipInstalledDetail	Zur Anzeige des ~1~ Menüs`nim Windows Explorer oder einer Dialogbox`n~2~ oder ~3~ drücken.`n`n~4~ oder ~5~`num ein neues Explorer-Fenster zu öffnen.
 lTrayTipinstalledTitle	~1~ ~2~ bereit!
-lUpdateError	An error occurred while accessing the latest version number. Checking for update interrupted.
+lUpdateError	Beim Zugriff auf die letzte Versionsnummer trat ein Fehler auf. Prüfe auf unterbrochene Updates.
 lUpdatePrompt	Update ~1~ von v~2~ auf v~3~?
 lUpdateTitle	Update ~1~?
 lUpdateYouHaveLatest	Sie verwenden die aktuellste Version: ~1~.`n`nTrotzdem die ~2~ Webseite besuchen?

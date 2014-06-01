@@ -61,6 +61,7 @@ lDonateText1	Soutenez le développement de ~1~ !
 lDonateText2	<a href="~1~">Pourquoi soutenir ce gratuiciel?</a>
 lDonateText3	... ou soutenez ce gratuiciel gratuitement !
 lDonateText4	Rédigez un avis favorable à ~1~ sur :
+lDonateText5	Envoyez-moi votre lien
 lDonateThankyou	Merci pour cette marque d'appréciation!
 lDonateTitle	Soutenez ce gratuiciel! - ~1~ ~2~
 lGui2Close	Fermer

@@ -2249,8 +2249,10 @@ loop, 3
 loop, 2
 	Gui, 2:Add, Link, % (A_Index = 1 ? "ys+20" : "y+5") . " x175 w150", % "<a href=""" . strDonateReviewUrlRight%A_Index% . """>" . lDonateReviewNameRight%A_Index% . "</a>"
 
+Gui, 2:Add, Link, y+30 x130, <a href="http://code.jeanlalonde.ca/support-freeware/">%lDonateText5%</a>
+
 Gui, 2:Font, s8 w400, Verdana
-Gui, 2:Add, Button, x175 y+40 g2GuiClose vbtnDonateClose, %lGui2Close%
+Gui, 2:Add, Button, x175 y+20 g2GuiClose vbtnDonateClose, %lGui2Close%
 GuiControl, Focus, btnDonateDefault
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
