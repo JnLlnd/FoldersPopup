@@ -13,6 +13,10 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### 2014-06-01 2.0.1
+* complete german translation
+* fix language typos
+
 ### 2014-05-28 2.0.0
 * see all additions from v1.5 ALPHA to v1.9 BETA
 

@@ -4,7 +4,8 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: 2.0.1 (2014-05-31)
+	Version: 2.0.1 (2014-06-01)
+	* complete german translation
 	* fix language typos
 	
 	Version: 2.0.0 (2014-05-28)
