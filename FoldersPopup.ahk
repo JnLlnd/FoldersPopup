@@ -4,6 +4,10 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: 2.0.2 (2014-06-XX)
+	* fix bug when a recent folder is not available (only XP?)
+	* stop checking recent file's folders, process only recent folders from recent items
+	
 	Version: 2.0.1 (2014-06-01)
 	* complete german translation
 	* fix language typos
@@ -175,7 +179,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 2.0.1
+;@Ahk2Exe-SetVersion 2.0.2
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -219,8 +223,8 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "2.0.1" ; "major.minor.bugs"
-global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
+global strCurrentVersion := "2.0.2" ; "major.minor.bugs"
+global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
 global strDiagFile := A_ScriptDir . "\" . strAppName . "-DIAG.txt"
@@ -839,21 +843,19 @@ Loop, parse, strDirList, `n
 	FileGetShortcut, %strTargetFullName%, strOutTarget
 	if (errorlevel) ; hidden or system files (like desktop.ini) returns an error
 		continue
+	if !FileExist(strOutTarget) ; if folder/file was delete or on a removable drive
+		continue
 	
 	FileGetAttrib, strAttributes, %strOutTarget%
-	if !InStr(strAttributes, "D")
-		SplitPath, strOutTarget, , strOutTarget ; for files, retreive the folder containing the file
+	if !InStr(strAttributes, "D") ; not a folder
+		continue
 
-	if !ValueIsInObject(strOutTarget, objRecentFolders)
-	{
-		intRecentFoldersIndex := intRecentFoldersIndex + 1
-		objRecentFolders.Insert(intRecentFoldersIndex, strOutTarget)
-		
-		Menu, menuRecentFolders, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strOutTarget, OpenRecentFolder
-		
-		if (intRecentFoldersIndex >= intRecentFolders)
-			break
-	}
+	intRecentFoldersIndex := intRecentFoldersIndex + 1
+	objRecentFolders.Insert(intRecentFoldersIndex, strOutTarget)
+	Menu, menuRecentFolders, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strOutTarget, OpenRecentFolder
+	
+	if (intRecentFoldersIndex >= intRecentFolders)
+		break
 }
 
 return
