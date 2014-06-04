@@ -7,6 +7,7 @@
 	Version: 2.0.2 (2014-06-XX)
 	* fix bug when a recent folder is not available (only XP?)
 	* stop checking recent file's folders, process only recent folders from recent items
+	* fix header bug in diagnostic mode
 	
 	Version: 2.0.1 (2014-06-01)
 	* complete german translation
@@ -253,6 +254,8 @@ global arrSubmenuStack := Object()
 Gosub, InitSystemArrays
 Gosub, InitLanguage
 Gosub, LoadIniFile
+if (blnDiagMode)
+	Gosub, InitDiagMode
 Gosub, LoadTheme
 ; build even if blnDisplaySpecialFolders, blnDisplayRecentFolders or blnDisplaySwitchMenu are false because they could become true
 Gosub, BuildSpecialFoldersMenu
@@ -263,8 +266,6 @@ Gosub, BuildGui
 Gosub, BuildAddDialogMenu
 Gosub, Check4Update
 Gosub, BuildTrayMenu
-if (blnDiagMode)
-	Gosub, InitDiagMode
 
 IfExist, %A_Startup%\%strAppName%.lnk
 {
