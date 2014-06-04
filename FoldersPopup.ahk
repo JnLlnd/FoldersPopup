@@ -4,9 +4,9 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: 2.0.2 (2014-06-XX)
+	Version: 2.0.2 (2014-06-03)
+	* improve performance of Recent Folders menu building, process only recent folders in recent items
 	* fix bug when a recent folder is not available (only XP?)
-	* stop checking recent file's folders, process only recent folders from recent items
 	* fix header bug in diagnostic mode
 	
 	Version: 2.0.1 (2014-06-01)
@@ -225,7 +225,7 @@ Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
 global strCurrentVersion := "2.0.2" ; "major.minor.bugs"
-global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
+global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
 global strDiagFile := A_ScriptDir . "\" . strAppName . "-DIAG.txt"
