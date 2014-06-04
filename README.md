@@ -13,6 +13,11 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### 2014-06-03 2.0.2
+* improve performance of Recent Folders menu building, process only recent folders in recent items
+* fix bug when a recent folder is not available (only XP?)
+* fix header bug in diagnostic mode
+
 ### 2014-06-01 2.0.1
 * complete german translation
 * fix language typos
