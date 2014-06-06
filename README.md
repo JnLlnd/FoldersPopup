@@ -13,6 +13,10 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### 2014-06-06 2.0.3
+* fix bugs with switch folders and recent folders options
+* update german translation
+
 ### 2014-06-03 2.0.2
 * improve performance of Recent Folders menu building, process only recent folders in recent items
 * fix bug when a recent folder is not available (only XP?)
