@@ -57,6 +57,7 @@ lDonateReviewNameLeft2	PortableFreeware.com
 lDonateReviewNameLeft3	Softpedia.com
 lDonateReviewNameRight1	BetaNews.com
 lDonateReviewNameRight2	FileCluster.com
+lDonateReviewNameRight3	PCastuces.com (FR)
 lDonateText1	Unterstützen Sie die Entwicklung von ~1~ !
 lDonateText2	<a href="~1~">Warum sollte ich Freeware unterstützen?</a>
 lDonateText3	... oder unterstützen Sie Freeware umsonst!
@@ -122,7 +123,7 @@ lNavigateFileError	Beim Öffnen des Ordners `n~1~ trat ein Fehler auf.
 lNavigateSpecialError	Beim Öffnen des Speziellen Ordners #~1~ trat ein Fehler auf.
 lOopsTitle	~1~ (~2~)
 lOopsWriteProtectedError	Es scheint, daß ~1~ aus einem SCHREIBGESCHÜTZTEN ORDNER heraus ausgeführt wird, in dem die Konfigurationsdatei "~1~.ini" nicht erstellt werden kann.`n`nVerschieben Sie die ~1~ .EXE Datei in einen STANDARD Ordner Ihrer Wahl und führen Sie es daraus nochmals aus.`n`n~1~ wird beendet.
-lOopsWrongDirectoryOpusPath	Falsches Verzeichnis, Opus-Pfad oder Dateiname in der ~1~.ini Konfigurationsdatei:`n"~2~"`n`nGeben Sie den vollen Pfad und Namen der DOpus.exe Datei an, z.B. (ohne Anführungszeichen):`n"DirectoryOpusPath=C:\Program Files\GPSoftware\Directory Opus\dopus.exe"
+lOopsWrongDirectoryOpusPath	Directory Opus Pfad oder Dateiname in der ~1~.ini Konfigurationsdatei falsch:`n"~2~"`n`nGeben Sie den vollen Pfad und Namen der DOpus.exe Datei an, z.B. (ohne Anführungszeichen):`n"DirectoryOpusPath=C:\Program Files\GPSoftware\Directory Opus\dopus.exe"
 lOopsZipFileError	Es scheint, daß ~1~ direkt aus einer .ZIP Datei ausgeführt wird.`n`nSie müssen zuerst die Datei ~1~ .EXE aus dem Archiv in ein Verzeichnis Ihrer Wahl entpacken und dann ausführen.`n`n~1~ wird beendet.
 lOptionsAlt	Alt
 lOptionsArrDescriptions1	Wählen Sie die MAUStaste und die Kombitasten, welche das FoldersPopup Menü im Windows Explorer oder Dateidialogboxen aufruft. Standardmäßig ist dies die mittlere Maustaste ohne zusätzliche Kombitaste.

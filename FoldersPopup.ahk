@@ -824,7 +824,8 @@ if (A_OSVersion = "WIN_XP")
 else
 	strRecentsFolder := A_AppData . "\Microsoft\Windows\Recent"
 
-blnDisplayRecentFolders := (StrLen(FileExist(strRecentsFolder)) > 0) ; turn recent menu off if recent folder not found
+if (blnDisplayRecentFolders)
+	blnDisplayRecentFolders := (StrLen(FileExist(strRecentsFolder)) > 0) ; turn recent menu off if recent folder not found
 
 strDirList := ""
 	
@@ -947,10 +948,12 @@ if (blnDisplaySwitchMenu)
 	Menu, menuSwitch, DeleteAll
 	Menu, menuSwitch, Add, %lMenuSwitchExplorer%, :menuSwitchExplorer
 	Menu, menuSwitch, Add, %lMenuSwitchDialog%, :menuSwitchDialog
+	Menu, %lMainMenuName%, Add, %lMenuSwitch%..., :menuSwitch
 }
 
-Menu, %lMainMenuName%, Add, %lMenuSwitch%..., :menuSwitch
-Menu, %lMainMenuName%, Add
+if (blnDisplaySpecialFolders or blnDisplayRecentFolders or blnDisplaySwitchMenu)
+	Menu, %lMainMenuName%, Add
+
 Menu, %lMainMenuName%, Add, % L(lMenuSettings, strAppName), GuiShow
 Menu, %lMainMenuName%, Default, % L(lMenuSettings, strAppName)
 Menu, %lMainMenuName%, Add, %lMenuAddThisFolder%, AddThisFolder
@@ -2250,10 +2253,10 @@ strDonateReviewUrlRight2 := "http://www.filecluster.com/System-Utilities/Other-U
 loop, 3
 	Gui, 2:Add, Link, % (A_Index = 1 ? "ys+20" : "y+5") . " x25 w150", % "<a href=""" . strDonateReviewUrlLeft%A_Index% . """>" . lDonateReviewNameLeft%A_Index% . "</a>"
 
-loop, 2
+loop, 3
 	Gui, 2:Add, Link, % (A_Index = 1 ? "ys+20" : "y+5") . " x175 w150", % "<a href=""" . strDonateReviewUrlRight%A_Index% . """>" . lDonateReviewNameRight%A_Index% . "</a>"
 
-Gui, 2:Add, Link, y+30 x130, <a href="http://code.jeanlalonde.ca/support-freeware/">%lDonateText5%</a>
+Gui, 2:Add, Link, y+10 x130, <a href="http://code.jeanlalonde.ca/support-freeware/">%lDonateText5%</a>
 
 Gui, 2:Font, s8 w400, Verdana
 Gui, 2:Add, Button, x175 y+20 g2GuiClose vbtnDonateClose, %lGui2Close%
