@@ -4,6 +4,10 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: 2.0.3 (2014-06-06)
+	* fix bugs with switch folders and recent folders options
+	* update german translation
+	
 	Version: 2.0.2 (2014-06-03)
 	* improve performance of Recent Folders menu building, process only recent folders in recent items
 	* fix bug when a recent folder is not available (only XP?)
@@ -180,7 +184,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 2.0.2
+;@Ahk2Exe-SetVersion 2.0.3
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -224,7 +228,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "2.0.2" ; "major.minor.bugs"
+global strCurrentVersion := "2.0.3" ; "major.minor.bugs"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
