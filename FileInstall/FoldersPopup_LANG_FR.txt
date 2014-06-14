@@ -109,6 +109,7 @@ lMenuNetworkNeighborhood	Réseau
 lMenuPictures	Images
 lMenuRecentFolders	&Emplacements récents
 lMenuRecycleBin	Corbeille
+lMenuRefreshRecent	Actualiser
 lMenuReservedShortcuts	DEBPA
 lMenuReservedShortcutsDonate	S
 lMenuRunAtStartup	Exécuter au démarrage
@@ -122,8 +123,8 @@ lMenuUpdate	Mettre à jour
 lNavigateFileError	Une erreur s'est produite lors de l'ouverture du dossier:`n~1~.
 lNavigateSpecialError	Une erreur s'est produite lors de l'ouverture du dossier spécial #~1~.
 lOopsTitle	~1~ (~2~)
-lOopsWrongDirectoryOpusPath	Chemin ou nom de fichier de Directory Opus invalide dans ~1~.ini:`n"~2~"`n`nEntrez le chemin complet et le nom du fichier exécutable de Directory Opus, par exemple (sans les guillemets):`n"DirectoryOpusPath=C:\Program Files\GPSoftware\Directory Opus\dopus.exe"
 lOopsWriteProtectedError	Il semble que ~1~ a été lancé depuis un dossier en ÉCRITURE SEULEMENT où il est impossible de créer le fichier de configuration "~1~.ini".`n`nDéplacez le fichier .EXE de ~1~ dans un dossier RÉGULIER de votre choix, puis exécutez l'application à nouveau depuis ce dossier.`n`n~1~ va être fermé.
+lOopsWrongDirectoryOpusPath	Chemin ou nom de fichier de Directory Opus invalide dans ~1~.ini:`n"~2~"`n`nEntrez le chemin complet et le nom du fichier exécutable de Directory Opus, par exemple (sans les guillemets):`n"DirectoryOpusPath=C:\Program Files\GPSoftware\Directory Opus\dopus.exe"
 lOopsZipFileError	Il semble que ~1~ a été lancé directement depuis un fichier compressé (ZIP).`n`nVous devez extraire le fichier .EXE de ~1~ du fichier ZIP dans un dossier de votre choix, puis exécuter l'application à nouveau depuis ce dossier.`n`n~1~ va être fermé.
 lOptionsAlt	Alt
 lOptionsArrDescriptions1	Choisissez le bouton de la SOURIS et la touche de combinaison qui ouvrira le menu popup dans l'Explorateur de fichier de Windows ou dans des boîtes de dialogue de fichier. Par défaut, il s'agit du bouton central de la souris (MButton) sans touche de modification.
@@ -149,6 +150,7 @@ lOptionsOtherOptions	Autres options
 lOptionsPopupFix	Menu popup à une position fixe
 lOptionsPopupFixPositionX	Position X:
 lOptionsPopupFixPositionY	Y:
+lOptionsRecentFolders	Emplacements récents
 lOptionsRunAtStartup	Exécuter au démarrage
 lOptionsShift	Maj
 lOptionsTitles	Souris - Popup|Souris - Nouvel explorateur|Keyboard - Popup|Keyboard - Nouvel explorateur|Paramètres

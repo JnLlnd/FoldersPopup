@@ -1,7 +1,6 @@
 /*
 TODO
-- language file refresh
-- option for number of recent
+- submenu when add this folder
 */
 
 ;===============================================
@@ -365,7 +364,7 @@ IfNotExist, %strIniFile%
 			DisplayTrayTip=1
 			DisplaySpecialFolders=1
 			DisplayRecentFolders=1
-			RecentFolders=5
+			RecentFolders=10
 			DisplaySwitchMenu=1
 			DisplayMenuShortcuts=0
 			PopupFix=0
@@ -414,7 +413,7 @@ IniRead, intStartups, %strIniFile%, Global, Startups, 1
 IniRead, blnDonor, %strIniFile%, Global, Donor, 0 ; Please, be fair. Don't cheat with this.
 if !(blnDonor)
 	lMenuReservedShortcuts := lMenuReservedShortcuts . lMenuReservedShortcutsDonate
-IniRead, intRecentFolders, %strIniFile%, Global, RecentFolders, 5
+IniRead, intRecentFolders, %strIniFile%, Global, RecentFolders, 10
 IniRead, strDirectoryOpusPath, %strIniFile%, Global, DirectoryOpusPath, %A_Space% ; empty string if not found
 
 Loop
@@ -821,7 +820,7 @@ BuildRecentFoldersMenu:
 Menu, menuRecentFolders, Add
 Menu, menuRecentFolders, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
 
-Menu, menuRecentFolders, Add, #### Refresh recent folders, RefreshRecentFolders
+Menu, menuRecentFolders, Add, %lMenuRefreshRecent%, RefreshRecentFolders
 Menu, menuRecentFolders, Add
 
 objRecentFolders := Object()
@@ -2382,17 +2381,20 @@ GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
 Gui, 2:Add, CheckBox, y+10 x40 vblnDisplayMenuShortcuts, %lOptionsDisplayMenuShortcuts%
 GuiControl, , blnDisplayMenuShortcuts, %blnDisplayMenuShortcuts%
 
-Gui, 2:Add, CheckBox, yp x250 vblnDisplayRecentFolders, %lOptionsDisplayRecentFolders%
+Gui, 2:Add, CheckBox, yp x250 vblnDisplayRecentFolders gDisplayRecentFoldersClicked, %lOptionsDisplayRecentFolders%
 GuiControl, , blnDisplayRecentFolders, %blnDisplayRecentFolders%
 
 Gui, 2:Add, CheckBox, y+10 x40 vblnDisplayTrayTip, %lOptionsTrayTip%
 GuiControl, , blnDisplayTrayTip, %blnDisplayTrayTip%
 
-Gui, 2:Add, CheckBox, yp x250 vblnDisplaySwitchMenu, %lOptionsDisplaySwitchMenu%
-GuiControl, , blnDisplaySwitchMenu, %blnDisplaySwitchMenu%
+Gui, 2:Add, Edit, yp x250 w36 h15 center vintRecentFolders, %intRecentFolders%
+Gui, 2:Add, Text, yp x+10 vlblRecentFolders, %lOptionsRecentFolders%
 
 Gui, 2:Add, CheckBox, y+10 x40 vblnPopupFix gPopupFixClicked, %lOptionsPopupFix%
 GuiControl, , blnPopupFix, %blnPopupFix%
+
+Gui, 2:Add, CheckBox, yp x250 vblnDisplaySwitchMenu, %lOptionsDisplaySwitchMenu%
+GuiControl, , blnDisplaySwitchMenu, %blnDisplaySwitchMenu%
 
 Gui, 2:Add, Text, % "y+10 x58 vlblPopupFixPositionX " . (blnPopupFix ? "" : "hidden"), %lOptionsPopupFixPositionX%
 Gui, 2:Add, Edit, % "yp x+5 w36 h15 vstrPopupFixPositionX center " . (blnPopupFix ? "" : "hidden"), %arrPopupFixPosition1%
@@ -2477,6 +2479,18 @@ return
 
 
 ;------------------------------------------------------------
+DisplayRecentFoldersClicked:
+;------------------------------------------------------------
+Gui, 2:Submit, NoHide
+
+GuiControl, % (blnDisplayRecentFolders ? "Show" : "Hide"), intRecentFolders
+GuiControl, % (blnDisplayRecentFolders ? "Show" : "Hide"), lblRecentFolders
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 PopupFixClicked:
 ;------------------------------------------------------------
 Gui, 2:Submit, NoHide
@@ -2506,6 +2520,7 @@ Menu, Tray, % blnOptionsRunAtStartup ? "Check" : "Uncheck", %lMenuRunAtStartup%
 IniWrite, %blnDisplayTrayTip%, %strIniFile%, Global, DisplayTrayTip
 IniWrite, %blnDisplaySpecialFolders%, %strIniFile%, Global, DisplaySpecialFolders
 IniWrite, %blnDisplayRecentFolders%, %strIniFile%, Global, DisplayRecentFolders
+IniWrite, %intRecentFolders%, %strIniFile%, Global, RecentFolders
 IniWrite, %blnDisplaySwitchMenu%, %strIniFile%, Global, DisplaySwitchMenu
 IniWrite, %blnPopupFix%, %strIniFile%, Global, PopupFix
 IniWrite, %blnDisplayMenuShortcuts%, %strIniFile%, Global, DisplayMenuShortcuts
@@ -2535,8 +2550,12 @@ if (strLanguageCodePrev <> strLanguageCode)
 	}
 }	
 
-; else rebuild Folders menus w/ or w/o optional folders and shortcuts
 
+; else rebuild recent and switch menus
+Gosub, BuildRecentFoldersMenu
+Gosub, BuildSwitchMenu
+
+; and rebuild Folders menus w/ or w/o optional folders and shortcuts
 for strMenuName, arrMenu in arrMenus
 {
 	Menu, %strMenuName%, Add
