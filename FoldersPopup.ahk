@@ -1,9 +1,19 @@
+/*
+TODO
+- language file refresh
+- option for number of recent
+*/
+
 ;===============================================
 /*
 	FoldersPopup
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: 2.1 (2014-06-XX)
+	* on-demande recent folders update to keep the popup menu snappy regardless of the number of recent items to parse or the performance of the PC
+	* option in settings to choose the number of recent files in popup menu, now default to 10
+	
 	Version: 2.0.3 (2014-06-06)
 	* fix bugs with switch folders and recent folders options
 	* update german translation
@@ -184,7 +194,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 2.0.3
+;@Ahk2Exe-SetVersion 2.1.0
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -228,7 +238,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "2.0.3" ; "major.minor.bugs"
+global strCurrentVersion := "2.1" ; "major.minor.bugs"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
@@ -618,7 +628,6 @@ if (blnDisplaySpecialFolders)
 
 if (blnDisplayRecentFolders)
 {
-	Gosub, BuildRecentFoldersMenu
 	Menu, %lMainMenuName%
 		, % (intRecentFoldersIndex ? "Enable" : "Disable")
 		, %lMenuRecentFolders%...
@@ -698,7 +707,6 @@ if (blnDisplaySpecialFolders)
 
 if (blnDisplayRecentFolders)
 {
-	Gosub, BuildRecentFoldersMenu
 	Menu, %lMainMenuName%
 		, % (intRecentFoldersIndex ? "Enable" : "Disable")
 		, %lMenuRecentFolders%...
@@ -745,11 +753,8 @@ if (blnMouse)
 	else
 		WinActivate, % "ahk_id " . strTargetWinId
 	if (!blnPopupFix)
-	{
 		; display menu at mouse pointer location
-		intMenuPosX :=
-		intMenuPosY :=
-	}
+		MouseGetPos, intMenuPosX, intMenuPosY
 }
 else
 {
@@ -816,6 +821,9 @@ BuildRecentFoldersMenu:
 Menu, menuRecentFolders, Add
 Menu, menuRecentFolders, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
 
+Menu, menuRecentFolders, Add, #### Refresh recent folders, RefreshRecentFolders
+Menu, menuRecentFolders, Add
+
 objRecentFolders := Object()
 intRecentFoldersIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
 
@@ -863,6 +871,18 @@ Loop, parse, strDirList, `n
 	if (intRecentFoldersIndex >= intRecentFolders)
 		break
 }
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+RefreshRecentFolders:
+;------------------------------------------------------------
+
+Gosub, BuildRecentFoldersMenu
+CoordMode, Menu, % (blnPopupFix ? "Screen" : "Window")
+Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
 
 return
 ;------------------------------------------------------------
