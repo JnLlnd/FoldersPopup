@@ -1,8 +1,3 @@
-/*
-TODO
-- submenu when add this folder
-*/
-
 ;===============================================
 /*
 	FoldersPopup
@@ -10,8 +5,10 @@ TODO
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
 	Version: 2.1 (2014-06-XX)
+	* when add this folder, select in which menu to add the new folder
 	* on-demande recent folders update to keep the popup menu snappy regardless of the number of recent items to parse or the performance of the PC
 	* option in settings to choose the number of recent files in popup menu, now default to 10
+	* refactor code merge of GuiAddFolderSave and GuiEditFolderSave
 	
 	Version: 2.0.3 (2014-06-06)
 	* fix bugs with switch folders and recent folders options
@@ -1931,78 +1928,16 @@ Gui, 2:Add, Text, x10 vlblFolder, %lDialogFolderLabel%
 Gui, 2:Add, Edit, x10 w300 vstrFolderLocation, %strCurrentLocation%
 Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation default, %lDialogBrowseButton%
 
-Gui, 2:Add, Button, x150 gGuiAddFolderSave, %lDialogAdd%
+if (A_ThisLabel = "GuiAddFromPopup")
+{
+	Gui, 2:Add, Text, x10 y+10 vlblFolderParentMenu, %lDialogFolderParentMenu%
+	Gui, 2:Add, DropDownList, x10 w250 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
+}
+
+Gui, 2:Add, Button, x150 y+15 gGuiAddFolderSave, %lDialogAdd%
 Gui, 2:Add, Button, x+20 yp gGuiAddFolderCancel, %lGuiCancel%
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiAddFolderSave:
-;------------------------------------------------------------
-Gui, 2:Submit, NoHide
-Gui, 2:+OwnDialogs
-
-blnMenuReady := false
-
-if !StrLen(strFolderShortName)
-{
-	Oops(lDialogFolderNameEmpty)
-	return
-}
-
-if  (blnRadioFolder and !StrLen(strFolderLocation))
-{
-	Oops(lDialogFolderLocationEmpty)
-	return
-}
-
-if !FolderNameIsNew(strFolderShortName)
-	and (strFolderShortName <> strCurrentName)
-{
-	Oops(lDialogFolderNameNotNew, strFolderShortName)
-	return
-}
-
-if (blnRadioSubmenu)
-{
-	if InStr(strFolderShortName, lGuiSubmenuSeparator)
-	{
-		Oops(L(lDialogFolderNameNoSeparator, lGuiSubmenuSeparator))
-		return
-	}
-	strFolderLocation := lGuiSubmenuLocation
-	strSubmenuFullName := strCurrentMenu . lGuiSubmenuSeparator . strFolderShortName
-	
-	arrNewMenu := Object() ; array of folders of the new menu
-	arrMenus.Insert(strSubmenuFullName, arrNewMenu)
-}
-else
-	strSubmenuFullName := ""
-
-Gosub, 2GuiClose
-
-Gui, 1:Default
-GuiControl, 1:Focus, lvFoldersList
-Gui, 1:ListView, lvFoldersList
-
-; insert new item at the top of the Gui
-LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", strFolderShortName, strFolderLocation, strCurrentMenu, strSubmenuFullName)
-LV_Modify(LV_GetNext(), "Vis")
-LV_ModifyCol(1, "AutoHdr")
-LV_ModifyCol(2, "AutoHdr")
-
-Gosub, SaveCurrentListviewToMenuObject ; save current LV tbefore update the dropdown menu
-GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
-Gosub, BuildFoldersMenus ; update menus
-
-GuiControl, Enable, btnGuiSave
-GuiControl, , btnGuiCancel, %lDialogCancelButton%
-
-blnMenuReady := true
 
 return
 ;------------------------------------------------------------
@@ -2052,15 +1987,16 @@ return
 
 
 ;------------------------------------------------------------
+GuiAddFolderSave:
 GuiEditFolderSave:
 ;------------------------------------------------------------
 Gui, 2:Submit, NoHide
 Gui, 2:+OwnDialogs
 
-blnMenuReady := false
-
 GuiControlGet, strParentMenu, , drpParentMenu
-	
+if !StrLen(strParentMenu)
+	strParentMenu := strCurrentMenu
+
 if !StrLen(strFolderShortName)
 {
 	Oops(lDialogFolderNameEmpty)
@@ -2087,12 +2023,26 @@ if (blnRadioSubmenu)
 		Oops(L(lDialogFolderNameNoSeparator, lGuiSubmenuSeparator))
 		return
 	}
-	strNewSubmenuFullName := strParentMenu . lGuiSubmenuSeparator . strFolderShortName
 	
-	UpdateMenuNameInSubmenus(strCurrentSubmenuFullName, strNewSubmenuFullName) ; change names in arrMenus and arrMenu objects	
+	if (A_ThisLabel = "GuiAddFolderSave")
+	{
+		strFolderLocation := lGuiSubmenuLocation
+		strSubmenuFullName := strCurrentMenu . lGuiSubmenuSeparator . strFolderShortName
+		
+		arrNewMenu := Object() ; array of folders of the new menu
+		arrMenus.Insert(strSubmenuFullName, arrNewMenu)
+	}
+	else
+	{
+		strNewSubmenuFullName := strParentMenu . lGuiSubmenuSeparator . strFolderShortName
+		UpdateMenuNameInSubmenus(strCurrentSubmenuFullName, strNewSubmenuFullName) ; change names in arrMenus and arrMenu objects	
+	}
 }
 else
-	strNewSubmenuFullName := ""
+	if (A_ThisLabel = "GuiAddFolderSave")
+		strSubmenuFullName := ""
+	else
+		strNewSubmenuFullName := ""
 
 Gosub, 2GuiClose
 
@@ -2100,26 +2050,46 @@ Gui, 1:Default
 GuiControl, 1:Focus, lvFoldersList
 Gui, 1:ListView, lvFoldersList
 
-if (strParentMenu = strCurrentMenu) ; modify selected row
-	LV_Modify(intRowToEdit, "Select Focus", strFolderShortName, strFolderLocation, strCurrentMenu, strNewSubmenuFullName)
-else ; move menu item to another menu: add to the new menu's object and remove item from this menu in the Gui
+if (strParentMenu = strCurrentMenu) ; add as top row to current menu
+{
+	if (A_ThisLabel = "GuiAddFolderSave")
+	{
+		LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", strFolderShortName, strFolderLocation, strCurrentMenu, strSubmenuFullName)
+		LV_Modify(LV_GetNext(), "Vis")
+	
+		Gosub, SaveCurrentListviewToMenuObject ; save current LV tbefore update the dropdown menu
+		GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
+	}
+	else
+	{
+		LV_Modify(intRowToEdit, "Select Focus", strFolderShortName, strFolderLocation, strCurrentMenu, strNewSubmenuFullName)
+	}
+}
+else ; add menu item to selected menu object
 {
 	objFolder := Object() ; new menu item
 	objFolder.MenuName := strParentMenu ; parent menu of this menu item
 	objFolder.FolderName := strFolderShortName ; display name of this menu item
 	objFolder.FolderLocation := strFolderLocation ; path for this menu item
 	objFolder.SubmenuFullName := strNewSubmenuFullName ; full name of the submenu
-	arrMenus[objFolder.MenuName].Insert(objFolder) ; add this menu item to the new menu
-	
-	LV_Delete(intRowToEdit)
-	LV_Modify(intRowToEdit, "Select Focus")
+	arrMenus[objFolder.MenuName].Insert(1, objFolder) ; add this menu item to the new menu
+
+	if (A_ThisLabel = "GuiEditFolderSave")
+	{
+		LV_Delete(intRowToEdit)
+		LV_Modify(intRowToEdit, "Select Focus")
+	}
 }
 
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
 
-Gosub, SaveCurrentListviewToMenuObject ; save current LV tbefore update the dropdown menu
-GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
+if (A_ThisLabel = "GuiEditFolderSave")
+{
+	Gosub, SaveCurrentListviewToMenuObject ; save current LV tbefore update the dropdown menu
+	GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
+}
+
 Gosub, BuildFoldersMenus ; update menus
 
 GuiControl, Enable, btnGuiSave
