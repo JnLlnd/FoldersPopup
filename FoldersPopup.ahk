@@ -4,11 +4,15 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: 2.1 (2014-06-XX)
-	* when add this folder, select in which menu to add the new folder
-	* on-demande recent folders update to keep the popup menu snappy regardless of the number of recent items to parse or the performance of the PC
+	Version: 2.1 (2014-06-16)
+	* when adding this folder, select in which menu to add the new folder
+	* new button when edit menu entry to open this menu
+	* in edit folder dialog box, set focus to and select folder name
+	* on-demand recent folders update to keep the popup menu snappy regardless of the number of recent items to parse or the performance of the PC
 	* option in settings to choose the number of recent files in popup menu, now default to 10
-	* refactor code merge of GuiAddFolderSave and GuiEditFolderSave
+	* refactor (code merge) of GuiAddFolderSave and GuiEditFolderSave
+	* allow to add this folder from a network folder starting with "\\"
+	* fix bug with up arrow to go to parent menu
 	
 	Version: 2.0.3 (2014-06-06)
 	* fix bugs with switch folders and recent folders options
@@ -1232,6 +1236,7 @@ return
 GuiMenusListChanged:
 GuiGotoUpMenu:
 GuiGotoPreviousMenu:
+OpenMenuFromEditForm:
 ;------------------------------------------------------------
 
 Gosub, SaveCurrentListviewToMenuObject ; save current LV before changing strCurrentMenu
@@ -1247,15 +1252,23 @@ else if (A_ThisLabel = "GuiGotoUpMenu")
 	arrSubmenuStack.Insert(1, strSavedMenu) ; push the current menu to the left arrow stack
 	strCurrentMenu := SubStr(strCurrentMenu, 1, InStr(strCurrentMenu, lGuiSubmenuSeparator, , 0) - 1) 
 }
-else ; GuiGotoPreviousMenu
+else if (A_ThisLabel = "GuiGotoPreviousMenu")
 {
 	strCurrentMenu := arrSubmenuStack[1] ; pull the top menu from the left arrow stack
 	arrSubmenuStack.Remove(1) ; remove the top menu from the left arrow stack
 }
+else if (A_ThisLabel = "OpenMenuFromEditForm")
+{
+	arrSubmenuStack.Insert(1, strSavedMenu) ; push the current menu to the left arrow stack
+	strCurrentMenu := strCurrentSubmenuFullName
+}
+else
+	return ; should not occur
+
 strPreviousMenu := strSavedMenu
 
-GuiControl, % arrSubmenuStack.MaxIndex() ? "Show" : "Hide", picPreviousMenu
-GuiControl, % arrSubmenuStack.MaxIndex() ? "Show" : "Hide", picUpMenu
+GuiControl, % (arrSubmenuStack.MaxIndex() ? "Show" : "Hide"), picPreviousMenu
+GuiControl, % (strCurrentMenu <> lMainMenuName ? "Show" : "Hide"), picUpMenu
 
 Gosub, LoadOneMenuToGui
 
@@ -1604,8 +1617,6 @@ ClipBoard := ""
 ; With dialog boxes, the key sequence {F4}{Esc} generally selects the current location of the window. But, in some
 ; dialog boxes, the {Esc} key closes the dialog box. We will check window title to detect this behavior.
 
-WinGetTitle, strWindowTitle, A ; to check later if this window is closed unexpectedly
-
 if (strTargetClass = "#32770")
 	intWaitTimeIncrement := 300 ; time allowed for dialog boxes
 else
@@ -1615,6 +1626,13 @@ if (blnDiagMode)
 	intTries := 8
 else
 	intTries := 3
+
+strWindowTitle := ""
+Loop, %intTries%
+{
+	Sleep, intWaitTimeIncrement * A_Index
+	WinGetTitle, strWindowTitle, A ; to check later if this window is closed unexpectedly
+} Until (StrLen(strWindowTitle))
 
 if WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
 {
@@ -1660,7 +1678,7 @@ if (blnDiagMode)
 	Diag("AddedFolder", strCurrentLocation)
 }
 
-If !StrLen(strCurrentLocation) or !InStr(strCurrentLocation, ":")  or (strWindowTitle <> strWindowThisTitle)
+If !StrLen(strCurrentLocation) or !(InStr(strCurrentLocation, ":") or InStr(strCurrentLocation, "\\")) or (strWindowTitle <> strWindowThisTitle)
 {
 	Gui, 1:+OwnDialogs 
 	MsgBox, 52, % L(lDialogAddFolderManuallyTitle, strAppName, strAppVersion), %lDialogAddFolderManuallyPrompt%
@@ -1936,6 +1954,8 @@ if (A_ThisLabel = "GuiAddFromPopup")
 
 Gui, 2:Add, Button, x150 y+15 gGuiAddFolderSave, %lDialogAdd%
 Gui, 2:Add, Button, x+20 yp gGuiAddFolderCancel, %lGuiCancel%
+
+GuiControl, 2:Focus, strFolderShortName
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
 
@@ -1977,10 +1997,30 @@ Gui, 2:Add, Text, % "x10 vlblFolder " . (strCurrentLocation = lGuiSubmenuLocatio
 Gui, 2:Add, Edit, % "x10 w300 vstrFolderLocation " . (strCurrentLocation = lGuiSubmenuLocation ? "hidden" : ""), %strCurrentLocation%
 Gui, 2:Add, Button, % "x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation " . (strCurrentLocation = lGuiSubmenuLocation ? "hidden" : "default"), %lDialogBrowseButton%
 
-Gui, 2:Add, Button, x100 gGuiEditFolderSave, %lDialogSave%
-Gui, 2:Add, Button, x+20 yp gGuiEditFolderCancel, %lGuiCancel%
+Gui, 2:Add, Button, x10 gGuiEditFolderSave, %lDialogSave%
+Gui, 2:Add, Button, x+10 yp gGuiEditFolderCancel, %lGuiCancel%
+if (blnRadioSubmenu)
+	Gui, 2:Add, Button, x+40 yp gGuiOpenThisMenu, %lDialogOpenThisMenu%
+
+GuiControl, 2:Focus, strFolderShortName
+Send, ^a
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiOpenThisMenu:
+;------------------------------------------------------------
+Gosub, 2GuiClose
+
+Gui, 1:Default
+GuiControl, 1:Focus, lvFoldersList
+Gui, 1:ListView, lvFoldersList
+
+Gosub, OpenMenuFromEditForm
 
 return
 ;------------------------------------------------------------
@@ -2943,18 +2983,20 @@ return
 OpenRecentFolder:
 ;------------------------------------------------------------
 
+intRecentMenuPos := A_ThisMenuItemPos - 2 ; offset for Refresh and separator lines
+
 if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
-	ComObjCreate("Shell.Application").Explore(objRecentFolders[A_ThisMenuItemPos])
+	ComObjCreate("Shell.Application").Explore(objRecentFolders[intRecentMenuPos])
 	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 else if WindowIsAnExplorer(strTargetClass)
-	NavigateExplorer(objRecentFolders[A_ThisMenuItemPos], strTargetWinId)
+	NavigateExplorer(objRecentFolders[intRecentMenuPos], strTargetWinId)
 else ; this is the console, FreeCommander, DirectoryOpus or a dialog box
 	if WindowIsConsole(strTargetClass)
-		NavigateConsole(objRecentFolders[A_ThisMenuItemPos], strTargetWinId)
+		NavigateConsole(objRecentFolders[intRecentMenuPos], strTargetWinId)
 	else if WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
-		NavigateFreeCommanderOrDirectoryOpus(objRecentFolders[A_ThisMenuItemPos], strTargetWinId, strTargetClass, strTargetControl)
+		NavigateFreeCommanderOrDirectoryOpus(objRecentFolders[intRecentMenuPos], strTargetWinId, strTargetClass, strTargetControl)
 	else
-		NavigateDialog(objRecentFolders[A_ThisMenuItemPos], strTargetWinId, strTargetClass)
+		NavigateDialog(objRecentFolders[intRecentMenuPos], strTargetWinId, strTargetClass)
 
 return
 ;------------------------------------------------------------

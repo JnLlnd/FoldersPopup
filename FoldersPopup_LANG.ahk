@@ -39,6 +39,7 @@ global lDialogFolderRemovePrompt := "Remove the folder ""~1~""`nand ALL its cont
 global lDialogFolderRemoveTitle := "Remove Folder - ~1~"
 global lDialogFolderShortName := "Folder short name for menu"
 global lDialogInvalidHotkey := "With your current system keyboard layout, the hotkey ""~1~"" could not be used as a trigger for the popup menu (not a valid key namse error).`n`nPlease, open the ""~2~ Settings"" window from the Tray menu and click ""Options"". In this dialog box, choose another shortcut for ""~3~""."
+global lDialogOpenThisMenu := "Open this menu"
 global lDialogSave := "Save"
 global lDialogSelectItemToEdit := "Please, select the item to edit."
 global lDialogSelectItemToRemove := "Please, select the item to remove."
