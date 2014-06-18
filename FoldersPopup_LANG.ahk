@@ -1,7 +1,7 @@
 InitLanguageVariables:
 
 global lAboutText1 := "~1~ ~2~ (~3~ bits)"
-global lAboutText2 := "~1~ is written by Jean Lalonde using the`n<a href=""http://ahkscript.org/"">AutoHotkey</a> programming language.`n`nGerman translation: Edgar ""Fast Edi"" Hoffmann`nFrench translation: Jean Lalonde`nOther languages translation: (help welcomed)`nEnglish proof checking: (help welcomed)`n`nIcons by: <a href=""http://www.visualpharm.com"">Visual Pharm</a>`nAutoHotkey_L v1.1 sources: <a href=""https://github.com/JnLlnd/FoldersPopup"">GitHub</a>"
+global lAboutText2 := "~1~ is written by Jean Lalonde using the`n<a href=""http://ahkscript.org/"">AutoHotkey</a> programming language.`n`nGerman translation: Edgar ""Fast Edi"" Hoffmann`nFrench translation: Jean Lalonde`nDutch translation: Pieter Dejonghe`nOther languages translation: (help welcomed)`nEnglish proof checking: (help welcomed)`n`nIcons by: <a href=""http://www.visualpharm.com"">Visual Pharm</a>`nAutoHotkey_L v1.1 sources: <a href=""https://github.com/JnLlnd/FoldersPopup"">GitHub</a>"
 global lAboutText3 := "~1~ Jean Lalonde 2013-2014. Freeware."
 global lAboutText4 := "Support on <a href=""http://code.jeanlalonde.ca/folderspopup"">www.code.jeanlalonde.ca</a>"
 global lAboutTitle := "About - ~1~ ~2~"
@@ -146,7 +146,7 @@ global lOptionsGuiIntro := "Define the mouse buttons and keyboard hotkeys that w
 global lOptionsGuiTitle := "Options - ~1~ ~2~"
 global lOptionsKeyboard := "Keyboard"
 global lOptionsLanguage := "Language"
-global lOptionsLanguageLabels := "English|French|German"
+global lOptionsLanguageLabels := "English|French|German|Dutch"
 global lOptionsMouse := "Mouse"
 global lOptionsNoKeyOrMouseSpecified := "No Key or Mouse Button specified. The existing ""~1~"" hotkey is unchanged."
 global lOptionsOtherOptions := "Other Options"

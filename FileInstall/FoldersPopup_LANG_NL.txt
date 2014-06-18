@@ -1,0 +1,167 @@
+lAboutText1	~1~ ~2~ (~3~ bits)
+lAboutText2	~1~ wordt ontwikkeld door Jean Lalonde gebruik`nmakend van <a href="http://ahkscript.org/">AutoHotkey</a> programmeertaal.`n`nDuitse vertaling: Edgar "Fast Edi" Hoffmann`nFranse vertaling: Jean Lalonde`nNederlandse vertaling: Pieter Dejonghe`nAndere talen: (hulp is welkom)`nCorrectie Engelse vertaling: (hulp is welkom)`n`nOntwerp icons: <a href="http://www.visualpharm.com">Visual Pharm</a>`nAutoHotkey_L v1.1 bronbestanden: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
+lAboutText4	Ondersteuning via <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
+lAboutTitle	Over... - ~1~ ~2~
+lAppTagline	Spring direct van een folder naar een andere
+lButtonRemind	Herinner me
+lDiagModeCaution	~1~ wordt momenteel uitgevoerd in diagnose-modus.`n`nInformatie over de uitvoering van de software wordt verzameld in het bestand:`n~2~`n`nNiets zal worden verzonden zonder uw toestemming.`n`nWil je de diagnose-modus AAN laten?
+lDiagModeExit	~1~ heeft informatie voor foutdiagnose verzameld in het bestand ~2~.
+lDiagModeIntro	Verstuur dit bestand naar ahk@jeanlalonde.ca met een beschrijving van de situatie die verder dient onderzocht te worden.
+lDiagModeSee	Wil je het diagnosebestand bekijken?
+lDialogAdd	Toevoegen
+lDialogAddDialogAlready	Dit venstertype wordt reeds ondersteund.
+lDialogAddDialogPrompt	Voer de nieuwe vensternaam in`n(of een deel van de naam):
+lDialogAddDialogTitle	Voeg nieuw venstertype toe - ~1~ ~2~
+lDialogAddEditFolderTitle	~1~ map - ~2~ ~3~
+lDialogAddFolderManuallyPrompt	Sorry, we kunnen de huidige map niet ontdekken in dit venstertype.`n`nWil je het handmatig toevoegen?
+lDialogAddFolderManuallyTitle	Voeg deze map toe - ~1~ ~2~
+lDialogAddFolderSelect	Kies of maak een nieuwe map:
+lDialogBrowseButton	Bladeren
+lDialogCancelButton	Annuleren
+lDialogCancelPrompt	Wijzigingen negeren?
+lDialogCancelTitle	Annuleren - ~1~ ~2~
+lDialogEdit	Bewerken
+lDialogEditDialogPrompt	Voer de nieuwe naam voor het dialoogvenster in`n(of een deel van de naam):
+lDialogEditDialogTitle	Bewerk dialoogvenster - ~1~ ~2~
+lDialogEditFolderPrompt	Voer de naam voor deze nieuwe map in:
+lDialogEditFolderSelect	Kies of maak een nieuwe map:
+lDialogEditFolderTitle	Bewerk Map - ~1~ ~2~
+lDialogFolderLabel	Map
+lDialogFolderLocationEmpty	Deze locatie is leeg. Kies alstublieft een locatie.
+lDialogFolderNameEmpty	De mapnaam is leeg. Kies alstublieft een korte naam.
+lDialogFolderNameNoSeparator	De naam voor een submenu mag het gereserveerde letterteken "~1~" niet bevatten.
+lDialogFolderNameNotNew	De naam "~1~" is reeds in gebruik in dit menu. Kies alstublieft een andere naam.
+lDialogFolderParentMenu	Map hoofd menu
+lDialogFolderRemovePrompt	Verwijder map "~1~"`nen ALLES wat er in staat (mappen en submenus)?
+lDialogFolderRemoveTitle	Verwijder map - ~1~
+lDialogFolderShortName	Korte naam voor de map (voor in het menu)
+lDialogInvalidHotkey	Met je huidige toetsenbordindeling kan de sneltoets "~1~" niet gebruikt worden als een trigger voor het popup menu.`n`nGelieve het "~2~ Settings" venster te openen vanuit het taakbalkmenu en selecteers "Opties". Gelieve in dit venster een andere sneltoets te kiezen voor "~3~".
+lDialogOpenThisMenu	Open dit menu
+lDialogSave	Bewaren
+lDialogSelectItemToEdit	Gelieve het te bewerken object te selecteren.
+lDialogSelectItemToRemove	Gelieve het te verwijderen object te selecteren.
+lDialogSubmenuLabel	Submenu
+lDialogSubmenuShortName	Korte naam voor het submenu
+lDonateButton	Steun Freeware!
+lDonateCheckPrompt	Ben je tevreden over ~1~?`n`n~1~ is niet alleen GRATIS maar bevat ook GEEN vervelende reclame of adware (waarvan je nooit zeker weet of ze geen spyware of malware bevatten)`n`nTot nog toe heeft ~1~ jou ~2~ geholpen tijdens je dagelijkse werkzaamheden. Wat zou je er van denken om freeware niet te steunen?
+lDonateCheckTitle	~1~ maal! - ~2~
+lDonateMenu	S&teun Freeware!
+lDonatePlatformComment1	De meest flexibele manier door je PayPal account of kredietkaart te gebruiken
+lDonatePlatformComment2	Met een officiale factuur voor het geval je het wil terugvorderen.
+lDonatePlatformComment3	Wil je meer weten over <a href="~1~">microgiften</a>?
+lDonatePlatformName1	Met Paypal
+lDonatePlatformName2	Met Share-it
+lDonatePlatformName3	Met Flattr
+lDonateReviewNameLeft1	Download.com
+lDonateReviewNameLeft2	PortableFreeware.com
+lDonateReviewNameLeft3	Softpedia.com
+lDonateReviewNameRight1	BetaNews.com
+lDonateReviewNameRight2	FileCluster.com
+lDonateReviewNameRight3	PCastuces.com (FR)
+lDonateText1	Steun ~1~ ontwikkeling!
+lDonateText2	<a href="~1~">Waarom freeware steunen?</a>
+lDonateText3	... of steun freeware geheel gratis!
+lDonateText4	Geef een gunstige recensie aan ~1~ op:
+lDonateText5	Stuur me jouw link
+lDonateThankyou	Dank-je-wel om eerlijk te zijn en freeware te steunen!
+lDonateTitle	Steun freeware! - ~1~ ~2~
+lGui2Close	Sluiten
+lGuiAbout	Over
+lGuiAddDialog	Toevoegen
+lGuiAddFolder	Toevoegen
+lGuiCancel	&Annuleren
+lGuiClose	&Sluiten
+lGuiDonate	Steun
+lGuiEditFolder	Bewerken
+lGuiHelp	Hulp
+lGuiLvDialogsHeader	Ondersteunde dialoogvensters`n(deel van de naam volstaat) 
+lGuiLvFoldersHeader	Naam|Pad
+lGuiMoveFolderDown	Naar beneden
+lGuiMoveFolderUp	Naar boven
+lGuiOptions	Opties
+lGuiRemoveFolder	Verwijderen
+lGuiSave	Bewaren
+lGuiSeparator	Se&parator
+lGuiSubmenuDropdownLabel	Te wijzigen menu:
+lGuiSubmenuLocation	>
+lGuiSubmenuSeparator	>
+lGuiTitle	Instellingen - ~1~ ~2~
+lHelpText1	Wanner FoldersPopup gestart wordt dan verschijnt er een icoontje in de systeembalk en FoldersPopup wacht dan op taken van jou. Als je naar een andere map wil springen in Windows Verkenner of in een andere bestandsdialoogvenster, druk dan op de middenste muisknop of druk de Windows-K toetsencombinatie. Vervolgens kan je de gewenste map selecteren en FoldersPopup brengt je er direct naar toe!
+lHelpText2	Kies "Instellingen" om het FoldersPopup instellingsvenster te openen waar je mappen kan toevoegen aan jouw menu, maar ook mappen kan hernoemen, verplaatsen of verwijderen. Je kan ook submenu's toevoegen, die je ook weer kan hernoemen, verplaatsen of verwijderen. Kies "Te wijzigen menu" in de uitklaplijst (dropdown list). Klik vervolgens op "Bewaren" om jouw wijzigingen te bewaren.
+lHelpText3	Je kan snel nieuwe mappen toevoegen aan het popup menu:`n1) Ga naar een vaak gebruikte map.`n2) Druk op de middenste muisknop (of druk Windows-K) en kies voor "Voeg deze map toe".`n3) Geef deze map een korte naam, druk "OK" en "Bewaren" in het instellingsvenster.`nDeze nieuwe map wordt bewaard in het hoofdmenu. Bewerk de map om hem eventueel naar een submenu te verplaatsen.
+lHelpText4	Standaard ondersteunt FoldersPopup gewone dialoogvensters (Openen, Bewaren, enz.). Je kan FoldersPopup makkelijk aanleren om ook andere types dialoogvensters te herkennen:`n1) Als je je in een niet ondersteund dialoogvenster bevindt, druk op de middenste muisknop (of druk Windows-K) en kies "Voeg dit dialoogvenster toe aan de lijst met ondersteunde dialoogvensters". Druk vervolgens "OK" en "Bewaren" in het instellingsvenster.
+lHelpText5	HANDIGE WEETJES`n- Via rechtermuisklik op het FoldersPopup icoontje in de systeembalk kan je de optie "Uitvoeren bij opstarten" activeren om FoldersPopup automatisch te starten tijdens het opstarten van Windwos.`n- Wil je een favoriete map openen in een nieuw Windows verkenner venster?  Druk dan op de middenste muisknop of gebruik de Windows-K toetsencombinatie. Dit laat je ook toe om je favoriete map te openen vanuit een willekeurig ander programma.`n- Stel je popup menu triggers in: kies muis knoppen naar jouw voorkeur of sneltoetsen in "Instellingen, Opties".`n- Eveneens in "Opties": kies de taal van jouw voorkeur, de mogelijkheid om ook recente mappen weer te geven, vooeg numerieke sneltoetsen toe aan het mapmenu of prik het popup menu vast op een vaste positie.
+lHelpText6	Ondersteuning voor FoldersPopup is beschikbaar via <a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
+lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware.
+lHelpTextLead	FoldersPopup laat je snel bewegen tussen de mappen die je vaak gebruikt!
+lHelpTitle	Hulp - ~1~ ~2~
+lMainMenuName	Hoofdmenu
+lMenuAbout	Over
+lMenuAddThisDialog	Voeg dit dialoogvenster toe aan de ondersteunde lijst
+lMenuAddThisFolder	Deze m&ap toevoegen
+lMenuControlPanel	&Configuratiescherm
+lMenuDesktop	Bureaublad
+lMenuDialogNotSupported	Dit type dialoogvenster wordt nog niet ondersteund
+lMenuDocuments	D&ocumenten
+lMenuHelp	Hulp
+lMenuMyComputer	&Mijn Computer
+lMenuNetworkNeighborhood	Mijn &Netwerklocaties
+lMenuPictures	Afbeeldingen
+lMenuRecentFolders	&Recente bezochte mappen
+lMenuRecycleBin	Prullenbak
+lMenuRefreshRecent	Vernieuwen
+lMenuReservedShortcuts	SRWFA
+lMenuReservedShortcutsDonate	T
+lMenuRunAtStartup	Uitvoe&ren bij opstarten
+lMenuSeparator	----------------
+lMenuSettings	&~1~ Instellingen
+lMenuSpecialFolders	&Speciale Mappen
+lMenuSwitch	S&witch
+lMenuSwitchDialog	Switch in &dialoogvenster
+lMenuSwitchExplorer	Naar Verkenner omschakelen
+lMenuUpdate	Controleren op nieuwe versies
+lNavigateFileError	Een fout trad op tijdens het openen van deze map:`n~1~.
+lNavigateSpecialError	Een fout trad op tijdens het openen van de speciale map #~1~.
+lOopsTitle	~1~ (~2~)
+lOopsWriteProtectedError	~1~ werd gestart vanuit een map die tegen schrijven beschermd is en dus kan het configuratiebestand "~1~.ini" niet worden aangemaakt.`n`nVerplaats de ~1~. EXE naar een normale map en start het programma vanuit deze map.`n`n~1~ wordt nu afgesloten.
+lOopsWrongDirectoryOpusPath	Verkeerde padnaam of bestandsnaam voor Directory Opus in het ~1~.ini bestand:`n"~2~"`n`nGeef het volledige pad en naam van het DOpus.exe bestand, bij voorbeeld (zonder de aanhalingstekens uiteraard):`n"DirectoryOpusPath=C:\Program Files\GPSoftware\Directory Opus\dopus.exe"
+lOopsZipFileError	Blijkbaar heb je ~1~ direct gestart vanuit een .ZIP bestand.`n`nJe moet het ~1~ .EXE bestand uit het .ZIP bestand uitpakken in een map van jouw keuze vooraleer het te starten.`n`n~1~ wordt nu afgesloten.
+lOptionsAlt	Alt
+lOptionsArrDescriptions1	Kies de combinatie van MUISknop en speciale toetsen (CTRL/ALT/SHIFT/WIN) die het popup menu voor mappen opent in Windows Verkenner of in bestandsdialoogvensters. Standaard is dit de middenste muisknop (MButton) zonder een speciale toets.
+lOptionsArrDescriptions2	Kies de combinatie van MUISknop en speciale toetsen (CTRL/ALT/SHIFT/WIN) die het popup menu voor mappen opent in elk venster en die navigeert naar de geselecteerde map in een NIEUW venster van Windows Verkenner. Standaard is dit de middenste muisknop (MButton) terwijl de Shift toets wordt ingedrukt.
+lOptionsArrDescriptions3	Kies de TOETSENBORD sneltoets combinatie die er voor zorgt dat het popup menu voor mappen opent in Windows Verkenner of in bestandsdialoogvensters. Standaard is dit de Win+K combinatie (de letter "K" terwijl de Windows toets wordt ingedrukt).
+lOptionsArrDescriptions4	Kies de TOETSENBORD sneltoets combinatie die er voor zorgt dat het popup menu voor mappen opent in elk venster en die navigeert naar de geselecteerde map in een NIEUW venster van Windows Verkenner. Standaard is dit de Shift+Win+K combinatie (de letter "K" terwijl de Shift toets en de Windows toets worden ingedrukt).
+lOptionsArrDescriptions5	Kies de sneltoets of muisknop combinatie die er voor zorgt dat de FoldersPopup instellingen geopend worden. Standaard is dit de toetsencombinatie Shift+Windows+F.
+lOptionsChangeHotkey	Wijzigen
+lOptionsChangeHotkeyTitle	Wijzig sneltoets - ~1~ ~2~
+lOptionsCtrl	Ctrl
+lOptionsDisplayMenuShortcuts	Toon de &Numerieke Menu sneltoetsen
+lOptionsDisplayRecentFolders	Toon Recente Mappen
+lOptionsDisplaySpecialFolders	Toon S&peciale Mappen
+lOptionsDisplaySwitchMenu	Toon Switch Menu's
+lOptionsGuiIntro	Definieer de muisknoppen en sneltoetsen die ~1~ zullen triggeren.
+lOptionsGuiTitle	Opties - ~1~ ~2~
+lOptionsKeyboard	Toetsenbord
+lOptionsLanguage	Taal
+lOptionsLanguageLabels	Engels|Frans|Duits|Nederlands
+lOptionsMouse	Muis
+lOptionsNoKeyOrMouseSpecified	Geen toets of muisknop werd gespecifieerd. De bestaande "~1~" combinatie blijft ongewijzigd.
+lOptionsOtherOptions	Andere Opties
+lOptionsPopupFix	Popup &Menu op een Vaste Positie
+lOptionsPopupFixPositionX	Positie X:
+lOptionsPopupFixPositionY	Y:
+lOptionsRecentFolders	Recente mappen
+lOptionsRunAtStartup	Uitvoeren bij opstarten
+lOptionsShift	Shift
+lOptionsTitles	Muis - Folders Popup|Muis - Nieuwe Verkenner|Toetsenbord - Folders Popup|Toetsenbord - Nieuwe Verkenner|Instellingen
+lOptionsTrayTip	Toon Startup Systeembalk Tip
+lOptionsTriggerFor	Trigger voor:
+lOptionsWin	Win
+lReloadPrompt	Taal werd gewijzigd naar ~1~. Wil je ~2~ laden in het ~1~ nu? Niet bewaarde wijzigingen gaan verloren.
+lTrayTipInstalledDetail	Om het ~1~ menu te tonen, druk:`n`n~2~ / ~3~`nin Windows Verkenner of in een dialoogvenster`n`n~4~ / ~5~`nom een nieuw Verkenner venster te openen
+lTrayTipinstalledTitle	~1~ ~2~ klaar!
+lUpdateError	Een fout trad op bij het controleren van het versienummer. De controle voor een update wordt stopgezet.
+lUpdatePrompt	Update ~1~ van v~2~ naar v~3~?
+lUpdateTitle	Update ~1~?
+lUpdateYouHaveLatest	Je hebt reeds de meest recente versie: ~1~.`n`nWil je de ~2~ pagina toch bezoeken?

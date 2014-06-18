@@ -1,5 +1,5 @@
 lAboutText1	~1~ ~2~ (~3~ bits)
-lAboutText2	~1~ est développé par Jean Lalonde`nsur la plateforme <a href="http://ahkscript.org/">AutoHotkey</a>.`n`nTraduction allemande: Edgar ""Fast Edi"" Hoffmann`nTraduction française: Jean Lalonde`nRévision anglaise: (aide bienvenue)`n`nIcônes par: <a href="http://www.visualpharm.com">Visual Pharm</a>`nSources AutoHotkey_L v1.1: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText2	~1~ est développé par Jean Lalonde`nsur la plateforme <a href="http://ahkscript.org/">AutoHotkey</a>.`n`nTraduction allemande: Edgar ""Fast Edi"" Hoffmann`nTraduction française: Jean Lalonde`nTraduction néerlandaise: Pieter Dejonghe`nRévision anglaise: (aide bienvenue)`n`nIcônes par: <a href="http://www.visualpharm.com">Visual Pharm</a>`nSources AutoHotkey_L v1.1: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Gratuiciel.
 lAboutText4	Soutien en ligne: <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	À propos - ~1~ ~2~
@@ -144,7 +144,7 @@ lOptionsGuiIntro	Choisisr les boutons de la souris et les raccourcis du clavier 
 lOptionsGuiTitle	Options - ~1~ ~2~
 lOptionsKeyboard	Clavier
 lOptionsLanguage	Langue
-lOptionsLanguageLabels	Anglais|Français|Allemand
+lOptionsLanguageLabels	Anglais|Français|Allemand|Néerlandais
 lOptionsMouse	Souris
 lOptionsNoKeyOrMouseSpecified	Aucune touche du clavier ou bouton de la souris n'a été sélectionné. La sélection actuelle ~1~ est inchangée.
 lOptionsOtherOptions	Autres options
@@ -154,7 +154,7 @@ lOptionsPopupFixPositionY	Y:
 lOptionsRecentFolders	Emplacements récents
 lOptionsRunAtStartup	Exécuter au démarrage
 lOptionsShift	Maj
-lOptionsTitles	Souris - Popup|Souris - Nouvel explorateur|Keyboard - Popup|Keyboard - Nouvel explorateur|Paramètres
+lOptionsTitles	Souris - Popup|Souris - Nouvel explorateur|Clavier - Popup|Clavier - Nouvel explorateur|Paramètres
 lOptionsTrayTip	Afficher la notification au démarrage
 lOptionsTriggerFor	Déclencheur pour:
 lOptionsWin	Win

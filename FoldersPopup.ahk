@@ -4,7 +4,7 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: 2.1 (2014-06-16)
+	Version: 2.1 (2014-06-17)
 	* when adding this folder, select in which menu to add the new folder
 	* new button when edit menu entry to open this menu
 	* in edit folder dialog box, set focus to and select folder name
@@ -13,6 +13,8 @@
 	* refactor (code merge) of GuiAddFolderSave and GuiEditFolderSave
 	* allow to add this folder from a network folder starting with "\\"
 	* fix bug with up arrow to go to parent menu
+	* addition of Dutch translation (thanks to Pieter Dejonghe!)
+	* fix missing translations
 	
 	Version: 2.0.3 (2014-06-06)
 	* fix bugs with switch folders and recent folders options
@@ -213,6 +215,7 @@ strTempDir := "_temp"
 FileCreateDir, %strTempDir%
 FileInstall, FileInstall\FoldersPopup_LANG_DE.txt, %strTempDir%\FoldersPopup_LANG_DE.txt, 1
 FileInstall, FileInstall\FoldersPopup_LANG_FR.txt, %strTempDir%\FoldersPopup_LANG_FR.txt, 1
+FileInstall, FileInstall\FoldersPopup_LANG_NL.txt, %strTempDir%\FoldersPopup_LANG_NL.txt, 1
 FileInstall, FileInstall\about-32.png, %strTempDir%\about-32.png
 FileInstall, FileInstall\add_image-26.png, %strTempDir%\add_image-26.png
 FileInstall, FileInstall\add_property-48.png, %strTempDir%\add_property-48.png
@@ -505,7 +508,7 @@ else
 ; Init Language Arrays
 StringSplit, arrOptionsTitles, lOptionsTitles, |
 StringSplit, arrOptionsTitlesLong, lOptionsTitlesLong, |
-strOptionsLanguageCodes := "EN|FR|DE"
+strOptionsLanguageCodes := "EN|FR|DE|NL"
 StringSplit, arrOptionsLanguageCodes, strOptionsLanguageCodes, |
 StringSplit, arrOptionsLanguageLabels, lOptionsLanguageLabels, |
 
@@ -1929,7 +1932,7 @@ Gui, 2:+OwnDialogs
 
 if (A_ThisLabel = "GuiAddFolder")
 {
-	Gui, 2:Add, Text, x10, Add:
+	Gui, 2:Add, Text, x10, %lDialogAdd%:
 	Gui, 2:Add, Radio, x+10 yp vblnRadioFolder checked gRadioButtonsChanged, %lDialogFolderLabel%
 	Gui, 2:Add, Radio, x+10 yp vblnRadioSubmenu gRadioButtonsChanged, %lDialogSubmenuLabel%
 }
@@ -1939,7 +1942,7 @@ else
 	blnRadioSubmenu := false
 }
 
-Gui, 2:Add, Text, x10 y+10 vlblShortName, %lDialogFolderShortName%
+Gui, 2:Add, Text, x10 w200 y+10 vlblShortName, %lDialogFolderShortName%
 Gui, 2:Add, Edit, x10 w200 vstrFolderShortName, %strCurrentName%
 
 Gui, 2:Add, Text, x10 vlblFolder, %lDialogFolderLabel%
@@ -1990,7 +1993,7 @@ Gui, 2:+OwnDialogs
 Gui, 2:Add, Text, x10 y10 vlblFolderParentMenu, %lDialogFolderParentMenu%
 Gui, 2:Add, DropDownList, x10 w250 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
 
-Gui, 2:Add, Text, x10 y+10 vlblShortName, % (StrLen(strCurrentSubmenuFullName) ? lDialogSubmenuShortName : lDialogFolderShortName)
+Gui, 2:Add, Text, x10 y+10 w200 vlblShortName, % (StrLen(strCurrentSubmenuFullName) ? lDialogSubmenuShortName : lDialogFolderShortName)
 Gui, 2:Add, Edit, x10 w200 vstrFolderShortName, %strCurrentName%
 
 Gui, 2:Add, Text, % "x10 vlblFolder " . (strCurrentLocation = lGuiSubmenuLocation ? "hidden" : ""), %lDialogFolderLabel%
@@ -2367,9 +2370,9 @@ loop, % arrIniKeyNames%0%
 	Gui, 2:Font, s8 w700
 	Gui, 2:Add, Text, x15 y+10, % arrOptionsTitles%A_Index%
 	Gui, 2:Font, s9 w500, Courier New
-	Gui, 2:Add, Text, x200 yp w220 h20 center 0x1000 vlblHotkeyText%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
+	Gui, 2:Add, Text, x220 yp w220 h20 center 0x1000 vlblHotkeyText%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
 	Gui, 2:Font
-	Gui, 2:Add, Button, h20 yp x400 vbtnChangeHotkey%A_Index% gButtonOptionsChangeHotkey%A_Index%, %lOptionsChangeHotkey%
+	Gui, 2:Add, Button, h20 yp x450 vbtnChangeHotkey%A_Index% gButtonOptionsChangeHotkey%A_Index%, %lOptionsChangeHotkey%
 }
 
 Gui, 2:Add, Text, x10 y+15 h2 w410 0x10 ; Horizontal Line > Etched Gray
@@ -2397,7 +2400,7 @@ GuiControl, , blnDisplayRecentFolders, %blnDisplayRecentFolders%
 Gui, 2:Add, CheckBox, y+10 x40 vblnDisplayTrayTip, %lOptionsTrayTip%
 GuiControl, , blnDisplayTrayTip, %blnDisplayTrayTip%
 
-Gui, 2:Add, Edit, yp x250 w36 h15 center vintRecentFolders, %intRecentFolders%
+Gui, 2:Add, Edit, yp x250 w36 h17 center vintRecentFolders, %intRecentFolders%
 Gui, 2:Add, Text, yp x+10 vlblRecentFolders, %lOptionsRecentFolders%
 
 Gui, 2:Add, CheckBox, y+10 x40 vblnPopupFix gPopupFixClicked, %lOptionsPopupFix%
@@ -2407,14 +2410,14 @@ Gui, 2:Add, CheckBox, yp x250 vblnDisplaySwitchMenu, %lOptionsDisplaySwitchMenu%
 GuiControl, , blnDisplaySwitchMenu, %blnDisplaySwitchMenu%
 
 Gui, 2:Add, Text, % "y+10 x58 vlblPopupFixPositionX " . (blnPopupFix ? "" : "hidden"), %lOptionsPopupFixPositionX%
-Gui, 2:Add, Edit, % "yp x+5 w36 h15 vstrPopupFixPositionX center " . (blnPopupFix ? "" : "hidden"), %arrPopupFixPosition1%
+Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionX center " . (blnPopupFix ? "" : "hidden"), %arrPopupFixPosition1%
 Gui, 2:Add, Text, % "yp x+5 vlblPopupFixPositionY " . (blnPopupFix ? "" : "hidden"), %lOptionsPopupFixPositionY%
-Gui, 2:Add, Edit, % "yp x+5 w36 h15 vstrPopupFixPositionY center " . (blnPopupFix ? "" : "hidden"), %arrPopupFixPosition2%
+Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionY center " . (blnPopupFix ? "" : "hidden"), %arrPopupFixPosition2%
 
 ; Build Gui footer
-Gui, 2:Add, Button, x180 y+20 gGuiDonate, %lDonateButton%
-Gui, 2:Add, Button, y+20 x180 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
+Gui, 2:Add, Button, y+20 x40 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
 Gui, 2:Add, Button, yp x+15 vbtnOptionsCancel gButtonOptionsCancel, %lGuiCancel%
+Gui, 2:Add, Button, yp x250 gGuiDonate, %lDonateButton%
 Gui, 2:Add, Text
 GuiControl, Focus, btnOptionsSave
 
@@ -2559,7 +2562,6 @@ if (strLanguageCodePrev <> strLanguageCode)
 		Reload
 	}
 }	
-
 
 ; else rebuild recent and switch menus
 Gosub, BuildRecentFoldersMenu
@@ -2959,7 +2961,7 @@ else ; this is the console, FreeCommander, DirectoryOpus or a dialog box
 
 	if !StrLen(FileExist(strLocation))
 		strLocation := A_MyDocuments
-		; Replace wrong path bby My Documents path. 
+		; Replace wrong path by My Documents path. 
 		; Draft of message for user:
 		; This special folder is not supported in your current language settings.
 		; To improve this, you could post a message to ~1~ support mentioning your language code (~2~) and the path of the selected special folder on your system.

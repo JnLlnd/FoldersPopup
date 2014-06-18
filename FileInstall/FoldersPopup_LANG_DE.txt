@@ -1,5 +1,5 @@
 lAboutText1	~1~ ~2~ (~3~ bits)
-lAboutText2	~1~ wird entwickelt von Jean Lalonde unter`nVerwendung der <a href="http://ahkscript.org/">AutoHotkey</a> Programmiersprache.`n`nDeutsche Übersetzung: Edgar ""Fast Edi"" Hoffmann`nFranzösische Übersetzung: Jean Lalonde`nEnglische Gegenleser: (Hilfe willkommen)`n`nIcons von: <a href="http://www.visualpharm.com">Visual Pharm</a>`nAutoHotkey_L v1.1 Sourcen: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText2	~1~ wird entwickelt von Jean Lalonde unter`nVerwendung der <a href="http://ahkscript.org/">AutoHotkey</a> Programmiersprache.`n`nDeutsche Übersetzung: Edgar ""Fast Edi"" Hoffmann`nFranzösische Übersetzung: Jean Lalonde`nHolländische Übersetzung: Pieter Dejonghe`nEnglische Gegenleser: (Hilfe willkommen)`n`nIcons von: <a href="http://www.visualpharm.com">Visual Pharm</a>`nAutoHotkey_L v1.1 Sourcen: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
 lAboutText4	Support unter <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	Über - ~1~ ~2~
@@ -37,7 +37,7 @@ lDialogFolderRemovePrompt	Entfernen des Ordners "~1~"`nund ALL seines Inhalts (O
 lDialogFolderRemoveTitle	Entfernen des Ordners - ~1~
 lDialogFolderShortName	Kurzname des Ordners für das Menü
 lDialogInvalidHotkey	Mit dem derzeitigen Tastaturlayout kann das Tastenkürzel "~1~" nicht verwendet werden, um das Popup-Menü aufzurufen (kein gültiger Tasten Name).`n`nBitte öffnen Sie das "~2~ Einstellungen" aus dem Tray-Menü und klicken Sie auf "Optionen". Wählen Sie in diesem Dialog ein anderes Tastenkürzel für "~3~".
-lDialogOpenThisMenu	Open this menu
+lDialogOpenThisMenu	Dieses Menü öffnen
 lDialogSave	Speichern
 lDialogSelectItemToEdit	Bitte wählen Sie das zu bearbeitende Element.
 lDialogSelectItemToRemove	Bitte wählen Sie das zu entfernende Element.
@@ -110,7 +110,7 @@ lMenuNetworkNeighborhood	&Netzwerkumgebung
 lMenuPictures	&Bilder
 lMenuRecentFolders	&Kürzlich verwendete Ordner
 lMenuRecycleBin	&Papierkorb
-lMenuRefreshRecent	Refresh
+lMenuRefreshRecent	Aktualisieren
 lMenuReservedShortcuts	SKWFD
 lMenuReservedShortcutsDonate	U
 lMenuRunAtStartup	&Beim Start von Windows ausführen
@@ -144,14 +144,14 @@ lOptionsGuiIntro	Legen Sie die Maustasten und Tastenkürzel fest, welche ~1~ ausl
 lOptionsGuiTitle	Optionen - ~1~ ~2~
 lOptionsKeyboard	Tastatur
 lOptionsLanguage	Sprache
-lOptionsLanguageLabels	Englisch|Französisch|Deutsch
+lOptionsLanguageLabels	Englisch|Französisch|Deutsch|Holländisch
 lOptionsMouse	Maus
 lOptionsNoKeyOrMouseSpecified	Kein Tastenkürzel oder Maustaste definiert. Der bestehende Hotkey ~1~ ist unverändert.
 lOptionsOtherOptions	Weitere einstellungen
 lOptionsPopupFix	Popup-&Menü an fester Position
 lOptionsPopupFixPositionX	Position X:
 lOptionsPopupFixPositionY	Y:
-lOptionsRecentFolders	Kürzlich verwendete Ordner
+lOptionsRecentFolders	Zuletzt verwendete Ordner
 lOptionsRunAtStartup	Beim Sta&rt ausführen
 lOptionsShift	Shift
 lOptionsTitles	Maus - Ordner Popup|Maus - Neu Explorer|Tastatur - Ordner Popup|Tastatur - Neu Explorer|Einstellungsfenster
