@@ -9,7 +9,7 @@
 	* new button when edit menu entry to open this menu
 	* in edit folder dialog box, set focus to and select folder name
 	* on-demand recent folders update to keep the popup menu snappy regardless of the number of recent items to parse or the performance of the PC
-	* option in settings to choose the number of recent files in popup menu, now default to 10
+	* option in settings to choose the number of recent folders in popup menu, now default to 10
 	* refactor (code merge) of GuiAddFolderSave and GuiEditFolderSave
 	* allow to add this folder from a network folder starting with "\\"
 	* fix bug with up arrow to go to parent menu
