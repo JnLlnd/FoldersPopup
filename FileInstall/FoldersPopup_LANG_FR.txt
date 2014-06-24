@@ -146,6 +146,7 @@ lOptionsKeyboard	Clavier
 lOptionsLanguage	Langue
 lOptionsLanguageLabels	Anglais|Français|Allemand|Néerlandais
 lOptionsMouse	Souris
+lOptionsMouseButtonsText	Bouton de gauche de la souris|Bouton du milieu de la souris|Bouton de droite de la souris|Bouton spécial 1 de la souris|Bouton spécial 2 de la souris|Molette vers le haut|Molette vers le bas|Molette à gauche|Molette à droite|
 lOptionsNoKeyOrMouseSpecified	Aucune touche du clavier ou bouton de la souris n'a été sélectionné. La sélection actuelle ~1~ est inchangée.
 lOptionsOtherOptions	Autres options
 lOptionsPopupFix	Menu popup à une position fixe

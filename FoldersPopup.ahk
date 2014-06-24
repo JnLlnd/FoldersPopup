@@ -4,6 +4,9 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: 2.1.1 (2014-06-XX)
+	*
+	
 	Version: 2.1 (2014-06-17)
 	* when adding this folder, select in which menu to add the new folder
 	* new button when edit menu entry to open this menu
@@ -196,7 +199,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 2.1.0
+;@Ahk2Exe-SetVersion 2.1.1
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -241,7 +244,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "2.1" ; "major.minor.bugs"
+global strCurrentVersion := "2.1.1" ; "major.minor.bugs"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
@@ -255,7 +258,7 @@ if InStr(A_ScriptDir, A_Temp) ; must be positioned after strAppName is created
 	Oops(lOopsZipFileError, strAppName)
 	Gosub, CleanUpBeforeExit
 }
-	
+
 ;@Ahk2Exe-IgnoreBegin
 ; Piece of code for developement phase only - won't be compiled
 ; http://fincs.ahk4.net/Ahk2ExeDirectives.htm
@@ -270,6 +273,7 @@ global arrSubmenuStack := Object()
 ; Keep gosubs in this order
 Gosub, InitSystemArrays
 Gosub, InitLanguage
+Gosub, InitLanguageArrays
 Gosub, LoadIniFile
 if (blnDiagMode)
 	Gosub, InitDiagMode
@@ -330,12 +334,9 @@ StringSplit, arrHotkeyDefaults, strHotkeyDefaults, |
 strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|GuiShow"
 StringSplit, arrHotkeyLabels, strHotkeyLabels, |
 
-strMouseButtons := " |LButton|MButton|RButton|XButton1|XButton2|WheelUp|WheelDown|WheelLeft|WheelRight|"
+strMouseButtons := "LButton|MButton|RButton|XButton1|XButton2|WheelUp|WheelDown|WheelLeft|WheelRight|"
 ; leave last | to enable default value on the last item
 StringSplit, arrMouseButtons, strMouseButtons, |
-strMouseButtonsText := " |Left Mouse Button|Middle Mouse Button|Right Mouse Button|X Button1|X Button2|Wheel Up|Wheel Down|Wheel Left|Wheel Right|"
-StringSplit, arrMouseButtonsText, strMouseButtonsText, |
-
 return
 ;-----------------------------------------------------------
 
@@ -505,7 +506,13 @@ if FileExist(strLanguageFile)
 else
 	strLanguageCode := "EN"
 
-; Init Language Arrays
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+InitLanguageArrays:
+;------------------------------------------------------------
 StringSplit, arrOptionsTitles, lOptionsTitles, |
 StringSplit, arrOptionsTitlesLong, lOptionsTitlesLong, |
 strOptionsLanguageCodes := "EN|FR|DE|NL"
@@ -518,6 +525,8 @@ loop, %arrOptionsLanguageCodes0%
 			strLanguageLabel := arrOptionsLanguageLabels%A_Index%
 			break
 		}
+
+StringSplit, arrMouseButtonsText, lOptionsMouseButtonsText, |
 
 return
 ;------------------------------------------------------------
@@ -2285,6 +2294,7 @@ strDonateReviewUrlLeft2 := "http://www.portablefreeware.com/index.php?id=2557"
 strDonateReviewUrlLeft3 := "http://www.softpedia.com/get/System/OS-Enhancements/FoldersPopup.shtml"
 strDonateReviewUrlRight1 := "http://fileforum.betanews.com/detail/Folders-Popup/1385175626/1"
 strDonateReviewUrlRight2 := "http://www.filecluster.com/System-Utilities/Other-Utilities/Download-FoldersPopup.html"
+strDonateReviewUrlRight3 := "http://www.pcastuces.com/logitheque/folders_popup.htm"
 
 loop, 3
 	Gui, 2:Add, Link, % (A_Index = 1 ? "ys+20" : "y+5") . " x25 w150", % "<a href=""" . strDonateReviewUrlLeft%A_Index% . """>" . lDonateReviewNameLeft%A_Index% . "</a>"
@@ -2360,9 +2370,9 @@ Gui, 1:Submit, NoHide
 Gui, 2:New, , % L(lOptionsGuiTitle, strAppName, strAppVersion)
 Gui, 2:+Owner1
 Gui, 2:Font, s10 w700, Verdana
-Gui, 2:Add, Text, x10 y10 w430 center, % L(lOptionsGuiTitle, strAppName)
+Gui, 2:Add, Text, x10 y10 w500 center, % L(lOptionsGuiTitle, strAppName)
 Gui, 2:Font
-Gui, 2:Add, Text, x10 y+10 w430 center, % L(lOptionsGuiIntro, strAppName)
+Gui, 2:Add, Text, x10 y+10 w500 center, % L(lOptionsGuiIntro, strAppName)
 
 ; Build Hotkey Gui lines
 loop, % arrIniKeyNames%0%
@@ -2370,15 +2380,15 @@ loop, % arrIniKeyNames%0%
 	Gui, 2:Font, s8 w700
 	Gui, 2:Add, Text, x15 y+10, % arrOptionsTitles%A_Index%
 	Gui, 2:Font, s9 w500, Courier New
-	Gui, 2:Add, Text, x220 yp w220 h20 center 0x1000 vlblHotkeyText%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
+	Gui, 2:Add, Text, x250 yp w270 h20 center 0x1000 vlblHotkeyText%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
 	Gui, 2:Font
-	Gui, 2:Add, Button, h20 yp x450 vbtnChangeHotkey%A_Index% gButtonOptionsChangeHotkey%A_Index%, %lOptionsChangeHotkey%
+	Gui, 2:Add, Button, h20 yp x530 vbtnChangeHotkey%A_Index% gButtonOptionsChangeHotkey%A_Index%, %lOptionsChangeHotkey%
 }
 
-Gui, 2:Add, Text, x10 y+15 h2 w410 0x10 ; Horizontal Line > Etched Gray
+Gui, 2:Add, Text, x10 y+15 h2 w570 0x10 ; Horizontal Line > Etched Gray
 
 Gui, 2:Font, s8 w700
-Gui, 2:Add, Text, x10 y+5 w410 center, %lOptionsOtherOptions%
+Gui, 2:Add, Text, x10 y+5 w500 center, %lOptionsOtherOptions%
 Gui, 2:Font
 
 Gui, 2:Add, Text, y+10 x40, %lOptionsLanguage%
@@ -2388,25 +2398,25 @@ GuiControl, ChooseString, drpLanguage, %strLanguageLabel%
 Gui, 2:Add, CheckBox, y+10 x40 vblnOptionsRunAtStartup, %lOptionsRunAtStartup%
 GuiControl, , blnOptionsRunAtStartup, % FileExist(A_Startup . "\" . strAppName . ".lnk") ? 1 : 0
 
-Gui, 2:Add, CheckBox, yp x250 vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
+Gui, 2:Add, CheckBox, yp x300 vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
 GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
 
 Gui, 2:Add, CheckBox, y+10 x40 vblnDisplayMenuShortcuts, %lOptionsDisplayMenuShortcuts%
 GuiControl, , blnDisplayMenuShortcuts, %blnDisplayMenuShortcuts%
 
-Gui, 2:Add, CheckBox, yp x250 vblnDisplayRecentFolders gDisplayRecentFoldersClicked, %lOptionsDisplayRecentFolders%
+Gui, 2:Add, CheckBox, yp x300 vblnDisplayRecentFolders gDisplayRecentFoldersClicked, %lOptionsDisplayRecentFolders%
 GuiControl, , blnDisplayRecentFolders, %blnDisplayRecentFolders%
 
 Gui, 2:Add, CheckBox, y+10 x40 vblnDisplayTrayTip, %lOptionsTrayTip%
 GuiControl, , blnDisplayTrayTip, %blnDisplayTrayTip%
 
-Gui, 2:Add, Edit, yp x250 w36 h17 center vintRecentFolders, %intRecentFolders%
+Gui, 2:Add, Edit, yp x300 w36 h17 center vintRecentFolders, %intRecentFolders%
 Gui, 2:Add, Text, yp x+10 vlblRecentFolders, %lOptionsRecentFolders%
 
 Gui, 2:Add, CheckBox, y+10 x40 vblnPopupFix gPopupFixClicked, %lOptionsPopupFix%
 GuiControl, , blnPopupFix, %blnPopupFix%
 
-Gui, 2:Add, CheckBox, yp x250 vblnDisplaySwitchMenu, %lOptionsDisplaySwitchMenu%
+Gui, 2:Add, CheckBox, yp x300 vblnDisplaySwitchMenu, %lOptionsDisplaySwitchMenu%
 GuiControl, , blnDisplaySwitchMenu, %blnDisplaySwitchMenu%
 
 Gui, 2:Add, Text, % "y+10 x58 vlblPopupFixPositionX " . (blnPopupFix ? "" : "hidden"), %lOptionsPopupFixPositionX%
@@ -2417,7 +2427,7 @@ Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionY center " . (blnPopupFi
 ; Build Gui footer
 Gui, 2:Add, Button, y+20 x40 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
 Gui, 2:Add, Button, yp x+15 vbtnOptionsCancel gButtonOptionsCancel, %lGuiCancel%
-Gui, 2:Add, Button, yp x250 gGuiDonate, %lDonateButton%
+Gui, 2:Add, Button, yp x300 gGuiDonate, %lDonateButton%
 Gui, 2:Add, Text
 GuiControl, Focus, btnOptionsSave
 
@@ -2459,25 +2469,26 @@ Gui, 3:Font
 
 Gui, 3:Add, Text, x10 y+5 w350, % lOptionsArrDescriptions%intIndex%
 
-Gui, 3:Add, CheckBox, y+20 x100 vblnOptionsShift, %lOptionsShift%
+Gui, 3:Add, CheckBox, y+20 x50 vblnOptionsShift, %lOptionsShift%
 GuiControl, , blnOptionsShift, % InStr(strModifiers%intIndex%, "+") ? 1 : 0
 GuiControlGet, posTop, Pos, blnOptionsShift
-Gui, 3:Add, CheckBox, y+10 x100 vblnOptionsCtrl, %lOptionsCtrl%
+Gui, 3:Add, CheckBox, y+10 x50 vblnOptionsCtrl, %lOptionsCtrl%
 GuiControl, , blnOptionsCtrl, % InStr(strModifiers%intIndex%, "^") ? 1 : 0
-Gui, 3:Add, CheckBox, y+10 x100 vblnOptionsAlt, %lOptionsAlt%
+Gui, 3:Add, CheckBox, y+10 x50 vblnOptionsAlt, %lOptionsAlt%
 GuiControl, , blnOptionsAlt, % InStr(strModifiers%intIndex%, "!") ? 1 : 0
-Gui, 3:Add, CheckBox, y+10 x100 vblnOptionsWin, %lOptionsWin%
+Gui, 3:Add, CheckBox, y+10 x50 vblnOptionsWin, %lOptionsWin%
 GuiControl, , blnOptionsWin, % InStr(strModifiers%intIndex%, "#") ? 1 : 0
 
 if (intType = 1)
-	Gui, 3:Add, DropDownList, % "y" . posTopY . " x200 w100 vstrOptionsMouse gOptionsMouseChanged", % strMouseButtonsWithDefault%intIndex%
+	Gui, 3:Add, DropDownList, % "y" . posTopY . " x150 w200 vstrOptionsMouse gOptionsMouseChanged", % strMouseButtonsWithDefault%intIndex%
 if (intType <> 1)
 {
-	Gui, 3:Add, Hotkey, % "y" . posTopY . " x200 w100 vstrOptionsKey gOptionsHotkeyChanged"
+	Gui, 3:Add, Text, % "y" . posTopY . " x150 w60", %lOptionsKeyboard%
+	Gui, 3:Add, Hotkey, yp x+10 w130 vstrOptionsKey gOptionsHotkeyChanged
 	GuiControl, , strOptionsKey, % strOptionsKey%intIndex%
 }
 if (intType = 3)
-	Gui, 3:Add, DropDownList, % "y" . posTopY + 50 . " x200 w100 vstrOptionsMouse gOptionsMouseChanged", % strMouseButtonsWithDefault%intIndex%
+	Gui, 3:Add, DropDownList, % "y" . posTopY + 50 . " x150 w200 vstrOptionsMouse gOptionsMouseChanged", % strMouseButtonsWithDefault%intIndex%
 
 Gui, 3:Add, Button, y220 x140 vbtnChangeHotkeySave gButtonChangeHotkeySave%intIndex%, %lGuiSave%
 Gui, 3:Add, Button, yp x+20 vbtnChangeHotkeyCancel gButtonChangeHotkeyCancel, %lGuiCancel%
@@ -2622,7 +2633,7 @@ if StrLen(strOptionsHotkeyChangedModifiers) ; we have a modifier and we don't wa
 else ; we have a valid key, empty the mouse dropdown and return
 {
 	StringReplace, strOptionsMouseControl, strOptionsHotkeyControl, Key, Mouse ; get the matching mouse dropdown var
-	GuiControl, ChooseString, %strOptionsMouseControl%, %A_Space%
+	GuiControl, Choose, %strOptionsMouseControl%, 0
 }
 
 return
@@ -2636,7 +2647,7 @@ strOptionsMouseControl := A_GuiControl ; mouse dropdown var name
 StringReplace, strOptionsHotkeyControl, strOptionsMouseControl, Mouse, Key ; get the hotkey var
 
 ; we have a mouse button, empty the hotkey control
-GuiControl, , %strOptionsHotkeyControl%, % ""
+GuiControl, , %strOptionsHotkeyControl%, None
 
 return
 ;------------------------------------------------------------
@@ -2654,6 +2665,11 @@ Gui, 3:Submit
 StringReplace, intIndex, A_ThisLabel, ButtonChangeHotkeySave
 
 StringSplit, arrIniVarNames, strIniKeyNames, |
+
+if StrLen(strOptionsMouse)
+	strOptionsMouse := GetMouseButton4Text(strOptionsMouse) ; get mouse button system name from dropdown localized text
+else
+	strMouseButton%intIndex% := "" ;  empty mouse button text
 
 strHotkey := Trim(strOptionsKey . strOptionsMouse)
 
@@ -3420,10 +3436,10 @@ SplitHotkey(strHotkey, strMouseButtons, ByRef strModifiers, ByRef strKey, ByRef 
 	{
 		strMouseButton := strKey
 		strKey := ""
-		StringReplace, strMouseButtonsWithDefault, strMouseButtons, %strMouseButton%|, %strMouseButton%|| ; with default value
+		StringReplace, strMouseButtonsWithDefault, lOptionsMouseButtonsText, % GetText4MouseButton(strMouseButton) . "|", % GetText4MouseButton(strMouseButton) . "||" ; with default value
 	}
 	else ; we have a key
-		strMouseButtonsWithDefault := strMouseButtons ; no default value
+		strMouseButtonsWithDefault := lOptionsMouseButtonsText ; no default value
 }
 ;------------------------------------------------------------
 
@@ -3495,6 +3511,20 @@ GetText4MouseButton(strSource)
 	loop, %arrMouseButtons0%
 		if (strSource = arrMouseButtons%A_Index%)
 			return arrMouseButtonsText%A_Index%
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GetMouseButton4Text(strSource)
+; Returns the string in arrMouseButtons at the same position of strSource in arrMouseButtonsText
+;------------------------------------------------------------
+{
+	global
+	
+	loop, %arrMouseButtonsText0%
+		if (strSource = arrMouseButtonsText%A_Index%)
+			return arrMouseButtons%A_Index%
 }
 ;------------------------------------------------------------
 
