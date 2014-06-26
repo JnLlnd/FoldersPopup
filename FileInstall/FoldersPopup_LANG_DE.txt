@@ -146,7 +146,7 @@ lOptionsKeyboard	Tastatur
 lOptionsLanguage	Sprache
 lOptionsLanguageLabels	Englisch|Französisch|Deutsch|Holländisch
 lOptionsMouse	Maus
-lOptionsMouseButtonsText	Left Mouse Button|Middle Mouse Button|Right Mouse Button|Special Mouse Button 1|Special Mouse Button 2|Wheel Up|Wheel Down|Wheel Left|Wheel Right||
+lOptionsMouseButtonsText	Linke Maustaste|Mittlere Maustaste|Rechte Maustaste|Maus-Spezialtaste 1|Maus-Spezialtaste 2|Mausrad hoch|Mausrad runter|Mausrad nach links|Mausrad nach rechts|
 lOptionsNoKeyOrMouseSpecified	Kein Tastenkürzel oder Maustaste definiert. Der bestehende Hotkey ~1~ ist unverändert.
 lOptionsOtherOptions	Weitere einstellungen
 lOptionsPopupFix	Popup-&Menü an fester Position

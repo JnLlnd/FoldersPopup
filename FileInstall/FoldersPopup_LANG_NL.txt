@@ -146,7 +146,7 @@ lOptionsKeyboard	Toetsenbord
 lOptionsLanguage	Taal
 lOptionsLanguageLabels	Engels|Frans|Duits|Nederlands
 lOptionsMouse	Muis
-lOptionsMouseButtonsText	Left Mouse Button|Middle Mouse Button|Right Mouse Button|Special Mouse Button 1|Special Mouse Button 2|Wheel Up|Wheel Down|Wheel Left|Wheel Right|
+lOptionsMouseButtonsText	Linkermuisknop|Middenste muisknop|Rechtermuisknop|Speciale muisknop 1|Speciale muisknop 2|Muiswiel omhoog|Muiswiel omlaag|Muiswiel links|Muiswiel rechts|
 lOptionsNoKeyOrMouseSpecified	Geen toets of muisknop werd gespecifieerd. De bestaande "~1~" combinatie blijft ongewijzigd.
 lOptionsOtherOptions	Andere Opties
 lOptionsPopupFix	Popup &Menu op een Vaste Positie

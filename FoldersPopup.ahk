@@ -4,8 +4,10 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: 2.1.1 (2014-06-XX)
-	*
+	Version: 2.1.1 (2014-06-25)
+	* complete translation of mouse button names
+	* fix bug when changing Setting shortcut
+	* fix PCAstuces URL missing
 	
 	Version: 2.1 (2014-06-17)
 	* when adding this folder, select in which menu to add the new folder
