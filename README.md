@@ -13,6 +13,11 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### 2014-06-25 2.1.1
+* complete translation of mouse button names
+* fix bug when changing Settings shortcut
+* fix PCAstuces missing URL
+
 ### 2014-06-17 2.1.0
 * when adding this folder, select in which menu to add the new folder
 * new button when edit menu entry to open this menu
