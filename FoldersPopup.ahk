@@ -4,9 +4,13 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: 2.1.2 (2014-07-XX)
+	* fix layout bug in edit folder dialog box
+	* make the cursor change to a hand when the mouse pointer is over buttons or clickable text in Settings dialog box (tried to also implement tooltips but even with a timer, it flickers too much)
+	
 	Version: 2.1.1 (2014-06-25)
 	* complete translation of mouse button names
-	* fix bug when changing Setting shortcut
+	* fix bug when changing Settings shortcut
 	* fix PCAstuces URL missing
 	
 	Version: 2.1 (2014-06-17)
@@ -309,6 +313,10 @@ if (blnDisplayTrayTip)
 OnExit, CleanUpBeforeExit
 
 blnMenuReady := true
+
+; Load the cursor and start the "hook"
+objCursor := DllCall("LoadCursor", "UInt", NULL, "Int", 32649, "UInt") ; IDC_HAND
+OnMessage(0x200, "WM_MOUSEMOVE")
 
 ; gosub, GuiShow ; ### only when debugging Gui
 
@@ -1095,35 +1103,37 @@ Gui, 1:Font, s10 w400, Verdana
 Gui, 1:Add, Text, xm y+1, %lAppTagline%
 Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, Text, xm+30, %lGuiSubmenuDropdownLabel%
-Gui, 1:Add, Picture, xm y+5 gGuiGotoPreviousMenu vpicPreviousMenu hidden, %strTempDir%\left-12.png
-Gui, 1:Add, Picture, xm+15 yp gGuiGotoUpMenu vpicUpMenu hidden, %strTempDir%\up-12.png
+Gui, 1:Add, Picture, xm y+5 gGuiGotoPreviousMenu vpicPreviousMenu hidden, %strTempDir%\left-12.png ; Static4
+Gui, 1:Add, Picture, xm+15 yp gGuiGotoUpMenu vpicUpMenu hidden, %strTempDir%\up-12.png ; Static5
 Gui, 1:Add, DropDownList, xm+30 yp w320 vdrpMenusList gGuiMenusListChanged ; Sort
 
 Gui, 1:Font, s8 w400, Verdana
-Gui, 1:Add, ListView, xm+30 w320 h220 Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFoldersList gGuiFoldersListEvent, %lGuiLvFoldersHeader%|Hidden Menu|Hidden Submenu
+Gui, 1:Add, ListView
+	, xm+30 w320 h220 Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFoldersList gGuiFoldersListEvent
+	, %lGuiLvFoldersHeader%|Hidden Menu|Hidden Submenu
 LV_ModifyCol(3, 0) ; hide 3rd column
 LV_ModifyCol(4, 0) ; hide 4th column
 
 Gui, 1:Add, Text, Section x+0 yp
 
-Gui, 1:Add, Picture, xm ys+25 gGuiMoveFolderUp, %strTempDir%\up_circular-26.png
-Gui, 1:Add, Picture, xm ys+55 gGuiMoveFolderDown, %strTempDir%\down_circular-26.png
-Gui, 1:Add, Picture, xm ys+85 gGuiAddSeparator, %strTempDir%\separator-26.png
-Gui, 1:Add, Picture, xm+1 ys+175 gGuiSortFolders, %strTempDir%\generic_sorting2-26-grey.png
+Gui, 1:Add, Picture, xm ys+25 gGuiMoveFolderUp, %strTempDir%\up_circular-26.png ; Static7
+Gui, 1:Add, Picture, xm ys+55 gGuiMoveFolderDown, %strTempDir%\down_circular-26.png ; Static8
+Gui, 1:Add, Picture, xm ys+85 gGuiAddSeparator, %strTempDir%\separator-26.png ; Static9
+Gui, 1:Add, Picture, xm+1 ys+175 gGuiSortFolders, %strTempDir%\generic_sorting2-26-grey.png ; Static10
 
 Gui, 1:Add, Text, Section xs ys
 
-Gui, 1:Add, Picture, xs+10 ys gGuiAddFolder, %strTempDir%\add_property-48.png
+Gui, 1:Add, Picture, xs+10 ys gGuiAddFolder, %strTempDir%\add_property-48.png ; Static12
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs y+0 w68 center gGuiAddFolder, %lGuiAddFolder%
+Gui, 1:Add, Text, xs y+0 w68 center gGuiAddFolder, %lGuiAddFolder% ; Static13
 
-Gui, 1:Add, Picture, xs+10 gGuiEditFolder, %strTempDir%\edit_property-48.png
+Gui, 1:Add, Picture, xs+10 gGuiEditFolder, %strTempDir%\edit_property-48.png ; Static14
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs y+0 w68 center gGuiEditFolder, %lGuiEditFolder%
+Gui, 1:Add, Text, xs y+0 w68 center gGuiEditFolder, %lGuiEditFolder% ; Static15
 
-Gui, 1:Add, Picture, xs+10 gGuiRemoveFolder, %strTempDir%\delete_property-48.png
+Gui, 1:Add, Picture, xs+10 gGuiRemoveFolder, %strTempDir%\delete_property-48.png ; Static16
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs y+0 w68 center gGuiRemoveFolder, %lGuiRemoveFolder%
+Gui, 1:Add, Text, xs y+0 w68 center gGuiRemoveFolder, %lGuiRemoveFolder% ; Static17
 
 Gui, 1:Add, Text, xs+90 ys h220 0x11
 
@@ -1131,11 +1141,13 @@ GuiControlGet, arrLvPos, Pos, lvFoldersList
 
 Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, Text, Section x%intCol% y%arrLvPosY% w220, %lGuiLvDialogsHeader%
-Gui, 1:Add, ListView, xs w220 h150 Count16 -Hdr -Multi NoSortHdr +0x10 LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvDialogsList gGuiDialogsListEvent, Header
+Gui, 1:Add, ListView
+	, xs w220 h150 Count16 -Hdr -Multi NoSortHdr +0x10 LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvDialogsList gGuiDialogsListEvent
+	, Header
 
-Gui, 1:Add, Picture, xs+70 y+5 gGuiAddDialog, %strTempDir%\add_image-26.png
-Gui, 1:Add, Picture, x+10 yp gGuiEditDialog, %strTempDir%\edit_image-26.png
-Gui, 1:Add, Picture, x+10 yp gGuiRemoveDialog, %strTempDir%\remove_image-26.png
+Gui, 1:Add, Picture, xs+70 y+5 gGuiAddDialog, %strTempDir%\add_image-26.png ; Static20
+Gui, 1:Add, Picture, x+10 yp gGuiEditDialog, %strTempDir%\edit_image-26.png ; Static21
+Gui, 1:Add, Picture, x+10 yp gGuiRemoveDialog, %strTempDir%\remove_image-26.png ; Static22
 
 Gui, 1:Add, Text, Section xs+18 ym
 
@@ -1145,27 +1157,27 @@ if !(blnDonor)
 	StringSplit, arrDonateButtons, strDonateButtons, |
 	Random, intDonateButton, 1, 5
 
-	Gui, 1:Add, Picture, xs+10 ym gGuiDonate, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png"
+	Gui, 1:Add, Picture, xs+10 ym gGuiDonate, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png" ; Static24
 	Gui, 1:Font, s8 w400, Arial ; button legend
-	Gui, 1:Add, Text, xs y+0 w52 center gGuiDonate, %lGuiDonate%
+	Gui, 1:Add, Text, xs y+0 w52 center gGuiDonate, %lGuiDonate% ; Static25
 }
 
-Gui, 1:Add, Picture, % "Section x+" . (blnDonor ? "42" : "10") . " ym gGuiHelp", %strTempDir%\help-32.png
+Gui, 1:Add, Picture, % "Section x+" . (blnDonor ? "42" : "10") . " ym gGuiHelp", %strTempDir%\help-32.png ; Static26
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiHelp, %lGuiHelp%
+Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiHelp, %lGuiHelp% ; Static27
 
-Gui, 1:Add, Picture, Section x+10 ym gGuiAbout, %strTempDir%\about-32.png
+Gui, 1:Add, Picture, Section x+10 ym gGuiAbout, %strTempDir%\about-32.png ; Static28
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiAbout, %lGuiAbout%
+Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiAbout, %lGuiAbout% ; Static29
 
-Gui, 1:Add, Picture, Section x+10 ym gGuiOptions, %strTempDir%\settings-32.png
+Gui, 1:Add, Picture, Section x+10 ym gGuiOptions, %strTempDir%\settings-32.png ; Static30
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiOptions, %lGuiOptions%
+Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiOptions, %lGuiOptions% ; Static31
 
 Gui, 1:Add, Text, xm y350 h1 w690
 Gui, 1:Font, s9 w600, Verdana
-Gui, 1:Add, Button, x260 w100 h48 Disabled Default vbtnGuiSave gGuiSave, %lGuiSave%
-Gui, 1:Add, Button, x+20 w100 h48 vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur
+Gui, 1:Add, Button, x260 w100 h48 Disabled Default vbtnGuiSave gGuiSave, %lGuiSave% ; Button1
+Gui, 1:Add, Button, x+20 w100 h48 vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur - Button2
 Gui, 1:Font, s6 w400, Verdana
 
 return
@@ -2004,7 +2016,7 @@ Gui, 2:+OwnDialogs
 Gui, 2:Add, Text, x10 y10 vlblFolderParentMenu, %lDialogFolderParentMenu%
 Gui, 2:Add, DropDownList, x10 w250 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
 
-Gui, 2:Add, Text, x10 y+10 w200 vlblShortName, % (StrLen(strCurrentSubmenuFullName) ? lDialogSubmenuShortName : lDialogFolderShortName)
+Gui, 2:Add, Text, x10 y+10 w300 vlblShortName, % (StrLen(strCurrentSubmenuFullName) ? lDialogSubmenuShortName : lDialogFolderShortName)
 Gui, 2:Add, Edit, x10 w200 vstrFolderShortName, %strCurrentName%
 
 Gui, 2:Add, Text, % "x10 vlblFolder " . (strCurrentLocation = lGuiSubmenuLocation ? "hidden" : ""), %lDialogFolderLabel%
@@ -3650,3 +3662,25 @@ UriDecode(str)
 			Break
 	return str
 }
+;------------------------------------------------
+
+
+;------------------------------------------------
+WM_MOUSEMOVE(wParam, lParam)
+; "hook" for image buttons cursor
+; see http://www.autohotkey.com/board/topic/70261-gui-buttons-hover-cant-change-cursor-to-hand/
+;------------------------------------------------
+{
+	Global objCursor
+	
+	MouseGetPos, , , , strControl ; Static1, StaticN, Button1, ButtonN
+	StringReplace, strControl, strControl, Static
+	
+	If InStr(".7.8.9.10.12.13.14.15.16.17.20.21.22.24.25.26.27.28.29.30.31.Button1.Button2.", "." . strControl . ".")
+		DllCall("SetCursor", "UInt", objCursor)
+
+	return
+}
+;------------------------------------------------
+
+
