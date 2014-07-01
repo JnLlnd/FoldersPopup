@@ -13,7 +13,6 @@ lDialogAdd	Toevoegen
 lDialogAddDialogAlready	Dit dialoogvenster wordt reeds ondersteund.
 lDialogAddDialogPrompt	Voer de nieuwe naam voor het dialoogvenster in`n(of een deel van de naam):
 lDialogAddDialogTitle	Voeg nieuw dialoogvenster toe - ~1~ ~2~
-lDialogAddEditFolderTitle	~1~ map - ~2~ ~3~
 lDialogAddFolderManuallyPrompt	Sorry, we kunnen de huidige map niet ontdekken in dit venstertype.`n`nWil je het handmatig toevoegen?
 lDialogAddFolderManuallyTitle	Voeg deze map toe - ~1~ ~2~
 lDialogAddFolderSelect	Kies of maak een nieuwe map:
@@ -58,7 +57,7 @@ lDonateReviewNameLeft2	PortableFreeware.com
 lDonateReviewNameLeft3	Softpedia.com
 lDonateReviewNameRight1	BetaNews.com
 lDonateReviewNameRight2	FileCluster.com
-lDonateReviewNameRight3	PCastuces.com (FR)
+lDonateReviewNameRight3	Freewares & Tutos (FR)
 lDonateText1	Steun ~1~ ontwikkeling!
 lDonateText2	<a href="~1~">Waarom freeware steunen?</a>
 lDonateText3	... of steun freeware geheel gratis!
@@ -109,6 +108,7 @@ lMenuMyComputer	&Mijn Computer
 lMenuNetworkNeighborhood	Mijn &Netwerklocaties
 lMenuPictures	Afbeeldingen
 lMenuRecentFolders	&Recente bezochte mappen
+lMenuRecentFoldersShortcut	R
 lMenuRecycleBin	Prullenbak
 lMenuRefreshRecent	Vernieuwen
 lMenuReservedShortcuts	SRWFA
@@ -166,3 +166,8 @@ lUpdateError	Een fout trad op bij het controleren van het versienummer. De contr
 lUpdatePrompt	Update ~1~ van v~2~ naar v~3~?
 lUpdateTitle	Update ~1~?
 lUpdateYouHaveLatest	Je hebt reeds de meest recente versie: ~1~.`n`nWil je de ~2~ pagina toch bezoeken?
+lOptionsIconSize	Menu icons size
+lDialogFileLabel	File
+lDialogAddEditFolderTitle	~1~ favorite - ~2~ ~3~
+lDialogFileShortName	File short name for menu
+lDialogAddFileSelect	Choose the new file:

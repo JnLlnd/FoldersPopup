@@ -13,7 +13,8 @@ lDialogAdd	Ajouter
 lDialogAddDialogAlready	Ce type de boîte de dialogue est déjà pris en charge.
 lDialogAddDialogPrompt	Entrez le nom de la nouvelle boîte de dialogue`n(ou une partie du nom):
 lDialogAddDialogTitle	Ajouter Boîte de dialogue - ~1~ ~2~
-lDialogAddEditFolderTitle	~1~ un dossier - ~2~ ~3~
+lDialogAddEditFolderTitle	~1~ un favori - ~2~ ~3~
+lDialogAddFileSelect	Choisir un nouveau fichier:
 lDialogAddFolderManuallyPrompt	Désolé, nous ne pouvons détecter automatiquement le dossier actif dans ce type de fenêtre.`n`nVoulez-vous ajouter ce dossier manuellement?
 lDialogAddFolderManuallyTitle	Ajouter un dossier - ~1~ ~2~
 lDialogAddFolderSelect	Choisir ou créer un nouveau dossier:
@@ -27,6 +28,8 @@ lDialogEditDialogTitle	Modifier Boîte de dialogue - ~1~ ~2~
 lDialogEditFolderPrompt	Entrez le nom de ce dossier:
 lDialogEditFolderSelect	Choisissez ou créez le nouveau dossier:
 lDialogEditFolderTitle	Modifier un dossier - ~1~ ~2~
+lDialogFileLabel	Fichier
+lDialogFileShortName	Nom court du fichier pour les menus
 lDialogFolderLabel	Dossier
 lDialogFolderLocationEmpty	L'emplacement est vide. Veuillez indiquer l'emplacement du dossier.
 lDialogFolderNameEmpty	Le nom du dossier est vide. Veuillez indiquer un nom court pour ce dossier.
@@ -58,7 +61,7 @@ lDonateReviewNameLeft2	PortableFreeware.com
 lDonateReviewNameLeft3	Softpedia.com
 lDonateReviewNameRight1	BetaNews.com
 lDonateReviewNameRight2	FileCluster.com
-lDonateReviewNameRight3	PCastuces.com (FR)
+lDonateReviewNameRight3	Freewares & Tutos (FR)
 lDonateText1	Soutenez le développement de ~1~ !
 lDonateText2	<a href="~1~">Pourquoi soutenir ce gratuiciel?</a>
 lDonateText3	... ou soutenez ce gratuiciel gratuitement !
@@ -109,6 +112,7 @@ lMenuMyComputer	Ordinateur
 lMenuNetworkNeighborhood	Réseau
 lMenuPictures	Images
 lMenuRecentFolders	&Emplacements récents
+lMenuRecentFoldersShortcut	E
 lMenuRecycleBin	Corbeille
 lMenuRefreshRecent	Actualiser
 lMenuReservedShortcuts	DEBPA
@@ -142,6 +146,7 @@ lOptionsDisplaySpecialFolders	Afficher les dossiers spéciaux
 lOptionsDisplaySwitchMenu	Afficher les menus Basculer
 lOptionsGuiIntro	Choisisr les boutons de la souris et les raccourcis du clavier déclenchant ~1~.
 lOptionsGuiTitle	Options - ~1~ ~2~
+lOptionsIconSize	Taille des icones de menu
 lOptionsKeyboard	Clavier
 lOptionsLanguage	Langue
 lOptionsLanguageLabels	Anglais|Français|Allemand|Néerlandais
