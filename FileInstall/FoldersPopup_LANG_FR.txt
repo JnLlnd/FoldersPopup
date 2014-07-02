@@ -61,7 +61,7 @@ lDonateReviewNameLeft2	PortableFreeware.com
 lDonateReviewNameLeft3	Softpedia.com
 lDonateReviewNameRight1	BetaNews.com
 lDonateReviewNameRight2	FileCluster.com
-lDonateReviewNameRight3	Freewares & Tutos (FR)
+lDonateReviewNameRight3	Freewares && Tutos (FR)
 lDonateText1	Soutenez le développement de ~1~ !
 lDonateText2	<a href="~1~">Pourquoi soutenir ce gratuiciel?</a>
 lDonateText3	... ou soutenez ce gratuiciel gratuitement !
@@ -114,7 +114,7 @@ lMenuPictures	Images
 lMenuRecentFolders	&Emplacements récents
 lMenuRecentFoldersShortcut	E
 lMenuRecycleBin	Corbeille
-lMenuRefreshRecent	Actualiser
+lMenuRefreshRecent	Actualisation des dossiers récents en cours
 lMenuReservedShortcuts	DEBPA
 lMenuReservedShortcutsDonate	S
 lMenuRunAtStartup	Exécuter au démarrage

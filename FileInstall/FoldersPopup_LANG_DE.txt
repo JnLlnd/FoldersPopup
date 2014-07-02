@@ -57,7 +57,7 @@ lDonateReviewNameLeft2	PortableFreeware.com
 lDonateReviewNameLeft3	Softpedia.com
 lDonateReviewNameRight1	BetaNews.com
 lDonateReviewNameRight2	FileCluster.com
-lDonateReviewNameRight3	Freewares & Tutos (FR)
+lDonateReviewNameRight3	Freewares && Tutos (FR)
 lDonateText1	Unterstützen Sie die Entwicklung von ~1~ !
 lDonateText2	<a href="~1~">Warum sollte ich Freeware unterstützen?</a>
 lDonateText3	... oder unterstützen Sie Freeware umsonst!
@@ -110,7 +110,6 @@ lMenuPictures	&Bilder
 lMenuRecentFolders	&Kürzlich verwendete Ordner
 lMenuRecentFoldersShortcut	K
 lMenuRecycleBin	&Papierkorb
-lMenuRefreshRecent	Aktualisieren
 lMenuReservedShortcuts	SKWFD
 lMenuReservedShortcutsDonate	U
 lMenuRunAtStartup	&Beim Start von Windows ausführen
@@ -171,3 +170,4 @@ lDialogFileLabel	File
 lDialogAddEditFolderTitle	~1~ favorite - ~2~ ~3~
 lDialogFileShortName	File short name for menu
 lDialogAddFileSelect	Choose the new file:
+lMenuRefreshRecent	Refreshing Recent folders menu

@@ -4,9 +4,15 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: 2.1.2 (2014-07-XX)
+	Version: 2.2 (2014-07-XX)
 	* fix layout bug in edit folder dialog box
 	* make the cursor change to a hand when the mouse pointer is over buttons or clickable text in Settings dialog box (tried to also implement tooltips but even with a timer, it flickers too much)
+	* support favorite files as popup menu items, add file radio button to add dialog box
+	* support drag and drop to add favorite
+	* add icons to Special folders menu, add Settings Option for menu icon size
+	* replace PCAstuces review URL with Freewares & Tutos
+	* Recent folders menu now shown in a detached menu refreshed each time it is opened, with tooltip while refreshing
+	* Fix a bug with number of Recent folders hide/display in Settings, Options
 	
 	Version: 2.1.1 (2014-06-25)
 	* complete translation of mouse button names
@@ -852,9 +858,6 @@ BuildRecentFoldersMenu:
 Menu, menuRecentFolders, Add
 Menu, menuRecentFolders, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
 
-Menu, menuRecentFolders, Add, %lMenuRefreshRecent%, RefreshRecentFolders
-Menu, menuRecentFolders, Add
-
 objRecentFolders := Object()
 intRecentFoldersIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
 
@@ -911,16 +914,11 @@ return
 RefreshRecentFolders:
 ;------------------------------------------------------------
 
+ToolTip, %lMenuRefreshRecent%...
 Gosub, BuildRecentFoldersMenu
+ToolTip
 CoordMode, Menu, % (blnPopupFix ? "Screen" : "Window")
-Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
-; #### WANT TO RE-OPEN THE RECENT FOLDERS SUB MENU - NO SOLUTION FOUND YET
-; Sleep, 50
-; ###_D(DllCall("GetCurrentProcessId"))
-; ThisScript := WinExist("Ahk_PID " . DllCall("GetCurrentProcessId"))
-; WinMenuSelectItem, WinTitle, WinText, Menu [, SubMenu1, SubMenu2, SubMenu3, SubMenu4, SubMenu5, SubMenu6, ExcludeTitle, ExcludeText]
-; ###_D(ThisScript)
-; Send, %lMenuRecentFoldersShortcut%
+Menu, menuRecentFolders, Show
 
 return
 ;------------------------------------------------------------
@@ -1001,8 +999,6 @@ Menu, %lMainMenuName%, Add
 
 if (blnDisplaySpecialFolders)
 	Menu, %lMainMenuName%, Add, %lMenuSpecialFolders%..., :menuSpecialFolders
-if (blnDisplayRecentFolders)
-	Menu, %lMainMenuName%, Add, %lMenuRecentFolders%..., :menuRecentFolders
 
 if (blnDisplaySwitchMenu)
 {
@@ -1012,6 +1008,9 @@ if (blnDisplaySwitchMenu)
 	Menu, menuSwitch, Add, %lMenuSwitchDialog%, :menuSwitchDialog
 	Menu, %lMainMenuName%, Add, %lMenuSwitch%..., :menuSwitch
 }
+
+if (blnDisplayRecentFolders)
+	Menu, %lMainMenuName%, Add, %lMenuRecentFolders%..., RefreshRecentFolders
 
 if (blnDisplaySpecialFolders or blnDisplayRecentFolders or blnDisplaySwitchMenu)
 	Menu, %lMainMenuName%, Add
@@ -2499,14 +2498,14 @@ GuiControl, ChooseString, drpIconSize, %intIconSize%
 Gui, 2:Add, CheckBox, y+10 xs vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
 GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
 
+Gui, 2:Add, CheckBox, y+10 xs vblnDisplaySwitchMenu, %lOptionsDisplaySwitchMenu%
+GuiControl, , blnDisplaySwitchMenu, %blnDisplaySwitchMenu%
+
 Gui, 2:Add, CheckBox, y+10 xs vblnDisplayRecentFolders gDisplayRecentFoldersClicked, %lOptionsDisplayRecentFolders%
 GuiControl, , blnDisplayRecentFolders, %blnDisplayRecentFolders%
 
-Gui, 2:Add, Edit, y+10 xs w36 h17 center vintRecentFolders, %intRecentFolders%
-Gui, 2:Add, Text, yp x+10 vlblRecentFolders, %lOptionsRecentFolders%
-
-Gui, 2:Add, CheckBox, y+10 xs vblnDisplaySwitchMenu, %lOptionsDisplaySwitchMenu%
-GuiControl, , blnDisplaySwitchMenu, %blnDisplaySwitchMenu%
+Gui, 2:Add, Edit, % "y+10 xs w36 h17 vintRecentFolders center " . (blnDisplayRecentFolders ? "" : "hidden"), %intRecentFolders%
+Gui, 2:Add, Text, % "yp x+10 vlblRecentFolders " . (blnDisplayRecentFolders ? "" : "hidden"), %lOptionsRecentFolders%
 
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled

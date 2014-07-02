@@ -57,7 +57,7 @@ lDonateReviewNameLeft2	PortableFreeware.com
 lDonateReviewNameLeft3	Softpedia.com
 lDonateReviewNameRight1	BetaNews.com
 lDonateReviewNameRight2	FileCluster.com
-lDonateReviewNameRight3	Freewares & Tutos (FR)
+lDonateReviewNameRight3	Freewares && Tutos (FR)
 lDonateText1	Steun ~1~ ontwikkeling!
 lDonateText2	<a href="~1~">Waarom freeware steunen?</a>
 lDonateText3	... of steun freeware geheel gratis!
@@ -110,7 +110,6 @@ lMenuPictures	Afbeeldingen
 lMenuRecentFolders	&Recente bezochte mappen
 lMenuRecentFoldersShortcut	R
 lMenuRecycleBin	Prullenbak
-lMenuRefreshRecent	Vernieuwen
 lMenuReservedShortcuts	SRWFA
 lMenuReservedShortcutsDonate	T
 lMenuRunAtStartup	Uitvoe&ren bij opstarten
@@ -171,3 +170,4 @@ lDialogFileLabel	File
 lDialogAddEditFolderTitle	~1~ favorite - ~2~ ~3~
 lDialogFileShortName	File short name for menu
 lDialogAddFileSelect	Choose the new file:
+lMenuRefreshRecent	Refreshing Recent folders menu
