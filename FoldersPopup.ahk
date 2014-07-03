@@ -1,7 +1,6 @@
 /*
 todo:
-- display icons in menu for documents
-- display fix icons
+- display fix icons for special folders
 
 */
 
@@ -15,11 +14,14 @@ todo:
 	* fix layout bug in edit folder dialog box
 	* make the cursor change to a hand when the mouse pointer is over buttons or clickable text in Settings dialog box (tried to also implement tooltips but even with a timer, it flickers too much)
 	* support favorite files as popup menu items, add file radio button to add dialog box
+	* when menu item is a file, launch it with Run
 	* support drag and drop to add favorite
 	* add icons to Special folders menu, add Settings Option for menu icon size
 	* replace PCAstuces review URL with Freewares & Tutos
 	* Recent folders menu now shown in a detached menu, at the calling popup menu location, refreshed each time it is opened, with tooltip while refreshing
 	* fix a bug with number of Recent folders hide/display in Settings, Options
+	* display menu icons for documents
+	* display fix folders menu icon, special folders menu icons and submenu icons
 	
 	Version: 2.1.1 (2014-06-25)
 	* complete translation of mouse button names
@@ -901,8 +903,7 @@ Loop, parse, strDirList, `n
 	if !FileExist(strOutTarget) ; if folder/file was delete or on a removable drive
 		continue
 	
-	FileGetAttrib, strAttributes, %strOutTarget%
-	if !InStr(strAttributes, "D") ; not a folder
+	if LocationIsDocument(strOutTarget) ; not a folder
 		continue
 
 	intRecentFoldersIndex := intRecentFoldersIndex + 1
@@ -1066,13 +1067,39 @@ BuildOneMenu(strMenu)
 				Menu, % arrThisMenu[A_Index].MenuName, Add, % arrThisMenu[A_Index].FolderName, OpenFavorite ; will never be called because disabled
 				Menu, % arrThisMenu[A_Index].MenuName, Disable, % arrThisMenu[A_Index].FolderName
 			}
+			Menu, % arrThisMenu[A_Index].MenuName , Icon, % arrThisMenu[A_Index].FolderName, %A_WinDir%\System32\imageres.dll, 200, %intIconSize%
 		}
 		else if (arrThisMenu[A_Index].FolderName = lMenuSeparator)
 			Menu, % arrThisMenu[A_Index].MenuName, Add
 		else
-			Menu, % arrThisMenu[A_Index].MenuName , Add
-				, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = lMainMenuName)) . " " : "")
-				. arrThisMenu[A_Index].FolderName, OpenFavorite
+		{
+			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = lMainMenuName)) . " " : "")
+				. arrThisMenu[A_Index].FolderName
+			Menu, % arrThisMenu[A_Index].MenuName , Add, %strMenuName%, OpenFavorite
+			
+			if LocationIsDocument(arrThisMenu[A_Index].FolderLocation)
+			{
+				; get icon, extract from kiu http://www.autohotkey.com/board/topic/8616-kiu-icons-manager-quickly-change-icon-files/
+				strLocation :=  arrThisMenu[A_Index].FolderLocation
+				SplitPath, strLocation, , , strExtension
+				RegRead, strHKeyClassRoot, HKEY_CLASSES_ROOT, .%strExtension%
+				RegRead, strDefaultIcon, HKEY_CLASSES_ROOT, %strHKeyClassRoot%\DefaultIcon
+				
+				IfInString, strDefaultIcon, `, ; this is for icongroup files
+				{
+					StringSplit, arrDefaultIcon, strDefaultIcon, `,
+					strDefaultIcon := arrDefaultIcon1
+					intDefaultIcon := arrDefaultIcon2
+				}
+				else
+					intDefaultIcon := 1
+
+				; ###_D(strLocation . "`n" . strHKeyClassRoot . "`n" . strDefaultIcon . "`n" . intDefaultIcon)
+				Menu, % arrThisMenu[A_Index].MenuName , Icon, %strMenuName%, %strDefaultIcon%, intDefaultIcon, %intIconSize%
+			}
+			else
+				Menu, % arrThisMenu[A_Index].MenuName , Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 4, %intIconSize%
+		}
 }
 ;------------------------------------------------------------
 
@@ -1992,9 +2019,8 @@ if (A_ThisLabel = "GuiAddFromPopup")
 else if (A_ThisLabel = "GuiAddFromDropFiles")
 {
 	blnRadioSubmenu := false
-	FileGetAttrib, strAttributes, %strCurrentLocation%
-	blnRadioFolder := InStr(strAttributes, "D")
-	blnRadioFile := not blnRadioFolder
+	blnRadioFile := LocationIsDocument(strCurrentLocation)
+	blnRadioFolder := not blnRadioFile
 }
 else ; GuiAddFolder
 {
@@ -2918,8 +2944,7 @@ if (blnDiagMode)
 	Diag("Path", strLocation)
 }
 
-FileGetAttrib, strAttributes, %strLocation%
-if !InStr(strAttributes, "D") ; this is a file
+if LocationIsDocument(strLocation) ; this is a file
 {
 	Run, %strLocation%
 	return
@@ -3760,5 +3785,15 @@ WM_MOUSEMOVE(wParam, lParam)
 	return
 }
 ;------------------------------------------------
+
+
+;------------------------------------------------------------
+LocationIsDocument(strLocation)
+;------------------------------------------------------------
+{
+	FileGetAttrib, strAttributes, %strLocation%
+	return !InStr(strAttributes, "D") ; not a folder
+}
+;------------------------------------------------------------
 
 
