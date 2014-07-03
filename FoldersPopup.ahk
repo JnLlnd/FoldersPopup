@@ -1,3 +1,10 @@
+/*
+todo:
+- display icons in menu for documents
+- display fix icons
+
+*/
+
 ;===============================================
 /*
 	FoldersPopup
@@ -11,8 +18,8 @@
 	* support drag and drop to add favorite
 	* add icons to Special folders menu, add Settings Option for menu icon size
 	* replace PCAstuces review URL with Freewares & Tutos
-	* Recent folders menu now shown in a detached menu refreshed each time it is opened, with tooltip while refreshing
-	* Fix a bug with number of Recent folders hide/display in Settings, Options
+	* Recent folders menu now shown in a detached menu, at the calling popup menu location, refreshed each time it is opened, with tooltip while refreshing
+	* fix a bug with number of Recent folders hide/display in Settings, Options
 	
 	Version: 2.1.1 (2014-06-25)
 	* complete translation of mouse button names
@@ -211,7 +218,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 2.1.1
+;@Ahk2Exe-SetVersion 2.2.0
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -256,7 +263,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "2.1.1" ; "major.minor.bugs"
+global strCurrentVersion := "2.2" ; "major.minor.bugs"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
@@ -918,7 +925,7 @@ ToolTip, %lMenuRefreshRecent%...
 Gosub, BuildRecentFoldersMenu
 ToolTip
 CoordMode, Menu, % (blnPopupFix ? "Screen" : "Window")
-Menu, menuRecentFolders, Show
+Menu, menuRecentFolders, Show, %intMenuPosX%, %intMenuPosY% ; same position as the calling popup menu
 
 return
 ;------------------------------------------------------------
@@ -2897,7 +2904,6 @@ BuildMenuTreeDropDown(strMenu, strDefaultMenu, strSkipSubmenu := "")
 ;------------------------------------------------------------
 OpenFavorite:
 ;------------------------------------------------------------
-; #### check if file
 
 if (blnDisplayMenuShortcuts)
 	StringTrimLeft, strThisMenu, A_ThisMenuItem, 3 ; remove "&1 " from menu item
@@ -2912,6 +2918,15 @@ if (blnDiagMode)
 	Diag("Path", strLocation)
 }
 
+FileGetAttrib, strAttributes, %strLocation%
+if !InStr(strAttributes, "D") ; this is a file
+{
+	Run, %strLocation%
+	return
+}
+
+; else this is a folder
+
 if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
 {
 	if (blnDiagMode)
@@ -2924,7 +2939,7 @@ if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetCla
 			Run, %strDirectoryOpusPath% "%strLocation%"
 		else
 			Oops(lOopsWrongDirectoryOpusPath, strAppName, strDirectoryOpusPath)
-	else
+	else ; Win7 +
 		Run, Explorer %strLocation%
 	; http://msdn.microsoft.com/en-us/library/bb774094
 	; ComObjCreate("Shell.Application").Explore(strLocation)
@@ -2965,7 +2980,7 @@ else if WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTarget
 	if (blnDiagMode)
 		Diag("NavigateResult", ErrorLevel)
 }
-else
+else ; dialog box
 {
 	if (blnDiagMode)
 	{
