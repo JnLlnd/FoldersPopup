@@ -171,3 +171,4 @@ lDialogAddEditFolderTitle	~1~ favorite - ~2~ ~3~
 lDialogFileShortName	File short name for menu
 lDialogAddFileSelect	Choose the new file:
 lMenuRefreshRecent	Refreshing Recent folders menu
+lMenuLibraries	Libraries

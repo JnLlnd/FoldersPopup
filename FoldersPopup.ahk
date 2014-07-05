@@ -1,9 +1,3 @@
-/*
-todo:
-- display fix icons for special folders
-
-*/
-
 ;===============================================
 /*
 	FoldersPopup
@@ -11,17 +5,17 @@ todo:
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
 	Version: 2.2 (2014-07-XX)
-	* fix layout bug in edit folder dialog box
-	* make the cursor change to a hand when the mouse pointer is over buttons or clickable text in Settings dialog box (tried to also implement tooltips but even with a timer, it flickers too much)
 	* support favorite files as popup menu items, add file radio button to add dialog box
 	* when menu item is a file, launch it with Run
+	* add icons to Special folders menu, add Settings Option for menu icon size, default size to 16
+	* add menu icons for documents
+	* add fix folders menu icon, special folders menu icons and submenu icons
+	* make the cursor change to a hand when the mouse pointer is over buttons or clickable text in Settings dialog box (tried to also implement tooltips but even with a timer, it flickers too much)
 	* support drag and drop to add favorite
-	* add icons to Special folders menu, add Settings Option for menu icon size
-	* replace PCAstuces review URL with Freewares & Tutos
 	* Recent folders menu now shown in a detached menu, at the calling popup menu location, refreshed each time it is opened, with tooltip while refreshing
 	* fix a bug with number of Recent folders hide/display in Settings, Options
-	* display menu icons for documents
-	* display fix folders menu icon, special folders menu icons and submenu icons
+	* fix layout bug in edit folder dialog box
+	* replace PCAstuces review URL with Freewares & Tutos
 	
 	Version: 2.1.1 (2014-06-25)
 	* complete translation of mouse button names
@@ -403,7 +397,7 @@ IfNotExist, %strIniFile%
 			Startups=1
 			LanguageCode=EN
 			DirectoryOpusPath=
-			IconSize=16
+			IconSize=24
 			[Folders]
 			Folder1=C:\|C:\
 			Folder2=Windows|%A_WinDir%
@@ -446,7 +440,7 @@ if !(blnDonor)
 	lMenuReservedShortcuts := lMenuReservedShortcuts . lMenuReservedShortcutsDonate
 IniRead, intRecentFolders, %strIniFile%, Global, RecentFolders, 10
 IniRead, strDirectoryOpusPath, %strIniFile%, Global, DirectoryOpusPath, %A_Space% ; empty string if not found
-IniRead, intIconSize, %strIniFile%, Global, IconSize, 16
+IniRead, intIconSize, %strIniFile%, Global, IconSize, 24
 
 Loop
 {
@@ -908,8 +902,11 @@ Loop, parse, strDirList, `n
 
 	intRecentFoldersIndex := intRecentFoldersIndex + 1
 	objRecentFolders.Insert(intRecentFoldersIndex, strOutTarget)
-	Menu, menuRecentFolders, Add, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strOutTarget, OpenRecentFolder
 	
+	strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strOutTarget
+	Menu, menuRecentFolders, Add, %strMenuName%, OpenRecentFolder
+	Menu, menuRecentFolders, Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 4, %intIconSize%
+
 	if (intRecentFoldersIndex >= intRecentFolders)
 		break
 }
@@ -972,19 +969,21 @@ For pExp in ComObjCreate("Shell.Application").Windows
 			StringReplace, strLocation, strLocation, /, \, A
 			if !StrLen(strLocation)
 				strLocation := pExp.LocationName
-			Menu, menuSwitchDialog, Add
-				, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strLocation
-				, SwitchDialog
+
+			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strLocation
+			Menu, menuSwitchDialog, Add, %strMenuName%, SwitchDialog
+			Menu, menuSwitchDialog, Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 96, %intIconSize%
 		}
 		else
-			strLocation := "???"
+			strLocation := lMenuLibraries ; will be used in menuSwitchExplorer
 		if StrLen(pExp.HWND)
 		{
 			intExplorersIndex := intExplorersIndex + 1
 			objExplorersWinId.Insert(intExplorersIndex, pExp.HWND)
-			Menu, menuSwitchExplorer, Add
-				, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strLocation
-				, SwitchExplorer
+			
+			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strLocation
+			Menu, menuSwitchExplorer, Add, %strMenuName%, SwitchExplorer
+			Menu, menuSwitchExplorer, Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 203, %intIconSize%
 		}
 	}
 }
@@ -1006,31 +1005,43 @@ BuildOneMenu(lMainMenuName) ; and recurse for submenus
 Menu, %lMainMenuName%, Add
 
 if (blnDisplaySpecialFolders)
+{
 	Menu, %lMainMenuName%, Add, %lMenuSpecialFolders%..., :menuSpecialFolders
+	Menu, %lMainMenuName%, Icon, %lMenuSpecialFolders%..., %A_WinDir%\System32\imageres.dll, 203, %intIconSize%
+}
 
 if (blnDisplaySwitchMenu)
 {
 	Menu, menuSwitch, Add
 	Menu, menuSwitch, DeleteAll
 	Menu, menuSwitch, Add, %lMenuSwitchExplorer%, :menuSwitchExplorer
+	Menu, menuSwitch, Icon, %lMenuSwitchExplorer%, %A_WinDir%\System32\imageres.dll, 177, %intIconSize%
 	Menu, menuSwitch, Add, %lMenuSwitchDialog%, :menuSwitchDialog
+	Menu, menuSwitch, Icon, %lMenuSwitchDialog%, %A_WinDir%\System32\imageres.dll, 176, %intIconSize%
 	Menu, %lMainMenuName%, Add, %lMenuSwitch%..., :menuSwitch
+	Menu, %lMainMenuName%, Icon, %lMenuSwitch%..., %A_WinDir%\System32\imageres.dll, 177, %intIconSize%
 }
 
 if (blnDisplayRecentFolders)
+{
 	Menu, %lMainMenuName%, Add, %lMenuRecentFolders%..., RefreshRecentFolders
+	Menu, %lMainMenuName%, Icon, %lMenuRecentFolders%..., %A_WinDir%\System32\imageres.dll, 113, %intIconSize%
+}
 
 if (blnDisplaySpecialFolders or blnDisplayRecentFolders or blnDisplaySwitchMenu)
 	Menu, %lMainMenuName%, Add
 
 Menu, %lMainMenuName%, Add, % L(lMenuSettings, strAppName), GuiShow
+Menu, %lMainMenuName%, Icon, % L(lMenuSettings, strAppName), %A_WinDir%\System32\imageres.dll, 110, %intIconSize%
 Menu, %lMainMenuName%, Default, % L(lMenuSettings, strAppName)
 Menu, %lMainMenuName%, Add, %lMenuAddThisFolder%, AddThisFolder
+Menu, %lMainMenuName%, Icon, %lMenuAddThisFolder%, %A_WinDir%\System32\imageres.dll, 217, %intIconSize%
 
 if !(blnDonor)
 {
 	Menu, %lMainMenuName%, Add
 	Menu, %lMainMenuName%, Add, %lDonateMenu%, GuiDonate
+	Menu, %lMainMenuName%, Icon, %lDonateMenu%, %A_WinDir%\System32\imageres.dll, 208, %intIconSize%
 }
 
 return
@@ -1043,6 +1054,7 @@ BuildOneMenu(strMenu)
 ;------------------------------------------------------------
 {
 	global blnDisplayMenuShortcuts
+	global intIconSize
 	intShortcut := 0
 	
 	; try because at first execution strMenu does not exist and produces an error,
@@ -2683,6 +2695,9 @@ if (strLanguageCodePrev <> strLanguageCode)
 	}
 }	
 
+intIconSize := drpIconSize
+IniWrite, %intIconSize%, %strIniFile%, Global, IconSize
+
 ; else rebuild recent and switch menus
 Gosub, BuildRecentFoldersMenu
 Gosub, BuildSwitchMenu
@@ -3141,11 +3156,7 @@ return
 SwitchExplorer:
 ;------------------------------------------------------------
 
-if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
-	ComObjCreate("Shell.Application").Explore(objExplorersLocation[A_ThisMenuItemPos])
-	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
-else
-	WinActivate, % "ahk_id " . objExplorersWinId[A_ThisMenuItemPos]
+WinActivate, % "ahk_id " . objExplorersWinId[A_ThisMenuItemPos]
 
 return
 ;------------------------------------------------------------
