@@ -4,7 +4,7 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: 2.2 (2014-07-XX)
+	Version: 2.2 (2014-07-06)
 	* support drag and drop to add favorite
 	* make the cursor change to a hand when the mouse pointer is over buttons or clickable text in Settings dialog box (tried to also implement tooltips but even with a timer, it flickers too much)
 	* Recent folders menu now shown in a detached menu, at the calling popup menu location, refreshed each time it is opened, with tooltip while refreshing
@@ -318,10 +318,6 @@ if (blnDisplayTrayTip)
 OnExit, CleanUpBeforeExit
 
 blnMenuReady := true
-
-; Load the cursor and start the "hook"
-objCursor := DllCall("LoadCursor", "UInt", NULL, "Int", 32649, "UInt") ; IDC_HAND
-OnMessage(0x200, "WM_MOUSEMOVE")
 
 ; Load the cursor and start the "hook"
 objCursor := DllCall("LoadCursor", "UInt", NULL, "Int", 32649, "UInt") ; IDC_HAND
