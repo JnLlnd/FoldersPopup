@@ -883,7 +883,6 @@ Loop, parse, strDirList, `n
 		continue
 	if !FileExist(strOutTarget) ; if folder/file was delete or on a removable drive
 		continue
-	
 	if LocationIsDocument(strOutTarget) ; not a folder
 		continue
 
@@ -960,7 +959,7 @@ For pExp in ComObjCreate("Shell.Application").Windows
 			Menu, menuSwitchDialog, Add, %strMenuName%, SwitchDialog
 		}
 		else
-			strLocation := lMenuLibraries ; will be used in menuSwitchExplorer
+			strLocation := lMenuSpecialExplorer ; will be used in menuSwitchExplorer
 		if StrLen(pExp.HWND)
 		{
 			intExplorersIndex := intExplorersIndex + 1
@@ -3069,20 +3068,18 @@ return
 OpenRecentFolder:
 ;------------------------------------------------------------
 
-intRecentMenuPos := A_ThisMenuItemPos - 2 ; offset for Refresh and separator lines
-
 if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
-	ComObjCreate("Shell.Application").Explore(objRecentFolders[intRecentMenuPos])
+	ComObjCreate("Shell.Application").Explore(objRecentFolders[A_ThisMenuItemPos])
 	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 else if WindowIsAnExplorer(strTargetClass)
-	NavigateExplorer(objRecentFolders[intRecentMenuPos], strTargetWinId)
+	NavigateExplorer(objRecentFolders[A_ThisMenuItemPos], strTargetWinId)
 else ; this is the console, FreeCommander, DirectoryOpus or a dialog box
 	if WindowIsConsole(strTargetClass)
-		NavigateConsole(objRecentFolders[intRecentMenuPos], strTargetWinId)
+		NavigateConsole(objRecentFolders[A_ThisMenuItemPos], strTargetWinId)
 	else if WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
-		NavigateFreeCommanderOrDirectoryOpus(objRecentFolders[intRecentMenuPos], strTargetWinId, strTargetClass, strTargetControl)
+		NavigateFreeCommanderOrDirectoryOpus(objRecentFolders[A_ThisMenuItemPos], strTargetWinId, strTargetClass, strTargetControl)
 	else
-		NavigateDialog(objRecentFolders[intRecentMenuPos], strTargetWinId, strTargetClass)
+		NavigateDialog(objRecentFolders[A_ThisMenuItemPos], strTargetWinId, strTargetClass)
 
 return
 ;------------------------------------------------------------

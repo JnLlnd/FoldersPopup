@@ -108,7 +108,7 @@ lMenuDesktop	Bureau
 lMenuDialogNotSupported	Ce type de boîte de dialogue n'est pas encore pris en charge
 lMenuDocuments	Documents
 lMenuHelp	Aide
-lMenuLibraries	Bibliothèques
+lMenuSpecialExplorer	Fenêtre spéciale de l'Explorateur
 lMenuMyComputer	Ordinateur
 lMenuNetworkNeighborhood	Réseau
 lMenuPictures	Images
