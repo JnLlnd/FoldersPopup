@@ -13,6 +13,15 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### 2014-07-06 2.2
+* support drag and drop to add favorite
+* make the cursor change to a hand when the mouse pointer is over buttons or clickable text in Settings dialog box (tried to also implement tooltips but even with a timer, it flickers too much)
+* Recent folders menu now shown in a detached menu, at the calling popup menu location, refreshed each time it is opened, with tooltip while refreshing
+* fix a bug with number of Recent folders hide/display in Settings, Options
+* fix layout bug in edit folder dialog box
+* fix bug with Switch to Explorer opening a new window
+* replace PCAstuces review URL with Freewares & Tutos
+
 ### 2014-06-25 2.1.1
 * complete translation of mouse button names
 * fix bug when changing Settings shortcut
