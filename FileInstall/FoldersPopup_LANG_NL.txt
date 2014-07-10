@@ -13,6 +13,8 @@ lDialogAdd	Toevoegen
 lDialogAddDialogAlready	Dit dialoogvenster wordt reeds ondersteund.
 lDialogAddDialogPrompt	Voer de nieuwe naam voor het dialoogvenster in`n(of een deel van de naam):
 lDialogAddDialogTitle	Voeg nieuw dialoogvenster toe - ~1~ ~2~
+lDialogAddEditFolderTitle	~1~ Favorieten - ~3~ ~4~
+lDialogAddFileSelect	Nieuw bestand selecteren:
 lDialogAddFolderManuallyPrompt	Sorry, we kunnen de huidige map niet ontdekken in dit venstertype.`n`nWil je het handmatig toevoegen?
 lDialogAddFolderManuallyTitle	Voeg deze map toe - ~1~ ~2~
 lDialogAddFolderSelect	Kies of maak een nieuwe map:
@@ -26,6 +28,8 @@ lDialogEditDialogTitle	Bewerk dialoogvenster - ~1~ ~2~
 lDialogEditFolderPrompt	Voer de naam voor deze nieuwe map in:
 lDialogEditFolderSelect	Kies of maak een nieuwe map:
 lDialogEditFolderTitle	Bewerk Map - ~1~ ~2~
+lDialogFileLabel	Bestand
+lDialogFileShortName	Korte bestandsnaam voor in het menu
 lDialogFolderLabel	Map
 lDialogFolderLocationEmpty	Deze locatie is leeg. Kies alstublieft een locatie.
 lDialogFolderNameEmpty	De mapnaam is leeg. Kies alstublieft een korte naam.
@@ -89,7 +93,7 @@ lGuiTitle	Instellingen - ~1~ ~2~
 lHelpText1	Wanner FoldersPopup gestart wordt dan verschijnt er een icoontje in de systeembalk en FoldersPopup wacht dan op taken van jou. Als je naar een andere map wil springen in Windows Verkenner of in een andere bestandsdialoogvenster, druk dan op de middenste muisknop of druk de Windows-K toetsencombinatie. Vervolgens kan je de gewenste map selecteren en FoldersPopup brengt je er direct naar toe!
 lHelpText2	Kies "Instellingen" om het FoldersPopup instellingsvenster te openen waar je mappen kan toevoegen aan jouw menu, maar ook mappen kan hernoemen, verplaatsen of verwijderen. Je kan ook submenu's toevoegen, die je ook weer kan hernoemen, verplaatsen of verwijderen. Selecteer het submenu dat je wil aanpassen in de "Te wijzigen menu" uitklaplijst (dropdown list). Klik vervolgens op "Bewaren" om jouw wijzigingen te bewaren.
 lHelpText3	Je kan snel nieuwe mappen toevoegen aan het popup menu:`n1) Ga naar een vaak gebruikte map.`n2) Druk op de middenste muisknop (of druk Windows-K) en kies voor "Voeg deze map toe".`n3) Geef deze map een korte naam, druk "OK" en "Bewaren" in het instellingsvenster.
-lHelpText4	Standaard ondersteunt FoldersPopup gewone dialoogvensters (Openen, Bewaren, enz.). Je kan FoldersPopup makkelijk aanleren om ook andere types dialoogvensters te herkennen:`n1) Als je je in een niet ondersteund dialoogvenster bevindt, druk op de middenste muisknop (of druk Windows-K) en kies "Voeg dit dialoogvenster toe aan de lijst met ondersteunde dialoogvensters". Druk vervolgens "OK" en "Bewaren" in het instellingsvenster.
+lHelpText4	Standaard ondersteunt FoldersPopup gewone dialoogvensters (Openen, Bewaren, enz.). Je kan FoldersPopup makkelijk aanleren om ook andere types dialoogvensters te herkennen:`n1) Als je je in een niet ondersteund dialoogvenster bevindt, druk op de middenste muisknop (of druk Windows-K) en kies "Voeg dit dialoogvenster toe aan de ondersteunde lijst". Druk vervolgens "OK" en "Bewaren" in het instellingsvenster.
 lHelpText5	HANDIGE WEETJES`n- Via rechtermuisklik op het FoldersPopup icoontje in de systeembalk kan je de optie "Uitvoeren bij opstarten" activeren om FoldersPopup automatisch te starten tijdens het opstarten van Windwos.`n- Wil je een favoriete map openen in een nieuw Windows verkenner venster?  Druk dan op de middenste muisknop of gebruik de Windows-K toetsencombinatie. Dit laat je ook toe om je favoriete map te openen vanuit een willekeurig ander programma.`n- Stel je popup menu triggers in: kies muis knoppen naar jouw voorkeur of sneltoetsen in "Instellingen, Opties".`n- Eveneens in "Opties": kies de taal van jouw voorkeur, de mogelijkheid om ook recente mappen weer te geven, voeg numerieke sneltoetsen toe aan het mapmenu of prik het popup menu vast op een vaste positie.
 lHelpText6	Ondersteuning voor FoldersPopup is beschikbaar via <a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
 lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware.
@@ -110,11 +114,13 @@ lMenuPictures	Afbeeldingen
 lMenuRecentFolders	&Recente bezochte mappen
 lMenuRecentFoldersShortcut	R
 lMenuRecycleBin	Prullenbak
+lMenuRefreshRecent	Vernieuwen van het menu met de recent bezochten mappen
 lMenuReservedShortcuts	SRWFA
 lMenuReservedShortcutsDonate	T
 lMenuRunAtStartup	Uitvoe&ren bij opstarten
 lMenuSeparator	----------------
 lMenuSettings	&~1~ Instellingen
+lMenuSpecialExplorer	Speciaal verkenner venster
 lMenuSpecialFolders	&Speciale Mappen
 lMenuSwitch	S&witch
 lMenuSwitchDialog	Switch in &dialoogvenster
@@ -141,6 +147,7 @@ lOptionsDisplaySpecialFolders	Toon S&peciale Mappen
 lOptionsDisplaySwitchMenu	Toon Switch Menu's
 lOptionsGuiIntro	Definieer de muisknoppen en sneltoetsen die ~1~ zullen triggeren.
 lOptionsGuiTitle	Opties - ~1~ ~2~
+lOptionsIconSize	Menu iconen grootte
 lOptionsKeyboard	Toetsenbord
 lOptionsLanguage	Taal
 lOptionsLanguageLabels	Engels|Frans|Duits|Nederlands
@@ -165,10 +172,3 @@ lUpdateError	Een fout trad op bij het controleren van het versienummer. De contr
 lUpdatePrompt	Update ~1~ van v~2~ naar v~3~?
 lUpdateTitle	Update ~1~?
 lUpdateYouHaveLatest	Je hebt reeds de meest recente versie: ~1~.`n`nWil je de ~2~ pagina toch bezoeken?
-lOptionsIconSize	Menu icons size
-lDialogFileLabel	File
-lDialogAddEditFolderTitle	~1~ favorite - ~2~ ~3~
-lDialogFileShortName	File short name for menu
-lDialogAddFileSelect	Choose the new file:
-lMenuRefreshRecent	Refreshing Recent folders menu
-lMenuSpecialExplorer	Special Explorer window
