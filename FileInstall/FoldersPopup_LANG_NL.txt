@@ -172,3 +172,4 @@ lDialogFileShortName	File short name for menu
 lDialogAddFileSelect	Choose the new file:
 lMenuRefreshRecent	Refreshing Recent folders menu
 lMenuSpecialExplorer	Special Explorer window
+lGuiDropFilesIncentive	Je kan je favoriete mappen naar dit venster slepen en neerzetten

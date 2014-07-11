@@ -172,3 +172,4 @@ lDialogFileShortName	File short name for menu
 lDialogAddFileSelect	Choose the new file:
 lMenuRefreshRecent	Refreshing Recent folders menu
 lMenuSpecialExplorer	Special Explorer window
+lGuiDropFilesIncentive	You can drag and drop your favorites to this window
