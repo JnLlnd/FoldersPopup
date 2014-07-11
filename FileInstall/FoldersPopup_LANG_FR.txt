@@ -108,7 +108,6 @@ lMenuDesktop	Bureau
 lMenuDialogNotSupported	Ce type de boîte de dialogue n'est pas encore pris en charge
 lMenuDocuments	Documents
 lMenuHelp	Aide
-lMenuSpecialExplorer	Fenêtre spéciale de l'Explorateur
 lMenuMyComputer	Ordinateur
 lMenuNetworkNeighborhood	Réseau
 lMenuPictures	Images
@@ -121,7 +120,9 @@ lMenuReservedShortcutsDonate	S
 lMenuRunAtStartup	Exécuter au démarrage
 lMenuSeparator	----------------
 lMenuSettings	&Paramètres de ~1~
+lMenuSpecialExplorer	Fenêtre spéciale de l'Explorateur
 lMenuSpecialFolders	&Dossiers spéciaux
+lMenuSuspendHotkeys	Suspendre les déclencheurs (Hotkeys)
 lMenuSwitch	&Basculer
 lMenuSwitchDialog	Basculer dans cette &boîte de dialogue
 lMenuSwitchExplorer	Basculer vers l'&Explorateur

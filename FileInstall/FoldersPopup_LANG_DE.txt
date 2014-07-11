@@ -13,6 +13,8 @@ lDialogAdd	Hinzufügen
 lDialogAddDialogAlready	Diese Dialogbox-Typ wird schon unterstützt.
 lDialogAddDialogPrompt	Geben Sie den neuen Namen für die Dialogbox an`n(oder einen Teil des Namens):
 lDialogAddDialogTitle	Dialogbox hinzufügen - ~1~ ~2~
+lDialogAddEditFolderTitle	~1~ Favoriten - ~3~ ~4~
+lDialogAddFileSelect	Neue Datei wählen:
 lDialogAddFolderManuallyPrompt	Entschuldigung, der aktuelle Ordner kann in diesem Fenstertyp nicht ermittelt werden.`n`nWollen Sie es jetzt von Hand hinzufügen?
 lDialogAddFolderManuallyTitle	Diesen Ordner hinzufügen - ~1~ ~2~
 lDialogAddFolderSelect	Auswählen oder Erstellen des neuen Ordners:
@@ -26,6 +28,8 @@ lDialogEditDialogTitle	Dialogbox bearbeiten - ~1~ ~2~
 lDialogEditFolderPrompt	Geben Sie den Namen für diesen Ordner an:
 lDialogEditFolderSelect	Auswählen oder Erstellen des neuen Ordners:
 lDialogEditFolderTitle	Ordner bearbeiten - ~1~ ~2~
+lDialogFileLabel	Datei
+lDialogFileShortName	Datei-Kurzname für Menü
 lDialogFolderLabel	Ordner
 lDialogFolderLocationEmpty	Dieser Ort ist leer. Bitte wählen Sie einen Ort.
 lDialogFolderNameEmpty	Der Name des Ordners ist leer. Bitte wählen Sie einen kurzen Namen.
@@ -110,11 +114,13 @@ lMenuPictures	&Bilder
 lMenuRecentFolders	&Kürzlich verwendete Ordner
 lMenuRecentFoldersShortcut	K
 lMenuRecycleBin	&Papierkorb
+lMenuRefreshRecent	Menü der kürzlich verwendeten Ordner wird aktualisiert
 lMenuReservedShortcuts	SKWFD
 lMenuReservedShortcutsDonate	U
 lMenuRunAtStartup	&Beim Start von Windows ausführen
 lMenuSeparator	----------------
 lMenuSettings	&~1~ Einstellungen
+lMenuSpecialExplorer	Spezielles Explorer-Fenster
 lMenuSpecialFolders	&Spezielle Ordner
 lMenuSwitch	S&witch
 lMenuSwitchDialog	Sw&itch in &Dialogbox
@@ -141,6 +147,7 @@ lOptionsDisplaySpecialFolders	Zeige S&pezielle Ordner
 lOptionsDisplaySwitchMenu	Zeige Switch Menü
 lOptionsGuiIntro	Legen Sie die Maustasten und Tastenkürzel fest, welche ~1~ auslösen.
 lOptionsGuiTitle	Optionen - ~1~ ~2~
+lOptionsIconSize	Symbolgröße im Menü
 lOptionsKeyboard	Tastatur
 lOptionsLanguage	Sprache
 lOptionsLanguageLabels	Englisch|Französisch|Deutsch|Holländisch
@@ -165,10 +172,4 @@ lUpdateError	Beim Zugriff auf die letzte Versionsnummer trat ein Fehler auf. Prü
 lUpdatePrompt	Update ~1~ von v~2~ auf v~3~?
 lUpdateTitle	Update ~1~?
 lUpdateYouHaveLatest	Sie verwenden die aktuellste Version: ~1~.`n`nTrotzdem die ~2~ Webseite besuchen?
-lOptionsIconSize	Menu icons size
-lDialogFileLabel	File
-lDialogAddEditFolderTitle	~1~ favorite - ~2~ ~3~
-lDialogFileShortName	File short name for menu
-lDialogAddFileSelect	Choose the new file:
-lMenuRefreshRecent	Refreshing Recent folders menu
-lMenuSpecialExplorer	Special Explorer window
+lMenuSuspendHotkeys	Suspend Hotkeys
