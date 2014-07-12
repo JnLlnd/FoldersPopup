@@ -1,10 +1,11 @@
+
+
 lAboutText1	~1~ ~2~ (~3~ bits)
 lAboutText2	~1~ wordt ontwikkeld door Jean Lalonde gebruik`nmakend van <a href="http://ahkscript.org/">AutoHotkey</a> programmeertaal.`n`nNederlandse vertaling: Pieter Dejonghe`nDuitse vertaling: Edgar "Fast Edi" Hoffmann`nFranse vertaling: Jean Lalonde`nAndere talen: (hulp is welkom)`nCorrectie Engelse vertaling: (hulp is welkom)`n`nOntwerp icons: <a href="http://www.visualpharm.com">Visual Pharm</a>`nAutoHotkey_L v1.1 bronbestanden: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
 lAboutText4	Ondersteuning via <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	Over... - ~1~ ~2~
 lAppTagline	Spring direct van een folder naar een andere
-lButtonRemind	Herinner me
 lDiagModeCaution	~1~ wordt momenteel uitgevoerd in diagnose-modus.`n`nInformatie over de uitvoering van de software wordt verzameld in het bestand:`n~2~`n`nNiets zal worden verzonden zonder uw toestemming.`n`nWil je de diagnose-modus AAN laten?
 lDiagModeExit	~1~ heeft informatie voor foutdiagnose verzameld in het bestand ~2~.
 lDiagModeIntro	Verstuur dit bestand naar ahk@jeanlalonde.ca met een beschrijving van de situatie die verder dient onderzocht te worden.
@@ -14,7 +15,7 @@ lDialogAddDialogAlready	Dit dialoogvenster wordt reeds ondersteund.
 lDialogAddDialogPrompt	Voer de nieuwe naam voor het dialoogvenster in`n(of een deel van de naam):
 lDialogAddDialogTitle	Voeg nieuw dialoogvenster toe - ~1~ ~2~
 lDialogAddEditFolderTitle	~1~ Favorieten - ~3~ ~4~
-lDialogAddFileSelect	Nieuw bestand selecteren:
+lDialogAddFileSelect	Nieuw document selecteren:
 lDialogAddFolderManuallyPrompt	Sorry, we kunnen de huidige map niet ontdekken in dit venstertype.`n`nWil je het handmatig toevoegen?
 lDialogAddFolderManuallyTitle	Voeg deze map toe - ~1~ ~2~
 lDialogAddFolderSelect	Kies of maak een nieuwe map:
@@ -25,19 +26,16 @@ lDialogCancelTitle	Annuleren - ~1~ ~2~
 lDialogEdit	Bewerken
 lDialogEditDialogPrompt	Voer de nieuwe naam voor het dialoogvenster in`n(of een deel van de naam):
 lDialogEditDialogTitle	Bewerk dialoogvenster - ~1~ ~2~
-lDialogEditFolderPrompt	Voer de naam voor deze nieuwe map in:
-lDialogEditFolderSelect	Kies of maak een nieuwe map:
-lDialogEditFolderTitle	Bewerk Map - ~1~ ~2~
-lDialogFileLabel	Bestand
-lDialogFileShortName	Korte bestandsnaam voor in het menu
+lDialogFileLabel	Document
+lDialogFileShortName	Document naam (voor in het menu)
 lDialogFolderLabel	Map
 lDialogFolderLocationEmpty	Deze locatie is leeg. Kies alstublieft een locatie.
-lDialogFolderNameEmpty	De mapnaam is leeg. Kies alstublieft een korte naam.
+lDialogFolderNameEmpty	De favoriet naam is leeg. Kies alstublieft een korte naam.
 lDialogFolderNameNoSeparator	De naam voor een submenu mag het gereserveerde letterteken "~1~" niet bevatten.
 lDialogFolderNameNotNew	De naam "~1~" is reeds in gebruik in dit menu. Kies alstublieft een andere naam.
-lDialogFolderParentMenu	Map hoofd menu
-lDialogFolderRemovePrompt	Verwijder map "~1~"`nen ALLES wat er in staat (mappen en submenus)?
-lDialogFolderRemoveTitle	Verwijder map - ~1~
+lDialogFolderParentMenu	Favoriet hoofd menu
+lDialogFolderRemovePrompt	Verwijder submenus "~1~"`nen ALLES wat er in staat (mappen en submenus)?
+lDialogFolderRemoveTitle	Verwijder favoriet - ~1~
 lDialogFolderShortName	Korte naam voor de map (voor in het menu)
 lDialogInvalidHotkey	Met je huidige toetsenbordindeling kan de sneltoets "~1~" niet gebruikt worden als een trigger voor het popup menu.`n`nGelieve het "~2~ Settings" venster te openen vanuit het taakbalkmenu en selecteers "Opties". Gelieve in dit venster een andere sneltoets te kiezen voor "~3~".
 lDialogOpenThisMenu	Open dit menu
@@ -45,6 +43,8 @@ lDialogSave	Bewaren
 lDialogSelectItemToEdit	Gelieve het te bewerken object te selecteren.
 lDialogSelectItemToRemove	Gelieve het te verwijderen object te selecteren.
 lDialogSubmenuLabel	Submenu
+!lDialogSubmenuNameEmpty	The submenu name is empty. Please, choose a name.
+!lDialogSubmenuParentMenu	Submenu parent menu
 lDialogSubmenuShortName	Korte naam voor het submenu
 lDonateButton	Steun Freeware!
 lDonateCheckPrompt	Ben je tevreden over ~1~?`n`n~1~ is niet alleen GRATIS maar bevat ook GEEN vervelende reclame of adware (waarvan je nooit zeker weet of ze geen spyware of malware bevatten)`n`nTot nog toe heeft ~1~ jou ~2~ maal geholpen tijdens je dagelijkse werkzaamheden. Wat zou je er van denken om freeware te steunen?
@@ -168,9 +168,11 @@ lOptionsWin	Win
 lReloadPrompt	Taal werd gewijzigd naar ~1~. Wil je ~2~ laden in het ~1~ nu? Niet bewaarde wijzigingen gaan verloren.
 lTrayTipInstalledDetail	Om het ~1~ menu te tonen, druk:`n`n~2~ / ~3~`nin Windows Verkenner of in een dialoogvenster`n`n~4~ / ~5~`nom een nieuw Verkenner venster te openen
 lTrayTipinstalledTitle	~1~ ~2~ klaar!
+lUpdateButtonRemind	Herinner me
 lUpdateError	Een fout trad op bij het controleren van het versienummer. De controle voor een update wordt stopgezet.
 lUpdatePrompt	Update ~1~ van v~2~ naar v~3~?
 lUpdateTitle	Update ~1~?
 lUpdateYouHaveLatest	Je hebt reeds de meest recente versie: ~1~.`n`nWil je de ~2~ pagina toch bezoeken?
 lMenuSuspendHotkeys	Suspend Hotkeys
 lGuiDropFilesIncentive	Je kan je favoriete mappen naar dit venster slepen en neerzetten
+lMenuExitFoldersPopup	Exit ~1~

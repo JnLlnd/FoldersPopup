@@ -1,10 +1,11 @@
+
+
 lAboutText1	~1~ ~2~ (~3~ bits)
 lAboutText2	~1~ est développé par Jean Lalonde`nsur la plateforme <a href="http://ahkscript.org/">AutoHotkey</a>.`n`nTraduction française: Jean Lalonde`nTraduction allemande: Edgar ""Fast Edi"" Hoffmann`nTraduction néerlandaise: Pieter Dejonghe`nRévision anglaise: (aide bienvenue)`n`nIcônes par: <a href="http://www.visualpharm.com">Visual Pharm</a>`nSources AutoHotkey_L v1.1: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Gratuiciel.
 lAboutText4	Soutien en ligne: <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	À propos - ~1~ ~2~
 lAppTagline	Naviguez en un clin d'oeil parmi vos dossiers favoris!
-lButtonRemind	Rappelez-moi
 lDiagModeCaution	~1~ roule en mode de diagnostique.`n`nDes renseignements à propos de l'exécution de cette application seront colligées dans le fichier:`n~2~`n`nAucune information ne sera transmise sans votre consentement.`n`nVoulez-vous rester en mode diagnostique?
 lDiagModeExit	~1~ a colligé des renseignements à des fins de diagnostique dans le fichier ~2~.
 lDiagModeIntro	Envoyez ce fichier à ahk@jeanlalonde.ca avec une description de la situation nécessitant un diasnostique.
@@ -14,7 +15,7 @@ lDialogAddDialogAlready	Ce type de boîte de dialogue est déjà pris en charge.
 lDialogAddDialogPrompt	Entrez le nom de la nouvelle boîte de dialogue`n(ou une partie du nom):
 lDialogAddDialogTitle	Ajouter Boîte de dialogue - ~1~ ~2~
 lDialogAddEditFolderTitle	~1~ un favori - ~2~ ~3~
-lDialogAddFileSelect	Choisir un nouveau fichier:
+lDialogAddFileSelect	Choisir un nouveau document:
 lDialogAddFolderManuallyPrompt	Désolé, nous ne pouvons détecter automatiquement le dossier actif dans ce type de fenêtre.`n`nVoulez-vous ajouter ce dossier manuellement?
 lDialogAddFolderManuallyTitle	Ajouter un dossier - ~1~ ~2~
 lDialogAddFolderSelect	Choisir ou créer un nouveau dossier:
@@ -25,19 +26,16 @@ lDialogCancelTitle	Annuler - ~1~ ~2~
 lDialogEdit	Modifier
 lDialogEditDialogPrompt	Entrez le nouveau nom de la boîte de dialogue`n(ou une partie du nom):
 lDialogEditDialogTitle	Modifier Boîte de dialogue - ~1~ ~2~
-lDialogEditFolderPrompt	Entrez le nom de ce dossier:
-lDialogEditFolderSelect	Choisissez ou créez le nouveau dossier:
-lDialogEditFolderTitle	Modifier un dossier - ~1~ ~2~
-lDialogFileLabel	Fichier
-lDialogFileShortName	Nom court du fichier pour les menus
+lDialogFileLabel	Document
+lDialogFileShortName	Nom du document (pour les menus)
 lDialogFolderLabel	Dossier
 lDialogFolderLocationEmpty	L'emplacement est vide. Veuillez indiquer l'emplacement du dossier.
-lDialogFolderNameEmpty	Le nom du dossier est vide. Veuillez indiquer un nom court pour ce dossier.
+lDialogFolderNameEmpty	Le nom du favori est vide. Veuillez indiquer un nom court pour ce favori.
 lDialogFolderNameNoSeparator	Le nom du sous-menu ne doit pas inclure le caractère réservé "~1~".
 lDialogFolderNameNotNew	Le nom "~1~" est déjà présent dans ce menu. Veuillez choisir un nouveau nom.
-lDialogFolderParentMenu	Menu contenant ce dossier
-lDialogFolderRemovePrompt	Supprimer le dossier "~1~"`net TOUT son contenu (dossiers et sous-menus)?
-lDialogFolderRemoveTitle	Supprimer un dossier - ~1~
+lDialogFolderParentMenu	Menu contenant ce favori
+lDialogFolderRemovePrompt	Supprimer le sous-menu "~1~"`net TOUT son contenu (dossiers et sous-menus)?
+lDialogFolderRemoveTitle	Supprimer un favori - ~1~
 lDialogFolderShortName	Nom court du dossier pour les menus
 lDialogInvalidHotkey	Avec votre configuration actuelle de clavier, la touche de raccourci "~1~" ne peut être utilisée comme un déclencheur pour le menu popup.`n`nVeuillez ouvrir la fenêtre "Paramètres de ~2~" dans la zone de notification et cliquez sur "Options". Dans cette boîte de dialogue, choisissez une autre touche de raccourci pour "~3~".
 lDialogOpenThisMenu	Ouvrir ce menu
@@ -45,6 +43,8 @@ lDialogSave	Enregistrer
 lDialogSelectItemToEdit	Veuillez sélectionner l'item à modifier.
 lDialogSelectItemToRemove	Veuillez sélectionner l'item à supprimer.
 lDialogSubmenuLabel	Sous-menu
+lDialogSubmenuNameEmpty	Le nom du sous-menu est vide. Veuillez indiquer un nom court pour ce dossier.
+lDialogSubmenuParentMenu	Menu contenant ce sous-menu
 lDialogSubmenuShortName	Nom court du sous-menu
 lDonateButton	Soutenez ce gratuiciel!
 lDonateCheckPrompt	Vous aimez ~1~?`n`n~1~ n'est pas seulement GRATUIT mais aussi distribué SANS ces attrapes publicitaires dont on ne sait jamais si elles transportent des virus ou encore des logiciels espions ou malveillants.`n`nCela fait maintenant ~2~ fois que ~1~ est appelé pour faciliter votre travail quotidien. Que diriez-vous de soutenir ce gratuiciel à votre tour?
@@ -108,6 +108,7 @@ lMenuControlPanel	Panneau de configuration
 lMenuDesktop	Bureau
 lMenuDialogNotSupported	Ce type de boîte de dialogue n'est pas encore pris en charge
 lMenuDocuments	Documents
+lMenuExitFoldersPopup	Quitter ~1~
 lMenuHelp	Aide
 lMenuMyComputer	Ordinateur
 lMenuNetworkNeighborhood	Réseau
@@ -170,6 +171,7 @@ lOptionsWin	Win
 lReloadPrompt	Changement de langue enregistré: ~1~. Voulez-vous relancer ~2~ en ~1~ maintenant? Les changements non sauvegardés dans le menu des dossiers seront perdus.
 lTrayTipInstalledDetail	Pour afficher le menu de ~1~, appuyez sur:`n`n~2~ / ~3~`ndans un Explorateur de fichiers ou dans une boîte de dialogue`n`n~4~ / ~5~`npour ouvrir un nouvel Explorateur
 lTrayTipinstalledTitle	~1~ ~2~ est prêt!
+lUpdateButtonRemind	Rappelez-moi
 lUpdateError	Une erreur est survenue lors de la vérification du numéro de la plus récente version. La vérification de la mise à jour est interrompue.
 lUpdatePrompt	Mettre à jour ~1~ de la version v~2~ à la version v~3~?
 lUpdateTitle	Mettre à jour ~1~?

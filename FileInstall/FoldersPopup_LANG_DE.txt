@@ -1,10 +1,11 @@
+
+
 lAboutText1	~1~ ~2~ (~3~ bits)
 lAboutText2	~1~ wird entwickelt von Jean Lalonde unter`nVerwendung der <a href="http://ahkscript.org/">AutoHotkey</a> Programmiersprache.`n`nDeutsche Übersetzung: Edgar ""Fast Edi"" Hoffmann`nFranzösische Übersetzung: Jean Lalonde`nHolländische Übersetzung: Pieter Dejonghe`nEnglische Gegenleser: (Hilfe willkommen)`n`nIcons von: <a href="http://www.visualpharm.com">Visual Pharm</a>`nAutoHotkey_L v1.1 Sourcen: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
 lAboutText4	Support unter <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	Über - ~1~ ~2~
 lAppTagline	Springe sofort von einem Ordner zum Anderen
-lButtonRemind	Erinnere mich
 lDiagModeCaution	~1~ läuft im Diagnose-Modus.`n`nInformationen über die Anwendungsausführung werden in der Datei:`n~2~`n gesammelt`nEs wird nichts ohne Ihr Einverständnis versendet.`n`nWollen Sie den Diagnose-Modus beibehalten?
 lDiagModeExit	~1~ gesammelte Diagnose-Informationen in Datei ~2~.
 lDiagModeIntro	Schicken Sie diese Datei an ahk@jeanlalonde.ca mit einer Beschreibung der Situation, welche die Diagnose ausgelöst hat.
@@ -16,7 +17,7 @@ lDialogAddDialogTitle	Dialogbox hinzufügen - ~1~ ~2~
 lDialogAddEditFolderTitle	~1~ Favoriten - ~3~ ~4~
 lDialogAddFileSelect	Neue Datei wählen:
 lDialogAddFolderManuallyPrompt	Entschuldigung, der aktuelle Ordner kann in diesem Fenstertyp nicht ermittelt werden.`n`nWollen Sie es jetzt von Hand hinzufügen?
-lDialogAddFolderManuallyTitle	Diesen Ordner hinzufügen - ~1~ ~2~
+lDialogAddFolderManuallyTitle	Diesen Dokumente hinzufügen - ~1~ ~2~
 lDialogAddFolderSelect	Auswählen oder Erstellen des neuen Ordners:
 lDialogBrowseButton	Durchsuchen
 lDialogCancelButton	Abbrechen
@@ -25,19 +26,16 @@ lDialogCancelTitle	Abbrechen - ~1~ ~2~
 lDialogEdit	Bearbeiten
 lDialogEditDialogPrompt	Geben Sie den neuen Namen für die Dialogbox ein`n(oder einen Teil des Namens):
 lDialogEditDialogTitle	Dialogbox bearbeiten - ~1~ ~2~
-lDialogEditFolderPrompt	Geben Sie den Namen für diesen Ordner an:
-lDialogEditFolderSelect	Auswählen oder Erstellen des neuen Ordners:
-lDialogEditFolderTitle	Ordner bearbeiten - ~1~ ~2~
-lDialogFileLabel	Datei
-lDialogFileShortName	Datei-Kurzname für Menü
+lDialogFileLabel	Dokumente
+lDialogFileShortName	Dokument-Kurzname (für Menü)
 lDialogFolderLabel	Ordner
 lDialogFolderLocationEmpty	Dieser Ort ist leer. Bitte wählen Sie einen Ort.
-lDialogFolderNameEmpty	Der Name des Ordners ist leer. Bitte wählen Sie einen kurzen Namen.
+lDialogFolderNameEmpty	Der Name des Favorite ist leer. Bitte wählen Sie einen kurzen Namen.
 lDialogFolderNameNoSeparator	Das Untermenü darf das reservierte Zeichen "~1~" nicht enthalten.
 lDialogFolderNameNotNew	Der Name ~1~ wird bereits in diesem Menü verwendet. Bitte wählen Sie einen anderen Namen.
-lDialogFolderParentMenu	Ordner Hauptmenü
-lDialogFolderRemovePrompt	Entfernen des Ordners "~1~"`nund ALL seines Inhalts (Ordner und Untermenüs)?
-lDialogFolderRemoveTitle	Entfernen des Ordners - ~1~
+lDialogFolderParentMenu	Favorite Hauptmenü
+lDialogFolderRemovePrompt	Entfernen des Untermenü "~1~"`nund ALL seines Inhalts (Ordner und Untermenüs)?
+lDialogFolderRemoveTitle	Entfernen des Favorite - ~1~
 lDialogFolderShortName	Kurzname des Ordners für das Menü
 lDialogInvalidHotkey	Mit dem derzeitigen Tastaturlayout kann das Tastenkürzel "~1~" nicht verwendet werden, um das Popup-Menü aufzurufen (kein gültiger Tasten Name).`n`nBitte öffnen Sie das "~2~ Einstellungen" aus dem Tray-Menü und klicken Sie auf "Optionen". Wählen Sie in diesem Dialog ein anderes Tastenkürzel für "~3~".
 lDialogOpenThisMenu	Dieses Menü öffnen
@@ -45,6 +43,8 @@ lDialogSave	Speichern
 lDialogSelectItemToEdit	Bitte wählen Sie das zu bearbeitende Element.
 lDialogSelectItemToRemove	Bitte wählen Sie das zu entfernende Element.
 lDialogSubmenuLabel	Untermenü
+!lDialogSubmenuNameEmpty	The submenu name is empty. Please, choose a name.
+!lDialogSubmenuParentMenu	Submenu parent menu
 lDialogSubmenuShortName	Kurzname des Untermenüs
 lDonateButton	Unterstützen Sie Freeware!
 lDonateCheckPrompt	Sind Sie zufrieden mit ~1~?`n`n~1~ ist nicht nur kostenlos, sondern enthält auch keine Werbung, bei der Sie nie wissen, ob diese Spyware oder Schadsoftware enthält.`n`n~2~ mal bisher, hat Ihnen ~1~ bei der täglichen Arbeit geholfen. Wie wär's jetzt mit ein wenig Unterstützung für Freeware?
@@ -168,9 +168,11 @@ lOptionsWin	Win
 lReloadPrompt	Sprache wurde in ~1~ geändert. Wollen Sie jetzt ~2~ in ~1~ neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
 lTrayTipInstalledDetail	Zur Anzeige des ~1~ Menüs`nim Windows Explorer oder einer Dialogbox`n~2~ oder ~3~ drücken.`n`n~4~ oder ~5~`num ein neues Explorer-Fenster zu öffnen.
 lTrayTipinstalledTitle	~1~ ~2~ bereit!
+lUpdateButtonRemind	Erinnere mich
 lUpdateError	Beim Zugriff auf die letzte Versionsnummer trat ein Fehler auf. Prüfe auf unterbrochene Updates.
 lUpdatePrompt	Update ~1~ von v~2~ auf v~3~?
 lUpdateTitle	Update ~1~?
 lUpdateYouHaveLatest	Sie verwenden die aktuellste Version: ~1~.`n`nTrotzdem die ~2~ Webseite besuchen?
 lMenuSuspendHotkeys	Suspend Hotkeys
 lGuiDropFilesIncentive	You can drag and drop your favorites to this window
+lMenuExitFoldersPopup	Exit ~1~

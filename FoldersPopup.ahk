@@ -1,7 +1,6 @@
 /*
 TODO
-- Implement Exit menu
-
+- when add document, after get file, if short name empty put fine name
 */
 
 ;===============================================
@@ -13,9 +12,13 @@ TODO
 	Version: 3.0 (2014-0X-XX)
 	* support favorite files as popup menu items, add file radio button to add dialog box
 	* when menu item is a file, launch it with Run
-	* add icons to Special folders menu, add Settings Option for menu icon size, default size to 24
-	* add menu icons for documents
-	* add fix folders menu icon, special folders menu icons and submenu icons
+	* add icons to folders menu, submenus, documents and special folders
+	* add Settings Option for menu icon size, default size to 24
+	* keep the regular tray icon when suspended
+	* implement Exite tray menu
+	* disable separator editing
+	* adapt labels to "favorites" instead of "folders"
+	* build function to auto-center buttons in Gui, implemented in Settings Gui.
 	
 	Version: 2.2.1 (2014-07-11)
 	* fix bug when adding a folder to a submenu using drag and drop
@@ -341,7 +344,7 @@ blnMenuReady := true
 objCursor := DllCall("LoadCursor", "UInt", NULL, "Int", 32649, "UInt") ; IDC_HAND
 OnMessage(0x200, "WM_MOUSEMOVE")
 
-; gosub, GuiShow ; ### only when debugging Gui
+Gosub, GuiShow ; ### only when debugging Gui
 
 return
 
@@ -826,12 +829,13 @@ return
 BuildTrayMenu:
 ;------------------------------------------------------------
 
+Menu, Tray, Icon, , , 1 ; last 1 to freeze icon during pause or suspend
 ;@Ahk2Exe-IgnoreBegin
 ; Piece of code for developement phase only - won't be compiled
 Menu, Tray, Icon, %A_ScriptDir%\Folders-Likes-icon-192-RED-center.ico, 1, 1 ; last 1 to freeze icon during pause or suspend
 ; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
-Menu, Tray, Standard
+Menu, Tray, NoStandard
 Menu, Tray, Add, % L(lMenuSettings, strAppName), GuiShow
 Menu, Tray, Add
 Menu, Tray, Add, %lMenuRunAtStartup%, RunAtStartup
@@ -841,6 +845,8 @@ Menu, Tray, Add, %lMenuUpdate%, Check4Update
 Menu, Tray, Add, %lMenuHelp%, GuiHelp
 Menu, Tray, Add, %lMenuAbout%, GuiAbout
 Menu, Tray, Add, %lDonateMenu%, GuiDonate
+Menu, Tray, Add
+Menu, Tray, Add, % L(lMenuExitFoldersPopup, strAppName), ExitFoldersPopup
 Menu, Tray, Default, % L(lMenuSettings, strAppName)
 
 return
@@ -1264,9 +1270,11 @@ Gui, 1:Add, Text, xm y340 w690 center, %lGuiDropFilesIncentive%
 
 Gui, 1:Add, Text, xm y360 h1 w690
 Gui, 1:Font, s9 w600, Verdana
-Gui, 1:Add, Button, x260 w100 h48 Disabled Default vbtnGuiSave gGuiSave, %lGuiSave% ; Button1
-Gui, 1:Add, Button, x+20 w100 h48 vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur - Button2
+Gui, 1:Add, Button, x260 w120 h48 Disabled Default vbtnGuiSave gGuiSave, %lGuiSave% ; Button1
+Gui, 1:Add, Button, x+20 w120 h48 vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur - Button2
 Gui, 1:Font, s6 w400, Verdana
+
+GuiCenterButtons(L(lGuiTitle, strAppName, strAppVersion), 30, "btnGuiSave", "btnGuiCancel")
 
 return
 ;------------------------------------------------------------
@@ -1910,6 +1918,15 @@ return
 
 
 ;------------------------------------------------------------
+ExitFoldersPopup:
+;------------------------------------------------------------
+
+ExitApp
+
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 Check4Update:
 ;------------------------------------------------------------
 Gui, 1:+OwnDialogs
@@ -2009,7 +2026,7 @@ IfWinNotExist, % l(lUpdateTitle, strAppName)
     return  ; Keep waiting.
 SetTimer, ChangeButtonNames, Off 
 WinActivate 
-ControlSetText, Button3, %lButtonRemind%
+ControlSetText, Button3, %lUpdateButtonRemind%
 
 return
 ;------------------------------------------------------------
@@ -2097,7 +2114,7 @@ strCurrentSubmenuFullName := ""
 Gui, 2:Add, Text, x10 w300 y+10 vlblShortName, %lDialogFolderShortName%
 Gui, 2:Add, Edit, x10 w300 vstrFolderShortName, %strCurrentName%
 
-Gui, 2:Add, Text, x10 vlblFolder, %lDialogFolderLabel%
+Gui, 2:Add, Text, x10 w300 vlblFolder, %lDialogFolderLabel%
 Gui, 2:Add, Edit, x10 w300 vstrFolderLocation, %strCurrentLocation%
 Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation default, %lDialogBrowseButton%
 
@@ -2126,6 +2143,9 @@ Gui, 1:ListView, lvFoldersList
 intRowToEdit := LV_GetNext()
 LV_GetText(strCurrentName, intRowToEdit, 1)
 
+if (strCurrentName = lMenuSeparator)
+	return
+
 if !StrLen(strCurrentName)
 {
 	Oops(lDialogSelectItemToEdit)
@@ -2133,8 +2153,18 @@ if !StrLen(strCurrentName)
 }
 LV_GetText(strCurrentLocation, intRowToEdit, 2)
 LV_GetText(strCurrentSubmenuFullName, intRowToEdit, 4)
+
 blnRadioSubmenu := StrLen(strCurrentSubmenuFullName)
-blnRadioFolder := !blnRadioSubmenu
+if (blnRadioSubmenu)
+{
+	blnRadioFolder := False
+	blnRadioFile := False
+}
+else
+{
+	blnRadioFile := LocationIsDocument(strCurrentLocation)
+	blnRadioFolder := !blnRadioFile
+}
 
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
@@ -2142,15 +2172,15 @@ Gui, 2:New, , % L(lDialogAddEditFolderTitle, lDialogEdit, strAppName, strAppVers
 Gui, 2:+Owner1
 Gui, 2:+OwnDialogs
 
-Gui, 2:Add, Text, x10 y10 vlblFolderParentMenu, %lDialogFolderParentMenu%
+Gui, 2:Add, Text, % x10 y10 vlblFolderParentMenu, % (blnRadioSubmenu ? lDialogSubmenuParentMenu : lDialogFolderParentMenu)
 Gui, 2:Add, DropDownList, x10 w250 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
 
-Gui, 2:Add, Text, x10 y+10 w300 vlblShortName, % (StrLen(strCurrentSubmenuFullName) ? lDialogSubmenuShortName : lDialogFolderShortName)
+Gui, 2:Add, Text, x10 y+10 w300 vlblShortName, % (blnRadioSubmenu ? lDialogSubmenuShortName : (blnRadioFile ? lDialogFileShortName : lDialogFolderShortName))
 Gui, 2:Add, Edit, x10 w200 vstrFolderShortName, %strCurrentName%
 
-Gui, 2:Add, Text, % "x10 vlblFolder " . (strCurrentLocation = lGuiSubmenuLocation ? "hidden" : ""), %lDialogFolderLabel%
-Gui, 2:Add, Edit, % "x10 w300 vstrFolderLocation " . (strCurrentLocation = lGuiSubmenuLocation ? "hidden" : ""), %strCurrentLocation%
-Gui, 2:Add, Button, % "x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation " . (strCurrentLocation = lGuiSubmenuLocation ? "hidden" : "default"), %lDialogBrowseButton%
+Gui, 2:Add, Text, % "x10 vlblFolder " . (blnRadioSubmenu ? "hidden" : ""), % (blnRadioFile ? lDialogFileLabel : lDialogFolderLabel)
+Gui, 2:Add, Edit, % "x10 w300 vstrFolderLocation " . (blnRadioSubmenu ? "hidden" : ""), %strCurrentLocation%
+Gui, 2:Add, Button, % "x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation " . (blnRadioSubmenu ? "hidden" : "default"), %lDialogBrowseButton%
 
 Gui, 2:Add, Button, x10 gGuiEditFolderSave, %lDialogSave%
 Gui, 2:Add, Button, x+10 yp gGuiEditFolderCancel, %lGuiCancel%
@@ -2194,11 +2224,11 @@ if !StrLen(strParentMenu)
 
 if !StrLen(strFolderShortName)
 {
-	Oops(lDialogFolderNameEmpty)
+	Oops(blnRadioSubmenu ? lDialogSubmenuNameEmpty : lDialogFolderNameEmpty)
 	return
 }
 
-if  (blnRadioFolder and !StrLen(strFolderLocation))
+if  ((blnRadioFolder or blnRadioFile) and !StrLen(strFolderLocation))
 {
 	Oops(lDialogFolderLocationEmpty)
 	return
@@ -2227,7 +2257,7 @@ if (blnRadioSubmenu)
 		arrNewMenu := Object() ; array of folders of the new menu
 		arrMenus.Insert(strSubmenuFullName, arrNewMenu)
 	}
-	else
+	else ; GuiEditFolderSave
 	{
 		strNewSubmenuFullName := strParentMenu . lGuiSubmenuSeparator . strFolderShortName
 		UpdateMenuNameInSubmenus(strCurrentSubmenuFullName, strNewSubmenuFullName) ; change names in arrMenus and arrMenu objects	
@@ -2255,7 +2285,7 @@ if (strParentMenu = strCurrentMenu) ; add as top row to current menu
 		Gosub, SaveCurrentListviewToMenuObject ; save current LV tbefore update the dropdown menu
 		GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
 	}
-	else
+	else ; GuiEditFolderSave
 	{
 		LV_Modify(intRowToEdit, "Select Focus", strFolderShortName, strFolderLocation, strCurrentMenu, strNewSubmenuFullName)
 	}
@@ -2371,7 +2401,7 @@ return
 GuiAddFolderCancel:
 GuiEditFolderCancel:
 ;------------------------------------------------------------
-gosub, 2GuiClose
+Gosub, 2GuiClose
 
 return
 ;------------------------------------------------------------
@@ -3859,3 +3889,30 @@ LocationIsDocument(strLocation)
 ;------------------------------------------------------------
 
 
+;------------------------------------------------------------
+GuiCenterButtons(strWindow, intDistanceBetweenButtons, arrControls*)
+;------------------------------------------------------------
+{
+	DetectHiddenWindows, On
+	Gui, Show, Hide
+	WinGetPos, , , intWidth, , %strWindow%
+	intMaxControlWidth := 0
+	for intIndex, strControl in arrControls
+	{
+		GuiControlGet, arrControlPos, Pos, %strControl%
+		; ###_D(strWindow . " / " . intWidth . " / " . strControl . " / " . arrControlPosW)
+		if (arrControlPosW > intMaxControlWidth)
+			intMaxControlWidth := arrControlPosW
+		
+	}
+	intButtonsWidth := (arrControls.MaxIndex() * intMaxControlWidth) + ((arrControls.MaxIndex()  - 1) * intDistanceBetweenButtons)
+	intLeftMargin := (intWidth - intButtonsWidth) // 2
+    ###_D(intMaxControlWidth . " / " . intButtonsWidth . " / " . intLeftMargin . " / " . "")
+	for intIndex, strControl in arrControls
+	{
+		###_D(intLeftMargin + ((intIndex - 1) * intMaxControlWidth) + ((intIndex - 1) * intDistanceBetweenButtons))
+		GuiControl, Move, %strControl%, % "x" . intLeftMargin + ((intIndex - 1) * intMaxControlWidth) + ((intIndex - 1) * intDistanceBetweenButtons) . " w" . intMaxControlWidth
+	}
+	
+}
+;------------------------------------------------------------
