@@ -13,6 +13,11 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### 2014-07-11 2.2.1
+* fix bug when adding a folder to a submenu using drag and drop
+* add an incentive message about drag and drop at the bottom of Settings window
+* ignore submenu change in Settings when user select the current menu
+
 ### 2014-07-06 2.2
 * support drag and drop to add favorite
 * make the cursor change to a hand when the mouse pointer is over buttons or clickable text in Settings dialog box (tried to also implement tooltips but even with a timer, it flickers too much)

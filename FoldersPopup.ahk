@@ -5,9 +5,9 @@
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
 	Version: 2.2.1 (2014-07-11)
-	* fix submenu bug when adding using drag and drop
+	* fix bug when adding a folder to a submenu using drag and drop
 	* add an incentive message about drag and drop at the bottom of Settings window
-	* reject submenu change in Settings when user select the current menu
+	* ignore submenu change in Settings when user select the current menu
 
 	Version: 2.2 (2014-07-06)
 	* support drag and drop to add favorite
