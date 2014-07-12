@@ -173,3 +173,4 @@ lUpdatePrompt	Update ~1~ van v~2~ naar v~3~?
 lUpdateTitle	Update ~1~?
 lUpdateYouHaveLatest	Je hebt reeds de meest recente versie: ~1~.`n`nWil je de ~2~ pagina toch bezoeken?
 lMenuSuspendHotkeys	Suspend Hotkeys
+lGuiDropFilesIncentive	Je kan je favoriete mappen naar dit venster slepen en neerzetten

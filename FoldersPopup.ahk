@@ -17,6 +17,11 @@ TODO
 	* add menu icons for documents
 	* add fix folders menu icon, special folders menu icons and submenu icons
 	
+	Version: 2.2.1 (2014-07-11)
+	* fix bug when adding a folder to a submenu using drag and drop
+	* add an incentive message about drag and drop at the bottom of Settings window
+	* ignore submenu change in Settings when user select the current menu
+
 	Version: 2.2 (2014-07-06)
 	* support drag and drop to add favorite
 	* make the cursor change to a hand when the mouse pointer is over buttons or clickable text in Settings dialog box (tried to also implement tooltips but even with a timer, it flickers too much)
@@ -1254,7 +1259,10 @@ Gui, 1:Add, Picture, Section x+10 ym gGuiOptions, %strTempDir%\settings-32.png ;
 Gui, 1:Font, s8 w400, Arial ; button legend
 Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiOptions, %lGuiOptions% ; Static31
 
-Gui, 1:Add, Text, xm y350 h1 w690
+Gui, 1:Font, s8 w600 c404040 italic, Verdana
+Gui, 1:Add, Text, xm y340 w690 center, %lGuiDropFilesIncentive%
+
+Gui, 1:Add, Text, xm y360 h1 w690
 Gui, 1:Font, s9 w600, Verdana
 Gui, 1:Add, Button, x260 w100 h48 Disabled Default vbtnGuiSave gGuiSave, %lGuiSave% ; Button1
 Gui, 1:Add, Button, x+20 w100 h48 vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur - Button2
@@ -1345,13 +1353,20 @@ GuiGotoPreviousMenu:
 OpenMenuFromEditForm:
 ;------------------------------------------------------------
 
+if (A_ThisLabel = "GuiMenusListChanged")
+{
+	GuiControlGet, strNewDropdownMenu, , drpMenusList
+	if (strNewDropdownMenu = strCurrentMenu) ; user selected the current menu in the dropdown
+		return
+}
+
 Gosub, SaveCurrentListviewToMenuObject ; save current LV before changing strCurrentMenu
 
 strSavedMenu := strCurrentMenu
 if (A_ThisLabel = "GuiMenusListChanged")
 {
 	arrSubmenuStack.Insert(1, strSavedMenu) ; push the current menu to the left arrow stack
-	GuiControlGet, strCurrentMenu, , drpMenusList
+	strCurrentMenu := strNewDropdownMenu
 }
 else if (A_ThisLabel = "GuiGotoUpMenu")
 {
@@ -1721,7 +1736,6 @@ Loop, parse, A_GuiEvent, `n
     Break
 }
 
-Gosub, GuiShow
 Gosub, GuiAddFromDropFiles
 
 return

@@ -173,3 +173,4 @@ lUpdatePrompt	Update ~1~ von v~2~ auf v~3~?
 lUpdateTitle	Update ~1~?
 lUpdateYouHaveLatest	Sie verwenden die aktuellste Version: ~1~.`n`nTrotzdem die ~2~ Webseite besuchen?
 lMenuSuspendHotkeys	Suspend Hotkeys
+lGuiDropFilesIncentive	You can drag and drop your favorites to this window

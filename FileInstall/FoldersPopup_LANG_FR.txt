@@ -76,6 +76,7 @@ lGuiAddFolder	Ajouter
 lGuiCancel	Annuler
 lGuiClose	Fermer
 lGuiDonate	Soutien
+lGuiDropFilesIncentive	Vous pouvez glisser-déposer vos favoris sur cette fenêtre!
 lGuiEditFolder	Modifier
 lGuiHelp	Aide
 lGuiLvDialogsHeader	Boîtes de dialogue prises en charge`n(une partie du nom suffit)
