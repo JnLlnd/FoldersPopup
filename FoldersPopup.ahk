@@ -1091,18 +1091,14 @@ BuildOneMenu(strMenu)
 			
 			BuildOneMenu(strSubMenuFullName) ; recursive call
 			
-			try Menu, %strSubMenuParent%, Add
-				, % (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = lMainMenuName)) . " " : "")
-				. strSubMenuDisplayName, % ":" . strSubMenuFullName
+			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = lMainMenuName)) . " " : "") . strSubMenuDisplayName
+			Try Menu, %strSubMenuParent%, Add, %strMenuName%, % ":" . strSubMenuFullName
 			catch e
 			{
 				Menu, % arrThisMenu[A_Index].MenuName, Add, % arrThisMenu[A_Index].FolderName, OpenFavorite ; will never be called because disabled
 				Menu, % arrThisMenu[A_Index].MenuName, Disable, % arrThisMenu[A_Index].FolderName
 			}
-			###_D(arrThisMenu[A_Index].MenuName . " / " . arrThisMenu[A_Index].FolderName . " / " . arrThisMenu[A_Index].SubmenuFullName)
-			; Menu, %lMainMenuName%, Show
-			; Menu, %lMainMenuName%, Icon, % arrThisMenu[A_Index].FolderName, %A_WinDir%\System32\imageres.dll, 200, %intIconSize%
-			Menu, % arrThisMenu[A_Index].MenuName, Icon, % arrThisMenu[A_Index].FolderName, %A_WinDir%\System32\imageres.dll, 200, %intIconSize%
+			Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 200, %intIconSize%
 		}
 		else if (arrThisMenu[A_Index].FolderName = lMenuSeparator) ; this is a separator
 
@@ -1112,7 +1108,7 @@ BuildOneMenu(strMenu)
 		{
 			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = lMainMenuName)) . " " : "")
 				. arrThisMenu[A_Index].FolderName
-			Menu, % arrThisMenu[A_Index].MenuName , Add, %strMenuName%, OpenFavorite
+			Menu, % arrThisMenu[A_Index].MenuName, Add, %strMenuName%, OpenFavorite
 			
 			if !FileExist(arrThisMenu[A_Index].FolderLocation) ; this favorite does not exist
 			{
@@ -1139,7 +1135,7 @@ BuildOneMenu(strMenu)
 				Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %strDefaultIcon%, intDefaultIcon, %intIconSize%
 			}
 			else ; this is a folder
-				Menu, % arrThisMenu[A_Index].MenuName , Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 4, %intIconSize%
+				Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 4, %intIconSize%
 		}
 }
 ;------------------------------------------------------------
