@@ -1,8 +1,3 @@
-/*
-TODO
-- when add document, after get file, if short name empty put fine name
-*/
-
 ;===============================================
 /*
 	FoldersPopup
@@ -10,15 +5,16 @@ TODO
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
 	Version: 3.0 (2014-0X-XX)
-	* support favorite files as popup menu items, add file radio button to add dialog box
-	* when menu item is a file, launch it with Run
+	* support favorite documents as popup menu items, add Document radio button to add dialog box
+	* when adding document, suggest short name for menu
+	* when menu item is a document, launch it with Run
 	* add icons to folders menu, submenus, documents and special folders
 	* add Settings Option for menu icon size, default size to 24
 	* keep the regular tray icon when suspended
 	* implement Exite tray menu
 	* disable separator editing
 	* adapt labels to "favorites" instead of "folders"
-	* build function to auto-center buttons in Gui, implemented in Settings Gui.
+	* build function to auto-center action buttons in Gui
 	
 	Version: 2.2.1 (2014-07-11)
 	* fix bug when adding a folder to a submenu using drag and drop
@@ -344,7 +340,7 @@ blnMenuReady := true
 objCursor := DllCall("LoadCursor", "UInt", NULL, "Int", 32649, "UInt") ; IDC_HAND
 OnMessage(0x200, "WM_MOUSEMOVE")
 
-Gosub, GuiShow ; ### only when debugging Gui
+; Gosub, GuiShow ; ### only when debugging Gui
 
 return
 
@@ -1270,11 +1266,10 @@ Gui, 1:Add, Text, xm y340 w690 center, %lGuiDropFilesIncentive%
 
 Gui, 1:Add, Text, xm y360 h1 w690
 Gui, 1:Font, s9 w600, Verdana
-Gui, 1:Add, Button, x260 w120 h48 Disabled Default vbtnGuiSave gGuiSave, %lGuiSave% ; Button1
-Gui, 1:Add, Button, x+20 w120 h48 vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur - Button2
+Gui, 1:Add, Button, Disabled Default vbtnGuiSave gGuiSave, %lGuiSave% ; Button1
+Gui, 1:Add, Button, yp vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur - Button2
 Gui, 1:Font, s6 w400, Verdana
-
-GuiCenterButtons(L(lGuiTitle, strAppName, strAppVersion), 30, "btnGuiSave", "btnGuiCancel")
+GuiCenterButtons(L(lGuiTitle, strAppName, strAppVersion), 50, 30, 40, "btnGuiSave", "btnGuiCancel")
 
 return
 ;------------------------------------------------------------
@@ -1684,7 +1679,7 @@ GuiShow:
 strCurrentMenu := lMainMenuName
 Gosub, BackupMenuObjects
 Gosub, LoadSettingsToGui
-Gui, 1:Show ; , w455 ; , h455
+Gui, 1:Show, AutoSize Center
 
 return
 ;------------------------------------------------------------
@@ -2085,7 +2080,7 @@ Gui, 2:New, , % L(lDialogAddEditFolderTitle, lDialogAdd, strAppName, strAppVersi
 Gui, 2:+Owner1
 Gui, 2:+OwnDialogs
 
-strCurrentName := GetDeepestFolderName(strCurrentLocation) ; value received from GuiDropFiles
+strCurrentName := GetDeepestFolderName(strCurrentLocation) ; value received from AddThisFolder or GuiDropFiles
 
 if (A_ThisLabel = "GuiAddFromPopup")
 {
@@ -2124,8 +2119,9 @@ if (A_ThisLabel = "GuiAddFromPopup" or A_ThisLabel = "GuiAddFromDropFiles")
 	Gui, 2:Add, DropDownList, x10 w250 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
 }
 
-Gui, 2:Add, Button, x150 y+15 gGuiAddFolderSave, %lDialogAdd%
-Gui, 2:Add, Button, x+20 yp gGuiAddFolderCancel, %lGuiCancel%
+Gui, 2:Add, Button, y+15 vbtnAddFolderAdd gGuiAddFolderSave, %lDialogAdd%
+Gui, 2:Add, Button, yp vbtnAddFolderCancel gGuiAddFolderCancel, %lGuiCancel%
+GuiCenterButtons(L(lDialogAddEditFolderTitle, lDialogAdd, strAppName, strAppVersion), 10, 5, 20, "btnAddFolderAdd", "btnAddFolderCancel")
 
 GuiControl, 2:Focus, strFolderShortName
 Gui, 2:Show, AutoSize Center
@@ -2173,19 +2169,23 @@ Gui, 2:+Owner1
 Gui, 2:+OwnDialogs
 
 Gui, 2:Add, Text, % x10 y10 vlblFolderParentMenu, % (blnRadioSubmenu ? lDialogSubmenuParentMenu : lDialogFolderParentMenu)
-Gui, 2:Add, DropDownList, x10 w250 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
+Gui, 2:Add, DropDownList, x10 w300 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
 
 Gui, 2:Add, Text, x10 y+10 w300 vlblShortName, % (blnRadioSubmenu ? lDialogSubmenuShortName : (blnRadioFile ? lDialogFileShortName : lDialogFolderShortName))
-Gui, 2:Add, Edit, x10 w200 vstrFolderShortName, %strCurrentName%
+Gui, 2:Add, Edit, x10 w300 vstrFolderShortName, %strCurrentName%
 
-Gui, 2:Add, Text, % "x10 vlblFolder " . (blnRadioSubmenu ? "hidden" : ""), % (blnRadioFile ? lDialogFileLabel : lDialogFolderLabel)
-Gui, 2:Add, Edit, % "x10 w300 vstrFolderLocation " . (blnRadioSubmenu ? "hidden" : ""), %strCurrentLocation%
-Gui, 2:Add, Button, % "x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation " . (blnRadioSubmenu ? "hidden" : "default"), %lDialogBrowseButton%
-
-Gui, 2:Add, Button, x10 gGuiEditFolderSave, %lDialogSave%
-Gui, 2:Add, Button, x+10 yp gGuiEditFolderCancel, %lGuiCancel%
 if (blnRadioSubmenu)
-	Gui, 2:Add, Button, x+40 yp gGuiOpenThisMenu, %lDialogOpenThisMenu%
+	Gui, 2:Add, Button, x+10 yp vbnlEditFolderOpenMenu gGuiOpenThisMenu, %lDialogOpenThisMenu%
+else
+{
+	Gui, 2:Add, Text, x10 vlblFolder, % (blnRadioFile ? lDialogFileLabel : lDialogFolderLabel)
+	Gui, 2:Add, Edit, x10 w300 h20 vstrFolderLocation, %strCurrentLocation%
+	Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation, %lDialogBrowseButton%
+}
+
+Gui, 2:Add, Button, y+20 vbtnEditFolderSave gGuiEditFolderSave, %lDialogSave%
+Gui, 2:Add, Button, yp vbtnEditFolderCancel gGuiEditFolderCancel, %lGuiCancel%
+GuiCenterButtons(L(lDialogAddEditFolderTitle, lDialogEdit, strAppName, strAppVersion), 10, 5, 20, "btnEditFolderSave", "btnEditFolderCancel")
 
 GuiControl, 2:Focus, strFolderShortName
 Send, ^a
@@ -2391,7 +2391,18 @@ else
 
 if !(StrLen(strNewLocation))
 	return
+
 GuiControl, 2:, strFolderLocation, %strNewLocation%
+
+strNewName := GetDeepestFolderName(strNewLocation)
+if StrLen(strFolderShortName)
+{
+	MsgBox, 52, %strAppName%, % L(lDialogReplaceShortName, strFolderShortName, strNewName, strAppName, strDiagFile)
+	IfMsgBox, Yes
+		strFolderShortName := ""
+}
+if !StrLen(strFolderShortName)
+	GuiControl, 2:, strFolderShortName, %strNewName%
 
 return
 ;------------------------------------------------------------
@@ -2449,8 +2460,11 @@ Gui, 2:Add, Link, , % L(lAboutText3, chr(169))
 Gui, 2:Font, s10 w400, Verdana
 Gui, 2:Add, Link, , % L(lAboutText4)
 Gui, 2:Font, s8 w400, Verdana
-Gui, 2:Add, Button, x115 y+20 gGuiDonate, %lDonateButton%
-Gui, 2:Add, Button, x150 y+20 g2GuiClose vbtnAboutClose, %lGui2Close%
+
+Gui, 2:Add, Button, y+20 vbtnAboutDonate gGuiDonate, %lDonateButton%
+Gui, 2:Add, Button, yp vbtnAboutClose g2GuiClose vbtnAboutClose, %lGui2Close%
+GuiCenterButtons(L(lAboutTitle, strAppName, strAppVersion), 10, 5, 20, "btnAboutDonate", "btnAboutClose")
+
 GuiControl, Focus, btnAboutClose
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
@@ -2499,6 +2513,8 @@ Gui, 2:Add, Link, y+10 x130, <a href="http://code.jeanlalonde.ca/support-freewar
 
 Gui, 2:Font, s8 w400, Verdana
 Gui, 2:Add, Button, x175 y+20 g2GuiClose vbtnDonateClose, %lGui2Close%
+GuiCenterButtons(L(lDonateTitle, strAppName, strAppVersion), 10, 5, 20, "btnDonateClose")
+
 GuiControl, Focus, btnDonateDefault
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
@@ -2541,8 +2557,11 @@ Gui, 2:Font, s8 w400, Verdana
 loop, 6
 	Gui, 2:Add, Link, w%intWidth%, % lHelpText%A_Index%
 Gui, 2:Add, Link, w%intWidth%, % L(lHelpText7, chr(169))
-Gui, 2:Add, Button, x180 y+20 gGuiDonate, %lDonateButton%
+
+Gui, 2:Add, Button, x180 y+20 vbtnHelpDonate gGuiDonate, %lDonateButton%
 Gui, 2:Add, Button, x+80 yp g2GuiClose vbtnHelpClose, %lGui2Close%
+GuiCenterButtons(L(lHelpTitle, strAppName, strAppVersion), 10, 5, 20, "btnHelpDonate", "btnHelpClose")
+
 GuiControl, Focus, btnHelpClose
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
@@ -2573,9 +2592,9 @@ loop, % arrIniKeyNames%0%
 	Gui, 2:Font, s8 w700
 	Gui, 2:Add, Text, x15 y+10, % arrOptionsTitles%A_Index%
 	Gui, 2:Font, s9 w500, Courier New
-	Gui, 2:Add, Text, x250 yp w270 h20 center 0x1000 vlblHotkeyText%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
+	Gui, 2:Add, Text, x250 yp w270 h23 center 0x1000 vlblHotkeyText%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
 	Gui, 2:Font
-	Gui, 2:Add, Button, h20 yp x530 vbtnChangeHotkey%A_Index% gButtonOptionsChangeHotkey%A_Index%, %lOptionsChangeHotkey%
+	Gui, 2:Add, Button, yp x530 vbtnChangeHotkey%A_Index% gButtonOptionsChangeHotkey%A_Index%, %lOptionsChangeHotkey%
 }
 
 Gui, 2:Add, Text, x10 y+15 h2 w570 0x10 ; Horizontal Line > Etched Gray
@@ -2607,9 +2626,11 @@ Gui, 2:Add, Text, % "yp x+5 vlblPopupFixPositionY " . (blnPopupFix ? "" : "hidde
 Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionY center " . (blnPopupFix ? "" : "hidden"), %arrPopupFixPosition2%
 
 ; Build Gui footer
-Gui, 2:Add, Button, y+20 x40 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
-Gui, 2:Add, Button, yp x+15 vbtnOptionsCancel gButtonOptionsCancel, %lGuiCancel%
-Gui, 2:Add, Button, yp x300 gGuiDonate, %lDonateButton%
+Gui, 2:Add, Button, y+20 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
+Gui, 2:Add, Button, yp vbtnOptionsCancel gButtonOptionsCancel, %lGuiCancel%
+Gui, 2:Add, Button, yp vbtnOptionsDonate gGuiDonate, %lDonateButton%
+GuiCenterButtons(L(lOptionsGuiTitle, strAppName, strAppVersion), 10, 5, 20, "btnOptionsSave", "btnOptionsCancel", "btnOptionsDonate")
+
 Gui, 2:Add, Text
 GuiControl, Focus, btnOptionsSave
 
@@ -2689,11 +2710,12 @@ if (intType <> 1)
 if (intType = 3)
 	Gui, 3:Add, DropDownList, % "y" . posTopY + 50 . " x150 w200 vstrOptionsMouse gOptionsMouseChanged", % strMouseButtonsWithDefault%intIndex%
 
-Gui, 3:Add, Button, y220 x140 vbtnChangeHotkeySave gButtonChangeHotkeySave%intIndex%, %lGuiSave%
+Gui, 3:Add, Button, y240 x140 vbtnChangeHotkeySave gButtonChangeHotkeySave%intIndex%, %lGuiSave%
 Gui, 3:Add, Button, yp x+20 vbtnChangeHotkeyCancel gButtonChangeHotkeyCancel, %lGuiCancel%
+GuiCenterButtons(L(lOptionsChangeHotkeyTitle, strAppName, strAppVersion), 10, 5, 20, "btnChangeHotkeySave", "btnChangeHotkeyCancel")
+
 Gui, 3:Add, Text
 GuiControl, Focus, btnChangeHotkeySave
-
 Gui, 3:Show, AutoSize Center
 Gui, 2:+Disabled
 
@@ -3788,7 +3810,7 @@ L(strMessage, objVariables*)
 GetDeepestFolderName(strLocation)
 ;------------------------------------------------------------
 {
-	SplitPath, strLocation, strDeepestName, , , , strDrive
+	SplitPath, strLocation, , , , strDeepestName, strDrive
 	if !StrLen(strDeepestName) ; we are probably at the root of a drive
 		return strDrive
 	else
@@ -3890,29 +3912,33 @@ LocationIsDocument(strLocation)
 
 
 ;------------------------------------------------------------
-GuiCenterButtons(strWindow, intDistanceBetweenButtons, arrControls*)
+GuiCenterButtons(strWindow, intInsideHorizontalMargin := 10, intInsideVerticalMargin := 0, intDistanceBetweenButtons := 20, arrControls*)
+; This is a variadic function. See: http://ahkscript.org/docs/Functions.htm#Variadic
 ;------------------------------------------------------------
 {
 	DetectHiddenWindows, On
 	Gui, Show, Hide
 	WinGetPos, , , intWidth, , %strWindow%
+
 	intMaxControlWidth := 0
+	intMaxControlHeight := 0
 	for intIndex, strControl in arrControls
 	{
 		GuiControlGet, arrControlPos, Pos, %strControl%
-		; ###_D(strWindow . " / " . intWidth . " / " . strControl . " / " . arrControlPosW)
 		if (arrControlPosW > intMaxControlWidth)
 			intMaxControlWidth := arrControlPosW
-		
-	}
-	intButtonsWidth := (arrControls.MaxIndex() * intMaxControlWidth) + ((arrControls.MaxIndex()  - 1) * intDistanceBetweenButtons)
-	intLeftMargin := (intWidth - intButtonsWidth) // 2
-    ###_D(intMaxControlWidth . " / " . intButtonsWidth . " / " . intLeftMargin . " / " . "")
-	for intIndex, strControl in arrControls
-	{
-		###_D(intLeftMargin + ((intIndex - 1) * intMaxControlWidth) + ((intIndex - 1) * intDistanceBetweenButtons))
-		GuiControl, Move, %strControl%, % "x" . intLeftMargin + ((intIndex - 1) * intMaxControlWidth) + ((intIndex - 1) * intDistanceBetweenButtons) . " w" . intMaxControlWidth
+		if (arrControlPosH > intMaxControlHeight)
+			intMaxControlHeight := arrControlPosH
 	}
 	
+	intMaxControlWidth := intMaxControlWidth + intInsideHorizontalMargin
+	intButtonsWidth := (arrControls.MaxIndex() * intMaxControlWidth) + ((arrControls.MaxIndex()  - 1) * intDistanceBetweenButtons)
+	intLeftMargin := (intWidth - intButtonsWidth) // 2
+
+	for intIndex, strControl in arrControls
+		GuiControl, Move, %strControl%
+			, % "x" . intLeftMargin + ((intIndex - 1) * intMaxControlWidth) + ((intIndex - 1) * intDistanceBetweenButtons)
+			. " w" . intMaxControlWidth
+			. " h" . intMaxControlHeight + intInsideVerticalMargin
 }
 ;------------------------------------------------------------

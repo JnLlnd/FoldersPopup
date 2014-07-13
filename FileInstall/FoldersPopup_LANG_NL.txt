@@ -1,5 +1,3 @@
-
-
 lAboutText1	~1~ ~2~ (~3~ bits)
 lAboutText2	~1~ wordt ontwikkeld door Jean Lalonde gebruik`nmakend van <a href="http://ahkscript.org/">AutoHotkey</a> programmeertaal.`n`nNederlandse vertaling: Pieter Dejonghe`nDuitse vertaling: Edgar "Fast Edi" Hoffmann`nFranse vertaling: Jean Lalonde`nAndere talen: (hulp is welkom)`nCorrectie Engelse vertaling: (hulp is welkom)`n`nOntwerp icons: <a href="http://www.visualpharm.com">Visual Pharm</a>`nAutoHotkey_L v1.1 bronbestanden: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
@@ -14,7 +12,7 @@ lDialogAdd	Toevoegen
 lDialogAddDialogAlready	Dit dialoogvenster wordt reeds ondersteund.
 lDialogAddDialogPrompt	Voer de nieuwe naam voor het dialoogvenster in`n(of een deel van de naam):
 lDialogAddDialogTitle	Voeg nieuw dialoogvenster toe - ~1~ ~2~
-lDialogAddEditFolderTitle	~1~ Favorieten - ~3~ ~4~
+lDialogAddEditFolderTitle	~1~ Favorieten - ~2~ ~3~
 lDialogAddFileSelect	Nieuw document selecteren:
 lDialogAddFolderManuallyPrompt	Sorry, we kunnen de huidige map niet ontdekken in dit venstertype.`n`nWil je het handmatig toevoegen?
 lDialogAddFolderManuallyTitle	Voeg deze map toe - ~1~ ~2~
@@ -43,8 +41,6 @@ lDialogSave	Bewaren
 lDialogSelectItemToEdit	Gelieve het te bewerken object te selecteren.
 lDialogSelectItemToRemove	Gelieve het te verwijderen object te selecteren.
 lDialogSubmenuLabel	Submenu
-!lDialogSubmenuNameEmpty	The submenu name is empty. Please, choose a name.
-!lDialogSubmenuParentMenu	Submenu parent menu
 lDialogSubmenuShortName	Korte naam voor het submenu
 lDonateButton	Steun Freeware!
 lDonateCheckPrompt	Ben je tevreden over ~1~?`n`n~1~ is niet alleen GRATIS maar bevat ook GEEN vervelende reclame of adware (waarvan je nooit zeker weet of ze geen spyware of malware bevatten)`n`nTot nog toe heeft ~1~ jou ~2~ maal geholpen tijdens je dagelijkse werkzaamheden. Wat zou je er van denken om freeware te steunen?
@@ -176,3 +172,6 @@ lUpdateYouHaveLatest	Je hebt reeds de meest recente versie: ~1~.`n`nWil je de ~2
 lMenuSuspendHotkeys	Suspend Hotkeys
 lGuiDropFilesIncentive	Je kan je favoriete mappen naar dit venster slepen en neerzetten
 lMenuExitFoldersPopup	Exit ~1~
+lDialogReplaceShortName	Replace favorite name "~1~" with "~2~"?
+lDialogSubmenuNameEmpty	The submenu name is empty. Please, choose a name.
+lDialogSubmenuParentMenu	Submenu parent menu

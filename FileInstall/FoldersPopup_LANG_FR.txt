@@ -1,5 +1,3 @@
-
-
 lAboutText1	~1~ ~2~ (~3~ bits)
 lAboutText2	~1~ est développé par Jean Lalonde`nsur la plateforme <a href="http://ahkscript.org/">AutoHotkey</a>.`n`nTraduction française: Jean Lalonde`nTraduction allemande: Edgar ""Fast Edi"" Hoffmann`nTraduction néerlandaise: Pieter Dejonghe`nRévision anglaise: (aide bienvenue)`n`nIcônes par: <a href="http://www.visualpharm.com">Visual Pharm</a>`nSources AutoHotkey_L v1.1: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Gratuiciel.
@@ -39,6 +37,7 @@ lDialogFolderRemoveTitle	Supprimer un favori - ~1~
 lDialogFolderShortName	Nom court du dossier pour les menus
 lDialogInvalidHotkey	Avec votre configuration actuelle de clavier, la touche de raccourci "~1~" ne peut être utilisée comme un déclencheur pour le menu popup.`n`nVeuillez ouvrir la fenêtre "Paramètres de ~2~" dans la zone de notification et cliquez sur "Options". Dans cette boîte de dialogue, choisissez une autre touche de raccourci pour "~3~".
 lDialogOpenThisMenu	Ouvrir ce menu
+lDialogReplaceShortName	Remplacer le nom de ce favori "~1~" par "~2~"?
 lDialogSave	Enregistrer
 lDialogSelectItemToEdit	Veuillez sélectionner l'item à modifier.
 lDialogSelectItemToRemove	Veuillez sélectionner l'item à supprimer.

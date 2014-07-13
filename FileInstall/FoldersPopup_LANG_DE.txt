@@ -1,5 +1,3 @@
-
-
 lAboutText1	~1~ ~2~ (~3~ bits)
 lAboutText2	~1~ wird entwickelt von Jean Lalonde unter`nVerwendung der <a href="http://ahkscript.org/">AutoHotkey</a> Programmiersprache.`n`nDeutsche Übersetzung: Edgar ""Fast Edi"" Hoffmann`nFranzösische Übersetzung: Jean Lalonde`nHolländische Übersetzung: Pieter Dejonghe`nEnglische Gegenleser: (Hilfe willkommen)`n`nIcons von: <a href="http://www.visualpharm.com">Visual Pharm</a>`nAutoHotkey_L v1.1 Sourcen: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
@@ -14,7 +12,7 @@ lDialogAdd	Hinzufügen
 lDialogAddDialogAlready	Diese Dialogbox-Typ wird schon unterstützt.
 lDialogAddDialogPrompt	Geben Sie den neuen Namen für die Dialogbox an`n(oder einen Teil des Namens):
 lDialogAddDialogTitle	Dialogbox hinzufügen - ~1~ ~2~
-lDialogAddEditFolderTitle	~1~ Favoriten - ~3~ ~4~
+lDialogAddEditFolderTitle	~1~ Favoriten - ~2~ ~3~
 lDialogAddFileSelect	Neue Datei wählen:
 lDialogAddFolderManuallyPrompt	Entschuldigung, der aktuelle Ordner kann in diesem Fenstertyp nicht ermittelt werden.`n`nWollen Sie es jetzt von Hand hinzufügen?
 lDialogAddFolderManuallyTitle	Diesen Dokumente hinzufügen - ~1~ ~2~
@@ -43,8 +41,6 @@ lDialogSave	Speichern
 lDialogSelectItemToEdit	Bitte wählen Sie das zu bearbeitende Element.
 lDialogSelectItemToRemove	Bitte wählen Sie das zu entfernende Element.
 lDialogSubmenuLabel	Untermenü
-!lDialogSubmenuNameEmpty	The submenu name is empty. Please, choose a name.
-!lDialogSubmenuParentMenu	Submenu parent menu
 lDialogSubmenuShortName	Kurzname des Untermenüs
 lDonateButton	Unterstützen Sie Freeware!
 lDonateCheckPrompt	Sind Sie zufrieden mit ~1~?`n`n~1~ ist nicht nur kostenlos, sondern enthält auch keine Werbung, bei der Sie nie wissen, ob diese Spyware oder Schadsoftware enthält.`n`n~2~ mal bisher, hat Ihnen ~1~ bei der täglichen Arbeit geholfen. Wie wär's jetzt mit ein wenig Unterstützung für Freeware?
@@ -176,3 +172,6 @@ lUpdateYouHaveLatest	Sie verwenden die aktuellste Version: ~1~.`n`nTrotzdem die 
 lMenuSuspendHotkeys	Suspend Hotkeys
 lGuiDropFilesIncentive	You can drag and drop your favorites to this window
 lMenuExitFoldersPopup	Exit ~1~
+lDialogReplaceShortName	Replace favorite name "~1~" with "~2~"?
+lDialogSubmenuNameEmpty	The submenu name is empty. Please, choose a name.
+lDialogSubmenuParentMenu	Submenu parent menu
