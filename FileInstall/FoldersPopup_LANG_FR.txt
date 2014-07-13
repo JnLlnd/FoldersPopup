@@ -3,7 +3,7 @@ lAboutText2	~1~ est développé par Jean Lalonde`nsur la plateforme <a href="http:
 lAboutText3	~1~ Jean Lalonde 2013-2014. Gratuiciel.
 lAboutText4	Soutien en ligne: <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	À propos - ~1~ ~2~
-lAppTagline	Naviguez en un clin d'oeil parmi vos dossiers favoris!
+lAppTagline	Navigez en un clin d'oeil parmi vos dossiers et documents favoris!
 lDiagModeCaution	~1~ roule en mode de diagnostique.`n`nDes renseignements à propos de l'exécution de cette application seront colligées dans le fichier:`n~2~`n`nAucune information ne sera transmise sans votre consentement.`n`nVoulez-vous rester en mode diagnostique?
 lDiagModeExit	~1~ a colligé des renseignements à des fins de diagnostique dans le fichier ~2~.
 lDiagModeIntro	Envoyez ce fichier à ahk@jeanlalonde.ca avec une description de la situation nécessitant un diasnostique.
@@ -97,7 +97,7 @@ lHelpText4	Initialement, FoldersPopup ne fonctionne que dans les boîtes de dialo
 lHelpText5	TRUCS ET ASTUCES`n- Dans la zone de Notifications, sélectionnez l'option "Exécuter au démarrage" pour lancer FoldersPopup automatiquement au lancement de Windows.`n- Besoin d'un dossier dans un nouvel Explorateur? Appuyez simplement sur Maj-bouton central (ou Maj-Windows-K). Cette action permet aussi d'ouvrir un dossier depuis n'importe quelle application.`n- Choisissez les combinaisons de bouton de la souris et de touches du clavier qui ouvrent le menu popup dans les  "Paramètres, Options".`n- Aussi dans les "Options": choisissez votre langue d'utilisation, décidez d'afficher le menu des Emplacements récents, les raccouris clavier numériques ou fixez le menu popup à une position de votre choix.
 lHelpText6	Le soutien sur FoldersPopup est disponible à <a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a> (en français et en anglais).
 lHelpText7	~1~ Jean Lalonde 2013-2014. Gratuiciel.
-lHelpTextLead	Avec FoldersPopup, navigez en un clin d'oeil parmi vos dossiers favoris!
+lHelpTextLead	Avec FoldersPopup, navigez en un clin d'oeil parmi vos dossiers et documents favoris!
 lHelpTitle	Aide - ~1~ ~2~
 lMainMenuName	Principal
 lMenuAbout	À propos

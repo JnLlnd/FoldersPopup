@@ -3,7 +3,7 @@ lAboutText2	~1~ wordt ontwikkeld door Jean Lalonde gebruik`nmakend van <a href="
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
 lAboutText4	Ondersteuning via <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	Over... - ~1~ ~2~
-lAppTagline	Spring direct van een folder naar een andere
+lAppTagline	FoldersPopup laat je snel wisselen tussen`nde mappen die je vaak gebruikt!
 lDiagModeCaution	~1~ wordt momenteel uitgevoerd in diagnose-modus.`n`nInformatie over de uitvoering van de software wordt verzameld in het bestand:`n~2~`n`nNiets zal worden verzonden zonder uw toestemming.`n`nWil je de diagnose-modus AAN laten?
 lDiagModeExit	~1~ heeft informatie voor foutdiagnose verzameld in het bestand ~2~.
 lDiagModeIntro	Verstuur dit bestand naar ahk@jeanlalonde.ca met een beschrijving van de situatie die verder dient onderzocht te worden.
@@ -138,9 +138,9 @@ lOptionsChangeHotkey	Wijzigen
 lOptionsChangeHotkeyTitle	Wijzig sneltoets - ~1~ ~2~
 lOptionsCtrl	Ctrl
 lOptionsDisplayMenuShortcuts	Toon de &Numerieke Menu Sneltoetsen
-lOptionsDisplayRecentFolders	Toon Recente Mappen
+lOptionsDisplayRecentFolders	Toon &Recente Mappen
 lOptionsDisplaySpecialFolders	Toon S&peciale Mappen
-lOptionsDisplaySwitchMenu	Toon Switch Menu's
+lOptionsDisplaySwitchMenu	Toon S&witch Menu's
 lOptionsGuiIntro	Definieer de muisknoppen en sneltoetsen die ~1~ zullen triggeren.
 lOptionsGuiTitle	Opties - ~1~ ~2~
 lOptionsIconSize	Menu iconen grootte
@@ -154,11 +154,11 @@ lOptionsOtherOptions	Andere Opties
 lOptionsPopupFix	Popup &Menu op een Vaste Positie
 lOptionsPopupFixPositionX	Positie X:
 lOptionsPopupFixPositionY	Y:
-lOptionsRecentFolders	Recente Mappen
-lOptionsRunAtStartup	Uitvoeren bij Opstarten
+lOptionsRecentFolders	R&ecente Mappen
+lOptionsRunAtStartup	&Uitvoeren bij Opstarten
 lOptionsShift	Shift
 lOptionsTitles	Muis - Folders Popup|Muis - Nieuwe Verkenner|Toetsenbord - Folders Popup|Toetsenbord - Nieuwe Verkenner|Instellingen
-lOptionsTrayTip	Toon Startup Systeembalk Tip
+lOptionsTrayTip	Toon &Startup Systeembalk Tip
 lOptionsTriggerFor	Trigger voor:
 lOptionsWin	Win
 lReloadPrompt	Taal werd gewijzigd naar ~1~. Wil je ~2~ laden in het ~1~ nu? Niet bewaarde wijzigingen gaan verloren.

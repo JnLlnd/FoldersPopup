@@ -1099,7 +1099,10 @@ BuildOneMenu(strMenu)
 				Menu, % arrThisMenu[A_Index].MenuName, Add, % arrThisMenu[A_Index].FolderName, OpenFavorite ; will never be called because disabled
 				Menu, % arrThisMenu[A_Index].MenuName, Disable, % arrThisMenu[A_Index].FolderName
 			}
-			Menu, % arrThisMenu[A_Index].MenuName , Icon, % arrThisMenu[A_Index].FolderName, %A_WinDir%\System32\imageres.dll, 200, %intIconSize%
+			###_D(arrThisMenu[A_Index].MenuName . " / " . arrThisMenu[A_Index].FolderName . " / " . arrThisMenu[A_Index].SubmenuFullName)
+			; Menu, %lMainMenuName%, Show
+			; Menu, %lMainMenuName%, Icon, % arrThisMenu[A_Index].FolderName, %A_WinDir%\System32\imageres.dll, 200, %intIconSize%
+			Menu, % arrThisMenu[A_Index].MenuName, Icon, % arrThisMenu[A_Index].FolderName, %A_WinDir%\System32\imageres.dll, 200, %intIconSize%
 		}
 		else if (arrThisMenu[A_Index].FolderName = lMenuSeparator) ; this is a separator
 
@@ -1186,7 +1189,7 @@ intWidth := 460
 
 Gui, 1:Font, s12 w700, Verdana
 Gui, 1:Add, Text, xm ym w%intWidth% h25, %strAppName% %strAppVersion%
-Gui, 1:Font, s10 w400, Verdana
+Gui, 1:Font, s9 w400, Verdana
 Gui, 1:Add, Text, xm y+1, %lAppTagline%
 Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, Text, xm+30, %lGuiSubmenuDropdownLabel%
@@ -1262,9 +1265,9 @@ Gui, 1:Font, s8 w400, Arial ; button legend
 Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiOptions, %lGuiOptions% ; Static31
 
 Gui, 1:Font, s8 w600 c404040 italic, Verdana
-Gui, 1:Add, Text, xm y340 w690 center, %lGuiDropFilesIncentive%
+Gui, 1:Add, Text, xm y350 w690 center, %lGuiDropFilesIncentive%
 
-Gui, 1:Add, Text, xm y360 h1 w690
+Gui, 1:Add, Text, xm y370 h1 w690
 Gui, 1:Font, s9 w600, Verdana
 Gui, 1:Add, Button, Disabled Default vbtnGuiSave gGuiSave, %lGuiSave% ; Button1
 Gui, 1:Add, Button, yp vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur - Button2
