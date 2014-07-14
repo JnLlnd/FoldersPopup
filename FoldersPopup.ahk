@@ -272,7 +272,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.0" ; "major.minor.bugs"
+global strCurrentVersion := "3.0.0" ; "major.minor.bugs"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
@@ -1963,12 +1963,16 @@ if FirstVsSecondIs(strLatestVersion, strCurrentVersion) = 1
 	Gui, 1:+OwnDialogs
 	SetTimer, ChangeButtonNames, 50
 
-	MsgBox, 3, % l(lUpdateTitle, strAppName), % l(lUpdatePrompt, strAppName, strCurrentVersion, strLatestVersion), 30
+	MsgBox, 3, % l(lUpdateTitle, strAppName)
+		, % l(lUpdatePrompt, strAppName
+			, strCurrentVersion . (strCurrentBranch = "beta" ? " BETA" : "")
+			, strLatestVersion . (strCurrentBranch = "beta" ? " BETA" : ""))
+		, 30
 	IfMsgBox, Yes
 		if (strCurrentBranch = "prod")
 			Run, http://code.jeanlalonde.ca/folderspopup/
 		else
-			Run, http://code.jeanlalonde.ca/folderspopup20beta/
+			Run, http://code.jeanlalonde.ca/beta-testers-wanted-for-folders-popup-v3/
 	IfMsgBox, No
 		IniWrite, %strLatestVersion%, %strIniFile%, Global, LatestVersionSkipped
 	IfMsgBox, Cancel ; Remind me
