@@ -4,14 +4,20 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: 3.0 (2014-0X-XX)
+	Version: 3.0.1 (2014-07-15)
+	* do not check if network favorites exist
+	* error icon when local favorite does not exist
+	* error message when unavailable local favorite is selected in popup menu
+	* traytip status when refreshing menus
+	
+	Version: 3.0.0 (2014-07-14)
 	* support favorite documents as popup menu items, add Document radio button to add dialog box
 	* when adding document, suggest short name for menu
 	* when menu item is a document, launch it with Run
 	* add icons to folders menu, submenus, documents and special folders
 	* add Settings Option for menu icon size, default size to 24
 	* keep the regular tray icon when suspended
-	* implement Exite tray menu
+	* implement Exit tray menu
 	* disable separator editing
 	* adapt labels to "favorites" instead of "folders"
 	* build function to auto-center action buttons in Gui
@@ -227,7 +233,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 3.0.0 BETA
+;@Ahk2Exe-SetVersion 3.0.1 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -272,7 +278,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.0.0" ; "major.minor.bugs"
+global strCurrentVersion := "3.0.1" ; "major.minor.bugs"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
