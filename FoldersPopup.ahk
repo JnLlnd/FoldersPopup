@@ -324,13 +324,7 @@ IfExist, %A_Startup%\%strAppName%.lnk
 }
 
 if (blnDisplayTrayTip)
-	TrayTip, % L(lTrayTipInstalledTitle, strAppName, strAppVersion)
-		, % L(lTrayTipInstalledDetail, strAppName
-			, Hotkey2Text(strModifiers1, strMouseButton1, strOptionsKey1)
-			, Hotkey2Text(strModifiers3, strMouseButton3, strOptionsKey3)
-			, Hotkey2Text(strModifiers2, strMouseButton2, strOptionsKey2)
-			, Hotkey2Text(strModifiers4, strMouseButton4, strOptionsKey4))
-		, , 1
+	GoSub, TrayTipInstalled
 
 OnExit, CleanUpBeforeExit
 
@@ -853,6 +847,9 @@ return
 BuildSpecialFoldersMenu:
 ;------------------------------------------------------------
 
+Menu, menuSpecialFolders, Add
+Menu, menuSpecialFolders, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
+
 Menu, menuSpecialFolders, Add, %lMenuDesktop%, OpenSpecialFolder
 Menu, menuSpecialFolders, Icon, %lMenuDesktop%, %A_WinDir%\System32\imageres.dll, 106, %intIconSize%
 Menu, menuSpecialFolders, Add, %lMenuDocuments%, OpenSpecialFolder
@@ -1014,7 +1011,13 @@ return
 
 ;------------------------------------------------------------
 BuildFoldersMenus:
+BuildFoldersMenusWithStatus:
 ;------------------------------------------------------------
+
+if (A_ThisLabel = "BuildFoldersMenusWithStatus")
+	TrayTip, % L(lTrayTipWorkingTitle, strAppName, strAppVersion)
+		, % L(lTrayTipWorkingDetail)
+		, , 1
 
 Menu, %lMainMenuName%, Add
 Menu, %lMainMenuName%, DeleteAll
@@ -1064,6 +1067,25 @@ if !(blnDonor)
 	Menu, %lMainMenuName%, Icon, %lDonateMenu%, %A_WinDir%\System32\imageres.dll, 208, %intIconSize%
 }
 
+if (A_ThisLabel = "BuildFoldersMenusWithStatus")
+	GoSub, TrayTipInstalled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+TrayTipInstalled:
+;------------------------------------------------------------
+
+TrayTip, % L(lTrayTipInstalledTitle, strAppName, strAppVersion)
+	, % L(lTrayTipInstalledDetail, strAppName
+		, Hotkey2Text(strModifiers1, strMouseButton1, strOptionsKey1)
+		, Hotkey2Text(strModifiers3, strMouseButton3, strOptionsKey3)
+		, Hotkey2Text(strModifiers2, strMouseButton2, strOptionsKey2)
+		, Hotkey2Text(strModifiers4, strMouseButton4, strOptionsKey4))
+	, , 1
+
 return
 ;------------------------------------------------------------
 
@@ -1110,33 +1132,40 @@ BuildOneMenu(strMenu)
 				. arrThisMenu[A_Index].FolderName
 			Menu, % arrThisMenu[A_Index].MenuName, Add, %strMenuName%, OpenFavorite
 			
-			if !FileExist(arrThisMenu[A_Index].FolderLocation) ; this favorite does not exist
+			if LocationIsNetwork(arrThisMenu[A_Index].FolderLocation)
+				; we don't check if network folders or documents exist
+				Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 29, %intIconSize%
+			else
 			{
-				Menu, % arrThisMenu[A_Index].MenuName, Disable, %strMenuName%
-				Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 94, %intIconSize%
-			}
-			else if LocationIsDocument(arrThisMenu[A_Index].FolderLocation) ; this is a file
-			{
-				; get icon, extract from kiu http://www.autohotkey.com/board/topic/8616-kiu-icons-manager-quickly-change-icon-files/
-				strLocation :=  arrThisMenu[A_Index].FolderLocation
-				SplitPath, strLocation, , , strExtension
-				RegRead, strHKeyClassRoot, HKEY_CLASSES_ROOT, .%strExtension%
-				RegRead, strDefaultIcon, HKEY_CLASSES_ROOT, %strHKeyClassRoot%\DefaultIcon
-				
-				IfInString, strDefaultIcon, `, ; this is for icongroup files
+				if !FileExist(arrThisMenu[A_Index].FolderLocation) ; this favorite does not exist
 				{
-					StringSplit, arrDefaultIcon, strDefaultIcon, `,
-					strDefaultIcon := arrDefaultIcon1
-					intDefaultIcon := arrDefaultIcon2
+					Menu, % arrThisMenu[A_Index].MenuName, Disable, %strMenuName%
+					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 94, %intIconSize%
 				}
-				else
-					intDefaultIcon := 1
+				else if LocationIsDocument(arrThisMenu[A_Index].FolderLocation) ; this is a file
+				{
+					; get icon, extract from kiu http://www.autohotkey.com/board/topic/8616-kiu-icons-manager-quickly-change-icon-files/
+					strLocation :=  arrThisMenu[A_Index].FolderLocation
+					SplitPath, strLocation, , , strExtension
+					RegRead, strHKeyClassRoot, HKEY_CLASSES_ROOT, .%strExtension%
+					RegRead, strDefaultIcon, HKEY_CLASSES_ROOT, %strHKeyClassRoot%\DefaultIcon
+					
+					IfInString, strDefaultIcon, `, ; this is for icongroup files
+					{
+						StringSplit, arrDefaultIcon, strDefaultIcon, `,
+						strDefaultIcon := arrDefaultIcon1
+						intDefaultIcon := arrDefaultIcon2
+					}
+					else
+						intDefaultIcon := 1
 
-				Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %strDefaultIcon%, intDefaultIcon, %intIconSize%
+					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %strDefaultIcon%, intDefaultIcon, %intIconSize%
+				}
+				else ; this is a folder
+					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 4, %intIconSize%
 			}
-			else ; this is a folder
-				Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 4, %intIconSize%
 		}
+
 }
 ;------------------------------------------------------------
 
@@ -1637,7 +1666,7 @@ Loop % LV_GetCount()
 }
 
 Gosub, LoadIniFile
-Gosub, BuildFoldersMenus
+Gosub, BuildFoldersMenusWithStatus
 GuiControl, Disable, %lGuiSave%
 GuiControl, , %lGuiCancel%, %lGuiClose%
 
@@ -1702,7 +1731,7 @@ if (blnSaveEnabled)
 		Gosub, BuildSpecialFoldersMenu
 		Gosub, BuildRecentFoldersMenu
 		Gosub, BuildSwitchMenu
-		Gosub, BuildFoldersMenus ; need to be initialized here - will be updated at each call to popup menu
+		Gosub, BuildFoldersMenusWithStatus ; need to be initialized here - will be updated at each call to popup menu
 
 		GuiControl, Disable, btnGuiSave
 		GuiControl, , btnGuiCancel, %lGuiClose%
@@ -1961,7 +1990,7 @@ if (FirstVsSecondIs(strLatestSkipped, strLatestVersion) >= 0 and (A_ThisMenuItem
 if FirstVsSecondIs(strLatestVersion, strCurrentVersion) = 1
 {
 	Gui, 1:+OwnDialogs
-	SetTimer, ChangeButtonNames, 50
+	SetTimer, ChangeButtonNamesUpdate, 50
 
 	MsgBox, 3, % l(lUpdateTitle, strAppName)
 		, % l(lUpdatePrompt, strAppName
@@ -2017,12 +2046,12 @@ FirstVsSecondIs(strFirstVersion, strSecondVersion)
 
 
 ;------------------------------------------------------------
-ChangeButtonNames: 
+ChangeButtonNamesUpdate:
 ;------------------------------------------------------------
 
 IfWinNotExist, % l(lUpdateTitle, strAppName)
     return  ; Keep waiting.
-SetTimer, ChangeButtonNames, Off 
+SetTimer, ChangeButtonNamesUpdate, Off
 WinActivate 
 ControlSetText, Button3, %lUpdateButtonRemind%
 
@@ -2318,7 +2347,7 @@ if (A_ThisLabel = "GuiEditFolderSave")
 	GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
 }
 
-Gosub, BuildFoldersMenus ; update menus
+Gosub, BuildFoldersMenusWithStatus ; update menus
 
 GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lDialogCancelButton%
@@ -2813,7 +2842,7 @@ for strMenuName, arrMenu in arrMenus
 	Menu, %strMenuName%, DeleteAll
 	arrMenu := ; free object's memory
 }
-Gosub, BuildFoldersMenus
+Gosub, BuildFoldersMenusWithStatus
 
 Gosub, 2GuiClose
 
@@ -3054,13 +3083,22 @@ if (blnDisplayMenuShortcuts)
 	StringTrimLeft, strThisMenu, A_ThisMenuItem, 3 ; remove "&1 " from menu item
 else
 	strThisMenu := A_ThisMenuItem
-strLocation := GetPathFor(A_ThisMenu, strThisMenu)
+strLocation := GetLocationFor(A_ThisMenu, strThisMenu)
 
 if (blnDiagMode)
 {
 	Diag("A_ThisHotkey", A_ThisHotkey)
 	Diag("Navigate", "RegularFolder")
 	Diag("Path", strLocation)
+}
+
+if !FileExist(strLocation) ; this favorite does not exist
+{
+	Gui, 1:+OwnDialogs
+	MsgBox, 0, % L(lDialogFavoriteDoesNotExistTitle, strAppName)
+		, % L(lDialogFavoriteDoesNotExistPrompt, strLocation)
+		, 30
+	return
 }
 
 if LocationIsDocument(strLocation) ; this is a file
@@ -3304,7 +3342,7 @@ WinUnderMouseID()
 
 
 ;------------------------------------------------------------
-GetPathFor(strMenu, strName)
+GetLocationFor(strMenu, strName)
 ;------------------------------------------------------------
 {
 	global
@@ -3910,6 +3948,17 @@ LocationIsDocument(strLocation)
 {
 	FileGetAttrib, strAttributes, %strLocation%
 	return !InStr(strAttributes, "D") ; not a folder
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+LocationIsNetwork(strLocation)
+;------------------------------------------------------------
+{
+	return SubStr(strLocation, 1, 2) = "\\"
+		or SubStr(strLocation, 1, 7) = "http://"
+		or SubStr(strLocation, 1, 8) = "https://"
 }
 ;------------------------------------------------------------
 

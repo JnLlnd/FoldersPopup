@@ -24,6 +24,8 @@ lDialogCancelTitle	Annuler - ~1~ ~2~
 lDialogEdit	Modifier
 lDialogEditDialogPrompt	Entrez le nouveau nom de la boîte de dialogue`n(ou une partie du nom):
 lDialogEditDialogTitle	Modifier Boîte de dialogue - ~1~ ~2~
+lDialogFavoriteDoesNotExistPrompt	Le favori "~1~" n'existe pas ou n'est pas disponible.`n`nSi ce favori réside sur un lecteur réseau, veuillez essayer à nouveau après l'authentification réseau.
+lDialogFavoriteDoesNotExistTitle	Favori introuvable - ~1~
 lDialogFileLabel	Document
 lDialogFileShortName	Nom du document (pour les menus)
 lDialogFolderLabel	Dossier
@@ -170,6 +172,8 @@ lOptionsWin	Win
 lReloadPrompt	Changement de langue enregistré: ~1~. Voulez-vous relancer ~2~ en ~1~ maintenant? Les changements non sauvegardés dans le menu des dossiers seront perdus.
 lTrayTipInstalledDetail	Pour afficher le menu de ~1~, appuyez sur:`n`n~2~ / ~3~`ndans un Explorateur de fichiers ou dans une boîte de dialogue`n`n~4~ / ~5~`npour ouvrir un nouvel Explorateur
 lTrayTipinstalledTitle	~1~ ~2~ est prêt!
+lTrayTipWorkingDetail	Préparation des menus
+lTrayTipWorkingTitle	~1~ ~2~ se prépare...
 lUpdateButtonRemind	Rappelez-moi
 lUpdateError	Une erreur est survenue lors de la vérification du numéro de la plus récente version. La vérification de la mise à jour est interrompue.
 lUpdatePrompt	Mettre à jour ~1~ de la version v~2~ à la version v~3~?
