@@ -5,6 +5,10 @@
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
 	Version: 3.0.1 (2014-07-15)
+	* add favorite type "F" folder, "D" document or "S" submenu and refactor all
+	* remove or add ... to main menu items
+	
+	Version: 3.0.1 (2014-07-15)
 	* do not check if network favorites exist
 	* error icon when local favorite does not exist
 	* error message when unavailable local favorite is selected in popup menu
@@ -462,7 +466,7 @@ Loop
 	if (strIniLine = "ERROR")
 		Break
 	strIniLine := strIniLine . "|||" ; additional "|" to make sure we have all empty items
-	; 1 FolderName, 2 FolderLocation, 3 MenuName, 4 SubmenuFullName
+	; 1 FolderName, 2 FolderLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType
 	StringSplit, arrThisFolder, strIniLine, |
 	
 	objFolder := Object() ; new menu item
@@ -473,8 +477,15 @@ Loop
 		objFolder.SubmenuFullName := lMainMenuName . arrThisFolder4 ; full name of the submenu, adding main menu name
 	else
 		objFolder.SubmenuFullName := ""
+	if StrLen(arrThisFolder5)
+		objFolder.FavoriteType := arrThisFolder5 ; "F" folder, "D" document or "S" submenu
+	else ; for upward compatibility from v1 and v2 ini files
+		if StrLen(objFolder.SubmenuFullName)
+			objFolder.FavoriteType := "S" ; "S" submenu
+		else ; for upward compatibility from v1 ini files
+			objFolder.FavoriteType := "F" ; "F" folder
 
-	if StrLen(objFolder.SubmenuFullName) ; then this is a new submenu
+	if (objFolder.FavoriteType := "S") ; then this is a new submenu
 	{
 		arrSubMenu := Object() ; create submenu
 		arrMenus.Insert(objFolder.SubmenuFullName, arrSubMenu) ; add this submenu to the array of menus
@@ -778,7 +789,7 @@ if (blnDisplaySwitchMenu)
 Menu, %lMainMenuName%
 	, % WindowIsAnExplorer(strTargetClass)  or WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
 	or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
-	, %lMenuAddThisFolder%
+	, %lMenuAddThisFolder%...
 Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
 
 return
@@ -1035,8 +1046,8 @@ Menu, %lMainMenuName%, Add
 
 if (blnDisplaySpecialFolders)
 {
-	Menu, %lMainMenuName%, Add, %lMenuSpecialFolders%..., :menuSpecialFolders
-	Menu, %lMainMenuName%, Icon, %lMenuSpecialFolders%..., %A_WinDir%\System32\imageres.dll, 203, %intIconSize%
+	Menu, %lMainMenuName%, Add, %lMenuSpecialFolders%, :menuSpecialFolders
+	Menu, %lMainMenuName%, Icon, %lMenuSpecialFolders%, %A_WinDir%\System32\imageres.dll, 203, %intIconSize%
 }
 
 if (blnDisplaySwitchMenu)
@@ -1047,8 +1058,8 @@ if (blnDisplaySwitchMenu)
 	Menu, menuSwitch, Icon, %lMenuSwitchExplorer%, %A_WinDir%\System32\imageres.dll, 177, %intIconSize%
 	Menu, menuSwitch, Add, %lMenuSwitchDialog%, :menuSwitchDialog
 	Menu, menuSwitch, Icon, %lMenuSwitchDialog%, %A_WinDir%\System32\imageres.dll, 176, %intIconSize%
-	Menu, %lMainMenuName%, Add, %lMenuSwitch%..., :menuSwitch
-	Menu, %lMainMenuName%, Icon, %lMenuSwitch%..., %A_WinDir%\System32\imageres.dll, 177, %intIconSize%
+	Menu, %lMainMenuName%, Add, %lMenuSwitch%, :menuSwitch
+	Menu, %lMainMenuName%, Icon, %lMenuSwitch%, %A_WinDir%\System32\imageres.dll, 177, %intIconSize%
 }
 
 if (blnDisplayRecentFolders)
@@ -1060,17 +1071,17 @@ if (blnDisplayRecentFolders)
 if (blnDisplaySpecialFolders or blnDisplayRecentFolders or blnDisplaySwitchMenu)
 	Menu, %lMainMenuName%, Add
 
-Menu, %lMainMenuName%, Add, % L(lMenuSettings, strAppName), GuiShow
-Menu, %lMainMenuName%, Icon, % L(lMenuSettings, strAppName), %A_WinDir%\System32\imageres.dll, 110, %intIconSize%
-Menu, %lMainMenuName%, Default, % L(lMenuSettings, strAppName)
-Menu, %lMainMenuName%, Add, %lMenuAddThisFolder%, AddThisFolder
-Menu, %lMainMenuName%, Icon, %lMenuAddThisFolder%, %A_WinDir%\System32\imageres.dll, 217, %intIconSize%
+Menu, %lMainMenuName%, Add, % L(lMenuSettings, strAppName) . "...", GuiShow
+Menu, %lMainMenuName%, Icon, % L(lMenuSettings, strAppName) . "...", %A_WinDir%\System32\imageres.dll, 110, %intIconSize%
+Menu, %lMainMenuName%, Default, % L(lMenuSettings, strAppName) . "..."
+Menu, %lMainMenuName%, Add, %lMenuAddThisFolder%..., AddThisFolder
+Menu, %lMainMenuName%, Icon, %lMenuAddThisFolder%..., %A_WinDir%\System32\imageres.dll, 217, %intIconSize%
 
 if !(blnDonor)
 {
 	Menu, %lMainMenuName%, Add
-	Menu, %lMainMenuName%, Add, %lDonateMenu%, GuiDonate
-	Menu, %lMainMenuName%, Icon, %lDonateMenu%, %A_WinDir%\System32\imageres.dll, 208, %intIconSize%
+	Menu, %lMainMenuName%, Add, %lDonateMenu%..., GuiDonate
+	Menu, %lMainMenuName%, Icon, %lDonateMenu%..., %A_WinDir%\System32\imageres.dll, 208, %intIconSize%
 }
 
 if (A_ThisLabel = "BuildFoldersMenusWithStatus")
@@ -1111,7 +1122,7 @@ BuildOneMenu(strMenu)
 	
 	arrThisMenu := arrMenus[strMenu]
 	Loop, % arrThisMenu.MaxIndex()
-		if StrLen(arrThisMenu[A_Index].SubmenuFullName) ; this is a submenu
+		if (arrThisMenu[A_Index].FavoriteType = "S") ; this is a submenu
 		{
 			strSubMenuFullName := arrThisMenu[A_Index].SubmenuFullName
 			strSubMenuDisplayName := arrThisMenu[A_Index].FolderName
@@ -1138,40 +1149,36 @@ BuildOneMenu(strMenu)
 				. arrThisMenu[A_Index].FolderName
 			Menu, % arrThisMenu[A_Index].MenuName, Add, %strMenuName%, OpenFavorite
 			
-			if LocationIsNetwork(arrThisMenu[A_Index].FolderLocation)
-				; we don't check if network folders or documents exist
+			if (SubStr(arrThisMenu[A_Index].FolderLocation, 1, 2) = "\\"
+				or SubStr(arrThisMenu[A_Index].FolderLocation, 1, 7) = "http://"
+				or SubStr(arrThisMenu[A_Index].FolderLocation, 1, 8) = "https://")
+				
 				Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 29, %intIconSize%
-			else
+				
+			else if (arrThisMenu[A_Index].FavoriteType = "D") ; this is a document
 			{
-				if !FileExist(arrThisMenu[A_Index].FolderLocation) ; this favorite does not exist
+				; get icon, extract from kiu http://www.autohotkey.com/board/topic/8616-kiu-icons-manager-quickly-change-icon-files/
+				strLocation :=  arrThisMenu[A_Index].FolderLocation
+				SplitPath, strLocation, , , strExtension
+				RegRead, strHKeyClassRoot, HKEY_CLASSES_ROOT, .%strExtension%
+				RegRead, strDefaultIcon, HKEY_CLASSES_ROOT, %strHKeyClassRoot%\DefaultIcon
+				
+				IfInString, strDefaultIcon, `, ; this is for icongroup files
 				{
-					Menu, % arrThisMenu[A_Index].MenuName, Disable, %strMenuName%
-					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 94, %intIconSize%
+					StringSplit, arrDefaultIcon, strDefaultIcon, `,
+					strDefaultIcon := arrDefaultIcon1
+					intDefaultIcon := arrDefaultIcon2
 				}
-				else if LocationIsDocument(arrThisMenu[A_Index].FolderLocation) ; this is a file
-				{
-					; get icon, extract from kiu http://www.autohotkey.com/board/topic/8616-kiu-icons-manager-quickly-change-icon-files/
-					strLocation :=  arrThisMenu[A_Index].FolderLocation
-					SplitPath, strLocation, , , strExtension
-					RegRead, strHKeyClassRoot, HKEY_CLASSES_ROOT, .%strExtension%
-					RegRead, strDefaultIcon, HKEY_CLASSES_ROOT, %strHKeyClassRoot%\DefaultIcon
-					
-					IfInString, strDefaultIcon, `, ; this is for icongroup files
-					{
-						StringSplit, arrDefaultIcon, strDefaultIcon, `,
-						strDefaultIcon := arrDefaultIcon1
-						intDefaultIcon := arrDefaultIcon2
-					}
-					else
-						intDefaultIcon := 1
+				else
+					intDefaultIcon := 1
 
-					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %strDefaultIcon%, intDefaultIcon, %intIconSize%
-				}
-				else ; this is a folder
-					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 4, %intIconSize%
+				Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %strDefaultIcon%, intDefaultIcon, %intIconSize%
 			}
+			else ; this is a folder
+				
+				Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 4, %intIconSize%
+				
 		}
-
 }
 ;------------------------------------------------------------
 
@@ -1231,9 +1238,10 @@ Gui, 1:Add, DropDownList, xm+30 yp w320 vdrpMenusList gGuiMenusListChanged ; Sor
 Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, ListView
 	, xm+30 w320 h220 Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFoldersList gGuiFoldersListEvent
-	, %lGuiLvFoldersHeader%|Hidden Menu|Hidden Submenu
+	, %lGuiLvFoldersHeader%|Hidden Menu|Hidden Submenu|Hidden FavoriteType
 LV_ModifyCol(3, 0) ; hide 3rd column
 LV_ModifyCol(4, 0) ; hide 4th column
+LV_ModifyCol(5, 0) ; hide 5th column
 
 Gui, 1:Add, Text, Section x+0 yp
 
@@ -1325,6 +1333,7 @@ for strMenuName, arrMenu in arrMenus
 		objFolderBK.FolderName := objFolder.FolderName
 		objFolderBK.FolderLocation := objFolder.FolderLocation
 		objFolderBK.SubmenuFullName := objFolder.SubmenuFullName
+		objFolderBK.FavoriteType := objFolder.FavoriteType
 		arrMenuBK.Insert(objFolderBK)
 	}
 	arrMenusBK.Insert(strMenuName, arrMenuBK) ; add this submenu to the array of menus
@@ -1350,6 +1359,7 @@ for strMenuName, arrMenuBK in arrMenusBK
 		objFolder.FolderName := objFolderBK.FolderName
 		objFolder.FolderLocation := objFolderBK.FolderLocation
 		objFolder.SubmenuFullName := objFolderBK.SubmenuFullName
+		objFolder.FavoriteType := objFolderBK.FavoriteType
 		arrMenu.Insert(objFolder)
 	}
 	arrMenus.Insert(strMenuName, arrMenu) ; add this submenu to the array of menus
@@ -1447,9 +1457,10 @@ if !(intItemToRemove)
 	return
 }
 
-LV_GetText(strSubmenuFullName, intItemToRemove, 4)
-if StrLen(strSubmenuFullName)
+LV_GetText(strFavoriteType, intItemToRemove, 5)
+if (strFavoriteType = "S") ; this is a submneu
 {
+	LV_GetText(strSubmenuFullName, intItemToRemove, 4)
 	MsgBox, 52, % L(lDialogFolderRemoveTitle, strAppName), % L(lDialogFolderRemovePrompt, strSubmenuFullName)
 	IfMsgBox, No
 		return
@@ -1461,7 +1472,7 @@ LV_Modify(intItemToRemove, "Select Focus")
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
 
-if StrLen(strSubmenuFullName)
+if (strFavoriteType = "S")
 {
 	Gosub, SaveCurrentListviewToMenuObject ; save current LV before update the dropdown menu
 	GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
@@ -1480,7 +1491,7 @@ RemoveAllSubMenus(strSubmenuFullName)
 ;------------------------------------------------------------
 {
 	Loop, % arrMenus[strSubmenuFullName].MaxIndex()
-		if StrLen(arrMenus[strSubmenuFullName][A_Index].SubmenuFullName)
+		if (arrMenus[strSubmenuFullName][A_Index].FavoriteType = "S") ; this is a submenu
 			RemoveAllSubMenus(arrMenus[strSubmenuFullName][A_Index].SubmenuFullName) ; recursive call
 	arrMenus.Remove(strSubmenuFullName)
 }
@@ -1533,14 +1544,16 @@ LV_GetText(strThisName, intSelectedRow, 1)
 LV_GetText(strThisLocation, intSelectedRow, 2)
 LV_GetText(strThisMenu, intSelectedRow, 3)
 LV_GetText(strThisSubmenu, intSelectedRow, 4)
+LV_GetText(strThisFavoriteType, intSelectedRow, 5)
 
 LV_GetText(strPriorName, intSelectedRow - 1, 1)
 LV_GetText(strPriorLocation, intSelectedRow - 1, 2)
 LV_GetText(strPriorMenu, intSelectedRow - 1, 3)
 LV_GetText(strPriorSubmenu, intSelectedRow - 1, 4)
+LV_GetText(strPriorFavoriteType, intSelectedRow - 1, 5)
 
-LV_Modify(intSelectedRow, "", strPriorName, strPriorLocation, strPriorMenu, strPriorSubmenu)
-LV_Modify(intSelectedRow - 1, "Select Focus Vis", strThisName, strThisLocation, strThisMenu, strThisSubmenu)
+LV_Modify(intSelectedRow, "", strPriorName, strPriorLocation, strPriorMenu, strPriorSubmenu, strPriorFavoriteType)
+LV_Modify(intSelectedRow - 1, "Select Focus Vis", strThisName, strThisLocation, strThisMenu, strThisSubmenu, strThisFavoriteType)
 
 GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lGuiCancel%
@@ -1563,14 +1576,16 @@ LV_GetText(strThisName, intSelectedRow, 1)
 LV_GetText(strThisLocation, intSelectedRow, 2)
 LV_GetText(strThisMenu, intSelectedRow, 3)
 LV_GetText(strThisSubmenu, intSelectedRow, 4)
+LV_GetText(strThisFavoriteType, intSelectedRow, 5)
 
 LV_GetText(strNextName, intSelectedRow + 1, 1)
 LV_GetText(strNextLocation, intSelectedRow + 1, 2)
 LV_GetText(strNextMenu, intSelectedRow + 1, 3)
 LV_GetText(strNextSubmenu, intSelectedRow + 1, 4)
+LV_GetText(strNextFavoriteType, intSelectedRow + 1, 5)
 	
-LV_Modify(intSelectedRow, "", strNextName, strNextLocation, strNextMenu, strNextSubmenu)
-LV_Modify(intSelectedRow + 1, "Select Focus Vis", strThisName, strThisLocation, strThisMenu, strThisSubmenu)
+LV_Modify(intSelectedRow, "", strNextName, strNextLocation, strNextMenu, strNextSubmenu, strNextFavoriteType)
+LV_Modify(intSelectedRow + 1, "Select Focus Vis", strThisName, strThisLocation, strThisMenu, strThisSubmenu, strThisFavoriteType)
 
 GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lGuiCancel%
@@ -1693,13 +1708,14 @@ SaveOneMenu(strMenu)
 	
 	Loop, % arrMenus[strMenu].MaxIndex()
 	{
-		strValue := arrMenus[strMenu][A_Index].FolderName 
-			. "|" . arrMenus[strMenu][A_Index].FolderLocation 
+		strValue := arrMenus[strMenu][A_Index].FolderName
+			. "|" . arrMenus[strMenu][A_Index].FolderLocation
 			. "|" . SubStr(arrMenus[strMenu][A_Index].MenuName, StrLen(lMainMenuName) + 1) ; remove main menu name for ini file
 			. "|" . SubStr(arrMenus[strMenu][A_Index].SubmenuFullName, StrLen(lMainMenuName) + 1) ; remove main menu name for ini file
+			. "|" . arrMenus[strMenu][A_Index].FavoriteType
 		intIndex := intIndex + 1
 		IniWrite, %strValue%, %strIniFile%, Folders, Folder%intIndex%
-		if StrLen(arrMenus[strMenu][A_Index].SubmenuFullName)
+		if (arrMenus[strMenu][A_Index].FavoriteType = "S")
 			SaveOneMenu(arrMenus[strMenu][A_Index].SubmenuFullName) ; recursive call
 	}
 }
@@ -2187,18 +2203,11 @@ if !StrLen(strCurrentName)
 }
 LV_GetText(strCurrentLocation, intRowToEdit, 2)
 LV_GetText(strCurrentSubmenuFullName, intRowToEdit, 4)
+LV_GetText(strFavoriteType, intRowToEdit, 5)
 
-blnRadioSubmenu := StrLen(strCurrentSubmenuFullName)
-if (blnRadioSubmenu)
-{
-	blnRadioFolder := False
-	blnRadioFile := False
-}
-else
-{
-	blnRadioFile := LocationIsDocument(strCurrentLocation)
-	blnRadioFolder := !blnRadioFile
-}
+blnRadioSubmenu := (strFavoriteType = "S")
+blnRadioFolder := (strFavoriteType = "F")
+blnRadioFile := (strFavoriteType = "D")
 
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
@@ -2307,6 +2316,11 @@ else
 	else
 		strNewSubmenuFullName := ""
 
+if (blnRadioSubmenu)
+	strFavoriteType := "S" ; submenu
+else
+	strFavoriteType := (blnRadioFile ? "D" : "F") ; document or folder
+
 Gosub, 2GuiClose
 
 Gui, 1:Default
@@ -2317,7 +2331,8 @@ if (strParentMenu = strCurrentMenu) ; add as top row to current menu
 {
 	if (A_ThisLabel = "GuiAddFolderSave")
 	{
-		LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", strFolderShortName, strFolderLocation, strCurrentMenu, strSubmenuFullName)
+		LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus"
+			, strFolderShortName, strFolderLocation, strCurrentMenu, strSubmenuFullName, strFavoriteType)
 		LV_Modify(LV_GetNext(), "Vis")
 	
 		Gosub, SaveCurrentListviewToMenuObject ; save current LV tbefore update the dropdown menu
@@ -2325,7 +2340,8 @@ if (strParentMenu = strCurrentMenu) ; add as top row to current menu
 	}
 	else ; GuiEditFolderSave
 	{
-		LV_Modify(intRowToEdit, "Select Focus", strFolderShortName, strFolderLocation, strCurrentMenu, strNewSubmenuFullName)
+		LV_Modify(intRowToEdit, "Select Focus"
+			, strFolderShortName, strFolderLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType)
 	}
 }
 else ; add menu item to selected menu object
@@ -2335,6 +2351,7 @@ else ; add menu item to selected menu object
 	objFolder.FolderName := strFolderShortName ; display name of this menu item
 	objFolder.FolderLocation := strFolderLocation ; path for this menu item
 	objFolder.SubmenuFullName := strNewSubmenuFullName ; full name of the submenu
+	objFolder.FavoriteType := strFavoriteType ; "F" folder, "D" document or "S" submenu
 	arrMenus[objFolder.MenuName].Insert(1, objFolder) ; add this menu item to the new menu
 
 	if (A_ThisLabel = "GuiEditFolderSave")
@@ -2373,7 +2390,7 @@ UpdateMenuNameInSubmenus(strOldMenu, strNewMenu)
 	Loop, % arrMenus[strNewMenu].MaxIndex()
 	{
 		arrMenus[strNewMenu][A_Index].MenuName := strNewMenu
-		if StrLen(arrMenus[strNewMenu][A_Index].SubmenuFullName)
+		if (arrMenus[strNewMenu][A_Index].FavoriteType = "S")
 		{
 			arrMenus[strNewMenu][A_Index].SubmenuFullName := strNewMenu . lGuiSubmenuSeparator . arrMenus[strNewMenu][A_Index].FolderName
 			UpdateMenuNameInSubmenus(strOldMenu . lGuiSubmenuSeparator . arrMenus[strOldMenu][A_Index].FolderName
@@ -3023,10 +3040,12 @@ Gui, 1:ListView, lvFoldersList
 LV_Delete()
 
 Loop, % arrMenus[strCurrentMenu].MaxIndex()
-	if StrLen(arrMenus[strCurrentMenu][A_Index].SubmenuFullName) ; this is a submenu
-		LV_Add(, arrMenus[strCurrentMenu][A_Index].FolderName, lGuiSubmenuLocation, arrMenus[strCurrentMenu][A_Index].MenuName, arrMenus[strCurrentMenu][A_Index].SubmenuFullName)
-	else ; this is a folder
-		LV_Add(, arrMenus[strCurrentMenu][A_Index].FolderName, arrMenus[strCurrentMenu][A_Index].FolderLocation, arrMenus[strCurrentMenu][A_Index].MenuName, "")
+	if (arrMenus[strCurrentMenu][A_Index].FavoriteType = "S") ; this is a submenu
+		LV_Add(, arrMenus[strCurrentMenu][A_Index].FolderName, lGuiSubmenuLocation, arrMenus[strCurrentMenu][A_Index].MenuName
+			, arrMenus[strCurrentMenu][A_Index].SubmenuFullName, arrMenus[strCurrentMenu][A_Index].FavoriteType)
+	else ; this is a folder or document
+		LV_Add(, arrMenus[strCurrentMenu][A_Index].FolderName, arrMenus[strCurrentMenu][A_Index].FolderLocation, arrMenus[strCurrentMenu][A_Index].MenuName
+			, "", arrMenus[strCurrentMenu][A_Index].FavoriteType)
 LV_Modify(1, "Select Focus")
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
@@ -3050,12 +3069,14 @@ Loop % LV_GetCount()
 	LV_GetText(strLocation, A_Index, 2)
 	LV_GetText(strMenu, A_Index, 3)
 	LV_GetText(strSubmenu, A_Index, 4)
+	LV_GetText(strFavoriteType, A_Index, 5)
 
 	objFolder := Object() ; new menu item
 	objFolder.FolderName := strName ; display name of this menu item
 	objFolder.FolderLocation := strLocation ; path for this menu item
 	objFolder.MenuName := strCurrentMenu ; parent menu of this menu item - do not use strMenu because lack of lMainMenuName
 	objFolder.SubmenuFullName := strSubmenu ; if menu, full name of the submenu
+	objFolder.FavoriteType := strFavoriteType ; "F" folder, "D" document or "S" submenu
 	arrMenus[strCurrentMenu].Insert(objFolder) ; add this menu item to parent menu - do not use strMenu because lack of lMainMenuName
 }
 
@@ -3073,7 +3094,7 @@ BuildMenuTreeDropDown(strMenu, strDefaultMenu, strSkipSubmenu := "")
 		strList := strList . "|" ; default value
 
 	Loop, % arrMenus[strMenu].MaxIndex()
-		if StrLen(arrMenus[strMenu][A_Index].SubmenuFullName) ; this is a submenu
+		if (arrMenus[strMenu][A_Index].FavoriteType = "S") ; this is a submenu
 			if (arrMenus[strMenu][A_Index].SubmenuFullName <> strSkipSubmenu) ; skip if under edited submenu
 				strList := strList . "|" . BuildMenuTreeDropDown(arrMenus[strMenu][A_Index].SubmenuFullName, strDefaultMenu, strSkipSubmenu) ; recursive call
 	return strList
@@ -3090,12 +3111,14 @@ if (blnDisplayMenuShortcuts)
 else
 	strThisMenu := A_ThisMenuItem
 strLocation := GetLocationFor(A_ThisMenu, strThisMenu)
+strFavoriteType := GetFavoriteTypeFor(A_ThisMenu, strThisMenu)
 
 if (blnDiagMode)
 {
 	Diag("A_ThisHotkey", A_ThisHotkey)
 	Diag("Navigate", "RegularFolder")
 	Diag("Path", strLocation)
+	Diag("FavoriteType", strFavoriteType)
 }
 
 if !FileExist(strLocation) ; this favorite does not exist
@@ -3107,7 +3130,7 @@ if !FileExist(strLocation) ; this favorite does not exist
 	return
 }
 
-if LocationIsDocument(strLocation) ; this is a file
+if (strFavoriteType = "D") ; this is a file
 {
 	Run, %strLocation%
 	return
@@ -3356,6 +3379,19 @@ GetLocationFor(strMenu, strName)
 	Loop, % arrMenus[strMenu].MaxIndex()
 		if (strName = arrMenus[strMenu][A_Index].FolderName)
 			return arrMenus[strMenu][A_Index].FolderLocation
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GetFavoriteTypeFor(strMenu, strName)
+;------------------------------------------------------------
+{
+	global
+	
+	Loop, % arrMenus[strMenu].MaxIndex()
+		if (strName = arrMenus[strMenu][A_Index].FolderName)
+			return arrMenus[strMenu][A_Index].FavoriteType
 }
 ;------------------------------------------------------------
 
@@ -3952,19 +3988,8 @@ WM_MOUSEMOVE(wParam, lParam)
 LocationIsDocument(strLocation)
 ;------------------------------------------------------------
 {
-	FileGetAttrib, strAttributes, %strLocation%
-	return !InStr(strAttributes, "D") ; not a folder
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-LocationIsNetwork(strLocation)
-;------------------------------------------------------------
-{
-	return SubStr(strLocation, 1, 2) = "\\"
-		or SubStr(strLocation, 1, 7) = "http://"
-		or SubStr(strLocation, 1, 8) = "https://"
+    FileGetAttrib, strAttributes, %strLocation%
+    return !InStr(strAttributes, "D") ; not a folder
 }
 ;------------------------------------------------------------
 
