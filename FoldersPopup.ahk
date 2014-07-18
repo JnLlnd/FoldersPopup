@@ -4,7 +4,7 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: 3.0.1 (2014-07-15)
+	Version: 3.0.2 (2014-07-16)
 	* add favorite type "F" folder, "D" document or "S" submenu and refactor all
 	* remove or add ... to main menu items
 	
@@ -237,7 +237,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 3.0.1 BETA
+;@Ahk2Exe-SetVersion 3.0.2 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -282,7 +282,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.0.1" ; "major.minor.bugs"
+global strCurrentVersion := "3.0.2" ; "major.minor.bugs"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
@@ -468,24 +468,27 @@ Loop
 	strIniLine := strIniLine . "|||" ; additional "|" to make sure we have all empty items
 	; 1 FolderName, 2 FolderLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType
 	StringSplit, arrThisFolder, strIniLine, |
-	
+
 	objFolder := Object() ; new menu item
 	objFolder.FolderName := arrThisFolder1 ; display name of this menu item
 	objFolder.FolderLocation := arrThisFolder2 ; path for this menu item
 	objFolder.MenuName := lMainMenuName . arrThisFolder3 ; parent menu of this menu item, adding main menu name
+
 	if StrLen(arrThisFolder4)
 		objFolder.SubmenuFullName := lMainMenuName . arrThisFolder4 ; full name of the submenu, adding main menu name
 	else
 		objFolder.SubmenuFullName := ""
 	if StrLen(arrThisFolder5)
+		
 		objFolder.FavoriteType := arrThisFolder5 ; "F" folder, "D" document or "S" submenu
+		
 	else ; for upward compatibility from v1 and v2 ini files
 		if StrLen(objFolder.SubmenuFullName)
 			objFolder.FavoriteType := "S" ; "S" submenu
 		else ; for upward compatibility from v1 ini files
 			objFolder.FavoriteType := "F" ; "F" folder
 
-	if (objFolder.FavoriteType := "S") ; then this is a new submenu
+	if (objFolder.FavoriteType = "S") ; then this is a new submenu
 	{
 		arrSubMenu := Object() ; create submenu
 		arrMenus.Insert(objFolder.SubmenuFullName, arrSubMenu) ; add this submenu to the array of menus
@@ -716,7 +719,7 @@ if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or Win
 	Menu, %lMainMenuName%
 		, % WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
 		or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
-		, %lMenuAddThisFolder%
+		, %lMenuAddThisFolder%...
 	Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
 }
 else
@@ -1137,7 +1140,7 @@ BuildOneMenu(strMenu)
 				Menu, % arrThisMenu[A_Index].MenuName, Add, % arrThisMenu[A_Index].FolderName, OpenFavorite ; will never be called because disabled
 				Menu, % arrThisMenu[A_Index].MenuName, Disable, % arrThisMenu[A_Index].FolderName
 			}
-			Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 200, %intIconSize%
+			Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 204, %intIconSize%
 		}
 		else if (arrThisMenu[A_Index].FolderName = lMenuSeparator) ; this is a separator
 
