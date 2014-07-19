@@ -1,9 +1,3 @@
-/*
-Todo:
-
-Bugs:
-
-*/
 ;===============================================
 /*
 	FoldersPopup
@@ -394,14 +388,18 @@ if (A_OSVersion = "WIN_XP")
 	strIconsFile := "shell32|shell32|shell32|shell32|shell32|shell32|shell32"
 				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
 				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
-	strIconsIndex := "35|127|118|16|19|22|33|4|25|4|4|147|147|147|214|72|88|161|44|10|3|4"
+	strIconsIndex := "35|127|118|16|19|22|33"
+				. "|4|25|4|4|147|147|147"
+				. "|214|166|111|161|44|10|3|4"
 }
 else
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|imageres|imageres|imageres|imageres|imageres|imageres"
-	strIconsIndex := "106|189|68|105|115|23|50|113|96|203|203|177|176|177|113|110|217|208|204|29|3|4"
+	strIconsIndex := "106|189|68|105|115|23|50"
+				. "|113|96|203|203|177|176|177|"
+				. "113|110|217|208|204|29|3|4"
 }
 
 StringSplit, arrIconsFile, strIconsFile, |
