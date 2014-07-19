@@ -1,3 +1,9 @@
+/*
+Todo:
+
+Bugs:
+
+*/
 ;===============================================
 /*
 	FoldersPopup
@@ -7,6 +13,9 @@
 	Version: 3.0.2 (2014-07-16)
 	* add favorite type "F" folder, "D" document or "S" submenu and refactor all
 	* remove or add ... to main menu items
+	* manage icons resource at init, supporting XP and Win7+
+	* include select parent menu when add favorite
+	* fix old 2.0 bug not detecting name already used when adding from add this folder
 	
 	Version: 3.0.1 (2014-07-15)
 	* do not check if network favorites exist
@@ -288,7 +297,10 @@ global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? "
 global blnDiagMode := False
 global strDiagFile := A_ScriptDir . "\" . strAppName . "-DIAG.txt"
 global strIniFile := A_ScriptDir . "\" . strAppName . ".ini"
-blnMenuReady := false
+global blnMenuReady := false
+global arrSubmenuStack := Object()
+global objIconsFile := Object()
+global objIconsIndex := Object()
 
 if InStr(A_ScriptDir, A_Temp) ; must be positioned after strAppName is created
 ; if the app runs from a zip file, the script directory is created under the system Temp folder
@@ -306,7 +318,6 @@ else if InStr(A_ComputerName, "STIC") ; for my work hotkeys
 	strIniFile := A_ScriptDir . "\" . strAppName . "-WORK.ini"
 ; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
-global arrSubmenuStack := Object()
 
 ; Keep gosubs in this order
 Gosub, InitSystemArrays
@@ -373,6 +384,35 @@ StringSplit, arrHotkeyLabels, strHotkeyLabels, |
 strMouseButtons := "LButton|MButton|RButton|XButton1|XButton2|WheelUp|WheelDown|WheelLeft|WheelRight|"
 ; leave last | to enable default value on the last item
 StringSplit, arrMouseButtons, strMouseButtons, |
+
+strIconsMenus := "lMenuDesktop|lMenuDocuments|lMenuPictures|lMenuMyComputer|lMenuNetworkNeighborhood|lMenuControlPanel|lMenuRecycleBin"
+	. "|menuRecentFolders|menuSwitchDialog|menuSwitchExplorer|lMenuSpecialFolders|lMenuSwitchExplorer|lMenuSwitchDialog|lMenuSwitch"
+	. "|lMenuRecentFolders|lMenuSettings|lMenuAddThisFolder|lDonateMenu|Submenu|Network|UnknownDocument|Folder"
+
+if (A_OSVersion = "WIN_XP")
+{
+	strIconsFile := "shell32|shell32|shell32|shell32|shell32|shell32|shell32"
+				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
+				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
+	strIconsIndex := "35|127|118|16|19|22|33|4|25|4|4|147|147|147|214|72|88|161|44|10|3|4"
+}
+else
+{
+	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
+				. "|imageres|imageres|imageres|imageres|imageres|imageres|imageres"
+				. "|imageres|imageres|imageres|imageres|imageres|imageres|imageres|imageres"
+	strIconsIndex := "106|189|68|105|115|23|50|113|96|203|203|177|176|177|113|110|217|208|204|29|3|4"
+}
+
+StringSplit, arrIconsFile, strIconsFile, |
+StringSplit, arrIconsIndex, strIconsIndex, |
+
+Loop, Parse, strIconsMenus, |
+{
+	objIconsFile[A_LoopField] := A_WinDir . "\System32\" . arrIconsFile%A_Index% . ".dll"
+	objIconsIndex[A_LoopField] := arrIconsIndex%A_Index%
+}
+; example: objIconsFile["lMenuPictures"] and objIconsIndex["lMenuPictures"]
 
 return
 ;-----------------------------------------------------------
@@ -871,21 +911,28 @@ Menu, menuSpecialFolders, Add
 Menu, menuSpecialFolders, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
 
 Menu, menuSpecialFolders, Add, %lMenuDesktop%, OpenSpecialFolder
-Menu, menuSpecialFolders, Icon, %lMenuDesktop%, %A_WinDir%\System32\imageres.dll, 106, %intIconSize%
+Menu, menuSpecialFolders, Icon, %lMenuDesktop%
+	, % objIconsFile["lMenuDesktop"], % objIconsIndex["lMenuDesktop"], %intIconSize%
 Menu, menuSpecialFolders, Add, %lMenuDocuments%, OpenSpecialFolder
-Menu, menuSpecialFolders, Icon, %lMenuDocuments%, %A_WinDir%\System32\imageres.dll, 189, %intIconSize%
+Menu, menuSpecialFolders, Icon, %lMenuDocuments%
+	, % objIconsFile["lMenuDocuments"], % objIconsIndex["lMenuDocuments"], %intIconSize%
 Menu, menuSpecialFolders, Add, %lMenuPictures%, OpenSpecialFolder
-Menu, menuSpecialFolders, Icon, %lMenuPictures%, %A_WinDir%\System32\imageres.dll, 68, %intIconSize%
+Menu, menuSpecialFolders, Icon, %lMenuPictures%
+	, % objIconsFile["lMenuPictures"], % objIconsIndex["lMenuPictures"], %intIconSize%
 Menu, menuSpecialFolders, Add
 Menu, menuSpecialFolders, Add, %lMenuMyComputer%, OpenSpecialFolder
-Menu, menuSpecialFolders, Icon, %lMenuMyComputer%, %A_WinDir%\System32\imageres.dll, 105, %intIconSize% ; %A_WinDir%\System32\Shell32.dll, 303, 16
+Menu, menuSpecialFolders, Icon, %lMenuMyComputer%
+	, % objIconsFile["lMenuMyComputer"], % objIconsIndex["lMenuMyComputer"], %intIconSize%
 Menu, menuSpecialFolders, Add, %lMenuNetworkNeighborhood%, OpenSpecialFolder
-Menu, menuSpecialFolders, Icon, %lMenuNetworkNeighborhood%, %A_WinDir%\System32\imageres.dll, 115, %intIconSize% ; %A_WinDir%\System32\Shell32.dll, 303, 16
+Menu, menuSpecialFolders, Icon, %lMenuNetworkNeighborhood%
+	, % objIconsFile["lMenuNetworkNeighborhood"], % objIconsIndex["lMenuNetworkNeighborhood"], %intIconSize%
 Menu, menuSpecialFolders, Add
 Menu, menuSpecialFolders, Add, %lMenuControlPanel%, OpenSpecialFolder
-Menu, menuSpecialFolders, Icon, %lMenuControlPanel%, %A_WinDir%\System32\imageres.dll, 23, %intIconSize%
+Menu, menuSpecialFolders, Icon, %lMenuControlPanel%
+	, % objIconsFile["lMenuControlPanel"], % objIconsIndex["lMenuControlPanel"], %intIconSize%
 Menu, menuSpecialFolders, Add, %lMenuRecycleBin%, OpenSpecialFolder
-Menu, menuSpecialFolders, Icon, %lMenuRecycleBin%, %A_WinDir%\System32\imageres.dll, 50, %intIconSize%
+Menu, menuSpecialFolders, Icon, %lMenuRecycleBin%
+	, % objIconsFile["lMenuRecycleBin"], % objIconsIndex["lMenuRecycleBin"], %intIconSize%
 
 return
 ;------------------------------------------------------------
@@ -942,7 +989,8 @@ Loop, parse, strDirList, `n
 	
 	strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strOutTarget
 	Menu, menuRecentFolders, Add, %strMenuName%, OpenRecentFolder
-	Menu, menuRecentFolders, Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 4, %intIconSize%
+	Menu, menuRecentFolders, Icon, %strMenuName%
+		, % objIconsFile["menuRecentFolders"], % objIconsIndex["menuRecentFolders"], %intIconSize%
 
 	if (intRecentFoldersIndex >= intRecentFolders)
 		break
@@ -1009,7 +1057,8 @@ For pExp in ComObjCreate("Shell.Application").Windows
 
 			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strLocation
 			Menu, menuSwitchDialog, Add, %strMenuName%, SwitchDialog
-			Menu, menuSwitchDialog, Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 96, %intIconSize%
+			Menu, menuSwitchDialog, Icon, %strMenuName%
+				, % objIconsFile["menuSwitchDialog"], % objIconsIndex["menuSwitchDialog"], %intIconSize%
 		}
 		else
 			strLocation := lMenuSpecialExplorer ; will be used in menuSwitchExplorer
@@ -1020,7 +1069,8 @@ For pExp in ComObjCreate("Shell.Application").Windows
 			
 			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strLocation
 			Menu, menuSwitchExplorer, Add, %strMenuName%, SwitchExplorer
-			Menu, menuSwitchExplorer, Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 203, %intIconSize%
+			Menu, menuSwitchExplorer, Icon, %strMenuName%
+				, % objIconsFile["menuSwitchExplorer"], % objIconsIndex["menuSwitchExplorer"], %intIconSize%
 		}
 	}
 }
@@ -1050,7 +1100,8 @@ Menu, %lMainMenuName%, Add
 if (blnDisplaySpecialFolders)
 {
 	Menu, %lMainMenuName%, Add, %lMenuSpecialFolders%, :menuSpecialFolders
-	Menu, %lMainMenuName%, Icon, %lMenuSpecialFolders%, %A_WinDir%\System32\imageres.dll, 203, %intIconSize%
+	Menu, %lMainMenuName%, Icon, %lMenuSpecialFolders%
+		, % objIconsFile["lMenuSpecialFolders"], % objIconsIndex["lMenuSpecialFolders"], %intIconSize%
 }
 
 if (blnDisplaySwitchMenu)
@@ -1058,33 +1109,40 @@ if (blnDisplaySwitchMenu)
 	Menu, menuSwitch, Add
 	Menu, menuSwitch, DeleteAll
 	Menu, menuSwitch, Add, %lMenuSwitchExplorer%, :menuSwitchExplorer
-	Menu, menuSwitch, Icon, %lMenuSwitchExplorer%, %A_WinDir%\System32\imageres.dll, 177, %intIconSize%
+	Menu, menuSwitch, Icon, %lMenuSwitchExplorer%
+		, % objIconsFile["lMenuSwitchExplorer"], % objIconsIndex["lMenuSwitchExplorer"], %intIconSize%
 	Menu, menuSwitch, Add, %lMenuSwitchDialog%, :menuSwitchDialog
-	Menu, menuSwitch, Icon, %lMenuSwitchDialog%, %A_WinDir%\System32\imageres.dll, 176, %intIconSize%
+	Menu, menuSwitch, Icon, %lMenuSwitchDialog%
+		, % objIconsFile["lMenuSwitchDialog"], % objIconsIndex["lMenuSwitchDialog"], %intIconSize%
 	Menu, %lMainMenuName%, Add, %lMenuSwitch%, :menuSwitch
-	Menu, %lMainMenuName%, Icon, %lMenuSwitch%, %A_WinDir%\System32\imageres.dll, 177, %intIconSize%
+	Menu, %lMainMenuName%, Icon, %lMenuSwitch%
+		, % objIconsFile["lMenuSwitch"], % objIconsIndex["lMenuSwitch"], %intIconSize%
 }
 
 if (blnDisplayRecentFolders)
 {
 	Menu, %lMainMenuName%, Add, %lMenuRecentFolders%..., RefreshRecentFolders
-	Menu, %lMainMenuName%, Icon, %lMenuRecentFolders%..., %A_WinDir%\System32\imageres.dll, 113, %intIconSize%
+	Menu, %lMainMenuName%, Icon, %lMenuRecentFolders%...
+		, % objIconsFile["lMenuRecentFolders"], % objIconsIndex["lMenuRecentFolders"], %intIconSize%
 }
 
 if (blnDisplaySpecialFolders or blnDisplayRecentFolders or blnDisplaySwitchMenu)
 	Menu, %lMainMenuName%, Add
 
 Menu, %lMainMenuName%, Add, % L(lMenuSettings, strAppName) . "...", GuiShow
-Menu, %lMainMenuName%, Icon, % L(lMenuSettings, strAppName) . "...", %A_WinDir%\System32\imageres.dll, 110, %intIconSize%
+Menu, %lMainMenuName%, Icon, % L(lMenuSettings, strAppName) . "..."
+	, % objIconsFile["lMenuSettings"], % objIconsIndex["lMenuSettings"], %intIconSize%
 Menu, %lMainMenuName%, Default, % L(lMenuSettings, strAppName) . "..."
 Menu, %lMainMenuName%, Add, %lMenuAddThisFolder%..., AddThisFolder
-Menu, %lMainMenuName%, Icon, %lMenuAddThisFolder%..., %A_WinDir%\System32\imageres.dll, 217, %intIconSize%
+Menu, %lMainMenuName%, Icon, %lMenuAddThisFolder%...
+	, % objIconsFile["lMenuAddThisFolder"], % objIconsIndex["lMenuAddThisFolder"], %intIconSize%
 
 if !(blnDonor)
 {
 	Menu, %lMainMenuName%, Add
 	Menu, %lMainMenuName%, Add, %lDonateMenu%..., GuiDonate
-	Menu, %lMainMenuName%, Icon, %lDonateMenu%..., %A_WinDir%\System32\imageres.dll, 208, %intIconSize%
+	Menu, %lMainMenuName%, Icon, %lDonateMenu%...
+		, % objIconsFile["lDonateMenu"], % objIconsIndex["lDonateMenu"], %intIconSize%
 }
 
 if (A_ThisLabel = "BuildFoldersMenusWithStatus")
@@ -1140,7 +1198,8 @@ BuildOneMenu(strMenu)
 				Menu, % arrThisMenu[A_Index].MenuName, Add, % arrThisMenu[A_Index].FolderName, OpenFavorite ; will never be called because disabled
 				Menu, % arrThisMenu[A_Index].MenuName, Disable, % arrThisMenu[A_Index].FolderName
 			}
-			Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 204, %intIconSize%
+			Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
+				, % objIconsFile["Submenu"], % objIconsIndex["Submenu"], %intIconSize%
 		}
 		else if (arrThisMenu[A_Index].FolderName = lMenuSeparator) ; this is a separator
 
@@ -1155,9 +1214,10 @@ BuildOneMenu(strMenu)
 			if (SubStr(arrThisMenu[A_Index].FolderLocation, 1, 2) = "\\"
 				or SubStr(arrThisMenu[A_Index].FolderLocation, 1, 7) = "http://"
 				or SubStr(arrThisMenu[A_Index].FolderLocation, 1, 8) = "https://")
-				
-				Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 29, %intIconSize%
-				
+			{ ; to avoid "else" confusion
+				Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
+					, % objIconsFile["Network"], % objIconsIndex["Network"], %intIconSize%
+			} ; to avoid "else" confusion
 			else if (arrThisMenu[A_Index].FavoriteType = "D") ; this is a document
 			{
 				; get icon, extract from kiu http://www.autohotkey.com/board/topic/8616-kiu-icons-manager-quickly-change-icon-files/
@@ -1175,12 +1235,16 @@ BuildOneMenu(strMenu)
 				else
 					intDefaultIcon := 1
 
-				Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %strDefaultIcon%, intDefaultIcon, %intIconSize%
+				if StrLen(strDefaultIcon)
+					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %strDefaultIcon%, intDefaultIcon, %intIconSize%
+				else
+					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
+						, % objIconsFile["UnknownDocument"], % objIconsIndex["UnknownDocument"], %intIconSize%
 			}
 			else ; this is a folder
 				
-				Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %A_WinDir%\System32\imageres.dll, 4, %intIconSize%
-				
+				Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
+					, % objIconsFile["Folder"], % objIconsIndex["Folder"], %intIconSize%
 		}
 }
 ;------------------------------------------------------------
@@ -1756,7 +1820,7 @@ if (blnSaveEnabled)
 		Gosub, BuildSpecialFoldersMenu
 		Gosub, BuildRecentFoldersMenu
 		Gosub, BuildSwitchMenu
-		Gosub, BuildFoldersMenusWithStatus ; need to be initialized here - will be updated at each call to popup menu
+		Gosub, BuildFoldersMenus ; need to be initialized here - will be updated at each call to popup menu
 
 		GuiControl, Disable, btnGuiSave
 		GuiControl, , btnGuiCancel, %lGuiClose%
@@ -2130,14 +2194,14 @@ GuiAddFromDropFiles:
 ;------------------------------------------------------------
 
 intRowToEdit := 0 ;  used when saving to flag to insert a new row
+strCurrentName := "" ;  make sure it is empty
+strCurrentSubmenuFullName := "" ;  make sure it is empty
 
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
 Gui, 2:New, , % L(lDialogAddEditFolderTitle, lDialogAdd, strAppName, strAppVersion)
 Gui, 2:+Owner1
 Gui, 2:+OwnDialogs
-
-strCurrentName := GetDeepestFolderName(strCurrentLocation) ; value received from AddThisFolder or GuiDropFiles
 
 if (A_ThisLabel = "GuiAddFromPopup")
 {
@@ -2157,24 +2221,27 @@ else ; GuiAddFolder
 	Gui, 2:Add, Radio, x+10 yp vblnRadioFolder checked gRadioButtonsChanged, %lDialogFolderLabel%
 	Gui, 2:Add, Radio, x+10 yp vblnRadioFile gRadioButtonsChanged, %lDialogFileLabel%
 	Gui, 2:Add, Radio, x+10 yp vblnRadioSubmenu gRadioButtonsChanged, %lDialogSubmenuLabel%
-	
-	strCurrentName := ""
-	strCurrentLocation := ""
 }
-strCurrentSubmenuFullName := ""
+
+if (A_ThisLabel = "GuiAddFromPopup" or A_ThisLabel = "GuiAddFromDropFiles")
+	; strCurrentLocation is received from AddThisFolder or GuiDropFiles
+	strFolderShortName := GetDeepestFolderName(strCurrentLocation)
+else
+{
+	;  make sure these variables are empty
+	strCurrentLocation := ""
+	strFolderShortName := ""
+}
 
 Gui, 2:Add, Text, x10 w300 y+10 vlblShortName, %lDialogFolderShortName%
-Gui, 2:Add, Edit, x10 w300 vstrFolderShortName, %strCurrentName%
+Gui, 2:Add, Edit, x10 w300 vstrFolderShortName, %strFolderShortName%
 
 Gui, 2:Add, Text, x10 w300 vlblFolder, %lDialogFolderLabel%
 Gui, 2:Add, Edit, x10 w300 vstrFolderLocation, %strCurrentLocation%
 Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation default, %lDialogBrowseButton%
 
-if (A_ThisLabel = "GuiAddFromPopup" or A_ThisLabel = "GuiAddFromDropFiles")
-{
-	Gui, 2:Add, Text, x10 y+10 vlblFolderParentMenu, %lDialogFolderParentMenu%
-	Gui, 2:Add, DropDownList, x10 w250 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
-}
+Gui, 2:Add, Text, x10 y+10 vlblFolderParentMenu, %lDialogFolderParentMenu%
+Gui, 2:Add, DropDownList, x10 w250 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
 
 Gui, 2:Add, Button, y+15 vbtnAddFolderAdd gGuiAddFolderSave, %lDialogAdd%
 Gui, 2:Add, Button, yp vbtnAddFolderCancel gGuiAddFolderCancel, %lGuiCancel%
@@ -2285,7 +2352,7 @@ if  ((blnRadioFolder or blnRadioFile) and !StrLen(strFolderLocation))
 }
 
 if !FolderNameIsNew(strFolderShortName, (strParentMenu = strCurrentMenu ? "" : strParentMenu))
-	if ((strParentMenu <> strCurrentMenu) or (strFolderShortName <> strCurrentName))
+	if ((strParentMenu <> strCurrentMenu) or (strFolderShortName <> strCurrentName)) ; same name is OK in current menu
 	{
 		Oops(lDialogFolderNameNotNew, strFolderShortName)
 		return
