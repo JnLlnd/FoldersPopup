@@ -10,6 +10,7 @@
 	* manage icons resource at init, supporting XP and Win7+
 	* include select parent menu when add favorite
 	* fix old 2.0 bug not detecting name already used when adding from add this folder
+	* menu icon size default size to 16 for XP and 24 for other OS
 	
 	Version: 3.0.1 (2014-07-15)
 	* do not check if network favorites exist
@@ -431,6 +432,7 @@ strPopupHotkeyMouseNewDefault := arrHotkeyDefaults2 ; "+MButton"
 strPopupHotkeyKeyboardDefault := arrHotkeyDefaults3 ; "#k"
 strPopupHotkeyKeyboardNewDefault := arrHotkeyDefaults4 ; "+#k"
 strSettingsHotkeyDefault := arrHotkeyDefaults5 ; "+#f"
+intIconSize := (A_OSVersion = "WIN_XP" ? 16 : 24)
 
 IfNotExist, %strIniFile%
 	FileAppend,
@@ -453,7 +455,7 @@ IfNotExist, %strIniFile%
 			Startups=1
 			LanguageCode=EN
 			DirectoryOpusPath=
-			IconSize=24
+			IconSize=%intIconSize%
 			[Folders]
 			Folder1=C:\|C:\
 			Folder2=Windows|%A_WinDir%
