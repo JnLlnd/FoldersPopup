@@ -4,11 +4,16 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: 3.0.2 (2014-07-16)
+	Version: 3.0.3 (2014-07-XX)
+	* remove "supported dialog boxes" management
+	* in gui remove listview, add/edit/remove buttons, reposition other buttons
+	* remove add dialog box menu, save dialog box, dialog is supported function
+	
+	Version: 3.0.2 (2014-07-19)
 	* add favorite type "F" folder, "D" document or "S" submenu and refactor all
 	* remove or add ... to main menu items
 	* manage icons resource at init, supporting XP and Win7+
-	* include select parent menu when add favorite
+	* include parent menu dropdown list when add favorite
 	* fix old 2.0 bug not detecting name already used when adding from add this folder
 	* menu icon size default size to 16 for XP and 24 for other OS
 	
@@ -241,7 +246,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 3.0.2 BETA
+;@Ahk2Exe-SetVersion 3.0.3 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -262,17 +267,17 @@ FileInstall, FileInstall\FoldersPopup_LANG_DE.txt, %strTempDir%\FoldersPopup_LAN
 FileInstall, FileInstall\FoldersPopup_LANG_FR.txt, %strTempDir%\FoldersPopup_LANG_FR.txt, 1
 FileInstall, FileInstall\FoldersPopup_LANG_NL.txt, %strTempDir%\FoldersPopup_LANG_NL.txt, 1
 FileInstall, FileInstall\about-32.png, %strTempDir%\about-32.png
-FileInstall, FileInstall\add_image-26.png, %strTempDir%\add_image-26.png
+; FileInstall, FileInstall\add_image-26.png, %strTempDir%\add_image-26.png
 FileInstall, FileInstall\add_property-48.png, %strTempDir%\add_property-48.png
 FileInstall, FileInstall\delete_property-48.png, %strTempDir%\delete_property-48.png
 FileInstall, FileInstall\separator-26.png, %strTempDir%\separator-26.png
 FileInstall, FileInstall\down_circular-26.png, %strTempDir%\down_circular-26.png
-FileInstall, FileInstall\edit_image-26.png, %strTempDir%\edit_image-26.png
+; FileInstall, FileInstall\edit_image-26.png, %strTempDir%\edit_image-26.png
 FileInstall, FileInstall\edit_property-48.png, %strTempDir%\edit_property-48.png
 FileInstall, FileInstall\generic_sorting2-26-grey.png, %strTempDir%\generic_sorting2-26-grey.png
 FileInstall, FileInstall\help-32.png, %strTempDir%\help-32.png
 FileInstall, FileInstall\left-12.png, %strTempDir%\left-12.png
-FileInstall, FileInstall\remove_image-26.png, %strTempDir%\remove_image-26.png
+; FileInstall, FileInstall\remove_image-26.png, %strTempDir%\remove_image-26.png
 FileInstall, FileInstall\settings-32.png, %strTempDir%\settings-32.png
 FileInstall, FileInstall\up-12.png, %strTempDir%\up-12.png
 FileInstall, FileInstall\up_circular-26.png, %strTempDir%\up_circular-26.png
@@ -286,7 +291,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.0.2" ; "major.minor.bugs"
+global strCurrentVersion := "3.0.3" ; "major.minor.bugs"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
@@ -328,7 +333,6 @@ Gosub, BuildRecentFoldersMenu
 Gosub, BuildSwitchMenu
 Gosub, BuildFoldersMenus ; need to be initialized here - will be updated at each call to popup menu
 Gosub, BuildGui
-Gosub, BuildAddDialogMenu
 Gosub, Check4Update
 Gosub, BuildTrayMenu
 
@@ -425,7 +429,6 @@ LoadIniFile:
 Global arrMenus := Object() ; list of menus (Main and submenus), non-hierachical
 arrMainMenu := Object() ; array of folders of the Main menu
 arrMenus.Insert(lMainMenuName, arrMainMenu) ; lMainMenuName is used in the objects but not saved/restores in the ini file
-arrDialogs := Object() ; list of supported dialog boxes
 
 strPopupHotkeyMouseDefault := arrHotkeyDefaults1 ; "MButton"
 strPopupHotkeyMouseNewDefault := arrHotkeyDefaults2 ; "+MButton"
@@ -460,18 +463,10 @@ IfNotExist, %strIniFile%
 			Folder1=C:\|C:\
 			Folder2=Windows|%A_WinDir%
 			Folder3=Program Files|%A_ProgramFiles%
-			[Dialogs]
-			Dialog1=Export
-			Dialog2=Import
-			Dialog3=Insert
-			Dialog4=Open
-			Dialog5=Save
-			Dialog6=Select
-			Dialog7=Upload
 
 )
 		, %strIniFile%
-	
+
 Gosub, LoadIniHotkeys
 
 ; fix language error
@@ -534,14 +529,6 @@ Loop
 		arrMenus.Insert(objFolder.SubmenuFullName, arrSubMenu) ; add this submenu to the array of menus
 	}
 	arrMenus[objFolder.MenuName].Insert(objFolder) ; add this menu item to parent menu
-}
-
-Loop
-{
-	IniRead, strIniLine, %strIniFile%, Dialogs, Dialog%A_Index%
-	if (strIniLine = "ERROR")
-		Break
-	arrDialogs.Insert(strIniLine)
 }
 
 IfNotExist, %strIniFile%
@@ -742,12 +729,12 @@ if (blnDisplaySwitchMenu)
 		, %lMenuSwitchExplorer%
 	Menu, menuSwitch
 		; , % (intDialogsIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
-		, % (intDialogsIndex and WindowIsDialog(strTargetClass)? "Enable" : "Disable")
+		, % (intDialogsIndex and WindowIsDialog(strTargetClass) ? "Enable" : "Disable")
 		, %lMenuSwitchDialog%
 }
 
 if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass)
-	or WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass) or DialogIsSupported(strTargetWinId))
+	or WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass) or WindowIsDialog(strTargetClass))
 {
 	; Enable Add This Folder only if the mouse is over an Explorer (tested on WIN_XP and WIN_7) or a dialog box (works on WIN_7, not on WIN_XP)
 	; Other tests shown that WIN_8 behaves like WIN_7. So, I assume WIN_8 to work. If someone could confirm (until I can test it myself)?
@@ -761,12 +748,6 @@ if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or Win
 		or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 		, %lMenuAddThisFolder%...
 	Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
-}
-else
-{
-	if (blnDiagMode)
-		Diag("ShowMenu", "Add Dialog")
-	Menu, menuAddDialog, Show
 }
 
 return
@@ -1251,21 +1232,6 @@ BuildOneMenu(strMenu)
 
 
 ;------------------------------------------------------------
-BuildAddDialogMenu:
-;------------------------------------------------------------
-
-Menu, menuAddDialog, Add, %lMenuDialogNotSupported%, AddThisDialog
-Menu, menuAddDialog, Disable, %lMenuDialogNotSupported%
-Menu, menuAddDialog, Add, %lMenuAddThisDialog%, AddThisDialog
-Menu, menuAddDialog, Add
-Menu, menuAddDialog, Add, % L(lMenuSettings, strAppName), GuiShow
-Menu, menuAddDialog, Default, %lMenuAddThisDialog%
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
 LoadTheme:
 ; colors for themes
 ; skin: WindowColor=FFC495
@@ -1300,11 +1266,11 @@ Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, Text, xm+30, %lGuiSubmenuDropdownLabel%
 Gui, 1:Add, Picture, xm y+5 gGuiGotoPreviousMenu vpicPreviousMenu hidden, %strTempDir%\left-12.png ; Static4
 Gui, 1:Add, Picture, xm+15 yp gGuiGotoUpMenu vpicUpMenu hidden, %strTempDir%\up-12.png ; Static5
-Gui, 1:Add, DropDownList, xm+30 yp w320 vdrpMenusList gGuiMenusListChanged ; Sort
+Gui, 1:Add, DropDownList, xm+30 yp w420 vdrpMenusList gGuiMenusListChanged ; Sort
 
 Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, ListView
-	, xm+30 w320 h220 Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFoldersList gGuiFoldersListEvent
+	, xm+30 w420 h220 Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFoldersList gGuiFoldersListEvent
 	, %lGuiLvFoldersHeader%|Hidden Menu|Hidden Submenu|Hidden FavoriteType
 LV_ModifyCol(3, 0) ; hide 3rd column
 LV_ModifyCol(4, 0) ; hide 4th column
@@ -1331,21 +1297,7 @@ Gui, 1:Add, Picture, xs+10 gGuiRemoveFolder, %strTempDir%\delete_property-48.png
 Gui, 1:Font, s8 w400, Arial ; button legend
 Gui, 1:Add, Text, xs y+0 w68 center gGuiRemoveFolder, %lGuiRemoveFolder% ; Static17
 
-Gui, 1:Add, Text, xs+90 ys h220 0x11
-
-GuiControlGet, arrLvPos, Pos, lvFoldersList
-
-Gui, 1:Font, s8 w400, Verdana
-Gui, 1:Add, Text, Section x%intCol% y%arrLvPosY% w220, %lGuiLvDialogsHeader%
-Gui, 1:Add, ListView
-	, xs w220 h150 Count16 -Hdr -Multi NoSortHdr +0x10 LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvDialogsList gGuiDialogsListEvent
-	, Header
-
-Gui, 1:Add, Picture, xs+70 y+5 gGuiAddDialog, %strTempDir%\add_image-26.png ; Static20
-Gui, 1:Add, Picture, x+10 yp gGuiEditDialog, %strTempDir%\edit_image-26.png ; Static21
-Gui, 1:Add, Picture, x+10 yp gGuiRemoveDialog, %strTempDir%\remove_image-26.png ; Static22
-
-Gui, 1:Add, Text, Section xs+18 ym
+Gui, 1:Add, Text, Section x165
 
 if !(blnDonor)
 {
@@ -1353,29 +1305,29 @@ if !(blnDonor)
 	StringSplit, arrDonateButtons, strDonateButtons, |
 	Random, intDonateButton, 1, 5
 
-	Gui, 1:Add, Picture, xs+10 ym gGuiDonate, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png" ; Static24
+	Gui, 1:Add, Picture, xs+10 ys gGuiDonate, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png" ; Static24
 	Gui, 1:Font, s8 w400, Arial ; button legend
 	Gui, 1:Add, Text, xs y+0 w52 center gGuiDonate, %lGuiDonate% ; Static25
 }
 
-Gui, 1:Add, Picture, % "Section x+" . (blnDonor ? "42" : "10") . " ym gGuiHelp", %strTempDir%\help-32.png ; Static26
+Gui, 1:Add, Picture, % "Section x+" . (blnDonor ? "42" : "10") . " ys gGuiHelp", %strTempDir%\help-32.png ; Static26
 Gui, 1:Font, s8 w400, Arial ; button legend
 Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiHelp, %lGuiHelp% ; Static27
 
-Gui, 1:Add, Picture, Section x+10 ym gGuiAbout, %strTempDir%\about-32.png ; Static28
+Gui, 1:Add, Picture, Section x+10 ys gGuiAbout, %strTempDir%\about-32.png ; Static28
 Gui, 1:Font, s8 w400, Arial ; button legend
 Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiAbout, %lGuiAbout% ; Static29
 
-Gui, 1:Add, Picture, Section x+10 ym gGuiOptions, %strTempDir%\settings-32.png ; Static30
+Gui, 1:Add, Picture, Section x+10 ys gGuiOptions, %strTempDir%\settings-32.png ; Static30
 Gui, 1:Font, s8 w400, Arial ; button legend
 Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiOptions, %lGuiOptions% ; Static31
 
 Gui, 1:Font, s8 w600 c404040 italic, Verdana
-Gui, 1:Add, Text, xm y350 w690 center, %lGuiDropFilesIncentive%
+Gui, 1:Add, Text, xm yp+30 w490 center, %lGuiDropFilesIncentive%
 
-Gui, 1:Add, Text, xm y370 h1 w690
+Gui, 1:Add, Text, xm y+20
 Gui, 1:Font, s9 w600, Verdana
-Gui, 1:Add, Button, Disabled Default vbtnGuiSave gGuiSave, %lGuiSave% ; Button1
+Gui, 1:Add, Button, yp Disabled Default vbtnGuiSave gGuiSave, %lGuiSave% ; Button1
 Gui, 1:Add, Button, yp vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur - Button2
 Gui, 1:Font, s6 w400, Verdana
 GuiCenterButtons(L(lGuiTitle, strAppName, strAppVersion), 50, 30, 40, "btnGuiSave", "btnGuiCancel")
@@ -1443,18 +1395,6 @@ Gui, 1:ListView, lvFoldersList
 
 if (A_GuiEvent = "DoubleClick")
 	gosub, GuiEditFolder
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiDialogsListEvent:
-;------------------------------------------------------------
-Gui, 1:ListView, lvDialogsList
-
-if (A_GuiEvent = "DoubleClick")
-	gosub, GuiEditDialog
 
 return
 ;------------------------------------------------------------
@@ -1662,76 +1602,6 @@ return
 
 
 ;------------------------------------------------------------
-GuiAddDialog:
-;------------------------------------------------------------
-
-AddDialog("")
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiRemoveDialog:
-;------------------------------------------------------------
-
-GuiControl, Focus, lvDialogsList
-Gui, 1:ListView, lvDialogssList
-intItemToRemove := LV_GetNext()
-if !(intItemToRemove)
-{
-	Oops(lDialogSelectItemToRemove)
-	return
-}
-LV_Delete(intItemToRemove)
-LV_Modify(intItemToRemove, "Select Focus")
-
-GuiControl, Enable, btnGuiSave
-GuiControl, , btnGuiCancel, %lGuiCancel%
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiEditDialog:
-;------------------------------------------------------------
-
-Gui, 1:+OwnDialogs
-GuiControl, Focus, lvDialogsList
-Gui, 1:ListView, lvDialogsList
-intRowToEdit := LV_GetNext()
-LV_GetText(strCurrentDialog, intRowToEdit, 1)
-
-InputBox strNewDialog, % L(lDialogEditDialogTitle, strAppName, strAppVersion)
-	, %lDialogEditDialogPrompt%, , 350, 150, , , , , %strCurrentDialog%
-if (ErrorLevel) or !StrLen(strNewDialog) or (strNewDialog = strCurrentDialog)
-	return
-
-Gui, 1:ListView, lvDialogsList
-Loop, % LV_GetCount()
-{
-	LV_GetText(strThisDialog, A_Index, 1)
-	if (strNewDialog = strThisDialog)
-	{
-		Oops(lDialogAddDialogAlready)
-		return
-	}
-}
-
-LV_Modify(intRowToEdit, "Select Focus", strNewDialog)
-LV_ModifyCol(1, "AutoHdr")
-LV_ModifyCol(1, "Sort")
-LV_Modify(LV_GetNext(), "Vis")
-
-GuiControl, Enable, btnGuiSave
-GuiControl, , btnGuiCancel, %lGuiCancel%
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
 GuiSave:
 ;------------------------------------------------------------
 
@@ -1744,14 +1614,6 @@ Gui, 1:ListView, lvFoldersList
 
 intIndex := 0
 SaveOneMenu(lMainMenuName) ; recursive function
-
-IniDelete, %strIniFile%, Dialogs
-Gui, 1:ListView, lvDialogsList
-Loop % LV_GetCount()
-{
-	LV_GetText(strDialog, A_Index, 1)
-	IniWrite, %strDialog%, %strIniFile%, Dialogs, Dialog%A_Index%
-}
 
 Gosub, LoadIniFile
 Gosub, BuildFoldersMenusWithStatus
@@ -1952,50 +1814,6 @@ else
 }
 
 return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-AddThisDialog:
-;------------------------------------------------------------
-
-WinGetTitle, strDialogTitle, ahk_id %strTargetWinId%
-Gosub, GuiShow
-AddDialog(strDialogTitle)
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-AddDialog(strCurrentDialogTitle)
-;------------------------------------------------------------
-{
-	Gui, 1:+OwnDialogs
-	GuiControl, Focus, lvDialogsList
-
-	InputBox, strNewDialog, % L(lDialogAddDialogTitle, strAppName, strAppVersion), %lDialogAddDialogPrompt%, , 350, 150, , , , , %strCurrentDialogTitle%
-	if (ErrorLevel) or !StrLen(strNewDialog)
-		return
-	
-	Gui, 1:ListView, lvDialogsList
-	Loop, % LV_GetCount()
-	{
-		LV_GetText(strThisDialog, A_Index, 1)
-		if (strNewDialog = strThisDialog)
-		{
-			Oops(lDialogAddDialogAlready)
-			return
-		}
-	}
-
-	LV_Add("Select Focus", strNewDialog)
-	LV_Modify(LV_GetNext(), "Vis")
-	LV_ModifyCol(1, "AutoHdr")
-
-	GuiControl, Enable, btnGuiSave
-	GuiControl, , btnGuiCancel, %lGuiCancel%
-}
 ;------------------------------------------------------------
 
 
@@ -3089,13 +2907,6 @@ if (blnSaveEnabled)
 
 Gosub, LoadOneMenuToGui
 
-Gui, 1:ListView, lvDialogsList
-LV_Delete()
-Loop, % arrDialogs.MaxIndex()
-	LV_Add(, arrDialogs[A_Index])
-LV_Modify(1, "Select Focus")
-LV_ModifyCol(1, "AutoHdr")
-
 GuiControl, Focus, lvFoldersList
 
 return
@@ -3554,26 +3365,6 @@ WindowIsDirectoryOpus(strClass)
 ;------------------------------------------------------------
 {
 	return InStr(strClass, "dopus")
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-DialogIsSupported(strWinId)
-;------------------------------------------------------------
-{
-	return True ; TEST
-
-/*
-	global
-	
-	WinGetTitle, strDialogTitle, ahk_id %strWinId%
-	loop, % arrDialogs.MaxIndex()
-		if InStr(strDialogTitle, arrDialogs[A_Index])
-			return True
-
-	return False
-*/
 }
 ;------------------------------------------------------------
 
