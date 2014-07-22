@@ -173,6 +173,7 @@ lReloadPrompt	Changement de langue enregistré: ~1~. Voulez-vous relancer ~2~ en 
 lTrayTipInstalledDetail	Pour afficher le menu de ~1~, appuyez sur:`n`n~2~ / ~3~`ndans un Explorateur de fichiers ou dans une boîte de dialogue`n`n~4~ / ~5~`npour ouvrir un nouvel Explorateur
 lTrayTipinstalledTitle	~1~ ~2~ est prêt!
 lTrayTipWorkingDetail	Préparation des menus
+lTrayTipWorkingDetailFinished	Le menu a été mis à jour.
 lTrayTipWorkingTitle	~1~ ~2~ se prépare...
 lUpdateButtonRemind	Rappelez-moi
 lUpdateError	Une erreur est survenue lors de la vérification du numéro de la plus récente version. La vérification de la mise à jour est interrompue.

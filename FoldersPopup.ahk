@@ -1,9 +1,21 @@
+/*
+To-do:
+- when change radio button in add, select the short name field
+*/
+
 ;===============================================
 /*
 	FoldersPopup
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: 3.0.4 (2014-07-21)
+	* fix a bug when adding a menu and numeric shortcuts are active
+	* lighter tray tip message after menu is updated in settings
+	* fix a bug when retrieving icons for documents
+	* change cursor for an hand for all buttons in Gui
+	* support icons for document being executable files
+	
 	Version: 3.0.3 (2014-07-20)
 	* remove "supported dialog boxes" management
 	* in gui remove listview, add/edit/remove buttons, reposition other buttons
@@ -344,7 +356,13 @@ IfExist, %A_Startup%\%strAppName%.lnk
 }
 
 if (blnDisplayTrayTip)
-	GoSub, TrayTipInstalled
+	TrayTip, % L(lTrayTipInstalledTitle, strAppName, strAppVersion)
+		, % L(lTrayTipInstalledDetail, strAppName
+			, Hotkey2Text(strModifiers1, strMouseButton1, strOptionsKey1)
+			, Hotkey2Text(strModifiers3, strMouseButton3, strOptionsKey3)
+			, Hotkey2Text(strModifiers2, strMouseButton2, strOptionsKey2)
+			, Hotkey2Text(strModifiers4, strMouseButton4, strOptionsKey4))
+		, , 1
 
 OnExit, CleanUpBeforeExit
 
@@ -1067,8 +1085,7 @@ BuildFoldersMenusWithStatus:
 
 if (A_ThisLabel = "BuildFoldersMenusWithStatus")
 	TrayTip, % L(lTrayTipWorkingTitle, strAppName, strAppVersion)
-		, % L(lTrayTipWorkingDetail)
-		, , 1
+		, %lTrayTipWorkingDetail%, , 1
 
 Menu, %lMainMenuName%, Add
 Menu, %lMainMenuName%, DeleteAll
@@ -1127,23 +1144,8 @@ if !(blnDonor)
 }
 
 if (A_ThisLabel = "BuildFoldersMenusWithStatus")
-	GoSub, TrayTipInstalled
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-TrayTipInstalled:
-;------------------------------------------------------------
-
-TrayTip, % L(lTrayTipInstalledTitle, strAppName, strAppVersion)
-	, % L(lTrayTipInstalledDetail, strAppName
-		, Hotkey2Text(strModifiers1, strMouseButton1, strOptionsKey1)
-		, Hotkey2Text(strModifiers3, strMouseButton3, strOptionsKey3)
-		, Hotkey2Text(strModifiers2, strMouseButton2, strOptionsKey2)
-		, Hotkey2Text(strModifiers4, strMouseButton4, strOptionsKey4))
-	, , 1
+	TrayTip, % L(lTrayTipInstalledTitle, strAppName, strAppVersion)
+		, %lTrayTipWorkingDetailFinished%, , 1
 
 return
 ;------------------------------------------------------------
@@ -1174,10 +1176,10 @@ BuildOneMenu(strMenu)
 			
 			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = lMainMenuName)) . " " : "") . strSubMenuDisplayName
 			Try Menu, %strSubMenuParent%, Add, %strMenuName%, % ":" . strSubMenuFullName
-			catch e
+			catch e ; when menu is empty
 			{
-				Menu, % arrThisMenu[A_Index].MenuName, Add, % arrThisMenu[A_Index].FolderName, OpenFavorite ; will never be called because disabled
-				Menu, % arrThisMenu[A_Index].MenuName, Disable, % arrThisMenu[A_Index].FolderName
+				Menu, % arrThisMenu[A_Index].MenuName, Add, %strMenuName%, OpenFavorite ; will never be called because disabled
+				Menu, % arrThisMenu[A_Index].MenuName, Disable, %strMenuName%
 			}
 			Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
 				, % objIconsFile["Submenu"], % objIconsIndex["Submenu"], %intIconSize%
@@ -1207,6 +1209,9 @@ BuildOneMenu(strMenu)
 				RegRead, strHKeyClassRoot, HKEY_CLASSES_ROOT, .%strExtension%
 				RegRead, strDefaultIcon, HKEY_CLASSES_ROOT, %strHKeyClassRoot%\DefaultIcon
 				
+				if (strDefaultIcon = "%1") ; use the file itself (for executable)
+					strDefaultIcon := strLocation
+				
 				IfInString, strDefaultIcon, `, ; this is for icongroup files
 				{
 					StringSplit, arrDefaultIcon, strDefaultIcon, `,
@@ -1217,7 +1222,7 @@ BuildOneMenu(strMenu)
 					intDefaultIcon := 1
 
 				if StrLen(strDefaultIcon)
-					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %strDefaultIcon%, intDefaultIcon, %intIconSize%
+					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %strDefaultIcon%, %intDefaultIcon%, %intIconSize%
 				else
 					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
 						, % objIconsFile["UnknownDocument"], % objIconsIndex["UnknownDocument"], %intIconSize%
@@ -1305,22 +1310,22 @@ if !(blnDonor)
 	StringSplit, arrDonateButtons, strDonateButtons, |
 	Random, intDonateButton, 1, 5
 
-	Gui, 1:Add, Picture, xs+10 ys gGuiDonate, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png" ; Static24
+	Gui, 1:Add, Picture, xs+10 ys gGuiDonate, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png" ; 19
 	Gui, 1:Font, s8 w400, Arial ; button legend
-	Gui, 1:Add, Text, xs y+0 w52 center gGuiDonate, %lGuiDonate% ; Static25
+	Gui, 1:Add, Text, xs y+0 w52 center gGuiDonate, %lGuiDonate% ; Static20
 }
 
-Gui, 1:Add, Picture, % "Section x+" . (blnDonor ? "42" : "10") . " ys gGuiHelp", %strTempDir%\help-32.png ; Static26
+Gui, 1:Add, Picture, % "Section x+" . (blnDonor ? "42" : "10") . " ys gGuiHelp", %strTempDir%\help-32.png ; Static21
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiHelp, %lGuiHelp% ; Static27
+Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiHelp, %lGuiHelp% ; Static22
 
-Gui, 1:Add, Picture, Section x+10 ys gGuiAbout, %strTempDir%\about-32.png ; Static28
+Gui, 1:Add, Picture, Section x+10 ys gGuiAbout, %strTempDir%\about-32.png ; Static23
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiAbout, %lGuiAbout% ; Static29
+Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiAbout, %lGuiAbout% ; Static24
 
-Gui, 1:Add, Picture, Section x+10 ys gGuiOptions, %strTempDir%\settings-32.png ; Static30
+Gui, 1:Add, Picture, Section x+10 ys gGuiOptions, %strTempDir%\settings-32.png ; Static25
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiOptions, %lGuiOptions% ; Static31
+Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiOptions, %lGuiOptions% ; Static26
 
 Gui, 1:Font, s8 w600 c404040 italic, Verdana
 Gui, 1:Add, Text, xm yp+30 w490 center, %lGuiDropFilesIncentive%
@@ -3837,7 +3842,7 @@ WM_MOUSEMOVE(wParam, lParam)
 	MouseGetPos, , , , strControl ; Static1, StaticN, Button1, ButtonN
 	StringReplace, strControl, strControl, Static
 	
-	If InStr(".7.8.9.10.12.13.14.15.16.17.20.21.22.24.25.26.27.28.29.30.31.Button1.Button2.", "." . strControl . ".")
+	If InStr(".4.5.7.8.9.10.12.13.14.15.16.17.20.21.22.24.25.26.Button1.Button2.", "." . strControl . ".")
 		DllCall("SetCursor", "UInt", objCursor)
 
 	return

@@ -3,7 +3,7 @@ lAboutText2	~1~ wird entwickelt von Jean Lalonde unter`nVerwendung der <a href="
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
 lAboutText4	Support unter <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	Über - ~1~ ~2~
-lAppTagline	FoldersPopup ermöglicht es, auf schnelle Weise zwischen`nhäufig verwendeten Verzeichnissen zu wechseln!
+lAppTagline	FoldersPopup ermöglicht es, auf schnelle Weise zwischen häufig`nverwendeten Verzeichnissen zu wechseln!
 lDiagModeCaution	~1~ läuft im Diagnose-Modus.`n`nInformationen über die Anwendungsausführung werden in der Datei:`n~2~`n gesammelt`nEs wird nichts ohne Ihr Einverständnis versendet.`n`nWollen Sie den Diagnose-Modus beibehalten?
 lDiagModeExit	~1~ gesammelte Diagnose-Informationen in Datei ~2~.
 lDiagModeIntro	Schicken Sie diese Datei an ahk@jeanlalonde.ca mit einer Beschreibung der Situation, welche die Diagnose ausgelöst hat.
@@ -179,3 +179,4 @@ lUpdateError	Beim Zugriff auf die letzte Versionsnummer trat ein Fehler auf. Prü
 lUpdatePrompt	Update ~1~ von v~2~ auf v~3~?
 lUpdateTitle	Update ~1~?
 lUpdateYouHaveLatest	Sie verwenden die aktuellste Version: ~1~.`n`nTrotzdem die ~2~ Webseite besuchen?
+lTrayTipWorkingDetailFinished	The menu has been updated.

@@ -175,6 +175,7 @@ global lReloadPrompt := "Language changed to ~1~. Do you want to reload ~2~ in ~
 global lTrayTipInstalledDetail := "To show ~1~ menu, press:`n`n~2~ / ~3~`nin Windows Explorer or in a Dialog box`n`n~4~ / ~5~`nto open a New Explorer window"
 global lTrayTipInstalledTitle := "~1~ ~2~ ready!"
 global lTrayTipWorkingDetail := "Building menus"
+global lTrayTipWorkingDetailFinished := "The menu has been updated."
 global lTrayTipWorkingTitle := "~1~ ~2~ working..."
 global lUpdateButtonRemind := "Remind me"
 global lUpdateError := "An error occurred while accessing the latest version number. Checking for update interrupted."

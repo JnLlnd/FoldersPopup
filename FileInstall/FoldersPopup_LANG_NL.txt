@@ -3,7 +3,7 @@ lAboutText2	~1~ wordt ontwikkeld door Jean Lalonde gebruik`nmakend van <a href="
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
 lAboutText4	Ondersteuning via <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	Over... - ~1~ ~2~
-lAppTagline	FoldersPopup laat je snel wisselen tussen`nde mappen die je vaak gebruikt!
+lAppTagline	FoldersPopup laat je snel wisselen tussen de mappen die je vaak gebruikt!
 lDiagModeCaution	~1~ wordt momenteel uitgevoerd in diagnose-modus.`n`nInformatie over de uitvoering van de software wordt verzameld in het bestand:`n~2~`n`nNiets zal worden verzonden zonder uw toestemming.`n`nWil je de diagnose-modus AAN laten?
 lDiagModeExit	~1~ heeft informatie voor foutdiagnose verzameld in het bestand ~2~.
 lDiagModeIntro	Verstuur dit bestand naar ahk@jeanlalonde.ca met een beschrijving van de situatie die verder dient onderzocht te worden.
@@ -179,3 +179,4 @@ lDialogFavoriteDoesNotExistPrompt	The favorite "~1~" does not exist or is not av
 lDialogFavoriteDoesNotExistTitle	Favorite does not exist - ~1~
 lTrayTipWorkingDetail	Building menus
 lTrayTipWorkingTitle	~1~ ~2~ working...
+lTrayTipWorkingDetailFinished	The menu has been updated.
