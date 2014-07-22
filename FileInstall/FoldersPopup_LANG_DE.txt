@@ -24,6 +24,8 @@ lDialogCancelTitle	Abbrechen - ~1~ ~2~
 lDialogEdit	Bearbeiten
 lDialogEditDialogPrompt	Geben Sie den neuen Namen für die Dialogbox ein`n(oder einen Teil des Namens):
 lDialogEditDialogTitle	Dialogbox bearbeiten - ~1~ ~2~
+lDialogFavoriteDoesNotExistPrompt	Der Favorit "~1~" existiert nicht oder ist nicht verfügbar.`n`nSollte er sich in einem Netzlaufwerk befinden, versuchen Sie es nach der Netzwerkanmeldung nochmals.
+lDialogFavoriteDoesNotExistTitle	Favorit existiert nicht - ~1~
 lDialogFileLabel	Dokumente
 lDialogFileShortName	Dokument-Kurzname (für Menü)
 lDialogFolderLabel	Ordner
@@ -37,10 +39,13 @@ lDialogFolderRemoveTitle	Entfernen des Favorite - ~1~
 lDialogFolderShortName	Kurzname des Ordners für das Menü
 lDialogInvalidHotkey	Mit dem derzeitigen Tastaturlayout kann das Tastenkürzel "~1~" nicht verwendet werden, um das Popup-Menü aufzurufen (kein gültiger Tasten Name).`n`nBitte öffnen Sie das "~2~ Einstellungen" aus dem Tray-Menü und klicken Sie auf "Optionen". Wählen Sie in diesem Dialog ein anderes Tastenkürzel für "~3~".
 lDialogOpenThisMenu	Dieses Menü öffnen
+lDialogReplaceShortName	Name der Favoriten "~1~" mit "~2~" ersetzen?
 lDialogSave	Speichern
 lDialogSelectItemToEdit	Bitte wählen Sie das zu bearbeitende Element.
 lDialogSelectItemToRemove	Bitte wählen Sie das zu entfernende Element.
 lDialogSubmenuLabel	Untermenü
+lDialogSubmenuNameEmpty	Kein Name für das Untermenü angegeben. Bitte Namen vergeben.
+lDialogSubmenuParentMenu	Untermenü Elternmenü
 lDialogSubmenuShortName	Kurzname des Untermenüs
 lDonateButton	Unterstützen Sie Freeware!
 lDonateCheckPrompt	Sind Sie zufrieden mit ~1~?`n`n~1~ ist nicht nur kostenlos, sondern enthält auch keine Werbung, bei der Sie nie wissen, ob diese Spyware oder Schadsoftware enthält.`n`n~2~ mal bisher, hat Ihnen ~1~ bei der täglichen Arbeit geholfen. Wie wär's jetzt mit ein wenig Unterstützung für Freeware?
@@ -72,6 +77,7 @@ lGuiAddFolder	Hinzufügen
 lGuiCancel	&Abbrechen
 lGuiClose	&Schliessen
 lGuiDonate	Unterstützen
+lGuiDropFilesIncentive	Sie können Ihre Favoriten in dieses Fenster ziehen
 lGuiEditFolder	Bearbeiten
 lGuiHelp	Hilfe
 lGuiLvDialogsHeader	Unterstützte Dialoge`n(Teile der Namen)
@@ -103,6 +109,7 @@ lMenuControlPanel	&Systemsteuerung
 lMenuDesktop	&Desktop
 lMenuDialogNotSupported	Diese Dialogbox wird momentan noch nicht unterstützt
 lMenuDocuments	D&okumente
+lMenuExitFoldersPopup	Beenden ~1~
 lMenuHelp	Hilfe
 lMenuMyComputer	&Mein Computer
 lMenuNetworkNeighborhood	&Netzwerkumgebung
@@ -118,6 +125,7 @@ lMenuSeparator	----------------
 lMenuSettings	&~1~ Einstellungen
 lMenuSpecialExplorer	Spezielles Explorer-Fenster
 lMenuSpecialFolders	&Spezielle Ordner
+lMenuSuspendHotkeys	Suspend Hotkeys
 lMenuSwitch	S&witch
 lMenuSwitchDialog	Sw&itch in &Dialogbox
 lMenuSwitchExplorer	Zum &Explorer wechseln
@@ -163,19 +171,11 @@ lOptionsTriggerFor	Auslöser für:
 lOptionsWin	Win
 lReloadPrompt	Sprache wurde in ~1~ geändert. Wollen Sie jetzt ~2~ in ~1~ neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
 lTrayTipInstalledDetail	Zur Anzeige des ~1~ Menüs`nim Windows Explorer oder einer Dialogbox`n~2~ oder ~3~ drücken.`n`n~4~ oder ~5~`num ein neues Explorer-Fenster zu öffnen.
+lTrayTipWorkingDetail	Erzeuge Menüs
+lTrayTipWorkingTitle	~1~ ~2~ arbeite...
 lTrayTipinstalledTitle	~1~ ~2~ bereit!
 lUpdateButtonRemind	Erinnere mich
 lUpdateError	Beim Zugriff auf die letzte Versionsnummer trat ein Fehler auf. Prüfe auf unterbrochene Updates.
 lUpdatePrompt	Update ~1~ von v~2~ auf v~3~?
 lUpdateTitle	Update ~1~?
 lUpdateYouHaveLatest	Sie verwenden die aktuellste Version: ~1~.`n`nTrotzdem die ~2~ Webseite besuchen?
-lMenuSuspendHotkeys	Suspend Hotkeys
-lGuiDropFilesIncentive	You can drag and drop your favorites to this window
-lMenuExitFoldersPopup	Exit ~1~
-lDialogReplaceShortName	Replace favorite name "~1~" with "~2~"?
-lDialogSubmenuNameEmpty	The submenu name is empty. Please, choose a name.
-lDialogSubmenuParentMenu	Submenu parent menu
-lDialogFavoriteDoesNotExistPrompt	The favorite "~1~" does not exist or is not available.`n`nIf this favorite is on a network drive, please try again after network authentification.
-lDialogFavoriteDoesNotExistTitle	Favorite does not exist - ~1~
-lTrayTipWorkingDetail	Building menus
-lTrayTipWorkingTitle	~1~ ~2~ working...
