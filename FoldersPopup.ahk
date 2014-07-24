@@ -1,6 +1,8 @@
 /*
 To-do:
-- when change radio button in add, select the short name field
+
+Bug
+
 */
 
 ;===============================================
@@ -9,6 +11,9 @@ To-do:
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: 3.0.5 (2014-07-23)
+	* 
+	
 	Version: 3.0.4 (2014-07-21)
 	* fix a bug when adding a menu and numeric shortcuts are active
 	* lighter tray tip message after menu is updated in settings
@@ -258,7 +263,7 @@ To-do:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 3.0.3 BETA
+;@Ahk2Exe-SetVersion 3.0.4 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -303,7 +308,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.0.3" ; "major.minor.bugs"
+global strCurrentVersion := "3.0.4" ; "major.minor.bugs"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
@@ -1208,6 +1213,12 @@ BuildOneMenu(strMenu)
 				SplitPath, strLocation, , , strExtension
 				RegRead, strHKeyClassRoot, HKEY_CLASSES_ROOT, .%strExtension%
 				RegRead, strDefaultIcon, HKEY_CLASSES_ROOT, %strHKeyClassRoot%\DefaultIcon
+				if (blnDiagMode)
+				{
+					Diag("BuildOneMenuIcon", strLocation)
+					Diag("strHKeyClassRoot", strHKeyClassRoot)
+					Diag("strDefaultIcon-1", strDefaultIcon)
+				}
 				
 				if (strDefaultIcon = "%1") ; use the file itself (for executable)
 					strDefaultIcon := strLocation
@@ -1221,6 +1232,11 @@ BuildOneMenu(strMenu)
 				else
 					intDefaultIcon := 1
 
+				if (blnDiagMode)
+				{
+					Diag("strDefaultIcon-2", strDefaultIcon)
+					Diag("intDefaultIcon", intDefaultIcon)
+				}
 				if StrLen(strDefaultIcon)
 					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %strDefaultIcon%, %intDefaultIcon%, %intIconSize%
 				else
@@ -1310,7 +1326,7 @@ if !(blnDonor)
 	StringSplit, arrDonateButtons, strDonateButtons, |
 	Random, intDonateButton, 1, 5
 
-	Gui, 1:Add, Picture, xs+10 ys gGuiDonate, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png" ; 19
+	Gui, 1:Add, Picture, xs+10 ys gGuiDonate, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png" ; Static19
 	Gui, 1:Font, s8 w400, Arial ; button legend
 	Gui, 1:Add, Text, xs y+0 w52 center gGuiDonate, %lGuiDonate% ; Static20
 }
@@ -2014,31 +2030,78 @@ Time2Donate(intStartups, blnDonor)
 GuiAddFolder:
 GuiAddFromPopup:
 GuiAddFromDropFiles:
+GuiEditFolder:
 ;------------------------------------------------------------
 
-intRowToEdit := 0 ;  used when saving to flag to insert a new row
-strCurrentName := "" ;  make sure it is empty
-strCurrentSubmenuFullName := "" ;  make sure it is empty
+if (A_ThisLabel = "GuiEditFolder")
+{
+	Gui, 1:ListView, lvFoldersList
+	intRowToEdit := LV_GetNext()
+	LV_GetText(strCurrentName, intRowToEdit, 1)
+	
+	if (strCurrentName = lMenuSeparator)
+		return
+
+	if !StrLen(strCurrentName) or (intRowToEdit = 0)
+	{
+		Oops(lDialogSelectItemToEdit)
+		return
+	}
+	LV_GetText(strCurrentLocation, intRowToEdit, 2)
+	LV_GetText(strCurrentSubmenuFullName, intRowToEdit, 4)
+	LV_GetText(strFavoriteType, intRowToEdit, 5)
+	
+	blnRadioSubmenu := (strFavoriteType = "S")
+	blnRadioFolder := (strFavoriteType = "F")
+	blnRadioFile := (strFavoriteType = "D")
+}
+else
+{
+	intRowToEdit := 0 ;  used when saving to flag to insert a new row
+	strCurrentName := "" ; make sure it is empty
+	strCurrentSubmenuFullName := "" ;  make sure it is empty
+	strFavoriteType := "" ;  make sure it is empty
+	
+	if (A_ThisLabel = "GuiAddFromPopup" or A_ThisLabel = "GuiAddFromDropFiles")
+		; strCurrentLocation is received from AddThisFolder or GuiDropFiles
+		strFolderShortName := GetDeepestFolderName(strCurrentLocation)
+	else
+	{
+		;  make sure these variables are empty
+		strCurrentLocation := ""
+		strFolderShortName := ""
+	}
+
+	if (A_ThisLabel = "GuiAddFromPopup")
+	{
+		blnRadioSubmenu := false
+		blnRadioFolder := true
+		blnRadioFile := false
+	}
+	else if (A_ThisLabel = "GuiAddFromDropFiles")
+	{
+		blnRadioSubmenu := false
+		blnRadioFile := LocationIsDocument(strCurrentLocation)
+		blnRadioFolder := not blnRadioFile
+	}
+	else ; GuiAddFolder
+	{
+		blnRadioSubmenu := false
+		blnRadioFolder := false
+		blnRadioFile := false
+	}
+}
 
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
-Gui, 2:New, , % L(lDialogAddEditFolderTitle, lDialogAdd, strAppName, strAppVersion)
+Gui, 2:New, , % L(lDialogAddEditFolderTitle, (A_ThisLabel = "GuiEditFolder" ? lDialogEdit : lDialogAdd), strAppName, strAppVersion)
 Gui, 2:+Owner1
 Gui, 2:+OwnDialogs
 
-if (A_ThisLabel = "GuiAddFromPopup")
-{
-	blnRadioSubmenu := false
-	blnRadioFolder := true
-	blnRadioFile := false
-}
-else if (A_ThisLabel = "GuiAddFromDropFiles")
-{
-	blnRadioSubmenu := false
-	blnRadioFile := LocationIsDocument(strCurrentLocation)
-	blnRadioFolder := not blnRadioFile
-}
-else ; GuiAddFolder
+Gui, 2:Add, Text, % x10 y10 vlblFolderParentMenu, % (blnRadioSubmenu ? lDialogSubmenuParentMenu : lDialogFolderParentMenu)
+Gui, 2:Add, DropDownList, x10 w300 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
+
+if (A_ThisLabel = "GuiAddFolder")
 {
 	Gui, 2:Add, Text, x10, %lDialogAdd%:
 	Gui, 2:Add, Radio, x+10 yp vblnRadioFolder checked gRadioButtonsChanged, %lDialogFolderLabel%
@@ -2046,89 +2109,34 @@ else ; GuiAddFolder
 	Gui, 2:Add, Radio, x+10 yp vblnRadioSubmenu gRadioButtonsChanged, %lDialogSubmenuLabel%
 }
 
-if (A_ThisLabel = "GuiAddFromPopup" or A_ThisLabel = "GuiAddFromDropFiles")
-	; strCurrentLocation is received from AddThisFolder or GuiDropFiles
-	strFolderShortName := GetDeepestFolderName(strCurrentLocation)
-else
-{
-	;  make sure these variables are empty
-	strCurrentLocation := ""
-	strFolderShortName := ""
-}
-
-Gui, 2:Add, Text, x10 w300 y+10 vlblShortName, %lDialogFolderShortName%
-Gui, 2:Add, Edit, x10 w300 vstrFolderShortName, %strFolderShortName%
-
-Gui, 2:Add, Text, x10 w300 vlblFolder, %lDialogFolderLabel%
-Gui, 2:Add, Edit, x10 w300 vstrFolderLocation, %strCurrentLocation%
-Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation default, %lDialogBrowseButton%
-
-Gui, 2:Add, Text, x10 y+10 vlblFolderParentMenu, %lDialogFolderParentMenu%
-Gui, 2:Add, DropDownList, x10 w250 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
-
-Gui, 2:Add, Button, y+15 vbtnAddFolderAdd gGuiAddFolderSave, %lDialogAdd%
-Gui, 2:Add, Button, yp vbtnAddFolderCancel gGuiAddFolderCancel, %lGuiCancel%
-GuiCenterButtons(L(lDialogAddEditFolderTitle, lDialogAdd, strAppName, strAppVersion), 10, 5, 20, "btnAddFolderAdd", "btnAddFolderCancel")
-
-GuiControl, 2:Focus, strFolderShortName
-Gui, 2:Show, AutoSize Center
-Gui, 1:+Disabled
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiEditFolder:
-;------------------------------------------------------------
-
-Gui, 1:ListView, lvFoldersList
-intRowToEdit := LV_GetNext()
-LV_GetText(strCurrentName, intRowToEdit, 1)
-
-if (strCurrentName = lMenuSeparator)
-	return
-
-if !StrLen(strCurrentName)
-{
-	Oops(lDialogSelectItemToEdit)
-	return
-}
-LV_GetText(strCurrentLocation, intRowToEdit, 2)
-LV_GetText(strCurrentSubmenuFullName, intRowToEdit, 4)
-LV_GetText(strFavoriteType, intRowToEdit, 5)
-
-blnRadioSubmenu := (strFavoriteType = "S")
-blnRadioFolder := (strFavoriteType = "F")
-blnRadioFile := (strFavoriteType = "D")
-
-intGui1WinID := WinExist("A")
-Gui, 1:Submit, NoHide
-Gui, 2:New, , % L(lDialogAddEditFolderTitle, lDialogEdit, strAppName, strAppVersion)
-Gui, 2:+Owner1
-Gui, 2:+OwnDialogs
-
-Gui, 2:Add, Text, % x10 y10 vlblFolderParentMenu, % (blnRadioSubmenu ? lDialogSubmenuParentMenu : lDialogFolderParentMenu)
-Gui, 2:Add, DropDownList, x10 w300 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
-
 Gui, 2:Add, Text, x10 y+10 w300 vlblShortName, % (blnRadioSubmenu ? lDialogSubmenuShortName : (blnRadioFile ? lDialogFileShortName : lDialogFolderShortName))
-Gui, 2:Add, Edit, x10 w300 vstrFolderShortName, %strCurrentName%
+Gui, 2:Add, Edit, x10 w300 vstrFolderShortName, % (A_ThisLabel = "GuiEditFolder" ? strCurrentName : strFolderShortName)
 
 if (blnRadioSubmenu)
 	Gui, 2:Add, Button, x+10 yp vbnlEditFolderOpenMenu gGuiOpenThisMenu, %lDialogOpenThisMenu%
 else
 {
-	Gui, 2:Add, Text, x10 vlblFolder, % (blnRadioFile ? lDialogFileLabel : lDialogFolderLabel)
+	Gui, 2:Add, Text, x10 w300 vlblFolder, % (blnRadioFile ? lDialogFileLabel : lDialogFolderLabel)
 	Gui, 2:Add, Edit, x10 w300 h20 vstrFolderLocation, %strCurrentLocation%
-	Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation, %lDialogBrowseButton%
+	Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation default, %lDialogBrowseButton%
 }
 
-Gui, 2:Add, Button, y+20 vbtnEditFolderSave gGuiEditFolderSave, %lDialogSave%
-Gui, 2:Add, Button, yp vbtnEditFolderCancel gGuiEditFolderCancel, %lGuiCancel%
-GuiCenterButtons(L(lDialogAddEditFolderTitle, lDialogEdit, strAppName, strAppVersion), 10, 5, 20, "btnEditFolderSave", "btnEditFolderCancel")
+if (A_ThisLabel = "GuiEditFolder")
+{
+	Gui, 2:Add, Button, y+20 vbtnEditFolderSave gGuiEditFolderSave, %lDialogSave%
+	Gui, 2:Add, Button, yp vbtnEditFolderCancel gGuiEditFolderCancel, %lGuiCancel%
+	GuiCenterButtons(L(lDialogAddEditFolderTitle, lDialogEdit, strAppName, strAppVersion), 10, 5, 20,  "btnEditFolderSave", "btnEditFolderCancel")
+}
+else
+{
+	Gui, 2:Add, Button, y+20 vbtnAddFolderAdd gGuiAddFolderSave, %lDialogAdd%
+	Gui, 2:Add, Button, yp vbtnAddFolderCancel gGuiAddFolderCancel, %lGuiCancel%
+	GuiCenterButtons(L(lDialogAddEditFolderTitle, lDialogAdd, strAppName, strAppVersion), 10, 5, 20, "btnAddFolderAdd", "btnAddFolderCancel")
+}
 
 GuiControl, 2:Focus, strFolderShortName
-Send, ^a
+if (A_ThisLabel = "GuiEditFolder")
+	Send, ^a
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
 
@@ -2159,8 +2167,6 @@ Gui, 2:Submit, NoHide
 Gui, 2:+OwnDialogs
 
 GuiControlGet, strParentMenu, , drpParentMenu
-if !StrLen(strParentMenu)
-	strParentMenu := strCurrentMenu
 
 if !StrLen(strFolderShortName)
 {
@@ -2189,29 +2195,24 @@ if (blnRadioSubmenu)
 		return
 	}
 	
+	strNewSubmenuFullName := strParentMenu . lGuiSubmenuSeparator . strFolderShortName
+	
 	if (A_ThisLabel = "GuiAddFolderSave")
 	{
 		strFolderLocation := lGuiSubmenuLocation
-		strSubmenuFullName := strCurrentMenu . lGuiSubmenuSeparator . strFolderShortName
 		
 		arrNewMenu := Object() ; array of folders of the new menu
-		arrMenus.Insert(strSubmenuFullName, arrNewMenu)
+		arrMenus.Insert(strNewSubmenuFullName, arrNewMenu)
 	}
 	else ; GuiEditFolderSave
-	{
-		strNewSubmenuFullName := strParentMenu . lGuiSubmenuSeparator . strFolderShortName
-		UpdateMenuNameInSubmenus(strCurrentSubmenuFullName, strNewSubmenuFullName) ; change names in arrMenus and arrMenu objects	
-	}
+		UpdateMenuNameInSubmenus(strCurrentSubmenuFullName, strNewSubmenuFullName) ; change names in arrMenus and arrMenu objects
 }
 else
-	if (A_ThisLabel = "GuiAddFolderSave")
-		strSubmenuFullName := ""
-	else
-		strNewSubmenuFullName := ""
+	strNewSubmenuFullName := ""
 
 if (blnRadioSubmenu)
 	strFavoriteType := "S" ; submenu
-else
+else ; GuiEditFolderSave
 	strFavoriteType := (blnRadioFile ? "D" : "F") ; document or folder
 
 Gosub, 2GuiClose
@@ -2225,7 +2226,7 @@ if (strParentMenu = strCurrentMenu) ; add as top row to current menu
 	if (A_ThisLabel = "GuiAddFolderSave")
 	{
 		LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus"
-			, strFolderShortName, strFolderLocation, strCurrentMenu, strSubmenuFullName, strFavoriteType)
+			, strFolderShortName, strFolderLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType)
 		LV_Modify(LV_GetNext(), "Vis")
 	
 		Gosub, SaveCurrentListviewToMenuObject ; save current LV tbefore update the dropdown menu
@@ -2253,6 +2254,8 @@ else ; add menu item to selected menu object
 		LV_Modify(intRowToEdit, "Select Focus")
 	}
 }
+
+GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
 
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
@@ -2313,6 +2316,7 @@ else if (blnRadioFile)
 else ; blnRadioSubmenu
 {
 	GuiControl, , lblShortName, %lDialogSubmenuShortName%
+	GuiControl, , strFolderLocation ; empty control
 }
 
 GuiControl, % (blnRadioSubmenu ? "Hide" : "Show"), lblFolder
@@ -2320,7 +2324,7 @@ GuiControl, % (blnRadioSubmenu ? "Hide" : "Show"), strFolderLocation
 GuiControl, % (blnRadioSubmenu ? "Hide" : "Show"), btnSelectFolderLocation
 GuiControl, % (blnRadioSubmenu ? "-" : "+") . "Default", btnSelectFolderLocation
 
-GuiControl, , strFolderLocation ; empty control
+GuiControl, Focus, strFolderShortName
 
 return
 ;------------------------------------------------------------
@@ -2342,15 +2346,8 @@ if !(StrLen(strNewLocation))
 
 GuiControl, 2:, strFolderLocation, %strNewLocation%
 
-strNewName := GetDeepestFolderName(strNewLocation)
-if StrLen(strFolderShortName)
-{
-	MsgBox, 52, %strAppName%, % L(lDialogReplaceShortName, strFolderShortName, strNewName, strAppName, strDiagFile)
-	IfMsgBox, Yes
-		strFolderShortName := ""
-}
 if !StrLen(strFolderShortName)
-	GuiControl, 2:, strFolderShortName, %strNewName%
+	GuiControl, 2:, strFolderShortName, % GetDeepestFolderName(strNewLocation)
 
 return
 ;------------------------------------------------------------
@@ -3842,7 +3839,7 @@ WM_MOUSEMOVE(wParam, lParam)
 	MouseGetPos, , , , strControl ; Static1, StaticN, Button1, ButtonN
 	StringReplace, strControl, strControl, Static
 	
-	If InStr(".4.5.7.8.9.10.12.13.14.15.16.17.20.21.22.24.25.26.Button1.Button2.", "." . strControl . ".")
+	If InStr(".4.5.7.8.9.10.12.13.14.15.16.17.19.20.21.22.23.24.25.26.Button1.Button2.", "." . strControl . ".")
 		DllCall("SetCursor", "UInt", objCursor)
 
 	return
@@ -3891,3 +3888,136 @@ GuiCenterButtons(strWindow, intInsideHorizontalMargin := 10, intInsideVerticalMa
 			. " h" . intMaxControlHeight + intInsideVerticalMargin
 }
 ;------------------------------------------------------------
+
+
+
+
+
+/*
+;------------------------------------------------------------
+GuiAddFolder:
+GuiAddFromPopup:
+GuiAddFromDropFiles:
+;------------------------------------------------------------
+
+intRowToEdit := 0 ;  used when saving to flag to insert a new row
+strCurrentName := "" ;  make sure it is empty
+strCurrentSubmenuFullName := "" ;  make sure it is empty
+
+intGui1WinID := WinExist("A")
+Gui, 1:Submit, NoHide
+Gui, 2:New, , % L(lDialogAddEditFolderTitle, lDialogAdd, strAppName, strAppVersion)
+Gui, 2:+Owner1
+Gui, 2:+OwnDialogs
+
+Gui, 2:Add, Text, x10 y10 vlblFolderParentMenu, %lDialogFolderParentMenu%
+Gui, 2:Add, DropDownList, x10 w300 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
+
+if (A_ThisLabel = "GuiAddFromPopup")
+{
+	blnRadioSubmenu := false
+	blnRadioFolder := true
+	blnRadioFile := false
+}
+else if (A_ThisLabel = "GuiAddFromDropFiles")
+{
+	blnRadioSubmenu := false
+	blnRadioFile := LocationIsDocument(strCurrentLocation)
+	blnRadioFolder := not blnRadioFile
+}
+else ; GuiAddFolder
+{
+	Gui, 2:Add, Text, x10, %lDialogAdd%:
+	Gui, 2:Add, Radio, x+10 yp vblnRadioFolder checked gRadioButtonsChanged, %lDialogFolderLabel%
+	Gui, 2:Add, Radio, x+10 yp vblnRadioFile gRadioButtonsChanged, %lDialogFileLabel%
+	Gui, 2:Add, Radio, x+10 yp vblnRadioSubmenu gRadioButtonsChanged, %lDialogSubmenuLabel%
+}
+
+if (A_ThisLabel = "GuiAddFromPopup" or A_ThisLabel = "GuiAddFromDropFiles")
+	; strCurrentLocation is received from AddThisFolder or GuiDropFiles
+	strFolderShortName := GetDeepestFolderName(strCurrentLocation)
+else
+{
+	;  make sure these variables are empty
+	strCurrentLocation := ""
+	strFolderShortName := ""
+}
+
+Gui, 2:Add, Text, x10 w300 y+10 vlblShortName, %lDialogFolderShortName%
+Gui, 2:Add, Edit, x10 w300 vstrFolderShortName, %strFolderShortName%
+
+Gui, 2:Add, Text, x10 w300 vlblFolder, %lDialogFolderLabel%
+Gui, 2:Add, Edit, x10 w300 vstrFolderLocation, %strCurrentLocation%
+Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation default, %lDialogBrowseButton%
+
+Gui, 2:Add, Button, y+15 vbtnAddFolderAdd gGuiAddFolderSave, %lDialogAdd%
+Gui, 2:Add, Button, yp vbtnAddFolderCancel gGuiAddFolderCancel, %lGuiCancel%
+GuiCenterButtons(L(lDialogAddEditFolderTitle, lDialogAdd, strAppName, strAppVersion), 10, 5, 20, "btnAddFolderAdd", "btnAddFolderCancel")
+
+GuiControl, 2:Focus, strFolderShortName
+Gui, 2:Show, AutoSize Center
+Gui, 1:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiEditFolder:
+;------------------------------------------------------------
+
+Gui, 1:ListView, lvFoldersList
+intRowToEdit := LV_GetNext()
+LV_GetText(strCurrentName, intRowToEdit, 1)
+
+if (strCurrentName = lMenuSeparator)
+	return
+
+if !StrLen(strCurrentName)
+{
+	Oops(lDialogSelectItemToEdit)
+	return
+}
+LV_GetText(strCurrentLocation, intRowToEdit, 2)
+LV_GetText(strCurrentSubmenuFullName, intRowToEdit, 4)
+LV_GetText(strFavoriteType, intRowToEdit, 5)
+
+blnRadioSubmenu := (strFavoriteType = "S")
+blnRadioFolder := (strFavoriteType = "F")
+blnRadioFile := (strFavoriteType = "D")
+
+intGui1WinID := WinExist("A")
+Gui, 1:Submit, NoHide
+Gui, 2:New, , % L(lDialogAddEditFolderTitle, lDialogEdit, strAppName, strAppVersion)
+Gui, 2:+Owner1
+Gui, 2:+OwnDialogs
+
+Gui, 2:Add, Text, % x10 y10 vlblFolderParentMenu, % (blnRadioSubmenu ? lDialogSubmenuParentMenu : lDialogFolderParentMenu)
+Gui, 2:Add, DropDownList, x10 w300 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
+
+Gui, 2:Add, Text, x10 y+10 w300 vlblShortName, % (blnRadioSubmenu ? lDialogSubmenuShortName : (blnRadioFile ? lDialogFileShortName : lDialogFolderShortName))
+Gui, 2:Add, Edit, x10 w300 vstrFolderShortName, %strCurrentName%
+
+if (blnRadioSubmenu)
+	Gui, 2:Add, Button, x+10 yp vbnlEditFolderOpenMenu gGuiOpenThisMenu, %lDialogOpenThisMenu%
+else
+{
+	Gui, 2:Add, Text, x10 vlblFolder, % (blnRadioFile ? lDialogFileLabel : lDialogFolderLabel)
+	Gui, 2:Add, Edit, x10 w300 h20 vstrFolderLocation, %strCurrentLocation%
+	Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation, %lDialogBrowseButton%
+}
+
+Gui, 2:Add, Button, y+20 vbtnEditFolderSave gGuiEditFolderSave, %lDialogSave%
+Gui, 2:Add, Button, yp vbtnEditFolderCancel gGuiEditFolderCancel, %lGuiCancel%
+GuiCenterButtons(L(lDialogAddEditFolderTitle, lDialogEdit, strAppName, strAppVersion), 10, 5, 20, "btnEditFolderSave", "btnEditFolderCancel")
+
+GuiControl, 2:Focus, strFolderShortName
+Send, ^a
+Gui, 2:Show, AutoSize Center
+Gui, 1:+Disabled
+
+return
+;------------------------------------------------------------
+*/
+
+
