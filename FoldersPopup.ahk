@@ -12,7 +12,10 @@ Bug
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
 	Version: 3.0.5 (2014-07-23)
-	* 
+	* fix a v2 bug allowing editing in Settings with no item selected
+	* fix a v3.0.2 bug when adding an item to a menu other than the current menu in Settings
+	* change cursor to hand for all buttons in Settings
+	* refactor (merge) Add and Edit favorites GUI and Save commands (no change visible to users)
 	
 	Version: 3.0.4 (2014-07-21)
 	* fix a bug when adding a menu and numeric shortcuts are active
@@ -263,7 +266,7 @@ Bug
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 3.0.4 BETA
+;@Ahk2Exe-SetVersion 3.0.5 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -308,7 +311,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.0.4" ; "major.minor.bugs"
+global strCurrentVersion := "3.0.5" ; "major.minor.bugs"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
