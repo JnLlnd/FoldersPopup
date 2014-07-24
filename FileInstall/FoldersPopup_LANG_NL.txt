@@ -172,7 +172,6 @@ lUpdateYouHaveLatest	Je hebt reeds de meest recente versie: ~1~.`n`nWil je de ~2
 lMenuSuspendHotkeys	Suspend Hotkeys
 lGuiDropFilesIncentive	Je kan je favoriete mappen naar dit venster slepen en neerzetten
 lMenuExitFoldersPopup	Exit ~1~
-lDialogReplaceShortName	Replace favorite name "~1~" with "~2~"?
 lDialogSubmenuNameEmpty	The submenu name is empty. Please, choose a name.
 lDialogSubmenuParentMenu	Submenu parent menu
 lDialogFavoriteDoesNotExistPrompt	The favorite "~1~" does not exist or is not available.`n`nIf this favorite is on a network drive, please try again after network authentification.
