@@ -10,10 +10,11 @@ Bugs:
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: 3.0.6 (2014-07-25)
+	Version: 3.0.6 (2014-07-26)
 	* Redesign of buttons in Settings
 	* Addition to ini file of themes with colors for dialog boxes and menu
 	* Implementation of colors to menus and dialog boxes
+	* Add option in Settings/Options to select theme
 	
 	Version: 3.0.5 (2014-07-23)
 	* fix a v2 bug allowing editing in Settings with no item selected
