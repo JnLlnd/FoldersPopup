@@ -80,7 +80,7 @@ lGuiDropFilesIncentive	Sie können Ihre Favoriten in dieses Fenster ziehen
 lGuiEditFolder	Bearbeiten
 lGuiHelp	Hilfe
 lGuiLvDialogsHeader	Unterstützte Dialoge`n(Teile der Namen)
-lGuiLvFoldersHeader	Name|Pfad
+lGuiLvFoldersHeader	Name|Ort
 lGuiMoveFolderDown	Nach u&nten bewegen
 lGuiMoveFolderUp	Nach o&ben bewegen
 lGuiOptions	Optionen

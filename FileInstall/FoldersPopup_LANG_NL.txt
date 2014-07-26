@@ -75,7 +75,7 @@ lGuiDonate	Steun
 lGuiEditFolder	Bewerken
 lGuiHelp	Hulp
 lGuiLvDialogsHeader	Ondersteunde dialoogvensters`n(deel van de naam volstaat) 
-lGuiLvFoldersHeader	Naam|Pad
+lGuiLvFoldersHeader	Naam|Locatie
 lGuiMoveFolderDown	Naar beneden
 lGuiMoveFolderUp	Naar boven
 lGuiOptions	Opties
