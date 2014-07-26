@@ -168,7 +168,7 @@ lOptionsTitles	Maus - Ordner Popup|Maus - Neu Explorer|Tastatur - Ordner Popup|T
 lOptionsTrayTip	Beim Start &Tray-Tip anzeigen
 lOptionsTriggerFor	Auslöser für:
 lOptionsWin	Win
-lReloadPrompt	Sprache wurde in ~1~ geändert. Wollen Sie jetzt ~2~ in ~1~ neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
+lReloadPrompt	~1~  wurde in ~2~ geändert. Wollen Sie jetzt ~3~ in ~2~ neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
 lTrayTipInstalledDetail	Zur Anzeige des ~1~ Menüs`nim Windows Explorer oder einer Dialogbox`n~2~ oder ~3~ drücken.`n`n~4~ oder ~5~`num ein neues Explorer-Fenster zu öffnen.
 lTrayTipWorkingDetail	Erzeuge Menüs
 lTrayTipWorkingTitle	~1~ ~2~ arbeite...
@@ -179,3 +179,4 @@ lUpdatePrompt	Update ~1~ von v~2~ auf v~3~?
 lUpdateTitle	Update ~1~?
 lUpdateYouHaveLatest	Sie verwenden die aktuellste Version: ~1~.`n`nTrotzdem die ~2~ Webseite besuchen?
 lTrayTipWorkingDetailFinished	The menu has been updated.
+lOptionsTheme	Thema

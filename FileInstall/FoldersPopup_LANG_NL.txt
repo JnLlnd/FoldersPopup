@@ -161,7 +161,7 @@ lOptionsTitles	Muis - Folders Popup|Muis - Nieuwe Verkenner|Toetsenbord - Folder
 lOptionsTrayTip	Toon &Startup Systeembalk Tip
 lOptionsTriggerFor	Trigger voor:
 lOptionsWin	Win
-lReloadPrompt	Taal werd gewijzigd naar ~1~. Wil je ~2~ laden in het ~1~ nu? Niet bewaarde wijzigingen gaan verloren.
+lReloadPrompt	~1~ werd gewijzigd naar ~2~. Wil je ~3~ laden in het ~2~ nu? Niet bewaarde wijzigingen gaan verloren.
 lTrayTipInstalledDetail	Om het ~1~ menu te tonen, druk:`n`n~2~ / ~3~`nin Windows Verkenner of in een dialoogvenster`n`n~4~ / ~5~`nom een nieuw Verkenner venster te openen
 lTrayTipinstalledTitle	~1~ ~2~ klaar!
 lUpdateButtonRemind	Herinner me
@@ -179,3 +179,4 @@ lDialogFavoriteDoesNotExistTitle	Favorite does not exist - ~1~
 lTrayTipWorkingDetail	Building menus
 lTrayTipWorkingTitle	~1~ ~2~ working...
 lTrayTipWorkingDetailFinished	The menu has been updated.
+lOptionsTheme	Thema

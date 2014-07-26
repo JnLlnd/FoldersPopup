@@ -1,6 +1,5 @@
 /*
 Todo:
-- add them drop down in Settings/Options
 
 Bugs:
 
@@ -529,8 +528,10 @@ IniRead, intIconSize, %strIniFile%, Global, IconSize, 24
 IniRead, strTheme, %strIniFile%, Global, Theme
 if (strTheme = "ERROR") ; if Theme not found, we have a v1 or v2 ini file - add the themes to the ini file
 {
-	IniWrite, Grey, %strIniFile%, Global, Theme
 	strTheme := "Grey"
+	strAvailableThemes := "Grey|Yellow|Light Blue|Light Red|Light Green"
+	IniWrite, %strTheme%, %strIniFile%, Global, Theme
+	IniWrite, %strAvailableThemes%, %strIniFile%, Global, AvailableThemes
 	FileAppend,
 		(LTrim Join`r`n
 			[Gui-Grey]
@@ -539,25 +540,25 @@ if (strTheme = "ERROR") ; if Theme not found, we have a v1 or v2 ini file - add 
 			ListviewBackground=FFFFFF
 			ListviewText=000000
 			MenuBackgroundColor=FFFFFF
-			[Gui-Blue]
-			WindowColor=e8e7fa
-			TextColor=000000
-			ListviewBackground=e7f0fa
-			ListviewText=000000
-			MenuBackgroundColor=e7f0fa
 			[Gui-Yellow]
 			WindowColor=f9ffc6
 			TextColor=000000
 			ListviewBackground=fcffe0
 			ListviewText=000000
 			MenuBackgroundColor=fcffe0
-			[Gui-Red]
+			[Gui-Light Blue]
+			WindowColor=e8e7fa
+			TextColor=000000
+			ListviewBackground=e7f0fa
+			ListviewText=000000
+			MenuBackgroundColor=e7f0fa
+			[Gui-Light Red]
 			WindowColor=fddcd7
 			TextColor=000000
 			ListviewBackground=fef1ef
 			ListviewText=000000
 			MenuBackgroundColor=fef1ef
-			[Gui-Green]
+			[Gui-Light Green]
 			WindowColor=d6fbde
 			TextColor=000000
 			ListviewBackground=edfdf1
@@ -567,7 +568,9 @@ if (strTheme = "ERROR") ; if Theme not found, we have a v1 or v2 ini file - add 
 )
 		, %strIniFile%
 }
-
+else
+	IniRead, strAvailableThemes, %strIniFile%, Global, AvailableThemes
+	
 Loop
 {
 	IniRead, strIniLine, %strIniFile%, Folders, Folder%A_Index%
@@ -2611,6 +2614,10 @@ Gui, 2:Add, Text, y+10 x40 Section, %lOptionsLanguage%
 Gui, 2:Add, DropDownList, ys x+10 w140 vdrpLanguage Sort, %lOptionsLanguageLabels%
 GuiControl, ChooseString, drpLanguage, %strLanguageLabel%
 
+Gui, 2:Add, Text, y+10 xs, %lOptionsTheme%
+Gui, 2:Add, DropDownList, yp x+10 w140 vdrpTheme Sort, %strAvailableThemes%
+GuiControl, ChooseString, drpTheme, %strTheme%
+
 Gui, 2:Add, CheckBox, y+10 xs vblnOptionsRunAtStartup, %lOptionsRunAtStartup%
 GuiControl, , blnOptionsRunAtStartup, % FileExist(A_Startup . "\" . strAppName . ".lnk") ? 1 : 0
 
@@ -2642,7 +2649,7 @@ Gui, 2:Add, Text, ys x300 Section, %lOptionsIconSize%
 Gui, 2:Add, DropDownList, ys x+10 w40 vdrpIconSize Sort, 16|24|32|64
 GuiControl, ChooseString, drpIconSize, %intIconSize%
 
-Gui, 2:Add, CheckBox, y+10 xs vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
+Gui, 2:Add, CheckBox, y+40 xs vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
 GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
 
 Gui, 2:Add, CheckBox, y+10 xs vblnDisplaySwitchMenu, %lOptionsDisplaySwitchMenu%
@@ -2788,10 +2795,14 @@ loop, %arrOptionsLanguageLabels0%
 		}
 IniWrite, %strLanguageCode%, %strIniFile%, Global, LanguageCode
 
-; if language changed, offer to restart the app
-if (strLanguageCodePrev <> strLanguageCode)
+strThemePrev := strTheme
+strTheme := drpTheme
+IniWrite, %strTheme%, %strIniFile%, Global, Theme
+
+; if language or theme changed, offer to restart the app
+if (strLanguageCodePrev <> strLanguageCode) or (strThemePrev <> strTheme)
 {
-	MsgBox, 52, %strAppName%, % L(lReloadPrompt, strLanguageLabel, strAppName)
+	MsgBox, 52, %strAppName%, % L(lReloadPrompt, (strLanguageCodePrev <> strLanguageCode ? lOptionsLanguage : lOptionsTheme), (strLanguageCodePrev <> strLanguageCode ? strLanguageLabel : strTheme), strAppName)
 	IfMsgBox, Yes
 	{
 		Gosub, RestoreBackupMenuObjects

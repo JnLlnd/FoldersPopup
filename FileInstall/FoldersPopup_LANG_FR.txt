@@ -164,11 +164,12 @@ lOptionsPopupFixPositionY	Y:
 lOptionsRecentFolders	Emplacements récents
 lOptionsRunAtStartup	Exécuter au démarrage
 lOptionsShift	Maj
+lOptionsTheme	Thème
 lOptionsTitles	Souris - Popup|Souris - Nouvel explorateur|Clavier - Popup|Clavier - Nouvel explorateur|Paramètres
 lOptionsTrayTip	Afficher la notification au démarrage
 lOptionsTriggerFor	Déclencheur pour:
 lOptionsWin	Win
-lReloadPrompt	Changement de langue enregistré: ~1~. Voulez-vous relancer ~2~ en ~1~ maintenant? Les changements non sauvegardés dans le menu des dossiers seront perdus.
+lReloadPrompt	Changement de ~1~ enregistré: ~2~. Voulez-vous relancer ~3~ en ~2~ maintenant? Les changements non sauvegardés dans le menu des dossiers seront perdus.
 lTrayTipInstalledDetail	Pour afficher le menu de ~1~, appuyez sur:`n`n~2~ / ~3~`ndans un Explorateur de fichiers ou dans une boîte de dialogue`n`n~4~ / ~5~`npour ouvrir un nouvel Explorateur
 lTrayTipinstalledTitle	~1~ ~2~ est prêt!
 lTrayTipWorkingDetail	Préparation des menus
