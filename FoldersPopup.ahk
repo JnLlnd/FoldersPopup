@@ -1,16 +1,21 @@
 /*
-To-do:
+Todo:
+- add them drop down in Settings/Options
 
-Bug
+Bugs:
 
 */
-
 ;===============================================
 /*
 	FoldersPopup
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: 3.0.6 (2014-07-25)
+	* Redesign of buttons in Settings
+	* Addition to ini file of themes with colors for dialog boxes and menu
+	* Implementation of colors to menus and dialog boxes
+	
 	Version: 3.0.5 (2014-07-23)
 	* fix a v2 bug allowing editing in Settings with no item selected
 	* fix a v3.0.2 bug when adding an item to a menu other than the current menu in Settings
@@ -266,7 +271,7 @@ Bug
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 3.0.5 BETA
+;@Ahk2Exe-SetVersion 3.0.6 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -311,7 +316,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.0.5" ; "major.minor.bugs"
+global strCurrentVersion := "3.0.6" ; "major.minor.bugs"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
@@ -520,6 +525,48 @@ if !(blnDonor)
 IniRead, intRecentFolders, %strIniFile%, Global, RecentFolders, 10
 IniRead, strDirectoryOpusPath, %strIniFile%, Global, DirectoryOpusPath, %A_Space% ; empty string if not found
 IniRead, intIconSize, %strIniFile%, Global, IconSize, 24
+
+IniRead, strTheme, %strIniFile%, Global, Theme
+if (strTheme = "ERROR") ; if Theme not found, we have a v1 or v2 ini file - add the themes to the ini file
+{
+	IniWrite, Grey, %strIniFile%, Global, Theme
+	strTheme := "Grey"
+	FileAppend,
+		(LTrim Join`r`n
+			[Gui-Grey]
+			WindowColor=E0E0E0
+			TextColor=000000
+			ListviewBackground=FFFFFF
+			ListviewText=000000
+			MenuBackgroundColor=FFFFFF
+			[Gui-Blue]
+			WindowColor=e8e7fa
+			TextColor=000000
+			ListviewBackground=e7f0fa
+			ListviewText=000000
+			MenuBackgroundColor=e7f0fa
+			[Gui-Yellow]
+			WindowColor=f9ffc6
+			TextColor=000000
+			ListviewBackground=fcffe0
+			ListviewText=000000
+			MenuBackgroundColor=fcffe0
+			[Gui-Red]
+			WindowColor=fddcd7
+			TextColor=000000
+			ListviewBackground=fef1ef
+			ListviewText=000000
+			MenuBackgroundColor=fef1ef
+			[Gui-Green]
+			WindowColor=d6fbde
+			TextColor=000000
+			ListviewBackground=edfdf1
+			ListviewText=000000
+			MenuBackgroundColor=edfdf1
+
+)
+		, %strIniFile%
+}
 
 Loop
 {
@@ -916,6 +963,7 @@ BuildSpecialFoldersMenu:
 
 Menu, menuSpecialFolders, Add
 Menu, menuSpecialFolders, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
+Menu, menuSpecialFolders, Color, %strMenuBackgroundColor%
 
 Menu, menuSpecialFolders, Add, %lMenuDesktop%, OpenSpecialFolder
 Menu, menuSpecialFolders, Icon, %lMenuDesktop%
@@ -951,6 +999,7 @@ BuildRecentFoldersMenu:
 
 Menu, menuRecentFolders, Add
 Menu, menuRecentFolders, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
+Menu, menuRecentFolders, Color, %strMenuBackgroundColor%
 
 objRecentFolders := Object()
 intRecentFoldersIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
@@ -1027,8 +1076,10 @@ BuildSwitchMenu:
 
 Menu, menuSwitchExplorer, Add
 Menu, menuSwitchExplorer, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
+Menu, menuSwitchExplorer, Color, %strMenuBackgroundColor%
 Menu, menuSwitchDialog, Add
 Menu, menuSwitchDialog, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
+Menu, menuSwitchDialog, Color, %strMenuBackgroundColor%
 
 objExplorersWinId := Object()
 objExplorersLocation := Object()
@@ -1097,7 +1148,7 @@ if (A_ThisLabel = "BuildFoldersMenusWithStatus")
 
 Menu, %lMainMenuName%, Add
 Menu, %lMainMenuName%, DeleteAll
-; Menu, %lMainMenuName%, Color, %strMenuBackgroundColor% ; only later when icons will be added
+Menu, %lMainMenuName%, Color, %strMenuBackgroundColor%
 
 BuildOneMenu(lMainMenuName) ; and recurse for submenus
 
@@ -1114,6 +1165,7 @@ if (blnDisplaySwitchMenu)
 {
 	Menu, menuSwitch, Add
 	Menu, menuSwitch, DeleteAll
+	Menu, menuSwitch, Color, %strMenuBackgroundColor%
 	Menu, menuSwitch, Add, %lMenuSwitchExplorer%, :menuSwitchExplorer
 	Menu, menuSwitch, Icon, %lMenuSwitchExplorer%
 		, % objIconsFile["lMenuSwitchExplorer"], % objIconsIndex["lMenuSwitchExplorer"], %intIconSize%
@@ -1166,6 +1218,7 @@ BuildOneMenu(strMenu)
 {
 	global blnDisplayMenuShortcuts
 	global intIconSize
+	global strMenuBackgroundColor
 	intShortcut := 0
 	
 	; try because at first execution strMenu does not exist and produces an error,
@@ -1181,6 +1234,7 @@ BuildOneMenu(strMenu)
 			strSubMenuParent := arrThisMenu[A_Index].MenuName
 			
 			BuildOneMenu(strSubMenuFullName) ; recursive call
+			Menu, %strSubMenuParent%, Color, %strMenuBackgroundColor%
 			
 			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = lMainMenuName)) . " " : "") . strSubMenuDisplayName
 			Try Menu, %strSubMenuParent%, Add, %strMenuName%, % ":" . strSubMenuFullName
@@ -1257,15 +1311,13 @@ BuildOneMenu(strMenu)
 
 ;------------------------------------------------------------
 LoadTheme:
-; colors for themes
-; skin: WindowColor=FFC495
-; Note: implement menu background color only when icons are implemented
 ;------------------------------------------------------------
 
-IniRead, strGuiWindowColor, %strIniFile%, Gui, WindowColor, E0E0E0
-IniRead, strGuiListviewBackgroundColor, %strIniFile%, Gui, ListviewBackground, FFFFFF
-IniRead, strGuiListviewTextColor, %strIniFile%, Gui, ListviewText, 000000
-IniRead, strMenuBackgroundColor, %strIniFile%, Gui, MenuBackgroundColor, FFFFFF
+IniRead, strGuiWindowColor, %strIniFile%, Gui-%strTheme%, WindowColor, E0E0E0
+IniRead, strTextColor, %strIniFile%, Gui-%strTheme%, TextColor, 000000
+IniRead, strGuiListviewBackgroundColor, %strIniFile%, Gui-%strTheme%, ListviewBackground, FFFFFF
+IniRead, strGuiListviewTextColor, %strIniFile%, Gui-%strTheme%, ListviewText, 000000
+IniRead, strMenuBackgroundColor, %strIniFile%, Gui-%strTheme%, MenuBackgroundColor, FFFFFF
 
 return
 ;------------------------------------------------------------
@@ -1277,24 +1329,29 @@ BuildGui:
 
 Gui, 1:New, , % L(lGuiTitle, strAppName, strAppVersion)
 Gui, Margin, 10, 10
-Gui, Color, %strGuiWindowColor%, %strGuiWindowColor%
+Gui, 1:Color, %strGuiWindowColor%
 
-intCol := 480
 intWidth := 460
 
-Gui, 1:Font, s12 w700, Verdana
-Gui, 1:Add, Text, xm ym w%intWidth% h25, %strAppName% %strAppVersion%
+Gui, 1:Font, s12 w700 c%strTextColor%, Verdana
+Gui, 1:Add, Text, xm ym h25, %strAppName% %strAppVersion%
 Gui, 1:Font, s9 w400, Verdana
-Gui, 1:Add, Text, xm y+1, %lAppTagline%
+Gui, 1:Add, Text, xm y+1 w517, %lAppTagline%
+
+
+Gui, 1:Add, Picture, x+10 ym Section gGuiOptions, %strTempDir%\settings-32.png ; Static3
+Gui, 1:Font, s8 w400, Arial ; button legend
+Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiOptions, %lGuiOptions% ; Static4
+
 Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, Text, xm+30, %lGuiSubmenuDropdownLabel%
-Gui, 1:Add, Picture, xm y+5 gGuiGotoPreviousMenu vpicPreviousMenu hidden, %strTempDir%\left-12.png ; Static4
-Gui, 1:Add, Picture, xm+15 yp gGuiGotoUpMenu vpicUpMenu hidden, %strTempDir%\up-12.png ; Static5
-Gui, 1:Add, DropDownList, xm+30 yp w420 vdrpMenusList gGuiMenusListChanged ; Sort
+Gui, 1:Add, Picture, xm y+5 gGuiGotoPreviousMenu vpicPreviousMenu hidden, %strTempDir%\left-12.png ; Static6
+Gui, 1:Add, Picture, xm+15 yp gGuiGotoUpMenu vpicUpMenu hidden, %strTempDir%\up-12.png ; Static7
+Gui, 1:Add, DropDownList, xm+30 yp w480 vdrpMenusList gGuiMenusListChanged
 
 Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, ListView
-	, xm+30 w420 h220 Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFoldersList gGuiFoldersListEvent
+	, xm+30 w480 h220 Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFoldersList gGuiFoldersListEvent
 	, %lGuiLvFoldersHeader%|Hidden Menu|Hidden Submenu|Hidden FavoriteType
 LV_ModifyCol(3, 0) ; hide 3rd column
 LV_ModifyCol(4, 0) ; hide 4th column
@@ -1302,60 +1359,53 @@ LV_ModifyCol(5, 0) ; hide 5th column
 
 Gui, 1:Add, Text, Section x+0 yp
 
-Gui, 1:Add, Picture, xm ys+25 gGuiMoveFolderUp, %strTempDir%\up_circular-26.png ; Static7
-Gui, 1:Add, Picture, xm ys+55 gGuiMoveFolderDown, %strTempDir%\down_circular-26.png ; Static8
-Gui, 1:Add, Picture, xm ys+85 gGuiAddSeparator, %strTempDir%\separator-26.png ; Static9
-Gui, 1:Add, Picture, xm+1 ys+175 gGuiSortFolders, %strTempDir%\generic_sorting2-26-grey.png ; Static10
+Gui, 1:Add, Picture, xm ys+25 gGuiMoveFolderUp, %strTempDir%\up_circular-26.png ; 9
+Gui, 1:Add, Picture, xm ys+55 gGuiMoveFolderDown, %strTempDir%\down_circular-26.png ; Static10
+Gui, 1:Add, Picture, xm ys+85 gGuiAddSeparator, %strTempDir%\separator-26.png ; Static11
+Gui, 1:Add, Picture, xm+1 ys+175 gGuiSortFolders, %strTempDir%\generic_sorting2-26-grey.png ; Static12
 
 Gui, 1:Add, Text, Section xs ys
 
-Gui, 1:Add, Picture, xs+10 ys gGuiAddFolder, %strTempDir%\add_property-48.png ; Static12
+Gui, 1:Add, Picture, xs+10 ys+7 gGuiAddFolder, %strTempDir%\add_property-48.png ; Static14
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs y+0 w68 center gGuiAddFolder, %lGuiAddFolder% ; Static13
+Gui, 1:Add, Text, xs y+0 w68 center gGuiAddFolder, %lGuiAddFolder% ; Static15
 
-Gui, 1:Add, Picture, xs+10 gGuiEditFolder, %strTempDir%\edit_property-48.png ; Static14
+Gui, 1:Add, Picture, xs+10 gGuiEditFolder, %strTempDir%\edit_property-48.png ; Static16
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs y+0 w68 center gGuiEditFolder, %lGuiEditFolder% ; Static15
+Gui, 1:Add, Text, xs y+0 w68 center gGuiEditFolder, %lGuiEditFolder% ; Static17
 
-Gui, 1:Add, Picture, xs+10 gGuiRemoveFolder, %strTempDir%\delete_property-48.png ; Static16
+Gui, 1:Add, Picture, xs+10 gGuiRemoveFolder, %strTempDir%\delete_property-48.png ; Static18
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs y+0 w68 center gGuiRemoveFolder, %lGuiRemoveFolder% ; Static17
+Gui, 1:Add, Text, xs y+0 w68 center gGuiRemoveFolder, %lGuiRemoveFolder% ; Static19
 
-Gui, 1:Add, Text, Section x165
+Gui, 1:Add, Text, Section x185 ys+240
 
+Gui, 1:Font, s8 w600 italic, Verdana
+Gui, 1:Add, Text, xm yp w520 center, %lGuiDropFilesIncentive%
+
+Gui, 1:Add, Text, xm y+20
+Gui, 1:Font, s9 w600, Verdana
+Gui, 1:Add, Button, ys+40 Disabled Default vbtnGuiSave gGuiSave, %lGuiSave% ; Button1
+Gui, 1:Add, Button, yp vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur - Button2
+Gui, 1:Font, s6 w400, Verdana
+GuiCenterButtons(L(lGuiTitle, strAppName, strAppVersion), 50, 30, 40, -80, "btnGuiSave", "btnGuiCancel")
+
+Gui, 1:Add, Picture, x490 yp+3 gGuiAbout Section, %strTempDir%\about-32.png ; Static23
+Gui, 1:Add, Picture, x540 yp gGuiHelp, %strTempDir%\help-32.png ; Static24
 if !(blnDonor)
 {
 	strDonateButtons := "thumbs_up|solutions|handshake|conference|gift"
 	StringSplit, arrDonateButtons, strDonateButtons, |
 	Random, intDonateButton, 1, 5
 
-	Gui, 1:Add, Picture, xs+10 ys gGuiDonate, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png" ; Static19
-	Gui, 1:Font, s8 w400, Arial ; button legend
-	Gui, 1:Add, Text, xs y+0 w52 center gGuiDonate, %lGuiDonate% ; Static20
+	Gui, 1:Add, Picture, xm+20 yp gGuiDonate, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png" ; Static25
 }
 
-Gui, 1:Add, Picture, % "Section x+" . (blnDonor ? "42" : "10") . " ys gGuiHelp", %strTempDir%\help-32.png ; Static21
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiHelp, %lGuiHelp% ; Static22
-
-Gui, 1:Add, Picture, Section x+10 ys gGuiAbout, %strTempDir%\about-32.png ; Static23
-Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiAbout, %lGuiAbout% ; Static24
-
-Gui, 1:Add, Picture, Section x+10 ys gGuiOptions, %strTempDir%\settings-32.png ; Static25
-Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiOptions, %lGuiOptions% ; Static26
-
-Gui, 1:Font, s8 w600 c404040 italic, Verdana
-Gui, 1:Add, Text, xm yp+30 w490 center, %lGuiDropFilesIncentive%
-
-Gui, 1:Add, Text, xm y+20
-Gui, 1:Font, s9 w600, Verdana
-Gui, 1:Add, Button, yp Disabled Default vbtnGuiSave gGuiSave, %lGuiSave% ; Button1
-Gui, 1:Add, Button, yp vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur - Button2
-Gui, 1:Font, s6 w400, Verdana
-GuiCenterButtons(L(lGuiTitle, strAppName, strAppVersion), 50, 30, 40, "btnGuiSave", "btnGuiCancel")
-
+Gui, 1:Add, Text, xs-20 ys+35 w68 center gGuiAbout, %lGuiAbout% ; Static26
+Gui, 1:Add, Text, xs+40 ys+35 w52 center gGuiHelp, %lGuiHelp% ; Static27
+if !(blnDonor)
+	Gui, 1:Add, Text, xm+10 ys+35 w52 center gGuiDonate, %lGuiDonate% ; Static28
 return
 ;------------------------------------------------------------
 
@@ -2100,6 +2150,7 @@ Gui, 1:Submit, NoHide
 Gui, 2:New, , % L(lDialogAddEditFolderTitle, (A_ThisLabel = "GuiEditFolder" ? lDialogEdit : lDialogAdd), strAppName, strAppVersion)
 Gui, 2:+Owner1
 Gui, 2:+OwnDialogs
+Gui, 2:Color, %strGuiWindowColor%
 
 Gui, 2:Add, Text, % x10 y10 vlblFolderParentMenu, % (blnRadioSubmenu ? lDialogSubmenuParentMenu : lDialogFolderParentMenu)
 Gui, 2:Add, DropDownList, x10 w300 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
@@ -2128,13 +2179,13 @@ if (A_ThisLabel = "GuiEditFolder")
 {
 	Gui, 2:Add, Button, y+20 vbtnEditFolderSave gGuiEditFolderSave, %lDialogSave%
 	Gui, 2:Add, Button, yp vbtnEditFolderCancel gGuiEditFolderCancel, %lGuiCancel%
-	GuiCenterButtons(L(lDialogAddEditFolderTitle, lDialogEdit, strAppName, strAppVersion), 10, 5, 20,  "btnEditFolderSave", "btnEditFolderCancel")
+	GuiCenterButtons(L(lDialogAddEditFolderTitle, lDialogEdit, strAppName, strAppVersion), 10, 5, 20, , "btnEditFolderSave", "btnEditFolderCancel")
 }
 else
 {
 	Gui, 2:Add, Button, y+20 vbtnAddFolderAdd gGuiAddFolderSave, %lDialogAdd%
 	Gui, 2:Add, Button, yp vbtnAddFolderCancel gGuiAddFolderCancel, %lGuiCancel%
-	GuiCenterButtons(L(lDialogAddEditFolderTitle, lDialogAdd, strAppName, strAppVersion), 10, 5, 20, "btnAddFolderAdd", "btnAddFolderCancel")
+	GuiCenterButtons(L(lDialogAddEditFolderTitle, lDialogAdd, strAppName, strAppVersion), 10, 5, 20, , "btnAddFolderAdd", "btnAddFolderCancel")
 }
 
 GuiControl, 2:Focus, strFolderShortName
@@ -2398,6 +2449,7 @@ GuiAbout:
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
 Gui, 2:New, , % L(lAboutTitle, strAppName, strAppVersion)
+Gui, 2:Color, %strGuiWindowColor%
 Gui, 2:+Owner1
 str32or64 := A_PtrSize  * 8
 Gui, 2:Font, s12 w700, Verdana
@@ -2411,7 +2463,7 @@ Gui, 2:Font, s8 w400, Verdana
 
 Gui, 2:Add, Button, y+20 vbtnAboutDonate gGuiDonate, %lDonateButton%
 Gui, 2:Add, Button, yp vbtnAboutClose g2GuiClose vbtnAboutClose, %lGui2Close%
-GuiCenterButtons(L(lAboutTitle, strAppName, strAppVersion), 10, 5, 20, "btnAboutDonate", "btnAboutClose")
+GuiCenterButtons(L(lAboutTitle, strAppName, strAppVersion), 10, 5, 20, , "btnAboutDonate", "btnAboutClose")
 
 GuiControl, Focus, btnAboutClose
 Gui, 2:Show, AutoSize Center
@@ -2428,6 +2480,7 @@ GuiDonate:
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
 Gui, 2:New, , % L(lDonateTitle, strAppName, strAppVersion)
+Gui, 2:Color, %strGuiWindowColor%
 Gui, 2:+Owner1
 Gui, 2:Font, s12 w700, Verdana
 Gui, 2:Add, Link, y10 w420, % L(lDonateText1, strAppName)
@@ -2461,7 +2514,7 @@ Gui, 2:Add, Link, y+10 x130, <a href="http://code.jeanlalonde.ca/support-freewar
 
 Gui, 2:Font, s8 w400, Verdana
 Gui, 2:Add, Button, x175 y+20 g2GuiClose vbtnDonateClose, %lGui2Close%
-GuiCenterButtons(L(lDonateTitle, strAppName, strAppVersion), 10, 5, 20, "btnDonateClose")
+GuiCenterButtons(L(lDonateTitle, strAppName, strAppVersion), 10, 5, 20, , "btnDonateClose")
 
 GuiControl, Focus, btnDonateDefault
 Gui, 2:Show, AutoSize Center
@@ -2495,6 +2548,7 @@ GuiHelp:
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
 Gui, 2:New, , % L(lHelpTitle, strAppName, strAppVersion)
+Gui, 2:Color, %strGuiWindowColor%
 Gui, 2:+Owner1
 intWidth := 600
 Gui, 2:Font, s12 w700, Verdana
@@ -2508,7 +2562,7 @@ Gui, 2:Add, Link, w%intWidth%, % L(lHelpText7, chr(169))
 
 Gui, 2:Add, Button, x180 y+20 vbtnHelpDonate gGuiDonate, %lDonateButton%
 Gui, 2:Add, Button, x+80 yp g2GuiClose vbtnHelpClose, %lGui2Close%
-GuiCenterButtons(L(lHelpTitle, strAppName, strAppVersion), 10, 5, 20, "btnHelpDonate", "btnHelpClose")
+GuiCenterButtons(L(lHelpTitle, strAppName, strAppVersion), 10, 5, 20, , "btnHelpDonate", "btnHelpClose")
 
 GuiControl, Focus, btnHelpClose
 Gui, 2:Show, AutoSize Center
@@ -2528,6 +2582,7 @@ intGui1WinID := WinExist("A")
 ; Build Gui header
 Gui, 1:Submit, NoHide
 Gui, 2:New, , % L(lOptionsGuiTitle, strAppName, strAppVersion)
+Gui, 2:Color, %strGuiWindowColor%
 Gui, 2:+Owner1
 Gui, 2:Font, s10 w700, Verdana
 Gui, 2:Add, Text, x10 y10 w500 center, % L(lOptionsGuiTitle, strAppName)
@@ -2577,7 +2632,7 @@ Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionY center " . (blnPopupFi
 Gui, 2:Add, Button, y+20 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
 Gui, 2:Add, Button, yp vbtnOptionsCancel gButtonOptionsCancel, %lGuiCancel%
 Gui, 2:Add, Button, yp vbtnOptionsDonate gGuiDonate, %lDonateButton%
-GuiCenterButtons(L(lOptionsGuiTitle, strAppName, strAppVersion), 10, 5, 20, "btnOptionsSave", "btnOptionsCancel", "btnOptionsDonate")
+GuiCenterButtons(L(lOptionsGuiTitle, strAppName, strAppVersion), 10, 5, 20, , "btnOptionsSave", "btnOptionsCancel", "btnOptionsDonate")
 
 Gui, 2:Add, Text
 GuiControl, Focus, btnOptionsSave
@@ -2619,6 +2674,7 @@ intGui2WinID := WinExist("A")
 
 Gui, 2:Submit, NoHide
 Gui, 3:New, , % L(lOptionsChangeHotkeyTitle, strAppName, strAppVersion)
+Gui, 3:Color, %strGuiWindowColor%
 Gui, 3:+Owner2
 Gui, 3:Font, s10 w700, Verdana
 Gui, 3:Add, Text, x10 y10 w350 center, % L(lOptionsChangeHotkeyTitle, strAppName)
@@ -2660,7 +2716,7 @@ if (intType = 3)
 
 Gui, 3:Add, Button, y240 x140 vbtnChangeHotkeySave gButtonChangeHotkeySave%intIndex%, %lGuiSave%
 Gui, 3:Add, Button, yp x+20 vbtnChangeHotkeyCancel gButtonChangeHotkeyCancel, %lGuiCancel%
-GuiCenterButtons(L(lOptionsChangeHotkeyTitle, strAppName, strAppVersion), 10, 5, 20, "btnChangeHotkeySave", "btnChangeHotkeyCancel")
+GuiCenterButtons(L(lOptionsChangeHotkeyTitle, strAppName, strAppVersion), 10, 5, 20, , "btnChangeHotkeySave", "btnChangeHotkeyCancel")
 
 Gui, 3:Add, Text
 GuiControl, Focus, btnChangeHotkeySave
@@ -3842,7 +3898,7 @@ WM_MOUSEMOVE(wParam, lParam)
 	MouseGetPos, , , , strControl ; Static1, StaticN, Button1, ButtonN
 	StringReplace, strControl, strControl, Static
 	
-	If InStr(".4.5.7.8.9.10.12.13.14.15.16.17.19.20.21.22.23.24.25.26.Button1.Button2.", "." . strControl . ".")
+	If InStr(".3.4.6.7.9.10.11.12.14.15.16.17.18.19.23.24.25.26.27.28.Button1.Button2.", "." . strControl . ".")
 		DllCall("SetCursor", "UInt", objCursor)
 
 	return
@@ -3861,7 +3917,7 @@ LocationIsDocument(strLocation)
 
 
 ;------------------------------------------------------------
-GuiCenterButtons(strWindow, intInsideHorizontalMargin := 10, intInsideVerticalMargin := 0, intDistanceBetweenButtons := 20, arrControls*)
+GuiCenterButtons(strWindow, intInsideHorizontalMargin := 10, intInsideVerticalMargin := 0, intDistanceBetweenButtons := 20, intLeftRightOffset := 0, arrControls*)
 ; This is a variadic function. See: http://ahkscript.org/docs/Functions.htm#Variadic
 ;------------------------------------------------------------
 {
@@ -3869,6 +3925,7 @@ GuiCenterButtons(strWindow, intInsideHorizontalMargin := 10, intInsideVerticalMa
 	Gui, Show, Hide
 	WinGetPos, , , intWidth, , %strWindow%
 
+	intWidth := intWidth + intLeftRightOffset
 	intMaxControlWidth := 0
 	intMaxControlHeight := 0
 	for intIndex, strControl in arrControls
