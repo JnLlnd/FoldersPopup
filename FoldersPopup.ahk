@@ -10,6 +10,9 @@ Bugs:
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: 3.0.7 (2014-08-XX)
+	*
+	
 	Version: 3.0.6 (2014-07-26)
 	* Redesign of buttons in Settings
 	* Addition to ini file of themes with colors for dialog boxes and menu
@@ -271,7 +274,7 @@ Bugs:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 3.0.6 BETA
+;@Ahk2Exe-SetVersion 3.0.7 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -316,7 +319,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.0.6" ; "major.minor.bugs"
+global strCurrentVersion := "3.0.7" ; "major.minor.bugs"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
@@ -1238,7 +1241,7 @@ BuildOneMenu(strMenu)
 			strSubMenuParent := arrThisMenu[A_Index].MenuName
 			
 			BuildOneMenu(strSubMenuFullName) ; recursive call
-			Menu, %strSubMenuParent%, Color, %strMenuBackgroundColor%
+			Try Menu, %strSubMenuParent%, Color, %strMenuBackgroundColor% ; Try because this can fail if submenu is empty
 			
 			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = lMainMenuName)) . " " : "") . strSubMenuDisplayName
 			Try Menu, %strSubMenuParent%, Add, %strMenuName%, % ":" . strSubMenuFullName
@@ -1298,7 +1301,7 @@ BuildOneMenu(strMenu)
 					Diag("strDefaultIcon-2", strDefaultIcon)
 					Diag("intDefaultIcon", intDefaultIcon)
 				}
-				if StrLen(strDefaultIcon)
+				if StrLen(strDefaultIcon) and !InStr(strDefaultIcon, "%")
 					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %strDefaultIcon%, %intDefaultIcon%, %intIconSize%
 				else
 					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
