@@ -11,7 +11,10 @@ Bugs:
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
 	Version: 3.0.7 (2014-08-XX)
-	*
+	* fix error when icon location contains %1
+	* fix error when assigning color to an empty submenu
+	* allow to select no mouse trigger for popup menu, add None to the doropdown list in Change hotkey window
+	* add mouse or keyboard hotkey to open the recent folders list
 	
 	Version: 3.0.6 (2014-07-26)
 	* Redesign of buttons in Settings
@@ -329,6 +332,8 @@ global blnMenuReady := false
 global arrSubmenuStack := Object()
 global objIconsFile := Object()
 global objIconsIndex := Object()
+global strHotkeyNoneModifiers := "#!+^"
+global strHotkeyNoneKey := "¤"
 
 if InStr(A_ScriptDir, A_Temp) ; must be positioned after strAppName is created
 ; if the app runs from a zip file, the script directory is created under the system Temp folder
@@ -388,7 +393,8 @@ blnMenuReady := true
 objCursor := DllCall("LoadCursor", "UInt", NULL, "Int", 32649, "UInt") ; IDC_HAND
 OnMessage(0x200, "WM_MOUSEMOVE")
 
-; Gosub, GuiShow ; ### only when debugging Gui
+Gosub, GuiShow ; ### only when debugging Gui
+Gosub, GuiOptions ; ### only when debugging Gui
 
 return
 
@@ -405,16 +411,16 @@ InitSystemArrays:
 ;-----------------------------------------------------------
 
 ; Hotkeys: ini names, hotkey variables name, default values, gosub label and Gui hotkey titles
-strIniKeyNames := "PopupHotkeyMouse|PopupHotkeyNewMouse|PopupHotkeyKeyboard|PopupHotkeyNewKeyboard|SettingsHotkey"
+strIniKeyNames := "PopupHotkeyMouse|PopupHotkeyNewMouse|PopupHotkeyKeyboard|PopupHotkeyNewKeyboard|RecentsHotkey|SettingsHotkey"
 StringSplit, arrIniKeyNames, strIniKeyNames, |
-strHotkeyVarNames := "strPopupHotkeyMouse|strPopupHotkeyMouseNew|strPopupHotkeyKeyboard|strPopupHotkeyKeyboardNew|strSettingsHotkey"
+strHotkeyVarNames := "strPopupHotkeyMouse|strPopupHotkeyMouseNew|strPopupHotkeyKeyboard|strPopupHotkeyKeyboardNew|strRecentsHotkey|strSettingsHotkey"
 StringSplit, arrHotkeyVarNames, strHotkeyVarNames, |
-strHotkeyDefaults := "MButton|+MButton|#k|+#k|+#f"
+strHotkeyDefaults := "MButton|+MButton|#k|+#k|+#r|+#f"
 StringSplit, arrHotkeyDefaults, strHotkeyDefaults, |
-strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|GuiShow"
+strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|RefreshRecentFolders|GuiShow"
 StringSplit, arrHotkeyLabels, strHotkeyLabels, |
 
-strMouseButtons := "LButton|MButton|RButton|XButton1|XButton2|WheelUp|WheelDown|WheelLeft|WheelRight|"
+strMouseButtons := "None|LButton|MButton|RButton|XButton1|XButton2|WheelUp|WheelDown|WheelLeft|WheelRight|"
 ; leave last | to enable default value on the last item
 StringSplit, arrMouseButtons, strMouseButtons, |
 
@@ -468,7 +474,9 @@ strPopupHotkeyMouseDefault := arrHotkeyDefaults1 ; "MButton"
 strPopupHotkeyMouseNewDefault := arrHotkeyDefaults2 ; "+MButton"
 strPopupHotkeyKeyboardDefault := arrHotkeyDefaults3 ; "#k"
 strPopupHotkeyKeyboardNewDefault := arrHotkeyDefaults4 ; "+#k"
-strSettingsHotkeyDefault := arrHotkeyDefaults5 ; "+#f"
+strRecentsHotkeyDefault := arrHotkeyDefaults5 ; "+#r"
+strSettingsHotkeyDefault := arrHotkeyDefaults6 ; "+#f"
+
 intIconSize := (A_OSVersion = "WIN_XP" ? 16 : 24)
 
 IfNotExist, %strIniFile%
@@ -479,6 +487,7 @@ IfNotExist, %strIniFile%
 			PopupHotkeyNewMouse=%strPopupHotkeyMouseNewDefault%
 			PopupHotkeyKeyboard=%strPopupHotkeyKeyboardDefault%
 			PopupHotkeyNewKeyboard=%strPopupHotkeyKeyboardNewDefault%
+			RecentsHotkey=%strRecentsHotkeyDefault%
 			SettingsHotkey=%strSettingsHotkeyDefault%
 			DisplayTrayTip=1
 			DisplaySpecialFolders=1
@@ -627,12 +636,15 @@ LoadIniHotkeys:
 ; Read the values and set hotkey shortcuts
 loop, % arrIniKeyNames%0%
 {
-	; Prepare global arrays used by GuiHotkey function
+	; Prepare global arrays used by SplitHotkey function
 	IniRead, arrHotkeyVarNames%A_Index%, %strIniFile%, Global, % arrIniKeyNames%A_Index%, % arrHotkeyDefaults%A_Index%
 	SplitHotkey(arrHotkeyVarNames%A_Index%, strMouseButtons
 		, strModifiers%A_Index%, strOptionsKey%A_Index%, strMouseButton%A_Index%, strMouseButtonsWithDefault%A_Index%)
 	; example: Hotkey, $MButton, PopupMenuMouse
-	Hotkey, % "$" . arrHotkeyVarNames%A_Index%, % arrHotkeyLabels%A_Index%, On UseErrorLevel
+	if (arrHotkeyVarNames%A_Index% = "None") ; do not compare with lOptionsMouseNone because it is translated
+		Hotkey, % "$" . strHotkeyNoneModifiers . strHotkeyNoneKey, % arrHotkeyLabels%A_Index%, On UseErrorLevel
+	else
+		Hotkey, % "$" . arrHotkeyVarNames%A_Index%, % arrHotkeyLabels%A_Index%, On UseErrorLevel
 	if (ErrorLevel)
 		Oops(lDialogInvalidHotkey, Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%), strAppName, arrOptionsTitles%A_Index%)
 }
@@ -682,6 +694,7 @@ loop, %arrOptionsLanguageCodes0%
 			break
 		}
 
+lOptionsMouseButtonsText := lOptionsMouseNone . "|" . lOptionsMouseButtonsText ; use lOptionsMouseNone because this is displayed
 StringSplit, arrMouseButtonsText, lOptionsMouseButtonsText, |
 
 return
@@ -2678,6 +2691,7 @@ ButtonOptionsChangeHotkey2:
 ButtonOptionsChangeHotkey3:
 ButtonOptionsChangeHotkey4:
 ButtonOptionsChangeHotkey5:
+ButtonOptionsChangeHotkey6:
 ;------------------------------------------------------------
 
 StringReplace, intIndex, A_ThisLabel, ButtonOptionsChangeHotkey
@@ -2691,7 +2705,7 @@ Gui, 3:Font, s10 w700, Verdana
 Gui, 3:Add, Text, x10 y10 w350 center, % L(lOptionsChangeHotkeyTitle, strAppName)
 Gui, 3:Font
 
-intType := 3
+intType := 3 ; Settings and Recent folders
 if InStr(arrIniKeyNames%intIndex%, "Mouse")
 	intType := 1
 if InStr(arrIniKeyNames%intIndex%, "Keyboard")
@@ -2903,6 +2917,7 @@ ButtonChangeHotkeySave2:
 ButtonChangeHotkeySave3:
 ButtonChangeHotkeySave4:
 ButtonChangeHotkeySave5:
+ButtonChangeHotkeySave6:
 ;------------------------------------------------------------
 Gui, 3:Submit
 
@@ -2918,20 +2933,33 @@ else
 strHotkey := Trim(strOptionsKey . strOptionsMouse)
 
 if StrLen(strHotkey)
-{
-	Hotkey, % "$" . arrHotkeyVarNames%intIndex%, Off, UseErrorLevel ; UseErrorLevel in case we had an invalid key name in the ini file
+	if (strHotkey = "None") ; do not compare with lOptionsMouseNone because it is translated
+	{
+		Hotkey, % "$" . arrHotkeyVarNames%intIndex%, Off, UseErrorLevel ; UseErrorLevel in case we had an invalid key name in the ini file
+		IniWrite, None, %strIniFile%, Global, % arrIniVarNames%intIndex% ; do not write lOptionsMouseNone because it is translated
+	}
+	else
+	{
+		if (blnOptionsWin)
+			strHotkey := "#" . strHotkey
+		if (blnOptionsAlt)
+			strHotkey := "!" . strHotkey
+		if (blnOptionsShift)
+			strHotkey := "+" . strHotkey
+		if (blnOptionsCtrl)
+			strHotkey := "^" . strHotkey
 
-	if (blnOptionsWin)
-		strHotkey := "#" . strHotkey
-	if (blnOptionsAlt)
-		strHotkey := "!" . strHotkey
-	if (blnOptionsShift)
-		strHotkey := "+" . strHotkey
-	if (blnOptionsCtrl)
-		strHotkey := "^" . strHotkey
-	IniWrite, % strHotkey, %strIniFile%, Global, % arrIniVarNames%intIndex%
-	
-}
+		if (strHotkey = "LButton")
+		{
+			Oops(lOptionsMouseCheckLButton)
+			Gosub, 3GuiClose
+			return
+		}
+
+		Hotkey, % "$" . arrHotkeyVarNames%intIndex%, Off, UseErrorLevel ; UseErrorLevel in case we had an invalid key name in the ini file
+		IniWrite, %strHotkey%, %strIniFile%, Global, % arrIniVarNames%intIndex%
+		
+	}
 else
 	Oops(L(lOptionsNoKeyOrMouseSpecified, arrIniVarNames%intIndex%))
 
@@ -3683,7 +3711,13 @@ SplitHotkey(strHotkey, strMouseButtons, ByRef strModifiers, ByRef strKey, ByRef 
 {
 	SplitModifiersFromKey(strHotkey, strModifiers, strKey)
 
-	if InStr(strMouseButtons, "|" . strKey . "|") ;  we have a mouse button
+	if (strHotkey = "None") ; do not compare with lOptionsMouseNone because it is translated
+	{
+		strMouseButton := "None" ; do not use lOptionsMouseNone because it is translated
+		strKey := ""
+		StringReplace, strMouseButtonsWithDefault, lOptionsMouseButtonsText, % lOptionsMouseNone . "|", % lOptionsMouseNone . "||" ; use lOptionsMouseNone because this is displayed
+	}
+	else if InStr(strMouseButtons, "|" . strKey . "|") ;  we have a mouse button
 	{
 		strMouseButton := strKey
 		strKey := ""
@@ -3726,25 +3760,30 @@ Hotkey2Text(strModifiers, strMouseButton, strOptionKey)
 ;------------------------------------------------------------
 {
 	global
-	
-	str := ""
-	loop, parse, strModifiers
+
+	if (strMouseButton = "None") ; do not compare with lOptionsMouseNone because it is translated
+		str := lOptionsMouseNone ; use lOptionsMouseNone because this is displayed
+	else
 	{
-		if (A_LoopField = "!")
-			str := str . lOptionsAlt . "+"
-		if (A_LoopField = "^")
-			str := str . lOptionsCtrl . "+"
-		if (A_LoopField = "+")
-			str := str . lOptionsShift . "+"
-		if (A_LoopField = "#")
-			str := str . lOptionsWin . "+"
-	}
-	if StrLen(strMouseButton)
-		str := str . GetText4MouseButton(strMouseButton)
-	if StrLen(strOptionKey)
-	{
-		StringUpper, strOptionKey, strOptionKey
-		str := str . strOptionKey
+		str := ""
+		loop, parse, strModifiers
+		{
+			if (A_LoopField = "!")
+				str := str . lOptionsAlt . "+"
+			if (A_LoopField = "^")
+				str := str . lOptionsCtrl . "+"
+			if (A_LoopField = "+")
+				str := str . lOptionsShift . "+"
+			if (A_LoopField = "#")
+				str := str . lOptionsWin . "+"
+		}
+		if StrLen(strMouseButton)
+			str := str . GetText4MouseButton(strMouseButton)
+		if StrLen(strOptionKey)
+		{
+			StringUpper, strOptionKey, strOptionKey
+			str := str . strOptionKey
+		}
 	}
 
 	return str
