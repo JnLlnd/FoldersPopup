@@ -146,6 +146,7 @@ global lOptionsArrDescriptions5 := "Choose the hotkey or mouse button combinatio
 global lOptionsChangeHotkey := "Change"
 global lOptionsChangeHotkeyTitle := "Change hotkey - ~1~ ~2~"
 global lOptionsCtrl := "Ctrl"
+global lOptionsDisplayIcons := "Display Menu &Icons"
 global lOptionsDisplayMenuShortcuts := "Display &Numeric Menu Shortcuts"
 global lOptionsDisplayRecentFolders := "Display R&ecent Folders"
 global lOptionsDisplaySpecialFolders := "Display S&pecial Folders"

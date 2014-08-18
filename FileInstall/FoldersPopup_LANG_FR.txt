@@ -144,6 +144,7 @@ lOptionsArrDescriptions5	Choisissez la combinaison de touches du clavier ou le b
 lOptionsChangeHotkey	Modifier
 lOptionsChangeHotkeyTitle	Modification de déclencheur - ~1~ ~2~
 lOptionsCtrl	Ctrl
+lOptionsDisplayIcons	Afficher les icônes des menus
 lOptionsDisplayMenuShortcuts	Afficher les raccourcis numériques
 lOptionsDisplayRecentFolders	Afficher les emplacements récents
 lOptionsDisplaySpecialFolders	Afficher les dossiers spéciaux

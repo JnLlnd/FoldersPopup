@@ -144,6 +144,7 @@ lOptionsArrDescriptions5	Kies de sneltoets of muisknop combinatie die er voor zo
 lOptionsChangeHotkey	Wijzigen
 lOptionsChangeHotkeyTitle	Wijzig sneltoets - ~1~ ~2~
 lOptionsCtrl	Ctrl
+lOptionsDisplayIcons	Display Menu Icons
 lOptionsDisplayMenuShortcuts	Toon de &Numerieke Menu Sneltoetsen
 lOptionsDisplayRecentFolders	Toon &Recente Mappen
 lOptionsDisplaySpecialFolders	Toon S&peciale Mappen

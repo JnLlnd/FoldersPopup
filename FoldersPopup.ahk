@@ -13,8 +13,10 @@ Bugs:
 	Version: 3.0.7 (2014-08-XX)
 	* fix error when icon location contains %1
 	* fix error when assigning color to an empty submenu
-	* allow to select no mouse trigger for popup menu, add None to the doropdown list in Change hotkey window
+	* allow to select no mouse trigger for popup menu, add None to the dropdown list in Change hotkey window
 	* add mouse or keyboard hotkey to open the recent folders list
+	* make display icons optional, refactor Add Menu commands in centralized function
+	* fix a bug with shortcuts numbers in Switch menus
 	
 	Version: 3.0.6 (2014-07-26)
 	* Redesign of buttons in Settings
@@ -490,6 +492,7 @@ IfNotExist, %strIniFile%
 			RecentsHotkey=%strRecentsHotkeyDefault%
 			SettingsHotkey=%strSettingsHotkeyDefault%
 			DisplayTrayTip=1
+			DisplayIcons=1
 			DisplaySpecialFolders=1
 			DisplayRecentFolders=1
 			RecentFolders=10
@@ -521,6 +524,7 @@ if (blnDonor >= 0)
 }
 
 IniRead, blnDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip, 1
+IniRead, blnDisplayIcons, %strIniFile%, Global, DisplayIcons, 1
 IniRead, blnDisplaySpecialFolders, %strIniFile%, Global, DisplaySpecialFolders, 1
 IniRead, blnDisplayRecentFolders, %strIniFile%, Global, DisplayRecentFolders, 1
 IniRead, blnDisplaySwitchMenu, %strIniFile%, Global, DisplaySwitchMenu, 1
@@ -985,29 +989,15 @@ Menu, menuSpecialFolders, Add
 Menu, menuSpecialFolders, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
 Menu, menuSpecialFolders, Color, %strMenuBackgroundColor%
 
-Menu, menuSpecialFolders, Add, %lMenuDesktop%, OpenSpecialFolder
-Menu, menuSpecialFolders, Icon, %lMenuDesktop%
-	, % objIconsFile["lMenuDesktop"], % objIconsIndex["lMenuDesktop"], %intIconSize%
-Menu, menuSpecialFolders, Add, %lMenuDocuments%, OpenSpecialFolder
-Menu, menuSpecialFolders, Icon, %lMenuDocuments%
-	, % objIconsFile["lMenuDocuments"], % objIconsIndex["lMenuDocuments"], %intIconSize%
-Menu, menuSpecialFolders, Add, %lMenuPictures%, OpenSpecialFolder
-Menu, menuSpecialFolders, Icon, %lMenuPictures%
-	, % objIconsFile["lMenuPictures"], % objIconsIndex["lMenuPictures"], %intIconSize%
+AddMenuIcon("menuSpecialFolders", lMenuDesktop, "OpenSpecialFolder", "lMenuDesktop")
+AddMenuIcon("menuSpecialFolders", lMenuDocuments, "OpenSpecialFolder", "lMenuDocuments")
+AddMenuIcon("menuSpecialFolders", lMenuPictures, "OpenSpecialFolder", "lMenuPictures")
 Menu, menuSpecialFolders, Add
-Menu, menuSpecialFolders, Add, %lMenuMyComputer%, OpenSpecialFolder
-Menu, menuSpecialFolders, Icon, %lMenuMyComputer%
-	, % objIconsFile["lMenuMyComputer"], % objIconsIndex["lMenuMyComputer"], %intIconSize%
-Menu, menuSpecialFolders, Add, %lMenuNetworkNeighborhood%, OpenSpecialFolder
-Menu, menuSpecialFolders, Icon, %lMenuNetworkNeighborhood%
-	, % objIconsFile["lMenuNetworkNeighborhood"], % objIconsIndex["lMenuNetworkNeighborhood"], %intIconSize%
+AddMenuIcon("menuSpecialFolders", lMenuMyComputer, "OpenSpecialFolder", "lMenuMyComputer")
+AddMenuIcon("menuSpecialFolders", lMenuNetworkNeighborhood, "OpenSpecialFolder", "lMenuNetworkNeighborhood")
 Menu, menuSpecialFolders, Add
-Menu, menuSpecialFolders, Add, %lMenuControlPanel%, OpenSpecialFolder
-Menu, menuSpecialFolders, Icon, %lMenuControlPanel%
-	, % objIconsFile["lMenuControlPanel"], % objIconsIndex["lMenuControlPanel"], %intIconSize%
-Menu, menuSpecialFolders, Add, %lMenuRecycleBin%, OpenSpecialFolder
-Menu, menuSpecialFolders, Icon, %lMenuRecycleBin%
-	, % objIconsFile["lMenuRecycleBin"], % objIconsIndex["lMenuRecycleBin"], %intIconSize%
+AddMenuIcon("menuSpecialFolders", lMenuControlPanel, "OpenSpecialFolder", "lMenuControlPanel")
+AddMenuIcon("menuSpecialFolders", lMenuRecycleBin, "OpenSpecialFolder", "lMenuRecycleBin")
 
 return
 ;------------------------------------------------------------
@@ -1064,9 +1054,7 @@ Loop, parse, strDirList, `n
 	objRecentFolders.Insert(intRecentFoldersIndex, strOutTarget)
 	
 	strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strOutTarget
-	Menu, menuRecentFolders, Add, %strMenuName%, OpenRecentFolder
-	Menu, menuRecentFolders, Icon, %strMenuName%
-		, % objIconsFile["menuRecentFolders"], % objIconsIndex["menuRecentFolders"], %intIconSize%
+	AddMenuIcon("menuRecentFolders", strMenuName, "OpenRecentFolder", "menuRecentFolders")
 
 	if (intRecentFoldersIndex >= intRecentFolders)
 		break
@@ -1105,7 +1093,8 @@ objExplorersWinId := Object()
 objExplorersLocation := Object()
 intDialogsIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
 intExplorersIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
-intShortcut := 0
+intShortcutExplorer := 0
+intShortcutDialog := 0
 
 For pExp in ComObjCreate("Shell.Application").Windows
 ; see http://msdn.microsoft.com/en-us/library/windows/desktop/aa752084(v=vs.85).aspx
@@ -1133,10 +1122,8 @@ For pExp in ComObjCreate("Shell.Application").Windows
 			if !StrLen(strLocation)
 				strLocation := pExp.LocationName
 
-			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strLocation
-			Menu, menuSwitchDialog, Add, %strMenuName%, SwitchDialog
-			Menu, menuSwitchDialog, Icon, %strMenuName%
-				, % objIconsFile["menuSwitchDialog"], % objIconsIndex["menuSwitchDialog"], %intIconSize%
+			strMenuName := (blnDisplayMenuShortcuts and (intShortcutDialog <= 35) ? "&" . NextMenuShortcut(intShortcutDialog, false) . " " : "") . strLocation
+			AddMenuIcon("menuSwitchDialog", strMenuName, "SwitchDialog", "menuSwitchDialog")
 		}
 		else
 			strLocation := lMenuSpecialExplorer ; will be used in menuSwitchExplorer
@@ -1145,10 +1132,8 @@ For pExp in ComObjCreate("Shell.Application").Windows
 			intExplorersIndex := intExplorersIndex + 1
 			objExplorersWinId.Insert(intExplorersIndex, pExp.HWND)
 			
-			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strLocation
-			Menu, menuSwitchExplorer, Add, %strMenuName%, SwitchExplorer
-			Menu, menuSwitchExplorer, Icon, %strMenuName%
-				, % objIconsFile["menuSwitchExplorer"], % objIconsIndex["menuSwitchExplorer"], %intIconSize%
+			strMenuName := (blnDisplayMenuShortcuts and (intShortcutExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutExplorer, false) . " " : "") . strLocation
+			AddMenuIcon("menuSwitchExplorer", strMenuName, "SwitchExplorer", "menuSwitchExplorer")
 		}
 	}
 }
@@ -1175,52 +1160,32 @@ BuildOneMenu(lMainMenuName) ; and recurse for submenus
 Menu, %lMainMenuName%, Add
 
 if (blnDisplaySpecialFolders)
-{
-	Menu, %lMainMenuName%, Add, %lMenuSpecialFolders%, :menuSpecialFolders
-	Menu, %lMainMenuName%, Icon, %lMenuSpecialFolders%
-		, % objIconsFile["lMenuSpecialFolders"], % objIconsIndex["lMenuSpecialFolders"], %intIconSize%
-}
+	AddMenuIcon(lMainMenuName, lMenuSpecialFolders, ":menuSpecialFolders", "lMenuSpecialFolders")
 
 if (blnDisplaySwitchMenu)
 {
 	Menu, menuSwitch, Add
 	Menu, menuSwitch, DeleteAll
 	Menu, menuSwitch, Color, %strMenuBackgroundColor%
-	Menu, menuSwitch, Add, %lMenuSwitchExplorer%, :menuSwitchExplorer
-	Menu, menuSwitch, Icon, %lMenuSwitchExplorer%
-		, % objIconsFile["lMenuSwitchExplorer"], % objIconsIndex["lMenuSwitchExplorer"], %intIconSize%
-	Menu, menuSwitch, Add, %lMenuSwitchDialog%, :menuSwitchDialog
-	Menu, menuSwitch, Icon, %lMenuSwitchDialog%
-		, % objIconsFile["lMenuSwitchDialog"], % objIconsIndex["lMenuSwitchDialog"], %intIconSize%
-	Menu, %lMainMenuName%, Add, %lMenuSwitch%, :menuSwitch
-	Menu, %lMainMenuName%, Icon, %lMenuSwitch%
-		, % objIconsFile["lMenuSwitch"], % objIconsIndex["lMenuSwitch"], %intIconSize%
+	AddMenuIcon("menuSwitch", lMenuSwitchExplorer, ":menuSwitchExplorer", "lMenuSwitchExplorer")
+	AddMenuIcon("menuSwitch", lMenuSwitchDialog, ":menuSwitchExplorer", "lMenuSwitchDialog")
+	AddMenuIcon(lMainMenuName, lMenuSwitch, ":menuSwitch", "lMenuSwitch")
 }
 
 if (blnDisplayRecentFolders)
-{
-	Menu, %lMainMenuName%, Add, %lMenuRecentFolders%..., RefreshRecentFolders
-	Menu, %lMainMenuName%, Icon, %lMenuRecentFolders%...
-		, % objIconsFile["lMenuRecentFolders"], % objIconsIndex["lMenuRecentFolders"], %intIconSize%
-}
+	AddMenuIcon(lMainMenuName, lMenuRecentFolders . "...", "RefreshRecentFolders", "lMenuRecentFolders")
 
 if (blnDisplaySpecialFolders or blnDisplayRecentFolders or blnDisplaySwitchMenu)
 	Menu, %lMainMenuName%, Add
 
-Menu, %lMainMenuName%, Add, % L(lMenuSettings, strAppName) . "...", GuiShow
-Menu, %lMainMenuName%, Icon, % L(lMenuSettings, strAppName) . "..."
-	, % objIconsFile["lMenuSettings"], % objIconsIndex["lMenuSettings"], %intIconSize%
+AddMenuIcon(lMainMenuName, L(lMenuSettings, strAppName) . "...", "GuiShow", "lMenuSettings")
 Menu, %lMainMenuName%, Default, % L(lMenuSettings, strAppName) . "..."
-Menu, %lMainMenuName%, Add, %lMenuAddThisFolder%..., AddThisFolder
-Menu, %lMainMenuName%, Icon, %lMenuAddThisFolder%...
-	, % objIconsFile["lMenuAddThisFolder"], % objIconsIndex["lMenuAddThisFolder"], %intIconSize%
+AddMenuIcon(lMainMenuName, lMenuAddThisFolder . "...", "AddThisFolder", "lMenuAddThisFolder")
 
 if !(blnDonor)
 {
 	Menu, %lMainMenuName%, Add
-	Menu, %lMainMenuName%, Add, %lDonateMenu%..., GuiDonate
-	Menu, %lMainMenuName%, Icon, %lDonateMenu%...
-		, % objIconsFile["lDonateMenu"], % objIconsIndex["lDonateMenu"], %intIconSize%
+	AddMenuIcon(lMainMenuName, lDonateMenu . "...", "GuiDonate", "lDonateMenu")
 }
 
 if (A_ThisLabel = "BuildFoldersMenusWithStatus")
@@ -1237,6 +1202,7 @@ BuildOneMenu(strMenu)
 ;------------------------------------------------------------
 {
 	global blnDisplayMenuShortcuts
+	global blnDisplayIcons
 	global intIconSize
 	global strMenuBackgroundColor
 	intShortcut := 0
@@ -1263,8 +1229,9 @@ BuildOneMenu(strMenu)
 				Menu, % arrThisMenu[A_Index].MenuName, Add, %strMenuName%, OpenFavorite ; will never be called because disabled
 				Menu, % arrThisMenu[A_Index].MenuName, Disable, %strMenuName%
 			}
-			Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
-				, % objIconsFile["Submenu"], % objIconsIndex["Submenu"], %intIconSize%
+			if (blnDisplayIcons)
+				Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
+					, % objIconsFile["Submenu"], % objIconsIndex["Submenu"], %intIconSize%
 		}
 		else if (arrThisMenu[A_Index].FolderName = lMenuSeparator) ; this is a separator
 
@@ -1280,8 +1247,9 @@ BuildOneMenu(strMenu)
 				or SubStr(arrThisMenu[A_Index].FolderLocation, 1, 7) = "http://"
 				or SubStr(arrThisMenu[A_Index].FolderLocation, 1, 8) = "https://")
 			{ ; to avoid "else" confusion
-				Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
-					, % objIconsFile["Network"], % objIconsIndex["Network"], %intIconSize%
+				if (blnDisplayIcons)
+					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
+						, % objIconsFile["Network"], % objIconsIndex["Network"], %intIconSize%
 			} ; to avoid "else" confusion
 			else if (arrThisMenu[A_Index].FavoriteType = "D") ; this is a document
 			{
@@ -1314,16 +1282,18 @@ BuildOneMenu(strMenu)
 					Diag("strDefaultIcon-2", strDefaultIcon)
 					Diag("intDefaultIcon", intDefaultIcon)
 				}
-				if StrLen(strDefaultIcon) and !InStr(strDefaultIcon, "%")
-					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %strDefaultIcon%, %intDefaultIcon%, %intIconSize%
-				else
-					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
-						, % objIconsFile["UnknownDocument"], % objIconsIndex["UnknownDocument"], %intIconSize%
+				if (blnDisplayIcons)
+					if StrLen(strDefaultIcon) and !InStr(strDefaultIcon, "%")
+						Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %strDefaultIcon%, %intDefaultIcon%, %intIconSize%
+					else
+						Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
+							, % objIconsFile["UnknownDocument"], % objIconsIndex["UnknownDocument"], %intIconSize%
 			}
 			else ; this is a folder
 				
-				Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
-					, % objIconsFile["Folder"], % objIconsIndex["Folder"], %intIconSize%
+				if (blnDisplayIcons)
+					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
+						, % objIconsFile["Folder"], % objIconsIndex["Folder"], %intIconSize%
 		}
 }
 ;------------------------------------------------------------
@@ -2666,7 +2636,10 @@ Gui, 2:Add, Text, ys x300 Section, %lOptionsIconSize%
 Gui, 2:Add, DropDownList, ys x+10 w40 vdrpIconSize Sort, 16|24|32|64
 GuiControl, ChooseString, drpIconSize, %intIconSize%
 
-Gui, 2:Add, CheckBox, y+40 xs vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
+Gui, 2:Add, CheckBox, y+40 xs vblnDisplayIcons, %lOptionsDisplayIcons%
+GuiControl, , blnDisplayIcons, %blnDisplayIcons%
+
+Gui, 2:Add, CheckBox, y+10 xs vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
 GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
 
 Gui, 2:Add, CheckBox, y+10 xs vblnDisplaySwitchMenu, %lOptionsDisplaySwitchMenu%
@@ -2792,6 +2765,7 @@ if (blnOptionsRunAtStartup)
 Menu, Tray, % blnOptionsRunAtStartup ? "Check" : "Uncheck", %lMenuRunAtStartup%
 
 IniWrite, %blnDisplayTrayTip%, %strIniFile%, Global, DisplayTrayTip
+IniWrite, %blnDisplayIcons%, %strIniFile%, Global, DisplayIcons
 IniWrite, %blnDisplaySpecialFolders%, %strIniFile%, Global, DisplaySpecialFolders
 IniWrite, %blnDisplayRecentFolders%, %strIniFile%, Global, DisplayRecentFolders
 IniWrite, %intRecentFolders%, %strIniFile%, Global, RecentFolders
@@ -4004,6 +3978,20 @@ GuiCenterButtons(strWindow, intInsideHorizontalMargin := 10, intInsideVerticalMa
 ;------------------------------------------------------------
 
 
+;------------------------------------------------------------
+AddMenuIcon(strMenuName, strMenuItemName, strLabel, strIconValue)
+;------------------------------------------------------------
+{
+	global intIconSize
+	global blnDisplayIcons
+	global objIconsFile
+	global objIconsIndex
+
+	Menu, %strMenuName%, Add, %strMenuItemName%, %strLabel%
+	if (blnDisplayIcons)
+		Menu, %strMenuName%, Icon, %strMenuItemName%, % objIconsFile[strIconValue], % objIconsIndex[strIconValue], %intIconSize%
+}
+;------------------------------------------------------------
 
 
 

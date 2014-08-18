@@ -144,6 +144,7 @@ lOptionsArrDescriptions5	Wählen Sie die Tastenkombination oder Maustasten-Kombin
 lOptionsChangeHotkey	Ändern
 lOptionsChangeHotkeyTitle	Tastenkürzel ändern - ~1~ ~2~
 lOptionsCtrl	Strg
+lOptionsDisplayIcons	Display Menu Icons
 lOptionsDisplayMenuShortcuts	Zeige &numerische Menü-Tastenkürzel
 lOptionsDisplayRecentFolders	Zeige kürzlich verwendete Ordner
 lOptionsDisplaySpecialFolders	Zeige S&pezielle Ordner
