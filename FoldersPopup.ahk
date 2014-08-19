@@ -11,12 +11,12 @@ Bugs:
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
 	Version: 3.0.7 (2014-08-XX)
-	* fix error when icon location contains %1
-	* fix error when assigning color to an empty submenu
+	* make display icons optional, refactor Add Menu commands in a centralized function
 	* allow to select no mouse trigger for popup menu, add None to the dropdown list in Change hotkey window
 	* add mouse or keyboard hotkey to open the recent folders list
-	* make display icons optional, refactor Add Menu commands in centralized function
-	* fix a bug with shortcuts numbers in Switch menus
+	* fix error when icon location contains %1
+	* fix error when assigning color to an empty submenu
+	* fix a v2 bug with shortcuts numbers increment in Switch menus
 	
 	Version: 3.0.6 (2014-07-26)
 	* Redesign of buttons in Settings
@@ -395,8 +395,8 @@ blnMenuReady := true
 objCursor := DllCall("LoadCursor", "UInt", NULL, "Int", 32649, "UInt") ; IDC_HAND
 OnMessage(0x200, "WM_MOUSEMOVE")
 
-Gosub, GuiShow ; ### only when debugging Gui
-Gosub, GuiOptions ; ### only when debugging Gui
+; Gosub, GuiShow ; ### only when debugging Gui
+; Gosub, GuiOptions ; ### only when debugging Gui
 
 return
 
