@@ -279,7 +279,7 @@ Bugs:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 3.0.7 BETA
+;@Ahk2Exe-SetVersion 3.0.8 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -296,21 +296,21 @@ ComObjError(False) ; we will do our own error handling
 
 strTempDir := "_temp"
 FileCreateDir, %strTempDir%
+
 FileInstall, FileInstall\FoldersPopup_LANG_DE.txt, %strTempDir%\FoldersPopup_LANG_DE.txt, 1
 FileInstall, FileInstall\FoldersPopup_LANG_FR.txt, %strTempDir%\FoldersPopup_LANG_FR.txt, 1
 FileInstall, FileInstall\FoldersPopup_LANG_NL.txt, %strTempDir%\FoldersPopup_LANG_NL.txt, 1
+FileInstall, FileInstall\default_browser_icon.html, %strTempDir%\default_browser_icon.html, 1
+
 FileInstall, FileInstall\about-32.png, %strTempDir%\about-32.png
-; FileInstall, FileInstall\add_image-26.png, %strTempDir%\add_image-26.png
 FileInstall, FileInstall\add_property-48.png, %strTempDir%\add_property-48.png
 FileInstall, FileInstall\delete_property-48.png, %strTempDir%\delete_property-48.png
 FileInstall, FileInstall\separator-26.png, %strTempDir%\separator-26.png
 FileInstall, FileInstall\down_circular-26.png, %strTempDir%\down_circular-26.png
-; FileInstall, FileInstall\edit_image-26.png, %strTempDir%\edit_image-26.png
 FileInstall, FileInstall\edit_property-48.png, %strTempDir%\edit_property-48.png
 FileInstall, FileInstall\generic_sorting2-26-grey.png, %strTempDir%\generic_sorting2-26-grey.png
 FileInstall, FileInstall\help-32.png, %strTempDir%\help-32.png
 FileInstall, FileInstall\left-12.png, %strTempDir%\left-12.png
-; FileInstall, FileInstall\remove_image-26.png, %strTempDir%\remove_image-26.png
 FileInstall, FileInstall\settings-32.png, %strTempDir%\settings-32.png
 FileInstall, FileInstall\up-12.png, %strTempDir%\up-12.png
 FileInstall, FileInstall\up_circular-26.png, %strTempDir%\up_circular-26.png
@@ -324,7 +324,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.0.7" ; "major.minor.bugs"
+global strCurrentVersion := "3.0.8" ; "major.minor.bugs"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
@@ -397,6 +397,10 @@ OnMessage(0x200, "WM_MOUSEMOVE")
 
 ; Gosub, GuiShow ; ### only when debugging Gui
 ; Gosub, GuiOptions ; ### only when debugging Gui
+; Gosub, GuiAddFolder ; ### only when debugging Gui
+; Gosub, GuiAddFromPopup
+; Gosub, GuiAddFromDropFiles
+; Gosub, GuiEditFolder
 
 return
 
@@ -608,7 +612,7 @@ Loop
 		objFolder.SubmenuFullName := ""
 	if StrLen(arrThisFolder5)
 		
-		objFolder.FavoriteType := arrThisFolder5 ; "F" folder, "D" document or "S" submenu
+		objFolder.FavoriteType := arrThisFolder5 ; "F" folder, "D" document, "U" URL or "S" submenu
 		
 	else ; for upward compatibility from v1 and v2 ini files
 		if StrLen(objFolder.SubmenuFullName)
@@ -787,6 +791,8 @@ If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass, strTargetContro
 blnMouse := InStr(A_ThisLabel, "Mouse")
 blnNewWindow := false
 Gosub, SetMenuPosition
+if WindowIsDirectoryOpus(strTargetClass)
+	Click ; to make sure the lister under the mouse become active
 
 ; Can't find how to navigate a dialog box to My Computer or Network Neighborhood... is this is feasible?
 if (blnDisplaySpecialFolders)
@@ -1044,7 +1050,7 @@ Loop, parse, strDirList, `n
 	FileGetShortcut, %strTargetFullName%, strOutTarget
 	if (errorlevel) ; hidden or system files (like desktop.ini) returns an error
 		continue
-	if !FileExist(strOutTarget) ; if folder/file was delete or on a removable drive
+	if !FileExist(strOutTarget) ; if folder/document was delete or on a removable drive
 		continue
 	
 	if LocationIsDocument(strOutTarget) ; not a folder
@@ -1213,6 +1219,7 @@ BuildOneMenu(strMenu)
 	
 	arrThisMenu := arrMenus[strMenu]
 	Loop, % arrThisMenu.MaxIndex()
+		
 		if (arrThisMenu[A_Index].FavoriteType = "S") ; this is a submenu
 		{
 			strSubMenuFullName := arrThisMenu[A_Index].SubmenuFullName
@@ -1233,67 +1240,41 @@ BuildOneMenu(strMenu)
 				Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
 					, % objIconsFile["Submenu"], % objIconsIndex["Submenu"], %intIconSize%
 		}
+		
 		else if (arrThisMenu[A_Index].FolderName = lMenuSeparator) ; this is a separator
 
 			Menu, % arrThisMenu[A_Index].MenuName, Add
 			
-		else ; this is a favorite (folder or file)
+		else ; this is a favorite (folder, document or URL)
 		{
 			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = lMainMenuName)) . " " : "")
 				. arrThisMenu[A_Index].FolderName
 			Menu, % arrThisMenu[A_Index].MenuName, Add, %strMenuName%, OpenFavorite
-			
-			if (SubStr(arrThisMenu[A_Index].FolderLocation, 1, 2) = "\\"
-				or SubStr(arrThisMenu[A_Index].FolderLocation, 1, 7) = "http://"
-				or SubStr(arrThisMenu[A_Index].FolderLocation, 1, 8) = "https://")
-			{ ; to avoid "else" confusion
-				if (blnDisplayIcons)
-					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
-						, % objIconsFile["Network"], % objIconsIndex["Network"], %intIconSize%
-			} ; to avoid "else" confusion
-			else if (arrThisMenu[A_Index].FavoriteType = "D") ; this is a document
-			{
-				; get icon, extract from kiu http://www.autohotkey.com/board/topic/8616-kiu-icons-manager-quickly-change-icon-files/
-				strLocation :=  arrThisMenu[A_Index].FolderLocation
-				SplitPath, strLocation, , , strExtension
-				RegRead, strHKeyClassRoot, HKEY_CLASSES_ROOT, .%strExtension%
-				RegRead, strDefaultIcon, HKEY_CLASSES_ROOT, %strHKeyClassRoot%\DefaultIcon
-				if (blnDiagMode)
-				{
-					Diag("BuildOneMenuIcon", strLocation)
-					Diag("strHKeyClassRoot", strHKeyClassRoot)
-					Diag("strDefaultIcon-1", strDefaultIcon)
-				}
-				
-				if (strDefaultIcon = "%1") ; use the file itself (for executable)
-					strDefaultIcon := strLocation
-				
-				IfInString, strDefaultIcon, `, ; this is for icongroup files
-				{
-					StringSplit, arrDefaultIcon, strDefaultIcon, `,
-					strDefaultIcon := arrDefaultIcon1
-					intDefaultIcon := arrDefaultIcon2
-				}
-				else
-					intDefaultIcon := 1
 
-				if (blnDiagMode)
+
+			if (blnDisplayIcons)
+			{
+				if (arrThisMenu[A_Index].FavoriteType = "F") ; this is a folder
+					
+					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
+						, % objIconsFile["Folder"], % objIconsIndex["Folder"], %intIconSize%
+				
+				else ;  this is a document or an URL
 				{
-					Diag("strDefaultIcon-2", strDefaultIcon)
-					Diag("intDefaultIcon", intDefaultIcon)
-				}
-				if (blnDisplayIcons)
+					if (arrThisMenu[A_Index].FavoriteType = "U") ; this is an URL
+						GetIcon4Location(strTempDir . "\default_browser_icon.html", strDefaultIcon, intDefaultIcon)
+						; not sure it is required to have a physical file with .html extension - but keep it as is by safety
+					else ; this is a document
+						GetIcon4Location(arrThisMenu[A_Index].FolderLocation, strDefaultIcon, intDefaultIcon)
+					; ###_D(arrThisMenu[A_Index].FolderLocation . " (" . arrThisMenu[A_Index].FavoriteType . ") " . strDefaultIcon . " / " . intDefaultIcon)
+					
 					if StrLen(strDefaultIcon) and !InStr(strDefaultIcon, "%")
 						Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %strDefaultIcon%, %intDefaultIcon%, %intIconSize%
 					else
 						Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
 							, % objIconsFile["UnknownDocument"], % objIconsIndex["UnknownDocument"], %intIconSize%
+				}
 			}
-			else ; this is a folder
-				
-				if (blnDisplayIcons)
-					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
-						, % objIconsFile["Folder"], % objIconsIndex["Folder"], %intIconSize%
 		}
 }
 ;------------------------------------------------------------
@@ -2097,6 +2078,7 @@ if (A_ThisLabel = "GuiEditFolder")
 	blnRadioSubmenu := (strFavoriteType = "S")
 	blnRadioFolder := (strFavoriteType = "F")
 	blnRadioFile := (strFavoriteType = "D")
+	blnRadioURL := (strFavoriteType = "U")
 }
 else
 {
@@ -2115,23 +2097,17 @@ else
 		strFolderShortName := ""
 	}
 
+	blnRadioSubmenu := false
+	blnRadioFolder := false
+	blnRadioFile := false
+	blnRadioURL := false
+	
 	if (A_ThisLabel = "GuiAddFromPopup")
-	{
-		blnRadioSubmenu := false
 		blnRadioFolder := true
-		blnRadioFile := false
-	}
 	else if (A_ThisLabel = "GuiAddFromDropFiles")
 	{
-		blnRadioSubmenu := false
 		blnRadioFile := LocationIsDocument(strCurrentLocation)
 		blnRadioFolder := not blnRadioFile
-	}
-	else ; GuiAddFolder
-	{
-		blnRadioSubmenu := false
-		blnRadioFolder := false
-		blnRadioFile := false
 	}
 }
 
@@ -2150,19 +2126,21 @@ if (A_ThisLabel = "GuiAddFolder")
 	Gui, 2:Add, Text, x10, %lDialogAdd%:
 	Gui, 2:Add, Radio, x+10 yp vblnRadioFolder checked gRadioButtonsChanged, %lDialogFolderLabel%
 	Gui, 2:Add, Radio, x+10 yp vblnRadioFile gRadioButtonsChanged, %lDialogFileLabel%
+	Gui, 2:Add, Radio, x+10 yp vblnRadioURL gRadioButtonsChanged, %lDialogURLLabel%
 	Gui, 2:Add, Radio, x+10 yp vblnRadioSubmenu gRadioButtonsChanged, %lDialogSubmenuLabel%
 }
 
-Gui, 2:Add, Text, x10 y+10 w300 vlblShortName, % (blnRadioSubmenu ? lDialogSubmenuShortName : (blnRadioFile ? lDialogFileShortName : lDialogFolderShortName))
+Gui, 2:Add, Text, x10 y+10 w300 vlblShortName, % (blnRadioSubmenu ? lDialogSubmenuShortName : (blnRadioFile ? lDialogFileShortName : (blnRadioURL ? lDialogURLShortName : lDialogFolderShortName)))
 Gui, 2:Add, Edit, x10 w300 vstrFolderShortName, % (A_ThisLabel = "GuiEditFolder" ? strCurrentName : strFolderShortName)
 
 if (blnRadioSubmenu)
 	Gui, 2:Add, Button, x+10 yp vbnlEditFolderOpenMenu gGuiOpenThisMenu, %lDialogOpenThisMenu%
 else
 {
-	Gui, 2:Add, Text, x10 w300 vlblFolder, % (blnRadioFile ? lDialogFileLabel : lDialogFolderLabel)
+	Gui, 2:Add, Text, x10 w300 vlblFolder, % (blnRadioFile ? lDialogFileLabel : (blnRadioURL ? lDialogURLLabel : lDialogFolderLabel))
 	Gui, 2:Add, Edit, x10 w300 h20 vstrFolderLocation, %strCurrentLocation%
-	Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation default, %lDialogBrowseButton%
+	if !(blnRadioURL)
+		Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation default, %lDialogBrowseButton%
 }
 
 if (A_ThisLabel = "GuiEditFolder")
@@ -2218,7 +2196,7 @@ if !StrLen(strFolderShortName)
 	return
 }
 
-if  ((blnRadioFolder or blnRadioFile) and !StrLen(strFolderLocation))
+if  ((blnRadioFolder or blnRadioFile or blnRadioURL) and !StrLen(strFolderLocation))
 {
 	Oops(lDialogFolderLocationEmpty)
 	return
@@ -2254,10 +2232,7 @@ if (blnRadioSubmenu)
 else
 	strNewSubmenuFullName := ""
 
-if (blnRadioSubmenu)
-	strFavoriteType := "S" ; submenu
-else ; GuiEditFolderSave
-	strFavoriteType := (blnRadioFile ? "D" : "F") ; document or folder
+strFavoriteType := (blnRadioSubmenu ? "S" : (blnRadioURL ? "U" : (blnRadioFile ? "D" : (blnRadioURL ? "U" : "F")))) ; submenu, document, URL or folder
 
 Gosub, 2GuiClose
 
@@ -2289,7 +2264,7 @@ else ; add menu item to selected menu object
 	objFolder.FolderName := strFolderShortName ; display name of this menu item
 	objFolder.FolderLocation := strFolderLocation ; path for this menu item
 	objFolder.SubmenuFullName := strNewSubmenuFullName ; full name of the submenu
-	objFolder.FavoriteType := strFavoriteType ; "F" folder, "D" document or "S" submenu
+	objFolder.FavoriteType := strFavoriteType ; "F" folder, "D" document, "U" for URL or "S" submenu
 	arrMenus[objFolder.MenuName].Insert(1, objFolder) ; add this menu item to the new menu
 
 	if (A_ThisLabel = "GuiEditFolderSave")
@@ -2357,6 +2332,11 @@ else if (blnRadioFile)
 	GuiControl, , lblShortName, %lDialogFileShortName%
 	GuiControl, , lblFolder, %lDialogFileLabel%
 }
+else if (blnRadioURL)
+{
+	GuiControl, , lblShortName, %lDialogURLShortName%
+	GuiControl, , lblFolder, %lDialogURLLabel%
+}
 else ; blnRadioSubmenu
 {
 	GuiControl, , lblShortName, %lDialogSubmenuShortName%
@@ -2365,8 +2345,12 @@ else ; blnRadioSubmenu
 
 GuiControl, % (blnRadioSubmenu ? "Hide" : "Show"), lblFolder
 GuiControl, % (blnRadioSubmenu ? "Hide" : "Show"), strFolderLocation
-GuiControl, % (blnRadioSubmenu ? "Hide" : "Show"), btnSelectFolderLocation
-GuiControl, % (blnRadioSubmenu ? "-" : "+") . "Default", btnSelectFolderLocation
+GuiControl, % (blnRadioSubmenu or blnRadioURL ? "Hide" : "Show"), btnSelectFolderLocation
+
+if (blnRadioSubmenu or blnRadioURL)
+	GuiControl, +Default, btnAddFolderAdd
+else
+	GuiControl, +Default, btnSelectFolderLocation
 
 GuiControl, Focus, strFolderShortName
 
@@ -3075,21 +3059,22 @@ strFavoriteType := GetFavoriteTypeFor(A_ThisMenu, strThisMenu)
 if (blnDiagMode)
 {
 	Diag("A_ThisHotkey", A_ThisHotkey)
-	Diag("Navigate", "RegularFolder")
+	Diag("Navigate", "OpenFavorite")
 	Diag("Path", strLocation)
 	Diag("FavoriteType", strFavoriteType)
 }
 
 if !FileExist(strLocation) ; this favorite does not exist
-{
-	Gui, 1:+OwnDialogs
-	MsgBox, 0, % L(lDialogFavoriteDoesNotExistTitle, strAppName)
-		, % L(lDialogFavoriteDoesNotExistPrompt, strLocation)
-		, 30
-	return
-}
+	if (strFavoriteType <> "U") ;  and this is not an URL
+	{
+		Gui, 1:+OwnDialogs
+		MsgBox, 0, % L(lDialogFavoriteDoesNotExistTitle, strAppName)
+			, % L(lDialogFavoriteDoesNotExistPrompt, strLocation)
+			, 30
+		return
+	}
 
-if (strFavoriteType = "D") ; this is a file
+if (strFavoriteType = "D" or strFavoriteType = "U") ; this is a document or an URL
 {
 	Run, %strLocation%
 	return
@@ -3100,7 +3085,7 @@ if (strFavoriteType = "D") ; this is a file
 if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
 {
 	if (blnDiagMode)
-		Diag("Navigate", "Shell.Application")
+		Diag("Navigate", "RunNewWindow")
 	
 	if (A_OSVersion = "WIN_XP")
 		ComObjCreate("Shell.Application").Explore(strLocation)
@@ -3520,11 +3505,12 @@ NavigateFreeCommanderOrDirectoryOpus(strLocation, strWinId, strClass, strControl
 		WinActivate, ahk_id %strWinId% ; we'll activate initialy active window
 		Sleep, 200
 	}
+	; to make sure the file list under the mouse become active - not reliable in DOpus, also using Click in PopupMenuMouse
 	ControlFocus, %strControl%
 	SetKeyDelay, 200
 	Send, % (WindowIsFreeCommander(strClass) ? "!g" : "+{Enter}") ; goto shortcut for FreeCommander or DirectoryOpus
 	SetKeyDelay, 0
-	Send, %strLocation%
+	SendInput, {Raw} %strLocation%
 	Sleep, 200
 	Send, {Enter}
 }
@@ -3990,6 +3976,44 @@ AddMenuIcon(strMenuName, strMenuItemName, strLabel, strIconValue)
 	Menu, %strMenuName%, Add, %strMenuItemName%, %strLabel%
 	if (blnDisplayIcons)
 		Menu, %strMenuName%, Icon, %strMenuItemName%, % objIconsFile[strIconValue], % objIconsIndex[strIconValue], %intIconSize%
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GetIcon4Location(strLocation, ByRef strDefaultIcon, ByRef intDefaultIcon)
+; get icon, extract from kiu http://www.autohotkey.com/board/topic/8616-kiu-icons-manager-quickly-change-icon-files/
+;------------------------------------------------------------
+{
+	global blnDiagMode
+	
+	SplitPath, strLocation, , , strExtension
+	RegRead, strHKeyClassRoot, HKEY_CLASSES_ROOT, .%strExtension%
+	RegRead, strDefaultIcon, HKEY_CLASSES_ROOT, %strHKeyClassRoot%\DefaultIcon
+	if (blnDiagMode)
+	{
+		Diag("BuildOneMenuIcon", strLocation)
+		Diag("strHKeyClassRoot", strHKeyClassRoot)
+		Diag("strDefaultIcon-1", strDefaultIcon)
+	}
+	
+	if (strDefaultIcon = "%1") ; use the file itself (for executable)
+		strDefaultIcon := strLocation
+	
+	IfInString, strDefaultIcon, `, ; this is for icongroup files
+	{
+		StringSplit, arrDefaultIcon, strDefaultIcon, `,
+		strDefaultIcon := arrDefaultIcon1
+		intDefaultIcon := arrDefaultIcon2
+	}
+	else
+		intDefaultIcon := 1
+
+	if (blnDiagMode)
+	{
+		Diag("strDefaultIcon-2", strDefaultIcon)
+		Diag("intDefaultIcon", intDefaultIcon)
+	}
 }
 ;------------------------------------------------------------
 
