@@ -24,7 +24,7 @@ lDialogCancelTitle	Annuleren - ~1~ ~2~
 lDialogEdit	Bewerken
 lDialogEditDialogPrompt	Voer de nieuwe naam voor het dialoogvenster in`n(of een deel van de naam):
 lDialogEditDialogTitle	Bewerk dialoogvenster - ~1~ ~2~
-lDialogFavoriteDoesNotExistPrompt	The favorite "~1~" does not exist or is not available.`n`nIf this favorite is on a network drive, please try again after network authentification.
+lDialogFavoriteDoesNotExistPrompt	The favorite "~1~" does not exist or is not available.`n`nIf this favorite is on a network drive, please try again after network authentification.`n`nIf a favorite is a link to a web page, select the "Link (URL)" option when you add the favorite.
 lDialogFavoriteDoesNotExistTitle	Favorite does not exist - ~1~
 lDialogFileLabel	Document
 lDialogFileShortName	Document naam (voor in het menu)
@@ -46,6 +46,8 @@ lDialogSubmenuLabel	Submenu
 lDialogSubmenuNameEmpty	The submenu name is empty. Please, choose a name.
 lDialogSubmenuParentMenu	Submenu parent menu
 lDialogSubmenuShortName	Korte naam voor het submenu
+lDialogURLLabel	Link (URL)
+lDialogURLShortName	Link short name (for menu)
 lDonateButton	Steun Freeware!
 lDonateCheckPrompt	Ben je tevreden over ~1~?`n`n~1~ is niet alleen GRATIS maar bevat ook GEEN vervelende reclame of adware (waarvan je nooit zeker weet of ze geen spyware of malware bevatten)`n`nTot nog toe heeft ~1~ jou ~2~ maal geholpen tijdens je dagelijkse werkzaamheden. Wat zou je er van denken om freeware te steunen?
 lDonateCheckTitle	~1~ maal! - ~2~

@@ -24,7 +24,7 @@ lDialogCancelTitle	Annuler - ~1~ ~2~
 lDialogEdit	Modifier
 lDialogEditDialogPrompt	Entrez le nouveau nom de la boîte de dialogue`n(ou une partie du nom):
 lDialogEditDialogTitle	Modifier Boîte de dialogue - ~1~ ~2~
-lDialogFavoriteDoesNotExistPrompt	Le favori "~1~" n'existe pas ou n'est pas disponible.`n`nSi ce favori réside sur un lecteur réseau, veuillez essayer à nouveau après l'authentification réseau.
+lDialogFavoriteDoesNotExistPrompt	Le favori "~1~" n'existe pas ou n'est pas disponible.`n`nSi ce favori réside sur un lecteur réseau, veuillez essayer à nouveau après l'authentification réseau.`n`nSi un favori est un lien vers une page web, choisissez l'option "Lien (URL)" lorsque vous ajoutez le favori.
 lDialogFavoriteDoesNotExistTitle	Favori introuvable - ~1~
 lDialogFileLabel	Document
 lDialogFileShortName	Nom du document (pour les menus)
@@ -46,6 +46,8 @@ lDialogSubmenuLabel	Sous-menu
 lDialogSubmenuNameEmpty	Le nom du sous-menu est vide. Veuillez indiquer un nom court pour ce dossier.
 lDialogSubmenuParentMenu	Menu contenant ce sous-menu
 lDialogSubmenuShortName	Nom court du sous-menu
+lDialogURLLabel	Lien (URL)
+lDialogURLShortName	Nom court de ce lien
 lDonateButton	Soutenez ce gratuiciel!
 lDonateCheckPrompt	Vous aimez ~1~?`n`n~1~ n'est pas seulement GRATUIT mais aussi distribué SANS ces attrapes publicitaires dont on ne sait jamais si elles transportent des virus ou encore des logiciels espions ou malveillants.`n`nCela fait maintenant ~2~ fois que ~1~ est appelé pour faciliter votre travail quotidien. Que diriez-vous de soutenir ce gratuiciel à votre tour?
 lDonateCheckTitle	~1~ fois! - ~2~
@@ -93,9 +95,9 @@ lGuiSubmenuSeparator	>
 lGuiTitle	Paramètres - ~1~ ~2~
 lHelpText1	Au lancement de FoldersPopup, une icône attend vos ordres dans la zone de Notifications. Lorsque vous voudrez changer de dossier dans l'Explorateur de fichier Windows ou dans une boîte de dialogue de fichiers, vous n'aurez qu'à appuyer sur le bouton central de la souris ou sur la touche Windows-K pour qu'un menu popup affiche vos dossiers préférés. Cliquez le dossier désiré et FoldersPopup vous y mènera instantanément !
 lHelpText2	Choisissez "Paramètres" pour ouvrir la boîte de configuration de FoldersPopup où vous pourrez ajouter des dossiers à votre menu, ou encore les effacer, déplacer ou renommer. Vous pourrez ajouter des sous-menus et aussi les déplacer, renommer ou effacer. Choisissez le "Menu à modifier:" dans la liste déroulante. Cliquez sur "Enregistrer" pour sauvegarder vos modifications.
-lHelpText3	Vous pourrez rapidement ajouter des dossiers à votre menu:`n1) Allez dans un dossier fréquemment utilisé.`n2) Cliquez sur le bouton du mieu de la souris (ou appuyez sur Windows-K) et choissez "Ajouter ce dossier".`n3) Attribuez un nom court à ce dossier, cliquez "OK" et "Enregistrer" dans la fenêtre des paramètres.
-lHelpText4	Initialement, FoldersPopup ne fonctionne que dans les boîtes de dialogue régulières (Ouvrir, Enregistrer, etc.). Vous pourrez facilement apprendre à FoldersPopup à reconnaître d'autres boîtes de dialogue:`n1) Dans une boîte de dialogue non-reconnue, cliquez le bouton central de la souris (or appuyez sur Windows-K) et choisissez "Prendre en charge ce type de boîte de dialogue".`n2 ) Cliquez "OK" et "Enregistrer" dans la fenêtre des paramètres.
-lHelpText5	TRUCS ET ASTUCES`n- Dans la zone de Notifications, sélectionnez l'option "Exécuter au démarrage" pour lancer FoldersPopup automatiquement au lancement de Windows.`n- Besoin d'un dossier dans un nouvel Explorateur? Appuyez simplement sur Maj-bouton central (ou Maj-Windows-K). Cette action permet aussi d'ouvrir un dossier depuis n'importe quelle application.`n- Choisissez les combinaisons de bouton de la souris et de touches du clavier qui ouvrent le menu popup dans les  "Paramètres, Options".`n- Aussi dans les "Options": choisissez votre langue d'utilisation, décidez d'afficher le menu des Emplacements récents, les raccouris clavier numériques ou fixez le menu popup à une position de votre choix.
+lHelpText3	Pour ajouter rapidement des DOSSIERS à votre menu:`n1) Allez dans un dossier fréquemment utilisé.`n2) Cliquez sur le bouton du milieu de la souris (Windows-K) et choissez "Ajouter ce dossier".`n3) Attribuez un nom court à ce dossier, cliquez "Ajouter" et "Enregistrer" dans la fenêtre des paramètres.
+lHelpText4	Pour ajouter à votre menu des DOCUMENTS ou des LIENS WEB:`n1) Ouvrez le menu de Folders Popup et choisissez "Paramètres" (Maj-Windows-F).`n2) Cliquez sur le bouton "Ajouter" et choisissez les options "Document" ou "Lien (URL)".`n3) Attribuez un nom court à ce favori, indiquez l'emplacement du document ou l'adresse URL du lien, cliquez sur "Ajouter" et "Enregistrer" dans la fenêtre des paramètres. 
+lHelpText5	TRUCS ET ASTUCES`n- Dans la zone de Notifications, sélectionnez l'option "Exécuter au démarrage" pour lancer FoldersPopup automatiquement au lancement de Windows.`n- Besoin d'un dossier dans un nouvel Explorateur? Appuyez simplement sur Maj-bouton du milieu de la souris (ou Maj-Windows-K). Cette action permet aussi d'ouvrir un dossier depuis n'importe quelle fenêtre.`n- Choisissez les combinaisons de bouton de la souris et de touches du clavier qui ouvrent le menu popup dans les  "Paramètres, Options".`n- Aussi dans les "Options": choisissez votre langue d'utilisation, la taille des icônes de menu, les couleurs des fenêtres. Décidez d'afficher le menu des Emplacements récents, les raccouris clavier numériques ou fixez le menu popup à une position de votre choix.
 lHelpText6	Le soutien sur FoldersPopup est disponible à <a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a> (en français et en anglais).
 lHelpText7	~1~ Jean Lalonde 2013-2014. Gratuiciel.
 lHelpTextLead	Avec FoldersPopup, navigez en un clin d'oeil parmi vos dossiers et documents favoris!

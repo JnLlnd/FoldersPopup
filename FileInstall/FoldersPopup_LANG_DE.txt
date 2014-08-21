@@ -24,7 +24,7 @@ lDialogCancelTitle	Abbrechen - ~1~ ~2~
 lDialogEdit	Bearbeiten
 lDialogEditDialogPrompt	Geben Sie den neuen Namen für die Dialogbox ein`n(oder einen Teil des Namens):
 lDialogEditDialogTitle	Dialogbox bearbeiten - ~1~ ~2~
-lDialogFavoriteDoesNotExistPrompt	Der Favorit "~1~" existiert nicht oder ist nicht verfügbar.`n`nSollte er sich in einem Netzlaufwerk befinden, versuchen Sie es nach der Netzwerkanmeldung nochmals.
+lDialogFavoriteDoesNotExistPrompt	Der Favorit "~1~" existiert nicht oder ist nicht verfügbar.`n`nSollte er sich in einem Netzlaufwerk befinden, versuchen Sie es nach der Netzwerkanmeldung nochmals.`n`nIf a favorite is a link to a web page, select the "Link (URL)" option when you add the favorite.
 lDialogFavoriteDoesNotExistTitle	Favorit existiert nicht - ~1~
 lDialogFileLabel	Dokumente
 lDialogFileShortName	Dokument-Kurzname (für Menü)
@@ -46,6 +46,8 @@ lDialogSubmenuLabel	Untermenü
 lDialogSubmenuNameEmpty	Kein Name für das Untermenü angegeben. Bitte Namen vergeben.
 lDialogSubmenuParentMenu	Untermenü Elternmenü
 lDialogSubmenuShortName	Kurzname des Untermenüs
+lDialogURLLabel	Link (URL)
+lDialogURLShortName	Link short name (for menu)
 lDonateButton	Unterstützen Sie Freeware!
 lDonateCheckPrompt	Sind Sie zufrieden mit ~1~?`n`n~1~ ist nicht nur kostenlos, sondern enthält auch keine Werbung, bei der Sie nie wissen, ob diese Spyware oder Schadsoftware enthält.`n`n~2~ mal bisher, hat Ihnen ~1~ bei der täglichen Arbeit geholfen. Wie wär's jetzt mit ein wenig Unterstützung für Freeware?
 lDonateCheckTitle	~1~ mal! - ~2~
