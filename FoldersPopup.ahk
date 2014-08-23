@@ -14,7 +14,7 @@ Bugs:
 	* replaces Send command with SendInput
 	* fix bug with None mouse hotkey for English US keyboard layout (0409)
 	* fix bug when navigating to network folder in DOpus
-	* add popup menu and to tray menu
+	* add popup menu and color to tray menu
 	
 	Version: 3.0.8 (2014-08-20)
 	* add type of favorites for links, display default browser icon for link favorites and open links in default browser
@@ -452,16 +452,16 @@ if (A_OSVersion = "WIN_XP")
 				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
 	strIconsIndex := "35|127|118|16|19|22|33"
 				. "|4|25|4|4|147|147|147"
-				. "|214|166|111|161|44|10|3|4"
+				. "|214|166|111|161|298|10|3|4"
 }
 else
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|imageres|imageres|imageres|imageres|imageres"
-				. "|imageres|imageres|imageres|imageres|imageres|imageres|imageres|imageres"
+				. "|imageres|imageres|imageres|imageres|shell32|imageres|imageres|imageres"
 	strIconsIndex := "106|189|68|105|115|23|50"
 				. "|113|96|203|203|177|176|177|"
-				. "113|110|217|208|204|29|3|4"
+				. "113|110|217|208|298|29|3|4"
 }
 
 StringSplit, arrIconsFile, strIconsFile, |
@@ -2675,11 +2675,11 @@ Gui, 3:Font, s10 w700, Verdana
 Gui, 3:Add, Text, x10 y10 w350 center, % L(lOptionsChangeHotkeyTitle, strAppName)
 Gui, 3:Font
 
-intType := 3 ; Settings and Recent folders
+intHotkeyType := 3 ; Settings and Recent folders
 if InStr(arrIniKeyNames%intIndex%, "Mouse")
-	intType := 1
+	intHotkeyType := 1
 if InStr(arrIniKeyNames%intIndex%, "Keyboard")
-	intType := 2
+	intHotkeyType := 2
 
 Gui, 3:Add, Text, y+15 x10 , %lOptionsTriggerFor%
 Gui, 3:Font, s8 w700
@@ -2698,15 +2698,19 @@ GuiControl, , blnOptionsAlt, % InStr(strModifiers%intIndex%, "!") ? 1 : 0
 Gui, 3:Add, CheckBox, y+10 x50 vblnOptionsWin, %lOptionsWin%
 GuiControl, , blnOptionsWin, % InStr(strModifiers%intIndex%, "#") ? 1 : 0
 
-if (intType = 1)
+; initialize or we may have an error if another hotkey was changed before
+strOptionsMouse := ""
+strOptionsKey := ""
+
+if (intHotkeyType = 1)
 	Gui, 3:Add, DropDownList, % "y" . posTopY . " x150 w200 vstrOptionsMouse gOptionsMouseChanged", % strMouseButtonsWithDefault%intIndex%
-if (intType <> 1)
+if (intHotkeyType <> 1)
 {
 	Gui, 3:Add, Text, % "y" . posTopY . " x150 w60", %lOptionsKeyboard%
 	Gui, 3:Add, Hotkey, yp x+10 w130 vstrOptionsKey gOptionsHotkeyChanged
 	GuiControl, , strOptionsKey, % strOptionsKey%intIndex%
 }
-if (intType = 3)
+if (intHotkeyType = 3)
 	Gui, 3:Add, DropDownList, % "y" . posTopY + 50 . " x150 w200 vstrOptionsMouse gOptionsMouseChanged", % strMouseButtonsWithDefault%intIndex%
 
 Gui, 3:Add, Button, y240 x140 vbtnChangeHotkeySave gButtonChangeHotkeySave%intIndex%, %lGuiSave%
@@ -2872,11 +2876,25 @@ return
 ;------------------------------------------------------------
 OptionsMouseChanged:
 ;------------------------------------------------------------
-strOptionsMouseControl := A_GuiControl ; mouse dropdown var name
-StringReplace, strOptionsHotkeyControl, strOptionsMouseControl, Mouse, Key ; get the hotkey var
 
-; we have a mouse button, empty the hotkey control
-GuiControl, , %strOptionsHotkeyControl%, None
+strOptionsMouseControl := A_GuiControl ; hotkey var name
+GuiControlGet, strOptionsMouseValue, , %strOptionsMouseControl%
+
+if (strOptionsMouseValue = lOptionsMouseNone) ; this is the translated "None"
+{
+	GuiControl, , blnOptionsShift, 0
+	GuiControl, , blnOptionsCtrl, 0
+	GuiControl, , blnOptionsAlt, 0
+	GuiControl, , blnOptionsWin, 0
+}
+
+if (intHotkeyType = 3) ; both keyboard and mouse options are available
+{
+	StringReplace, strOptionsHotkeyControl, strOptionsMouseControl, Mouse, Key ; get the hotkey var
+
+	; we have a mouse button, empty the hotkey control
+	GuiControl, , %strOptionsHotkeyControl%, None
+}
 
 return
 ;------------------------------------------------------------
@@ -3683,22 +3701,24 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 SplitHotkey(strHotkey, strMouseButtons, ByRef strModifiers, ByRef strKey, ByRef strMouseButton, ByRef strMouseButtonsWithDefault)
 ;------------------------------------------------------------
 {
-	SplitModifiersFromKey(strHotkey, strModifiers, strKey)
-
 	if (strHotkey = "None") ; do not compare with lOptionsMouseNone because it is translated
 	{
 		strMouseButton := "None" ; do not use lOptionsMouseNone because it is translated
 		strKey := ""
 		StringReplace, strMouseButtonsWithDefault, lOptionsMouseButtonsText, % lOptionsMouseNone . "|", % lOptionsMouseNone . "||" ; use lOptionsMouseNone because this is displayed
 	}
-	else if InStr(strMouseButtons, "|" . strKey . "|") ;  we have a mouse button
+	else 
 	{
-		strMouseButton := strKey
-		strKey := ""
-		StringReplace, strMouseButtonsWithDefault, lOptionsMouseButtonsText, % GetText4MouseButton(strMouseButton) . "|", % GetText4MouseButton(strMouseButton) . "||" ; with default value
+		SplitModifiersFromKey(strHotkey, strModifiers, strKey)
+		if InStr(strMouseButtons, "|" . strKey . "|") ;  we have a mouse button
+		{
+			strMouseButton := strKey
+			strKey := ""
+			StringReplace, strMouseButtonsWithDefault, lOptionsMouseButtonsText, % GetText4MouseButton(strMouseButton) . "|", % GetText4MouseButton(strMouseButton) . "||" ; with default value
+		}
+		else ; we have a key
+			strMouseButtonsWithDefault := lOptionsMouseButtonsText ; no default value
 	}
-	else ; we have a key
-		strMouseButtonsWithDefault := lOptionsMouseButtonsText ; no default value
 }
 ;------------------------------------------------------------
 
@@ -3733,8 +3753,6 @@ GetFirstNotModifier(strHotkey)
 Hotkey2Text(strModifiers, strMouseButton, strOptionKey)
 ;------------------------------------------------------------
 {
-	global
-
 	if (strMouseButton = "None") ; do not compare with lOptionsMouseNone because it is translated
 		str := lOptionsMouseNone ; use lOptionsMouseNone because this is displayed
 	else
