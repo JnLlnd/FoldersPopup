@@ -10,7 +10,18 @@ Bugs:
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: 3.0.7 (2014-08-XX)
+	Version: 3.0.9 (2014-08-22)
+	* replaces Send command with SendInput
+	* fix bug with None mouse hotkey for English US keyboard layout (0409)
+	* fix bug when navigating to network folder in DOpus
+	* add popup menu and to tray menu
+	
+	Version: 3.0.8 (2014-08-20)
+	* add type of favorites for links, display default browser icon for link favorites and open links in default browser
+	* fix bug with DOpus when path includes AHK reserved chars
+	* better support of DOpus when in dual listers
+	
+	Version: 3.0.7 (2014-08-18)
 	* make display icons optional, refactor Add Menu commands in a centralized function
 	* allow to select no mouse trigger for popup menu, add None to the dropdown list in Change hotkey window
 	* add mouse or keyboard hotkey to open the recent folders list
@@ -279,7 +290,7 @@ Bugs:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 3.0.8 BETA
+;@Ahk2Exe-SetVersion 3.0.9 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -324,7 +335,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.0.8" ; "major.minor.bugs"
+global strCurrentVersion := "3.0.9" ; "major.minor.bugs"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
@@ -334,8 +345,8 @@ global blnMenuReady := false
 global arrSubmenuStack := Object()
 global objIconsFile := Object()
 global objIconsIndex := Object()
-global strHotkeyNoneModifiers := "#!+^"
-global strHotkeyNoneKey := "¤"
+global strHotkeyNoneModifiers := ">^!+#" ; right-control/atl/shift/windows impossible keys combination
+global strHotkeyNoneKey := "9"
 
 if InStr(A_ScriptDir, A_Temp) ; must be positioned after strAppName is created
 ; if the app runs from a zip file, the script directory is created under the system Temp folder
@@ -779,11 +790,11 @@ If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass, strTargetContro
 {
 	StringReplace, strThisHotkey, A_ThisHotkey, $ ; remove $ from hotkey
 	if (A_ThisLabel = "PopupMenuMouse")
-		Send, {%strThisHotkey%} ; for example {MButton}
+		SendInput, {%strThisHotkey%} ; for example {MButton}
 	else
 	{
 		StringLower, strThisHotkey, strThisHotkey
-		Send, %strThisHotkey% ; for example #k
+		SendInput, %strThisHotkey% ; for example #k
 	}
 	return
 }
@@ -970,6 +981,7 @@ Menu, Tray, Icon, %A_ScriptDir%\Folders-Likes-icon-192-RED-center.ico, 1, 1 ; la
 ; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
 Menu, Tray, NoStandard
+Menu, Tray, Add, %strAppName%, :%lMainMenuName%
 Menu, Tray, Add, % L(lMenuSettings, strAppName), GuiShow
 Menu, Tray, Add
 Menu, Tray, Add, %lMenuRunAtStartup%, RunAtStartup
@@ -982,6 +994,7 @@ Menu, Tray, Add, %lDonateMenu%, GuiDonate
 Menu, Tray, Add
 Menu, Tray, Add, % L(lMenuExitFoldersPopup, strAppName), ExitFoldersPopup
 Menu, Tray, Default, % L(lMenuSettings, strAppName)
+Menu, Tray, Color, %strMenuBackgroundColor%
 
 return
 ;------------------------------------------------------------
@@ -1810,9 +1823,9 @@ if WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass
 	Loop, %intTries%
 	{
 		Sleep, intWaitTimeIncrement * A_Index
-		Send, % (WindowIsFreeCommander(strTargetClass) ? "!g" : "+{Enter}") ; goto shortcut for FreeCommander or DirectoryOpus
+		SendInput, % (WindowIsFreeCommander(strTargetClass) ? "!g" : "+{Enter}") ; goto shortcut for FreeCommander or DirectoryOpus
 		Sleep, intWaitTimeIncrement * A_Index
-		Send, ^c
+		SendInput, ^c
 		Sleep, intWaitTimeIncrement * A_Index
 		intTries := A_Index
 		WinGetTitle, strWindowThisTitle, A ; to check if the window was closed unexpectedly
@@ -1822,9 +1835,9 @@ else
 	Loop, %intTries%
 	{
 		Sleep, intWaitTimeIncrement * A_Index
-		Send {F4}{Esc} ; F4 move the caret the "Go To A Different Folder box" and {Esc} select it content ({Esc} could be replaced by ^a to Select All)
+		SendInput, {F4}{Esc} ; F4 move the caret the "Go To A Different Folder box" and {Esc} select it content ({Esc} could be replaced by ^a to Select All)
 		Sleep, intWaitTimeIncrement * A_Index
-		Send ^c ; Copy
+		SendInput, ^c ; Copy
 		Sleep, intWaitTimeIncrement * A_Index
 		intTries := A_Index
 		WinGetTitle, strWindowThisTitle, A ; to check if the window was closed unexpectedly
@@ -2158,7 +2171,7 @@ else
 
 GuiControl, 2:Focus, strFolderShortName
 if (A_ThisLabel = "GuiEditFolder")
-	Send, ^a
+	SendInput, ^a
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
 
@@ -3476,7 +3489,7 @@ http://msdn.microsoft.com/en-us/library/aa752094
 	{
 		; Workaround for the hash (aka Sharp / "#") bug in Shell.Application - occurs only when navigatin in the current Explorer window
 		; see http://stackoverflow.com/questions/22868546/navigate-shell-command-not-working-when-the-path-includes-an-hash
-		Send, {F4}{Esc}
+		SendInput, {F4}{Esc}
 		Sleep, 500
 		ControlSetText, Edit1, %varPath%, A
 		ControlSend, Edit1, {Enter}, A
@@ -3506,13 +3519,14 @@ NavigateFreeCommanderOrDirectoryOpus(strLocation, strWinId, strClass, strControl
 		Sleep, 200
 	}
 	; to make sure the file list under the mouse become active - not reliable in DOpus, also using Click in PopupMenuMouse
-	ControlFocus, %strControl%
 	SetKeyDelay, 200
-	Send, % (WindowIsFreeCommander(strClass) ? "!g" : "+{Enter}") ; goto shortcut for FreeCommander or DirectoryOpus
-	SetKeyDelay, 0
-	SendInput, {Raw} %strLocation%
+	ControlFocus, %strControl%
 	Sleep, 200
-	Send, {Enter}
+	SendInput, % (WindowIsFreeCommander(strClass) ? "!g" : "+{Enter}") ; goto shortcut for FreeCommander or DirectoryOpus
+	Sleep, 200
+	SendInput, {Raw}%strLocation%
+	Sleep, 200
+	SendInput, {Enter}
 }
 ;------------------------------------------------------------
 
