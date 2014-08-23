@@ -10,6 +10,11 @@ Bugs:
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: 3.0.10 (2014-08-23)
+	* fix bug when selecting a mouse hotkey after None was selected for that hotkey
+	* in Change Hotkey, unselect modifiers when None is selected as mouse trigger
+	* new menu icon for submenus
+	
 	Version: 3.0.9 (2014-08-22)
 	* replaces Send command with SendInput
 	* fix bug with None mouse hotkey for English US keyboard layout (0409)
@@ -1060,11 +1065,20 @@ Loop, parse, strDirList, `n
 
 	arrTargetFullName := StrSplit(A_LoopField, A_Tab)
 	strTargetFullName := arrTargetFullName[2]
+	if (blnDiagMode)
+		Diag("BuildRecentFoldersMenu", strTargetFullName)
+	
 	FileGetShortcut, %strTargetFullName%, strOutTarget
 	if (errorlevel) ; hidden or system files (like desktop.ini) returns an error
 		continue
 	if !FileExist(strOutTarget) ; if folder/document was delete or on a removable drive
+	{
+		if (blnDiagMode)
+			Diag("RecentShortcut NO", strOutTarget)
 		continue
+	}
+	else
+		Diag("RecentShortcut YES", strOutTarget)
 	
 	if LocationIsDocument(strOutTarget) ; not a folder
 		continue
