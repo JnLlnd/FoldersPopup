@@ -13,8 +13,9 @@ Bugs:
 	Version: 3.0.10 (2014-08-23)
 	* fix bug when selecting a mouse hotkey after None was selected for that hotkey
 	* in Change Hotkey, unselect modifiers when None is selected as mouse trigger
+	* additional text to clarify triggers in Settings, Options
 	* new menu icon for submenus
-	
+
 	Version: 3.0.9 (2014-08-22)
 	* replaces Send command with SendInput
 	* fix bug with None mouse hotkey for English US keyboard layout (0409)
@@ -295,7 +296,7 @@ Bugs:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 3.0.9 BETA
+;@Ahk2Exe-SetVersion 3.0.10 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -340,7 +341,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.0.9" ; "major.minor.bugs"
+global strCurrentVersion := "3.0.10" ; "major.minor.bugs"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
@@ -706,6 +707,7 @@ return
 InitLanguageArrays:
 ;------------------------------------------------------------
 StringSplit, arrOptionsTitles, lOptionsTitles, |
+StringSplit, arrOptionsTitlesSub, lOptionsTitlesSub, |
 StringSplit, arrOptionsTitlesLong, lOptionsTitlesLong, |
 strOptionsLanguageCodes := "EN|FR|DE|NL"
 StringSplit, arrOptionsLanguageCodes, strOptionsLanguageCodes, |
@@ -2594,11 +2596,13 @@ Gui, 2:Add, Text, x10 y+10 w500 center, % L(lOptionsGuiIntro, strAppName)
 loop, % arrIniKeyNames%0%
 {
 	Gui, 2:Font, s8 w700
-	Gui, 2:Add, Text, x15 y+10, % arrOptionsTitles%A_Index%
+	Gui, 2:Add, Text, Section x15 y+10, % arrOptionsTitles%A_Index%
 	Gui, 2:Font, s9 w500, Courier New
-	Gui, 2:Add, Text, x250 yp w270 h23 center 0x1000 vlblHotkeyText%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
+	Gui, 2:Add, Text, x250 ys+5 w270 h23 center 0x1000 vlblHotkeyText%A_Index% gButtonOptionsChangeHotkey%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
 	Gui, 2:Font
 	Gui, 2:Add, Button, yp x530 vbtnChangeHotkey%A_Index% gButtonOptionsChangeHotkey%A_Index%, %lOptionsChangeHotkey%
+	Gui, 2:Font, s8 w500
+	Gui, 2:Add, Text, x15 ys+15, % arrOptionsTitlesSub%A_Index%
 }
 
 Gui, 2:Add, Text, x10 y+15 h2 w570 0x10 ; Horizontal Line > Etched Gray

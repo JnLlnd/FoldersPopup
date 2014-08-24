@@ -171,6 +171,7 @@ lOptionsRunAtStartup	Exécuter au démarrage
 lOptionsShift	Maj
 lOptionsTheme	Thème
 lOptionsTitles	Souris - Popup|Souris - Nouvel explorateur|Clavier - Popup|Clavier - Nouvel explorateur|Emplacements récents|Paramètres
+lOptionsTitlesSub	(dans l'Explorateur et les boîtes de dialogue)|(dans n'importe quelle fenêtre)|(dans l'Explorateur et les boîtes de dialogue)|(dans n'importe quelle fenêtre)|(liste des emplacements récents de Windows)|(configuration du menu et options)
 lOptionsTrayTip	Afficher la notification au démarrage
 lOptionsTriggerFor	Déclencheur pour:
 lOptionsWin	Win
