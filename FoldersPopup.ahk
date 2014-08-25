@@ -4,6 +4,9 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: 3.0.11 (2014-08-24)
+	* fix an icon error under WinXP
+	
 	Version: 3.0.10 (2014-08-23)
 	* fix bug when selecting a mouse hotkey after None was selected for that hotkey
 	* in Change Hotkey, unselect modifiers when None is selected as mouse trigger
@@ -290,7 +293,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 3.0.10 BETA
+;@Ahk2Exe-SetVersion 3.0.11 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -335,7 +338,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.0.10" ; "major.minor.bugs"
+global strCurrentVersion := "3.0.11" ; "major.minor.bugs"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
@@ -452,7 +455,7 @@ if (A_OSVersion = "WIN_XP")
 				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
 	strIconsIndex := "35|127|118|16|19|22|33"
 				. "|4|25|4|4|147|147|147"
-				. "|214|166|111|161|298|10|3|4"
+				. "|214|166|111|161|85|10|3|4"
 }
 else
 {
