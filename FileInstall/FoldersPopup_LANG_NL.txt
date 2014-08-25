@@ -111,7 +111,9 @@ lMenuDesktop	Bureaublad
 lMenuDialogNotSupported	Dit type dialoogvenster wordt nog niet ondersteund
 lMenuDocuments	D&ocumenten
 lMenuExitFoldersPopup	Exit ~1~
+lMenuFPMenu	~1~ ~2~
 lMenuHelp	Hulp
+lMenuMenu	Menu
 lMenuMyComputer	&Mijn Computer
 lMenuNetworkNeighborhood	Mijn &Netwerklocaties
 lMenuPictures	Afbeeldingen

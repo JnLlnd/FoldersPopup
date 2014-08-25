@@ -111,7 +111,9 @@ lMenuDesktop	&Desktop
 lMenuDialogNotSupported	Diese Dialogbox wird momentan noch nicht unterstützt
 lMenuDocuments	D&okumente
 lMenuExitFoldersPopup	Beenden ~1~
+lMenuFPMenu	~1~ ~2~
 lMenuHelp	Hilfe
+lMenuMenu	Menu
 lMenuMyComputer	&Mein Computer
 lMenuNetworkNeighborhood	&Netzwerkumgebung
 lMenuPictures	&Bilder

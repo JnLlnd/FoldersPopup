@@ -1,9 +1,3 @@
-/*
-Todo:
-
-Bugs:
-
-*/
 ;===============================================
 /*
 	FoldersPopup
@@ -988,7 +982,7 @@ Menu, Tray, Icon, %A_ScriptDir%\Folders-Likes-icon-192-RED-center.ico, 1, 1 ; la
 ; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
 Menu, Tray, NoStandard
-Menu, Tray, Add, %strAppName%, :%lMainMenuName%
+Menu, Tray, Add, % L(lMenuFPMenu, strAppName, lMenuMenu), :%lMainMenuName%
 Menu, Tray, Add, % L(lMenuSettings, strAppName), GuiShow
 Menu, Tray, Add
 Menu, Tray, Add, %lMenuRunAtStartup%, RunAtStartup
