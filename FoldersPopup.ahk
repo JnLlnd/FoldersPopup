@@ -4,6 +4,10 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: 3.0.12 (2014-08-25)
+	* Deutch translation update
+	* left click on Tray icon to show favorites menu
+	
 	Version: 3.0.11 (2014-08-24)
 	* fix an icon error under WinXP
 	
@@ -15,7 +19,6 @@
 
 	Version: 3.0.9 (2014-08-22)
 	* replaces Send command with SendInput
-	* fix bug with None mouse hotkey for English US keyboard layout (0409)
 	* fix bug when navigating to network folder in DOpus
 	* add popup menu and color to tray menu
 	
@@ -66,7 +69,7 @@
 	
 	Version: 3.0.1 (2014-07-15)
 	* do not check if network favorites exist
-	* error icon when local favorite does not exist
+	* error icon when local favorite does not exist (removed feature)
 	* error message when unavailable local favorite is selected in popup menu
 	* traytip status when refreshing menus
 	
@@ -293,7 +296,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 3.0.11 BETA
+;@Ahk2Exe-SetVersion 3.0.12 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -338,7 +341,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.0.11" ; "major.minor.bugs"
+global strCurrentVersion := "3.0.12" ; "major.minor.bugs"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
@@ -408,6 +411,9 @@ blnMenuReady := true
 ; Load the cursor and start the "hook"
 objCursor := DllCall("LoadCursor", "UInt", NULL, "Int", 32649, "UInt") ; IDC_HAND
 OnMessage(0x200, "WM_MOUSEMOVE")
+
+; To popup menu when left click on the tray icon - See AHK_NOTIFYICON function below
+OnMessage(0x404, "AHK_NOTIFYICON")
 
 ; Gosub, GuiShow ; ### only when debugging Gui
 ; Gosub, GuiOptions ; ### only when debugging Gui
@@ -4065,132 +4071,18 @@ GetIcon4Location(strLocation, ByRef strDefaultIcon, ByRef intDefaultIcon)
 ;------------------------------------------------------------
 
 
-
-/*
 ;------------------------------------------------------------
-GuiAddFolder:
-GuiAddFromPopup:
-GuiAddFromDropFiles:
+AHK_NOTIFYICON(wParam, lParam) 
+; Adapted from Lexikos http://www.autohotkey.com/board/topic/11250-mouseover-trayicon-triggering-an-event/#entry153388
+; To popup menu when left click on the tray icon - See the OnMessage command in the init section
 ;------------------------------------------------------------
-
-intRowToEdit := 0 ;  used when saving to flag to insert a new row
-strCurrentName := "" ;  make sure it is empty
-strCurrentSubmenuFullName := "" ;  make sure it is empty
-
-intGui1WinID := WinExist("A")
-Gui, 1:Submit, NoHide
-Gui, 2:New, , % L(lDialogAddEditFolderTitle, lDialogAdd, strAppName, strAppVersion)
-Gui, 2:+Owner1
-Gui, 2:+OwnDialogs
-
-Gui, 2:Add, Text, x10 y10 vlblFolderParentMenu, %lDialogFolderParentMenu%
-Gui, 2:Add, DropDownList, x10 w300 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
-
-if (A_ThisLabel = "GuiAddFromPopup")
-{
-	blnRadioSubmenu := false
-	blnRadioFolder := true
-	blnRadioFile := false
-}
-else if (A_ThisLabel = "GuiAddFromDropFiles")
-{
-	blnRadioSubmenu := false
-	blnRadioFile := LocationIsDocument(strCurrentLocation)
-	blnRadioFolder := not blnRadioFile
-}
-else ; GuiAddFolder
-{
-	Gui, 2:Add, Text, x10, %lDialogAdd%:
-	Gui, 2:Add, Radio, x+10 yp vblnRadioFolder checked gRadioButtonsChanged, %lDialogFolderLabel%
-	Gui, 2:Add, Radio, x+10 yp vblnRadioFile gRadioButtonsChanged, %lDialogFileLabel%
-	Gui, 2:Add, Radio, x+10 yp vblnRadioSubmenu gRadioButtonsChanged, %lDialogSubmenuLabel%
-}
-
-if (A_ThisLabel = "GuiAddFromPopup" or A_ThisLabel = "GuiAddFromDropFiles")
-	; strCurrentLocation is received from AddThisFolder or GuiDropFiles
-	strFolderShortName := GetDeepestFolderName(strCurrentLocation)
-else
-{
-	;  make sure these variables are empty
-	strCurrentLocation := ""
-	strFolderShortName := ""
-}
-
-Gui, 2:Add, Text, x10 w300 y+10 vlblShortName, %lDialogFolderShortName%
-Gui, 2:Add, Edit, x10 w300 vstrFolderShortName, %strFolderShortName%
-
-Gui, 2:Add, Text, x10 w300 vlblFolder, %lDialogFolderLabel%
-Gui, 2:Add, Edit, x10 w300 vstrFolderLocation, %strCurrentLocation%
-Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation default, %lDialogBrowseButton%
-
-Gui, 2:Add, Button, y+15 vbtnAddFolderAdd gGuiAddFolderSave, %lDialogAdd%
-Gui, 2:Add, Button, yp vbtnAddFolderCancel gGuiAddFolderCancel, %lGuiCancel%
-GuiCenterButtons(L(lDialogAddEditFolderTitle, lDialogAdd, strAppName, strAppVersion), 10, 5, 20, "btnAddFolderAdd", "btnAddFolderCancel")
-
-GuiControl, 2:Focus, strFolderShortName
-Gui, 2:Show, AutoSize Center
-Gui, 1:+Disabled
-
-return
+{ 
+	if (lParam = 0x202) ; WM_LBUTTONUP
+	{ 
+		SetTimer, PopupMenuNewWindowMouse, -1 
+		return 0 
+	} 
+} 
 ;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiEditFolder:
-;------------------------------------------------------------
-
-Gui, 1:ListView, lvFoldersList
-intRowToEdit := LV_GetNext()
-LV_GetText(strCurrentName, intRowToEdit, 1)
-
-if (strCurrentName = lMenuSeparator)
-	return
-
-if !StrLen(strCurrentName)
-{
-	Oops(lDialogSelectItemToEdit)
-	return
-}
-LV_GetText(strCurrentLocation, intRowToEdit, 2)
-LV_GetText(strCurrentSubmenuFullName, intRowToEdit, 4)
-LV_GetText(strFavoriteType, intRowToEdit, 5)
-
-blnRadioSubmenu := (strFavoriteType = "S")
-blnRadioFolder := (strFavoriteType = "F")
-blnRadioFile := (strFavoriteType = "D")
-
-intGui1WinID := WinExist("A")
-Gui, 1:Submit, NoHide
-Gui, 2:New, , % L(lDialogAddEditFolderTitle, lDialogEdit, strAppName, strAppVersion)
-Gui, 2:+Owner1
-Gui, 2:+OwnDialogs
-
-Gui, 2:Add, Text, % x10 y10 vlblFolderParentMenu, % (blnRadioSubmenu ? lDialogSubmenuParentMenu : lDialogFolderParentMenu)
-Gui, 2:Add, DropDownList, x10 w300 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
-
-Gui, 2:Add, Text, x10 y+10 w300 vlblShortName, % (blnRadioSubmenu ? lDialogSubmenuShortName : (blnRadioFile ? lDialogFileShortName : lDialogFolderShortName))
-Gui, 2:Add, Edit, x10 w300 vstrFolderShortName, %strCurrentName%
-
-if (blnRadioSubmenu)
-	Gui, 2:Add, Button, x+10 yp vbnlEditFolderOpenMenu gGuiOpenThisMenu, %lDialogOpenThisMenu%
-else
-{
-	Gui, 2:Add, Text, x10 vlblFolder, % (blnRadioFile ? lDialogFileLabel : lDialogFolderLabel)
-	Gui, 2:Add, Edit, x10 w300 h20 vstrFolderLocation, %strCurrentLocation%
-	Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation, %lDialogBrowseButton%
-}
-
-Gui, 2:Add, Button, y+20 vbtnEditFolderSave gGuiEditFolderSave, %lDialogSave%
-Gui, 2:Add, Button, yp vbtnEditFolderCancel gGuiEditFolderCancel, %lGuiCancel%
-GuiCenterButtons(L(lDialogAddEditFolderTitle, lDialogEdit, strAppName, strAppVersion), 10, 5, 20, "btnEditFolderSave", "btnEditFolderCancel")
-
-GuiControl, 2:Focus, strFolderShortName
-Send, ^a
-Gui, 2:Show, AutoSize Center
-Gui, 1:+Disabled
-
-return
-;------------------------------------------------------------
-*/
 
 
