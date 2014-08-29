@@ -4,9 +4,9 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: 3.0.12 (2014-08-25)
-	* Deutch translation update
-	* left click on Tray icon to show favorites menu
+	Version: 3.0.12 (2014-08-27)
+	* German and Dutch translation update (Thanks to Edgar "Fast Edi" Hoffmann and Pieter Dejonghe)
+	* Left click on Tray icon to show favorites menu
 	
 	Version: 3.0.11 (2014-08-24)
 	* fix an icon error under WinXP
@@ -1137,9 +1137,9 @@ intShortcutDialog := 0
 For pExp in ComObjCreate("Shell.Application").Windows
 ; see http://msdn.microsoft.com/en-us/library/windows/desktop/aa752084(v=vs.85).aspx
 {
-	if (A_LastError)
+	; ### if (A_LastError)
 		; an error occurred during ComObjCreate (A_LastError probably is E_UNEXPECTED = -2147418113 #0x8000FFFFL)
-		break
+	;	### break
 
 	if (blnDiagMode)
 		Diag("BuildSwitchMenu_pExp.HWND", pExp.HWND)
@@ -1150,6 +1150,7 @@ For pExp in ComObjCreate("Shell.Application").Windows
 
 	if !StrLen(strType)
 	{
+		###_D(A_Index . " / " . intExplorersIndex . " / " . strType . " / " . pExp.LocationURL . " / " . A_LastError)
 		if StrLen(pExp.LocationURL)
 		{
 			intDialogsIndex := intDialogsIndex + 1
@@ -1161,6 +1162,7 @@ For pExp in ComObjCreate("Shell.Application").Windows
 				strLocation := pExp.LocationName
 
 			strMenuName := (blnDisplayMenuShortcuts and (intShortcutDialog <= 35) ? "&" . NextMenuShortcut(intShortcutDialog, false) . " " : "") . strLocation
+				. " - A " . pExp.LocationURL ; ###
 			AddMenuIcon("menuSwitchDialog", strMenuName, "SwitchDialog", "menuSwitchDialog")
 		}
 		else
@@ -1171,6 +1173,7 @@ For pExp in ComObjCreate("Shell.Application").Windows
 			objExplorersWinId.Insert(intExplorersIndex, pExp.HWND)
 			
 			strMenuName := (blnDisplayMenuShortcuts and (intShortcutExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutExplorer, false) . " " : "") . strLocation
+				. " - B " . pExp.LocationURL ; ###
 			AddMenuIcon("menuSwitchExplorer", strMenuName, "SwitchExplorer", "menuSwitchExplorer")
 		}
 	}
