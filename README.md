@@ -13,7 +13,7 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
-### Version: 3.1 BETA (2014-08-29)
+### Version: 3.1 (2014-08-29)
 * First public release of Folders Popup v3
 * Fix a bug in Switch in dialog box menu
 	
