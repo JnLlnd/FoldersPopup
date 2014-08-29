@@ -4,7 +4,7 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: 3.1 (2014-08-XX)
+	Version: 3.1 (2014-08-29)
 	* First public release of Folders Popup v3
 	* Fix a bug in Switch in dialog box menu
 	
@@ -300,7 +300,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 3.0.12 BETA
+;@Ahk2Exe-SetVersion 3.1.0 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
