@@ -13,6 +13,91 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### Version: 3.1 BETA (2014-08-29)
+* First public release of Folders Popup v3
+* Fix a bug in Switch in dialog box menu
+	
+### Version: 3.0.12 BETA (2014-08-27)
+* German and Dutch translation update (Thanks to Edgar "Fast Edi" Hoffmann and Pieter Dejonghe)
+* Left click on Tray icon to show favorites menu
+	
+### Version: 3.0.11 BETA (2014-08-24)
+* fix an icon error under WinXP
+	
+### Version: 3.0.10 BETA (2014-08-23)
+* fix bug when selecting a mouse hotkey after None was selected for that hotkey
+* in Change Hotkey, unselect modifiers when None is selected as mouse trigger
+* additional text to clarify triggers in Settings, Options
+* new menu icon for submenus
+
+### Version: 3.0.9 BETA (2014-08-22)
+* replaces Send command with SendInput
+* fix bug when navigating to network folder in DOpus
+* add popup menu and color to tray menu
+	
+### Version: 3.0.8 BETA (2014-08-20)
+* add type of favorites for links, display default browser icon for link favorites and open links in default browser
+* fix bug with DOpus when path includes AHK reserved chars
+* better support of DOpus when in dual listers
+	
+### Version: 3.0.7 BETA (2014-08-18)
+* make display icons optional, refactor Add Menu commands in a centralized function
+* allow to select no mouse trigger for popup menu, add None to the dropdown list in Change hotkey window
+* add mouse or keyboard hotkey to open the recent folders list
+* fix error when icon location contains %1
+* fix error when assigning color to an empty submenu
+* fix a v2 bug with shortcuts numbers increment in Switch menus
+	
+### Version: 3.0.6 BETA (2014-07-26)
+* Redesign of buttons in Settings
+* Addition to ini file of themes with colors for dialog boxes and menu
+* Implementation of colors to menus and dialog boxes
+* Add option in Settings/Options to select theme
+	
+### Version: 3.0.5 BETA (2014-07-23)
+* fix a v2 bug allowing editing in Settings with no item selected
+* fix a v3.0.2 bug when adding an item to a menu other than the current menu in Settings
+* change cursor to hand for all buttons in Settings
+* refactor (merge) Add and Edit favorites GUI and Save commands (no change visible to users)
+	
+### Version: 3.0.4 BETA (2014-07-21)
+* fix a bug when adding a menu and numeric shortcuts are active
+* lighter tray tip message after menu is updated in settings
+* fix a bug when retrieving icons for documents
+* change cursor for an hand for all buttons in Gui
+* support icons for document being executable files
+	
+### Version: 3.0.3 BETA (2014-07-20)
+* remove "supported dialog boxes" management
+* in gui remove listview, add/edit/remove buttons, reposition other buttons
+* remove add dialog box menu, save dialog box, dialog is supported function
+	
+### Version: 3.0.2 BETA (2014-07-19)
+* add favorite type "F" folder, "D" document or "S" submenu and refactor all
+* remove or add ... to main menu items
+* manage icons resource at init, supporting XP and Win7+
+* include parent menu dropdown list when add favorite
+* fix old 2.0 bug not detecting name already used when adding from add this folder
+* menu icon size default size to 16 for XP and 24 for other OS
+	
+### Version: 3.0.1 BETA (2014-07-15)
+* do not check if network favorites exist
+* error icon when local favorite does not exist (removed feature)
+* error message when unavailable local favorite is selected in popup menu
+* traytip status when refreshing menus
+	
+### Version: 3.0.0 BETA (2014-07-14)
+* support favorite documents as popup menu items, add Document radio button to add dialog box
+* when adding document, suggest short name for menu
+* when menu item is a document, launch it with Run
+* add icons to folders menu, submenus, documents and special folders
+* add Settings Option for menu icon size, default size to 24
+* keep the regular tray icon when suspended
+* implement Exit tray menu
+* disable separator editing
+* adapt labels to "favorites" instead of "folders"
+* build function to auto-center action buttons in Gui
+	
 ### 2014-07-11 2.2.1
 * fix bug when adding a folder to a submenu using drag and drop
 * add an incentive message about drag and drop at the bottom of Settings window
