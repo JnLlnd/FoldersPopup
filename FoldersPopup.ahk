@@ -4,6 +4,10 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: 3.1 (2014-08-XX)
+	* First public release of Folders Popup v3
+	* Fix a bug in Switch in dialog box menu
+	
 	Version: 3.0.12 (2014-08-27)
 	* German and Dutch translation update (Thanks to Edgar "Fast Edi" Hoffmann and Pieter Dejonghe)
 	* Left click on Tray icon to show favorites menu
@@ -341,8 +345,8 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.0.12" ; "major.minor.bugs"
-global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
+global strCurrentVersion := "3.1" ; "major.minor.bugs"
+global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
 global strDiagFile := A_ScriptDir . "\" . strAppName . "-DIAG.txt"
@@ -1206,7 +1210,7 @@ if (blnDisplaySwitchMenu)
 	Menu, menuSwitch, DeleteAll
 	Menu, menuSwitch, Color, %strMenuBackgroundColor%
 	AddMenuIcon("menuSwitch", lMenuSwitchExplorer, ":menuSwitchExplorer", "lMenuSwitchExplorer")
-	AddMenuIcon("menuSwitch", lMenuSwitchDialog, ":menuSwitchExplorer", "lMenuSwitchDialog")
+	AddMenuIcon("menuSwitch", lMenuSwitchDialog, ":menuSwitchDialog", "lMenuSwitchDialog")
 	AddMenuIcon(lMainMenuName, lMenuSwitch, ":menuSwitch", "lMenuSwitch")
 }
 
