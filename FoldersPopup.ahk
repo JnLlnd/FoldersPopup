@@ -4,6 +4,12 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: 3.1.1 (2014-08-30)
+	* Fix a bug that created the diag file even when diagnostic mode was off
+	* Stop forcing the working directory to be the app's directory.
+	* Note 1: User can set the working directory of his choice by creating a Windows shortcut and setting the "Start in:" option.
+	* Note 2: By default and when user enable the "Run at startup" option, the working directory is the app's directory.
+	
 	Version: 3.1 (2014-08-29)
 	* First public release of Folders Popup v3
 	* Fix a bug in Switch in dialog box menu
@@ -300,7 +306,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 3.1.0 BETA
+;@Ahk2Exe-SetVersion 3.1.1 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -312,10 +318,21 @@
 #SingleInstance force
 #KeyHistory 0
 ListLines, Off
-SetWorkingDir, %A_ScriptDir%
 ComObjError(False) ; we will do our own error handling
 
-strTempDir := "_temp"
+; Removed SetWorkingDir to allow user set the working directory in his own Windows shortcut.
+; By default, the A_WorkingDir is A_ScriptDir.
+; If user enable "Run at startup", the "Start in:" shortcut option will set the A_WorkingDir to A_ScriptDir
+
+; Force A_WorkingDir to A_ScriptDir if uncomplied (development phase)
+;@Ahk2Exe-IgnoreBegin
+; Piece of code for development phase only - won't be compiled
+; see http://fincs.ahk4.net/Ahk2ExeDirectives.htm
+SetWorkingDir, %A_ScriptDir%
+; / Piece of code for developement phase only - won't be compiled
+;@Ahk2Exe-IgnoreEnd
+
+strTempDir := A_WorkingDir . "\_temp"
 FileCreateDir, %strTempDir%
 
 FileInstall, FileInstall\FoldersPopup_LANG_DE.txt, %strTempDir%\FoldersPopup_LANG_DE.txt, 1
@@ -345,12 +362,12 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.1" ; "major.minor.bugs"
+global strCurrentVersion := "3.1.1" ; "major.minor.bugs"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
-global strDiagFile := A_ScriptDir . "\" . strAppName . "-DIAG.txt"
-global strIniFile := A_ScriptDir . "\" . strAppName . ".ini"
+global strDiagFile := A_WorkingDir . "\" . strAppName . "-DIAG.txt"
+global strIniFile := A_WorkingDir . "\" . strAppName . ".ini"
 global blnMenuReady := false
 global arrSubmenuStack := Object()
 global objIconsFile := Object()
@@ -367,11 +384,10 @@ if InStr(A_ScriptDir, A_Temp) ; must be positioned after strAppName is created
 
 ;@Ahk2Exe-IgnoreBegin
 ; Piece of code for developement phase only - won't be compiled
-; http://fincs.ahk4.net/Ahk2ExeDirectives.htm
 if (A_ComputerName = "JEAN-PC") ; for my home PC
-	strIniFile := A_ScriptDir . "\" . strAppName . "-HOME.ini"
+	strIniFile := A_WorkingDir . "\" . strAppName . "-HOME.ini"
 else if InStr(A_ComputerName, "STIC") ; for my work hotkeys
-	strIniFile := A_ScriptDir . "\" . strAppName . "-WORK.ini"
+	strIniFile := A_WorkingDir . "\" . strAppName . "-WORK.ini"
 ; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
 
@@ -392,10 +408,10 @@ Gosub, BuildGui
 Gosub, Check4Update
 Gosub, BuildTrayMenu
 
-IfExist, %A_Startup%\%strAppName%.lnk
+IfExist, %A_Startup%\%strAppName%.lnk ; update the shortcute in case the exe filename changed
 {
 	FileDelete, %A_Startup%\%strAppName%.lnk
-	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%strAppName%.lnk
+	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%strAppName%.lnk, %A_ScriptDir%
 	Menu, Tray, Check, %lMenuRunAtStartup%
 }
 
@@ -753,6 +769,7 @@ if !FileExist(strDiagFile)
 	Diag("AppName", strAppName)
 	Diag("AppVersion", strAppVersion)
 	Diag("A_ScriptFullPath", A_ScriptFullPath)
+	Diag("A_WorkingDir", A_WorkingDir)
 	Diag("A_AhkVersion", A_AhkVersion)
 	Diag("A_OSVersion", A_OSVersion)
 	Diag("A_Is64bitOS", A_Is64bitOS)
@@ -1087,7 +1104,8 @@ Loop, parse, strDirList, `n
 		continue
 	}
 	else
-		Diag("RecentShortcut YES", strOutTarget)
+		if (blnDiagMode)
+			Diag("RecentShortcut YES", strOutTarget)
 	
 	if LocationIsDocument(strOutTarget) ; not a folder
 		continue
@@ -1907,7 +1925,7 @@ Menu, Tray, Togglecheck, %lMenuRunAtStartup%
 IfExist, %A_Startup%\%strAppName%.lnk
 	FileDelete, %A_Startup%\%strAppName%.lnk
 else
-	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%strAppName%.lnk
+	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%strAppName%.lnk, %A_ScriptDir%
 
 return
 ;------------------------------------------------------------
@@ -2787,7 +2805,7 @@ blnMenuReady := false
 IfExist, %A_Startup%\%strAppName%.lnk
 	FileDelete, %A_Startup%\%strAppName%.lnk
 if (blnOptionsRunAtStartup)
-	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%strAppName%.lnk
+	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%strAppName%.lnk, %A_ScriptDir%
 Menu, Tray, % blnOptionsRunAtStartup ? "Check" : "Uncheck", %lMenuRunAtStartup%
 
 IniWrite, %blnDisplayTrayTip%, %strIniFile%, Global, DisplayTrayTip
