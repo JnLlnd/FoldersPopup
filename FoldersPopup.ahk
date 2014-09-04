@@ -4,6 +4,10 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: 3.1.2 (2014-09-03)
+	* Menu icons now supporting Windows Vista
+	* Stop building recent folders menu at startup (unnecessary since this menu is refreshed on demand)
+	
 	Version: 3.1.1 (2014-08-30)
 	* Fix a bug that created the diag file even when diagnostic mode was off
 	* Stop forcing the working directory to be the app's directory.
@@ -306,7 +310,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 3.1.1 BETA
+;@Ahk2Exe-SetVersion 3.1.2
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -362,7 +366,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.1.1" ; "major.minor.bugs"
+global strCurrentVersion := "3.1.2" ; "major.minor.bugs"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
@@ -399,9 +403,10 @@ Gosub, LoadIniFile
 if (blnDiagMode)
 	Gosub, InitDiagMode
 Gosub, LoadTheme
-; build even if blnDisplaySpecialFolders, blnDisplayRecentFolders or blnDisplaySwitchMenu are false because they could become true
+
+; build even if blnDisplaySpecialFolders or blnDisplaySwitchMenu are false because they could become true
+; no need to build Recent folders menu at startup since this menu is refreshed on demand
 Gosub, BuildSpecialFoldersMenu
-Gosub, BuildRecentFoldersMenu
 Gosub, BuildSwitchMenu
 Gosub, BuildFoldersMenus ; need to be initialized here - will be updated at each call to popup menu
 Gosub, BuildGui
@@ -482,6 +487,15 @@ if (A_OSVersion = "WIN_XP")
 	strIconsIndex := "35|127|118|16|19|22|33"
 				. "|4|25|4|4|147|147|147"
 				. "|214|166|111|161|85|10|3|4"
+}
+else if (A_OSVersion = "WIN_VISTA")
+{
+	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
+				. "|imageres|imageres|imageres|imageres|imageres|imageres|imageres"
+				. "|imageres|imageres|shell32|shell32|shell32|imageres|imageres|imageres"
+	strIconsIndex := "105|85|67|104|114|22|49"
+				. "|112|95|3|3|175|174|175|"
+				. "112|109|88|161|85|28|2|3"
 }
 else
 {
@@ -859,13 +873,6 @@ if (blnDisplaySpecialFolders)
 		, %lMenuRecycleBin%
 }
 
-if (blnDisplayRecentFolders)
-{
-	Menu, %lMainMenuName%
-		, % (intRecentFoldersIndex ? "Enable" : "Disable")
-		, %lMenuRecentFolders%...
-}
-
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
@@ -931,13 +938,6 @@ if (blnDisplaySpecialFolders)
 	Menu, menuSpecialFolders, Enable, %lMenuNetworkNeighborhood%
 	Menu, menuSpecialFolders, Enable, %lMenuControlPanel%
 	Menu, menuSpecialFolders, Enable, %lMenuRecycleBin%
-}
-
-if (blnDisplayRecentFolders)
-{
-	Menu, %lMainMenuName%
-		, % (intRecentFoldersIndex ? "Enable" : "Disable")
-		, %lMenuRecentFolders%...
 }
 
 if (blnDisplaySwitchMenu)
@@ -1094,18 +1094,29 @@ Loop, parse, strDirList, `n
 	if (blnDiagMode)
 		Diag("BuildRecentFoldersMenu", strTargetFullName)
 	
-	FileGetShortcut, %strTargetFullName%, strOutTarget
+	; ###_D(A_Index . " - Before FileGetShortcut`n" . strTargetFullName)
+	Try FileGetShortcut, %strTargetFullName%, strOutTarget
+	catch
+	{
+		; ###_D(A_Index . " - CATCH`n" . strTargetFullName)
+		continue
+	}
+	
 	if (errorlevel) ; hidden or system files (like desktop.ini) returns an error
 		continue
 	if !FileExist(strOutTarget) ; if folder/document was delete or on a removable drive
 	{
+		; ###_D(A_Index . " - NOT Exist`n" . strOutTarget)
 		if (blnDiagMode)
 			Diag("RecentShortcut NO", strOutTarget)
 		continue
 	}
 	else
+	{
+		; ###_D(A_Index . " - Exist`n" . strOutTarget)
 		if (blnDiagMode)
 			Diag("RecentShortcut YES", strOutTarget)
+	}
 	
 	if LocationIsDocument(strOutTarget) ; not a folder
 		continue
@@ -1779,7 +1790,6 @@ if (blnSaveEnabled)
 		
 		; restore popup menu
 		Gosub, BuildSpecialFoldersMenu
-		Gosub, BuildRecentFoldersMenu
 		Gosub, BuildSwitchMenu
 		Gosub, BuildFoldersMenus ; need to be initialized here - will be updated at each call to popup menu
 
@@ -2849,9 +2859,8 @@ if (strLanguageCodePrev <> strLanguageCode) or (strThemePrev <> strTheme)
 intIconSize := drpIconSize
 IniWrite, %intIconSize%, %strIniFile%, Global, IconSize
 
-; else rebuild special, recent and switch menus
+; else rebuild special and switch menus
 Gosub, BuildSpecialFoldersMenu
-Gosub, BuildRecentFoldersMenu
 Gosub, BuildSwitchMenu
 
 ; and rebuild Folders menus w/ or w/o optional folders and shortcuts
