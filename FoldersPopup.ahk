@@ -4,6 +4,9 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: 3.1.3 (2014-09-XX)
+	*
+	
 	Version: 3.1.2 (2014-09-03)
 	* Menu icons now supporting Windows Vista
 	* Stop building recent folders menu at startup (unnecessary since this menu is refreshed on demand)
@@ -310,7 +313,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 3.1.2
+;@Ahk2Exe-SetVersion 3.1.3
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -366,7 +369,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.1.2" ; "major.minor.bugs"
+global strCurrentVersion := "3.1.3" ; "major.minor.bugs"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
@@ -846,7 +849,7 @@ If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass, strTargetContro
 
 blnMouse := InStr(A_ThisLabel, "Mouse")
 blnNewWindow := false
-Gosub, SetMenuPosition
+Gosub, SetMenuPosition ; sets strTargetWinId or activate the window strTargetWinId set by CanOpenFavorite
 if WindowIsDirectoryOpus(strTargetClass)
 	Click ; to make sure the lister under the mouse become active
 
@@ -916,7 +919,7 @@ if !(blnMenuReady)
 
 blnMouse := InStr(A_ThisLabel, "Mouse")
 blnNewWindow := true
-Gosub, SetMenuPosition
+Gosub, SetMenuPosition ; sets strTargetWinId
 
 WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
 
@@ -978,9 +981,9 @@ intMenuPosY := arrPopupFixPosition2
 if (blnMouse)
 {
 	if (blnNewWindow)
-		MouseGetPos, , , strTargetWinId
+		MouseGetPos, , , strTargetWinId ; sets strTargetWinId for PopupMenuNewWindowMouse
 	else
-		WinActivate, % "ahk_id " . strTargetWinId
+		WinActivate, % "ahk_id " . strTargetWinId ; activate for PopupMenuMouse
 	if (!blnPopupFix)
 		; display menu at mouse pointer location
 		MouseGetPos, intMenuPosX, intMenuPosY
@@ -988,7 +991,7 @@ if (blnMouse)
 else
 {
 	if (blnNewWindow)
-		strTargetWinId := WinExist("A")
+		strTargetWinId := WinExist("A") ; sets strTargetWinId for PopupMenuNewWindowKeyboard
 	if (!blnPopupFix)
 	{
 		; display menu at an offset of 20x20 pixel from top-left client area
@@ -3263,7 +3266,7 @@ if (blnDiagMode)
 	Diag("SpecialFolder", intSpecialFolder)
 }
 
-if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
+if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass) or WindowIsTray(strTargetClass)
 	ComObjCreate("Shell.Application").Explore(intSpecialFolder)
 	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 else if WindowIsAnExplorer(strTargetClass)
@@ -3511,6 +3514,15 @@ WindowIsDirectoryOpus(strClass)
 ;------------------------------------------------------------
 {
 	return InStr(strClass, "dopus")
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+WindowIsTray(strClass)
+;------------------------------------------------------------
+{
+	return (strClass = "Shell_TrayWnd") or (strClass = "NotifyIconOverflowWindow")
 }
 ;------------------------------------------------------------
 
