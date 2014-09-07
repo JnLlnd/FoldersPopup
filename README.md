@@ -13,6 +13,15 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### Version: 3.1.3 (2014-09-07)
+* bug fix: make all special folders menu items work when popup menu is activated from the tray icon
+* improve handling of the hash (aka Sharp / "#") bug in Shell.Application (see v1.2.6)
+* fix bug when navigating in a CMD window with path including AHK reserved chars
+
+### Version: 3.1.2 (2014-09-03)
+* Menu icons now supporting Windows Vista
+* Stop building recent folders menu at startup (unnecessary since this menu is refreshed on demand)
+
 ### Version: 3.1 (2014-08-29)
 * First public release of Folders Popup v3
 * Fix a bug in Switch in dialog box menu
