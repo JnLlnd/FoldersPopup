@@ -4,8 +4,10 @@
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: 3.1.3 (2014-09-XX)
-	*
+	Version: 3.1.3 (2014-09-07)
+	* bug fix: make all special folders menu items work when popup menu is activated from the tray icon
+	* improve handling of the hash (aka Sharp / "#") bug in Shell.Application (see v1.2.6)
+	* fix bug when navigating in a CMD window with path including AHK reserved chars
 	
 	Version: 3.1.2 (2014-09-03)
 	* Menu icons now supporting Windows Vista
@@ -326,6 +328,7 @@
 #KeyHistory 0
 ListLines, Off
 ComObjError(False) ; we will do our own error handling
+; ### to test with PC #2 before releasing DllCall("SetErrorMode", "uint", SEM_FAILCRITICALERRORS := 1) ; see http://ahkscript.org/boards/viewtopic.php?f=5&t=4477&p=25239#p25236
 
 ; Removed SetWorkingDir to allow user set the working directory in his own Windows shortcut.
 ; By default, the A_WorkingDir is A_ScriptDir.
@@ -3537,7 +3540,7 @@ http://msdn.microsoft.com/en-us/library/windows/desktop/bb774096%28v=vs.85%29.as
 http://msdn.microsoft.com/en-us/library/aa752094
 */
 {
-	if !InStr(varPath, "#") ; prevent the hash bug in Shell.Application
+	if !Regexmatch(varPath, "#.*\\") ; prevent the hash bug in Shell.Application - when a hash in path is followed by a backslash like in "c:\abc#xyz\abc")
 	{
 		intCountMatch := 0
 		For pExp in ComObjCreate("Shell.Application").Windows
@@ -3568,14 +3571,10 @@ http://msdn.microsoft.com/en-us/library/aa752094
 				Run, Explorer %varPath%
 	}
 	else
-	{
-		; Workaround for the hash (aka Sharp / "#") bug in Shell.Application - occurs only when navigatin in the current Explorer window
+		; Workaround for the hash (aka Sharp / "#") bug in Shell.Application - occurs only when navigating in the current Explorer window
 		; see http://stackoverflow.com/questions/22868546/navigate-shell-command-not-working-when-the-path-includes-an-hash
-		SendInput, {F4}{Esc}
-		Sleep, 500
-		ControlSetText, Edit1, %varPath%, A
-		ControlSend, Edit1, {Enter}, A
-	}
+		; and http://ahkscript.org/boards/viewtopic.php?f=5&t=526&p=25287#p25274
+		SendInput, {F4}{Esc}{Raw}%varPath%`n
 }
 ;------------------------------------------------------------
 
@@ -3586,7 +3585,9 @@ NavigateConsole(strLocation, strWinId)
 {
 	if (WinExist("A") <> strWinId) ; in case that some window just popped out, and initialy active window lost focus
 		WinActivate, ahk_id %strWinId% ; we'll activate initialy active window
-	SendInput, CD /D %strLocation%{Enter}
+	SendInput, {Raw}CD /D %strLocation%
+	Sleep, 200
+	SendInput, {Enter}
 }
 ;------------------------------------------------------------
 
