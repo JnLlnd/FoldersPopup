@@ -191,4 +191,8 @@ global lUpdatePrompt := "Update ~1~ from v~2~ to v~3~?"
 global lUpdateTitle := "Update ~1~?"
 global lUpdateYouHaveLatest := "You have the latest version: ~1~.`n`nVisit the ~2~ web page anyway?"
 
+global lOptionsDOpusTitle := "Directory Opus users:"
+global lOptionsDOpusDetail := "Select the Directory Opus program file (dopus.exe) to enable Directory Opus integration."
+global lOptionsDOpusPrompt := "Directory Opus program file"
+
 return
