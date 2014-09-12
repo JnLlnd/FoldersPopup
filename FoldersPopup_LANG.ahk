@@ -194,5 +194,6 @@ global lUpdateYouHaveLatest := "You have the latest version: ~1~.`n`nVisit the ~
 global lOptionsDOpusTitle := "Directory Opus users:"
 global lOptionsDOpusDetail := "Select the Directory Opus program file (dopus.exe) to enable Directory Opus integration."
 global lOptionsDOpusPrompt := "Directory Opus program file"
+global lDialogDirectoryOpusDetected := "~1~ detected that Directory Opus is installed on your system.`n`nDo you want to enable Directory Opus integration?"
 
 return

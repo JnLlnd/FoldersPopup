@@ -1,11 +1,9 @@
 /*
 Bugs:
-- debug DOpus option mngt
 
 To-do:
-- finish prompt to activate DOpus
-- finish add dopus path in options
 - Add this folder with DOpus using DOpusRt
+- add DOpus icons in SwithExplorer
 */
 ;===============================================
 /*
@@ -15,21 +13,24 @@ To-do:
 
 	Version: 3.2 (2014-09-XX)
 	
-	To-ReDo
-	* collect info about opened Explorers in an object
-	* collect info about DOpus listers in an object using DOpusRt
-	* merge two sets of folders found in Explorers and Listers, remove duplicates and build Switch menus
+	Directory Opus integration
+	* collect info about opened DOpus listers using DOpusRt
+	* collect info about opened Explorers and DOpus listers in two objects merge the two sets of folders, remove duplicates and build Switch menus
 	* adapt SwitchExplorer and SwitchDialog to new object model
-	* switch explorer in DOpus using DOpusRt
-	* switch to DOpus in correct lister if 2 panes
-	* switch explorer in DOpus to correct tab when multiple tabs
-	* enable special folders menus when target window is Directory Opus
-	* can open favorite in a DOpus lister only if DOpus path is set in ini file
+	* switch explorer in DOpus using DOpusRt, switch to DOpus if 2 panes or multiple tabs
+	* handling coll:// DOpus windows like search results in Switch Menu
+	* enable special folders menus when target window is Directory Opus and navigate to special folders using DOpusRt and built-in aliases
 	* navigate folders and recent folders in current lister using DOpusRt
 	* open new lister using DOpusRt
-	* prompt to activate DOpusRt if DOpus found under Program Files
-	* enable special folders menus when target window is Directory Opus and navigate to special folders using DOpusRt and built-in aliases
-	* handling coll:// DOpus windows like search results in Switch Menu
+	* prompt at startup to activate DOpusRt if DOpus found under Program Files
+	
+	Other
+
+
+
+
+
+To-Re-Test
 
 	* prevent intermittent Windows bug showing an error when building recent folders menu if an external drive has been removed
 	* setting the image special folders reading the Registry for a solution working in a Windows locales
@@ -644,21 +645,13 @@ if !(blnDonor)
 	lMenuReservedShortcuts := lMenuReservedShortcuts . lMenuReservedShortcutsDonate
 
 IniRead, strDirectoryOpusPath, %strIniFile%, Global, DirectoryOpusPath, %A_Space% ; empty string if not found
-blnUseDirectoryOpus := StrLen(strDirectoryOpusPath)
-if (blnUseDirectoryOpus)
-{
+if StrLen(strDirectoryOpusPath)
 	blnUseDirectoryOpus := FileExist(strDirectoryOpusPath)
-	if (blnUseDirectoryOpus)
-		Gosub, EnableDirectoryOpus
-/*
-	{
-		strDOpusTempFilePath := strTempDir . "\dopus-list.txt"
-		StringReplace, strDirectoryOpusRtPath, strDirectoryOpusPath, \dopus.exe, \dopusrt.exe
-	}
-*/
-}
-if !(blnUseDirectoryOpus) and (strDirectoryOpusPath <> "NO")
-	Gosub, CheckDirectoryOpus
+if (blnUseDirectoryOpus)
+	Gosub, SetDOpusRt
+else
+	if (strDirectoryOpusPath <> "NO")
+		Gosub, CheckDirectoryOpus
 
 IniRead, strTheme, %strIniFile%, Global, Theme
 if (strTheme = "ERROR") ; if Theme not found, we have a v1 or v2 ini file - add the themes to the ini file
@@ -1257,7 +1250,6 @@ if (blnUseDirectoryOpus)
 
 	objDOpusListers := Object()
 	CollectDOpusListersList(objDOpusListers, strListText) ; list all listers, excluding special folders like Recycle Bin
-	; ###_D(objDOpusListers.MaxIndex())
 }
 
 objExplorersWindows := Object()
@@ -1271,20 +1263,30 @@ intDialogsIndex := 0 ; used in PopupMenu... to check if we disable the menu when
 
 if (blnUseDirectoryOpus)
 	for intIndex, objLister in objDOpusListers
+	{
 		if !NameIsInObject(objLister.path, objSwitchMenuExplorers)
 		{
 			objSwitchMenuExplorer := Object()
 			objSwitchMenuExplorer.Path := objLister.path
-			objSwitchMenuExplorer.Name := objLister.path
+			if InStr(objLister.path, "Lister-Quick-Find-Results")
+				objSwitchMenuExplorer.Name := "Directory Opus Quick Find Results"
+			else if InStr(objLister.path, "coll://")
+				objSwitchMenuExplorer.Name := "Directory Opus Special Collection"
+			else
+				objSwitchMenuExplorer.Name := objLister.path
 			objSwitchMenuExplorer.WindowID := objLister.lister
 			objSwitchMenuExplorer.TabID := objLister.tab
 			
 			intExplorersIndex := intExplorersIndex + 1
 			objSwitchMenuExplorers.Insert(intExplorersIndex, objSwitchMenuExplorer)
 			
-			intDialogsIndex := intDialogsIndex + 1
-			objSwitchMenuDialogs.Insert(intDialogsIndex, objSwitchMenuExplorer)
+			if StrLen(objSwitchMenuExplorer.Path) and !InStr(objSwitchMenuExplorer.Path, "coll://")
+			{
+				intDialogsIndex := intDialogsIndex + 1
+				objSwitchMenuDialogs.Insert(intDialogsIndex, objSwitchMenuExplorer)
+			}
 		}
+	}
 
 for intIndex, objExplorer in objExplorersWindows
 	if !NameIsInObject(objExplorer.LocationName, objSwitchMenuExplorers)
@@ -1311,15 +1313,14 @@ intShortcutDialog := 0
 
 for intIndex, objSwitchMenuExplorer in objSwitchMenuExplorers
 {
-
 	strMenuName := (blnDisplayMenuShortcuts and (intShortcutExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutExplorer, false) . " " : "") . objSwitchMenuExplorer.Name
 	AddMenuIcon("menuSwitchExplorer", strMenuName, "SwitchExplorer", "menuSwitchExplorer")
+}
 
-	if StrLen(objSwitchMenuExplorer.Path)
-	{
-		strMenuName := (blnDisplayMenuShortcuts and (intShortcutDialog <= 35) ? "&" . NextMenuShortcut(intShortcutDialog, false) . " " : "") . objSwitchMenuExplorer.Name
-		AddMenuIcon("menuSwitchDialog", strMenuName, "SwitchDialog", "menuSwitchDialog")
-	}
+for intIndex, objSwitchMenuDialog in objSwitchMenuDialogs
+{
+	strMenuName := (blnDisplayMenuShortcuts and (intShortcutDialog <= 35) ? "&" . NextMenuShortcut(intShortcutDialog, false) . " " : "") . objSwitchMenuDialog.Name
+	AddMenuIcon("menuSwitchDialog", strMenuName, "SwitchDialog", "menuSwitchDialog")
 }
 
 return
@@ -2047,73 +2048,98 @@ return
 AddThisFolder:
 ;------------------------------------------------------------
 
-objPrevClipboard := ClipboardAll ; Save the entire clipboard
-ClipBoard := ""
-
-; Add This folder menu is active only if we are in Explorer (WIN_XP, WIN_7 or WIN_8) or in a Dialog box (WIN_7 or WIN_8).
-; In all these OS, with Explorer, the key sequence {F4}{Esc} selects the current location of the window.
-; With dialog boxes, the key sequence {F4}{Esc} generally selects the current location of the window. But, in some
-; dialog boxes, the {Esc} key closes the dialog box. We will check window title to detect this behavior.
-
-if (strTargetClass = "#32770")
-	intWaitTimeIncrement := 300 ; time allowed for dialog boxes
-else
-	intWaitTimeIncrement := 150 ; time allowed for Explorer
-
-if (blnDiagMode)
-	intTries := 8
-else
-	intTries := 3
-
-strWindowTitle := ""
-Loop, %intTries%
+if (blnUseDirectoryOpus)
 {
-	Sleep, intWaitTimeIncrement * A_Index
-	WinGetTitle, strWindowTitle, A ; to check later if this window is closed unexpectedly
-} Until (StrLen(strWindowTitle))
+	objDOpusListers := Object()
+	CollectDOpusListersList(objDOpusListers, strListText) ; list all listers, excluding special folders like Recycle Bin
 
-if WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
-{
-	if (WinExist("A") <> strTargetWinId) ; in case that some window just popped out, and initialy active window lost focus
+	for intIndex, objLister in objDOpusListers
 	{
-		WinActivate, ahk_id %strTargetWinId% ; we'll activate initialy active window
-		Sleep, intWaitTimeIncrement
+		###_D(objLister.path)
+		/*
+			objLister.active_lister := ParseDOpusListerProperty(strSubStr, "active_lister")
+			objLister.active_tab := ParseDOpusListerProperty(strSubStr, "active_tab")
+			objLister.lister := ParseDOpusListerProperty(strSubStr, "lister")
+			objLister.side := ParseDOpusListerProperty(strSubStr, "side")
+			objLister.tab := ParseDOpusListerProperty(strSubStr, "tab")
+			objLister.tab_state := ParseDOpusListerProperty(strSubStr, "tab_state")
+			objLister.path := SubStr(strSubStr, InStr(strSubStr, ">") + 1)
+		*/
+		
 	}
-	if StrLen(strTargetControl)
-		ControlFocus, %strTargetControl%, ahk_id %strTargetWinId%
-	Loop, %intTries%
-	{
-		Sleep, intWaitTimeIncrement * A_Index
-		SendInput, % (WindowIsFreeCommander(strTargetClass) ? "!g" : "+{Enter}") ; goto shortcut for FreeCommander or DirectoryOpus
-		Sleep, intWaitTimeIncrement * A_Index
-		SendInput, ^c
-		Sleep, intWaitTimeIncrement * A_Index
-		intTries := A_Index
-		WinGetTitle, strWindowThisTitle, A ; to check if the window was closed unexpectedly
-	} Until (StrLen(ClipBoard))
+
+	strCurrentLocation := "C:\WORK IN PROGRESS"
 }
 else
+{
+	objPrevClipboard := ClipboardAll ; Save the entire clipboard
+	ClipBoard := ""
+
+	; Add This folder menu is active only if we are in Explorer (WIN_XP, WIN_7 or WIN_8) or in a Dialog box (WIN_7 or WIN_8).
+	; In all these OS, with Explorer, the key sequence {F4}{Esc} selects the current location of the window.
+	; With dialog boxes, the key sequence {F4}{Esc} generally selects the current location of the window. But, in some
+	; dialog boxes, the {Esc} key closes the dialog box. We will check window title to detect this behavior.
+
+	if (strTargetClass = "#32770")
+		intWaitTimeIncrement := 300 ; time allowed for dialog boxes
+	else
+		intWaitTimeIncrement := 150 ; time allowed for Explorer
+
+	if (blnDiagMode)
+		intTries := 8
+	else
+		intTries := 3
+
+	strWindowTitle := ""
 	Loop, %intTries%
 	{
 		Sleep, intWaitTimeIncrement * A_Index
-		SendInput, {F4}{Esc} ; F4 move the caret the "Go To A Different Folder box" and {Esc} select it content ({Esc} could be replaced by ^a to Select All)
-		Sleep, intWaitTimeIncrement * A_Index
-		SendInput, ^c ; Copy
-		Sleep, intWaitTimeIncrement * A_Index
-		intTries := A_Index
-		WinGetTitle, strWindowThisTitle, A ; to check if the window was closed unexpectedly
-	} Until (StrLen(ClipBoard) or (strWindowTitle <> strWindowThisTitle))
+		WinGetTitle, strWindowTitle, A ; to check later if this window is closed unexpectedly
+	} Until (StrLen(strWindowTitle))
 
-strCurrentLocation := ClipBoard
-Clipboard := objPrevClipboard ; Restore the original clipboard
-objPrevClipboard := "" ; Free the memory in case the clipboard was very large
+	if WindowIsFreeCommander(strTargetClass)
+	{
+		if (WinExist("A") <> strTargetWinId) ; in case that some window just popped out, and initialy active window lost focus
+		{
+			WinActivate, ahk_id %strTargetWinId% ; we'll activate initialy active window
+			Sleep, intWaitTimeIncrement
+		}
+		if StrLen(strTargetControl)
+			ControlFocus, %strTargetControl%, ahk_id %strTargetWinId%
+		Loop, %intTries%
+		{
+			Sleep, intWaitTimeIncrement * A_Index
+			SendInput, !g ; goto shortcut for FreeCommander
+			Sleep, intWaitTimeIncrement * A_Index
+			SendInput, ^c
+			Sleep, intWaitTimeIncrement * A_Index
+			intTries := A_Index
+			WinGetTitle, strWindowThisTitle, A ; to check if the window was closed unexpectedly
+		} Until (StrLen(ClipBoard))
+	}
+	else ; Explorer
+		Loop, %intTries%
+		{
+			Sleep, intWaitTimeIncrement * A_Index
+			SendInput, {F4}{Esc} ; F4 move the caret the "Go To A Different Folder box" and {Esc} select it content ({Esc} could be replaced by ^a to Select All)
+			Sleep, intWaitTimeIncrement * A_Index
+			SendInput, ^c ; Copy
+			Sleep, intWaitTimeIncrement * A_Index
+			intTries := A_Index
+			WinGetTitle, strWindowThisTitle, A ; to check if the window was closed unexpectedly
+		} Until (StrLen(ClipBoard) or (strWindowTitle <> strWindowThisTitle))
 
-if (blnDiagMode)
-{
-	Diag("Menu", A_ThisLabel)
-	Diag("Class", strTargetClass)
-	Diag("Tries", intTries)
-	Diag("AddedFolder", strCurrentLocation)
+	strCurrentLocation := ClipBoard
+	Clipboard := objPrevClipboard ; Restore the original clipboard
+	objPrevClipboard := "" ; Free the memory in case the clipboard was very large
+
+	if (blnDiagMode)
+	{
+		Diag("Menu", A_ThisLabel)
+		Diag("Class", strTargetClass)
+		Diag("Tries", intTries)
+		Diag("AddedFolder", strCurrentLocation)
+	}
 }
 
 If !StrLen(strCurrentLocation) or !(InStr(strCurrentLocation, ":") or InStr(strCurrentLocation, "\\")) or (strWindowTitle <> strWindowThisTitle)
@@ -3092,6 +3118,18 @@ strThemePrev := strTheme
 strTheme := drpTheme
 IniWrite, %strTheme%, %strIniFile%, Global, Theme
 
+intIconSize := drpIconSize
+IniWrite, %intIconSize%, %strIniFile%, Global, IconSize
+
+IniWrite, %strDirectoryOpusPath%, %strIniFile%, Global, DirectoryOpusPath
+blnUseDirectoryOpus := StrLen(strDirectoryOpusPath)
+if (blnUseDirectoryOpus)
+{
+	blnUseDirectoryOpus := FileExist(strDirectoryOpusPath)
+	if (blnUseDirectoryOpus)
+		Gosub, SetDOpusRt
+}
+
 ; if language or theme changed, offer to restart the app
 if (strLanguageCodePrev <> strLanguageCode) or (strThemePrev <> strTheme)
 {
@@ -3102,22 +3140,6 @@ if (strLanguageCodePrev <> strLanguageCode) or (strThemePrev <> strTheme)
 		Reload
 	}
 }	
-
-intIconSize := drpIconSize
-IniWrite, %intIconSize%, %strIniFile%, Global, IconSize
-
-blnUseDirectoryOpus := StrLen(strDirectoryOpusPath)
-if (blnUseDirectoryOpus)
-{
-	blnUseDirectoryOpus := FileExist(strDirectoryOpusPath)
-	if (blnUseDirectoryOpus)
-	{
-		IniWrite, %strDirectoryOpusPath%, %strIniFile%, Global, DirectoryOpusPath
-		Gosub, EnableDirectoryOpus
-	}
-}
-if !(blnUseDirectoryOpus) and (strDirectoryOpusPath <> "NO")
-	IniDelete, %strIniFile%, Global, DirectoryOpusPath
 
 ; else rebuild special and switch menus
 Gosub, BuildSpecialFoldersMenu
@@ -3642,7 +3664,7 @@ if StrLen(objSwitchMenuExplorers[A_ThisMenuItemPos].TabID) ; this is a DOpus lis
 		WinActivate, % "ahk_id " . objSwitchMenuExplorers[A_ThisMenuItemPos].WindowID
 	else
 		; better because can find activate lister, pane and tab
-		RunDOpusRt("/acmd Go ", objSwitchMenuExplorers[A_ThisMenuItemPos].Path, "EXISTINGLISTER") ; activate an existing lister listing this path
+		RunDOpusRt("/acmd Go ", objSwitchMenuExplorers[A_ThisMenuItemPos].Path, " EXISTINGLISTER") ; activate an existing lister listing this path
 else
 	WinActivate, % "ahk_id " . objSwitchMenuExplorers[A_ThisMenuItemPos].WindowID
 
@@ -4426,14 +4448,14 @@ AHK_NOTIFYICON(wParam, lParam)
 
 ;------------------------------------------------------------
 RunDOpusRt(strCommand, strLocation := "", strParam := "")
+; put A_Space at the beginning of strParam if required - some param (like ",paths") must have no space 
 ;------------------------------------------------------------
 {
 	global strDirectoryOpusRtPath
 	global strDirectoryOpusPath
-	###_D("1" . strDirectoryOpusRtPath . "`n2 " . strDirectoryOpusPath)
 		
 	if FileExist(strDirectoryOpusRtPath)
-		Run, % """" . strDirectoryOpusRtPath . """ " . strCommand . " """ . strLocation . """ " . strParam
+		Run, % """" . strDirectoryOpusRtPath . """ " . strCommand . " """ . strLocation . """" . strParam
 	else
 		Oops(lOopsWrongDirectoryOpusPath, strAppName, strDirectoryOpusPath)
 }
@@ -4448,20 +4470,16 @@ strCheckDirectoryOpusPath := A_ProgramFiles . "\GPSoftware\Directory Opus\dopus.
 
 if FileExist(strCheckDirectoryOpusPath)
 {
-	lDialogDirectoryOpus := "Dopus ok?"
-	MsgBox, 52, %strAppName%, % L(lDialogDirectoryOpus, strAppName, strDiagFile)
+	MsgBox, 52, %strAppName%, % L(lDialogDirectoryOpusDetected, strAppName)
 	IfMsgBox, No
-	{
-		IniWrite, NO, %strIniFile%, Global, DirectoryOpusPath
-		return
-	}
+		strDirectoryOpusPath := "NO"
 	else
 	{
-		blnUseDirectoryOpus := true
-		IniWrite, %strCheckDirectoryOpusPath%, %strIniFile%, Global, DirectoryOpusPath
 		strDirectoryOpusPath := strCheckDirectoryOpusPath
-		Gosub, EnableDirectoryOpus
+		Gosub, SetDOpusRt
 	}
+	blnUseDirectoryOpus := (strDirectoryOpusPath <> "NO")
+	IniWrite, %strDirectoryOpusPath%, %strIniFile%, Global, DirectoryOpusPath
 }
 
 return
@@ -4469,7 +4487,7 @@ return
 
 
 ;------------------------------------------------------------
-EnableDirectoryOpus:
+SetDOpusRt:
 ;------------------------------------------------------------
 
 strDOpusTempFilePath := strTempDir . "\dopus-list.txt"
