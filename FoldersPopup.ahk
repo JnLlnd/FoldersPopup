@@ -3,7 +3,6 @@ Bugs:
 
 To-do:
 - Add this folder with DOpus using DOpusRt
-- add DOpus icons in SwithExplorer
 */
 ;===============================================
 /*
@@ -23,6 +22,7 @@ To-do:
 	* navigate folders and recent folders in current lister using DOpusRt
 	* open new lister using DOpusRt
 	* prompt at startup to activate DOpusRt if DOpus found under Program Files
+	* use DOpus icons for listers in SwithExplorer
 	
 	Other
 
@@ -529,7 +529,7 @@ if (A_OSVersion = "WIN_XP")
 				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
 				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
 	strIconsIndex := "35|127|118|16|19|22|33"
-				. "|4|25|4|4|147|147|147"
+				. "|4|147|4|4|147|147|147"
 				. "|214|166|111|161|85|10|3|4"
 }
 else if (A_OSVersion = "WIN_VISTA")
@@ -538,7 +538,7 @@ else if (A_OSVersion = "WIN_VISTA")
 				. "|imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|shell32|shell32|shell32|imageres|imageres|imageres"
 	strIconsIndex := "105|85|67|104|114|22|49"
-				. "|112|95|3|3|175|174|175|"
+				. "|112|174|3|3|175|174|175|"
 				. "112|109|88|161|85|28|2|3"
 }
 else
@@ -547,7 +547,7 @@ else
 				. "|imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres|imageres|imageres"
 	strIconsIndex := "106|189|68|105|115|23|50"
-				. "|113|96|203|203|177|176|177|"
+				. "|113|176|203|203|177|176|177|"
 				. "113|110|217|208|298|29|3|4"
 }
 
@@ -648,7 +648,13 @@ IniRead, strDirectoryOpusPath, %strIniFile%, Global, DirectoryOpusPath, %A_Space
 if StrLen(strDirectoryOpusPath)
 	blnUseDirectoryOpus := FileExist(strDirectoryOpusPath)
 if (blnUseDirectoryOpus)
+{
 	Gosub, SetDOpusRt
+	; additional icon for Directory Opus
+	objIconsFile["DirectoryOpus"] := strDirectoryOpusPath
+	objIconsIndex["DirectoryOpus"] := 1
+
+}
 else
 	if (strDirectoryOpusPath <> "NO")
 		Gosub, CheckDirectoryOpus
@@ -1201,7 +1207,7 @@ Loop, parse, strDirList, `n
 	objRecentFolders.Insert(intRecentFoldersIndex, strOutTarget)
 	
 	strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strOutTarget
-	AddMenuIcon("menuRecentFolders", strMenuName, "OpenRecentFolder", "menuRecentFolders")
+	AddMenuIcon("menuRecentFolders", strMenuName, "OpenRecentFolder", "Folder")
 
 	if (intRecentFoldersIndex >= intRecentFolders)
 		break
@@ -1314,7 +1320,7 @@ intShortcutDialog := 0
 for intIndex, objSwitchMenuExplorer in objSwitchMenuExplorers
 {
 	strMenuName := (blnDisplayMenuShortcuts and (intShortcutExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutExplorer, false) . " " : "") . objSwitchMenuExplorer.Name
-	AddMenuIcon("menuSwitchExplorer", strMenuName, "SwitchExplorer", "menuSwitchExplorer")
+	AddMenuIcon("menuSwitchExplorer", strMenuName, "SwitchExplorer", (StrLen(objSwitchMenuExplorer.TabID) ? "DirectoryOpus" : "menuSwitchExplorer"))
 }
 
 for intIndex, objSwitchMenuDialog in objSwitchMenuDialogs
