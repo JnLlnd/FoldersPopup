@@ -23,6 +23,7 @@ To-do:
 	* open new lister using DOpusRt
 	* prompt at startup to activate DOpusRt if DOpus found under Program Files
 	* use DOpus icons for listers in SwithExplorer
+	* when Add This Folder, read current folder using DOpusRt
 	
 	Other
 
@@ -1409,6 +1410,8 @@ ParseDOpusListerProperty(strSource, strProperty)
 ;------------------------------------------------------------
 {
 	intStartPos := InStr(strSource, " " . strProperty . "=")
+	if !(intStartPos)
+		return ""
 	strSource := SubStr(strSource, intStartPos + StrLen(strProperty) + 3)
 	; ###_D(strProperty . ": " . strSource)
 	intEndPos := InStr(strSource, """")
@@ -2054,27 +2057,28 @@ return
 AddThisFolder:
 ;------------------------------------------------------------
 
+strCurrentLocation := ""
+
 if (blnUseDirectoryOpus)
 {
 	objDOpusListers := Object()
 	CollectDOpusListersList(objDOpusListers, strListText) ; list all listers, excluding special folders like Recycle Bin
+	/*
+		From leo @ GPSoftware (http://resource.dopus.com/viewtopic.php?f=3&t=23013):
+		Lines will have active_lister="1" if they represent tabs from the active lister.
+		To get the active tab you want the line with active_lister="1" and tab_state="1".
+		tab_state="1" means it's the selected tab, on the active side of the lister.
+		tab_state="2" means it's the selected tab, on the inactive side of a dual-display lister.
+		Tabs which are not visible (because another tab is selected on top of them) don't get a tab_state attribute at all.
+	*/
 
 	for intIndex, objLister in objDOpusListers
-	{
-		###_D(objLister.path)
-		/*
-			objLister.active_lister := ParseDOpusListerProperty(strSubStr, "active_lister")
-			objLister.active_tab := ParseDOpusListerProperty(strSubStr, "active_tab")
-			objLister.lister := ParseDOpusListerProperty(strSubStr, "lister")
-			objLister.side := ParseDOpusListerProperty(strSubStr, "side")
-			objLister.tab := ParseDOpusListerProperty(strSubStr, "tab")
-			objLister.tab_state := ParseDOpusListerProperty(strSubStr, "tab_state")
-			objLister.path := SubStr(strSubStr, InStr(strSubStr, ">") + 1)
-		*/
-		
+		if (objLister.active_lister = "1" and objLister.tab_state = "1")
+		{
+			strCurrentLocation := objLister.path
+			break
+		}
 	}
-
-	strCurrentLocation := "C:\WORK IN PROGRESS"
 }
 else
 {
