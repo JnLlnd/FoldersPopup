@@ -2,7 +2,6 @@
 Bugs:
 
 To-do:
-- Add this folder with DOpus using DOpusRt
 */
 ;===============================================
 /*
@@ -14,31 +13,23 @@ To-do:
 	
 	Directory Opus integration
 	* collect info about opened DOpus listers using DOpusRt
-	* collect info about opened Explorers and DOpus listers in two objects merge the two sets of folders, remove duplicates and build Switch menus
+	* collect info about opened Explorers and DOpus listers in two objects, merge the two sets of folders, remove duplicates and build Switch menus
 	* adapt SwitchExplorer and SwitchDialog to new object model
 	* switch explorer in DOpus using DOpusRt, switch to DOpus if 2 panes or multiple tabs
 	* handling coll:// DOpus windows like search results in Switch Menu
+	* use DOpus icons for listers in Switch Explorer
 	* enable special folders menus when target window is Directory Opus and navigate to special folders using DOpusRt and built-in aliases
 	* navigate folders and recent folders in current lister using DOpusRt
 	* open new lister using DOpusRt
 	* prompt at startup to activate DOpusRt if DOpus found under Program Files
-	* use DOpus icons for listers in SwithExplorer
 	* when Add This Folder, read current folder using DOpusRt
 	
-	Other
-
-
-
-
-
-To-Re-Test
-
+	Other changes
 	* prevent intermittent Windows bug showing an error when building recent folders menu if an external drive has been removed
-	* setting the image special folders reading the Registry for a solution working in a Windows locales
-	* more reliable command to set the recent items folders using Registry
+	* setting the image and recent items special folders reading the Registry for a solution working in all Windows locales
 	* fix bug when showing special folders names in Switch menus
 	* fix bug when duplicate folders were found in Switch menus
-	* prevent paths longer than 260 chars from causing an error in Switch menu
+	* prevent paths longer than 260 chars in Switch menu from causing an error
 	* limit menu name to 250 chars maximum in add/edit folder dialog box
 
 	Version: 3.1.3 (2014-09-07)
@@ -245,7 +236,7 @@ To-Re-Test
 	* add ValueIsInObject function
 	* add language dropdown
 	* display full folder names in recent folders
-	* add swith submenu to activate any other open Explorer
+	* add switch submenu to activate any other open Explorer
 	* add DisplayRecentFolders and DisplaySwitchMenu options in Options dialog box and ini file
 
 	Version: FoldersPopup v1.2.7 (2014-04-25)
@@ -649,13 +640,7 @@ IniRead, strDirectoryOpusPath, %strIniFile%, Global, DirectoryOpusPath, %A_Space
 if StrLen(strDirectoryOpusPath)
 	blnUseDirectoryOpus := FileExist(strDirectoryOpusPath)
 if (blnUseDirectoryOpus)
-{
 	Gosub, SetDOpusRt
-	; additional icon for Directory Opus
-	objIconsFile["DirectoryOpus"] := strDirectoryOpusPath
-	objIconsIndex["DirectoryOpus"] := 1
-
-}
 else
 	if (strDirectoryOpusPath <> "NO")
 		Gosub, CheckDirectoryOpus
@@ -1070,7 +1055,8 @@ Menu, Tray, NoStandard
 ;@Ahk2Exe-IgnoreBegin
 ; Piece of code for developement phase only - won't be compiled
 Menu, Tray, Icon, %A_ScriptDir%\Folders-Likes-icon-192-RED-center.ico, 1, 1 ; last 1 to freeze icon during pause or suspend
-; Menu, Tray, Standard ; REMOVED because caused a BUG in submenu display (first display only) - unexplained...
+; Menu, Tray, Standard ; REMOVED because caused a BUG in submenu display (first display only) - compiled or not - unexplained...
+; Menu, Tray, Add
 ; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
 Menu, Tray, Add, % L(lMenuFPMenu, strAppName, lMenuMenu), :%lMainMenuName%
@@ -2059,7 +2045,7 @@ AddThisFolder:
 
 strCurrentLocation := ""
 
-if (blnUseDirectoryOpus)
+if WindowIsDirectoryOpus(strTargetClass)
 {
 	objDOpusListers := Object()
 	CollectDOpusListersList(objDOpusListers, strListText) ; list all listers, excluding special folders like Recycle Bin
@@ -2078,7 +2064,6 @@ if (blnUseDirectoryOpus)
 			strCurrentLocation := objLister.path
 			break
 		}
-	}
 }
 else
 {
@@ -2914,9 +2899,9 @@ GuiControl, , blnDisplayIcons, %blnDisplayIcons%
 Gui, 2:Add, Text, x15 y+15 h2 w590 0x10 ; Horizontal Line > Etched Gray
 
 Gui, 2:Font, s8 w700
-Gui, 2:Add, Text, y+5 xs, %lOptionsDOpusTitle% 
+Gui, 2:Add, Text, y+5 xs, %lOptionsDOpusTitle%
 Gui, 2:Font
-Gui, 2:Add, Text, yp x+3, %lOptionsDOpusDetail%
+Gui, 2:Add, Text, y+5 xs, %lOptionsDOpusDetail%
 Gui, 2:Add, Text, y+10 xs, %lOptionsDOpusPrompt%
 Gui, 2:Add, Edit, x+10 yp w300 h20 vstrDirectoryOpusPath, %strDirectoryOpusPath%
 Gui, 2:Add, Button, x+10 yp vbtnSelectDOpusPath gButtonSelectDOpusPath default, %lDialogBrowseButton%
@@ -4502,6 +4487,10 @@ SetDOpusRt:
 
 strDOpusTempFilePath := strTempDir . "\dopus-list.txt"
 StringReplace, strDirectoryOpusRtPath, strDirectoryOpusPath, \dopus.exe, \dopusrt.exe
+
+; additional icon for Directory Opus
+objIconsFile["DirectoryOpus"] := strDirectoryOpusPath
+objIconsIndex["DirectoryOpus"] := 1
 
 return
 ;------------------------------------------------------------
