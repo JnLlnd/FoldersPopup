@@ -21,6 +21,7 @@ lDialogBrowseButton	Parcourir
 lDialogCancelButton	Annuler
 lDialogCancelPrompt	Annuler les changements?
 lDialogCancelTitle	Annuler - ~1~ ~2~
+lDialogDirectoryOpusDetected	~1~ a détecté que Directory Opus est installé sur votre ordinateur.`n`nVoulez-vous activer l'intégration avec Directory Opus?
 lDialogEdit	Modifier
 lDialogEditDialogPrompt	Entrez le nouveau nom de la boîte de dialogue`n(ou une partie du nom):
 lDialogEditDialogTitle	Modifier Boîte de dialogue - ~1~ ~2~
@@ -153,6 +154,9 @@ lOptionsDisplayMenuShortcuts	Afficher les raccourcis numériques
 lOptionsDisplayRecentFolders	Afficher les emplacements récents
 lOptionsDisplaySpecialFolders	Afficher les dossiers spéciaux
 lOptionsDisplaySwitchMenu	Afficher les menus Basculer
+lOptionsDOpusDetail	Pour activer l'intégration avec Directory Opus, localisez le programme dopus.exe sous votre dossier Program Files.
+lOptionsDOpusPrompt	Fichier:
+lOptionsDOpusTitle	Utilisateurs de Directory Opus
 lOptionsGuiIntro	Choisisr les boutons de la souris et les raccourcis du clavier déclenchant ~1~.
 lOptionsGuiTitle	Options - ~1~ ~2~
 lOptionsIconSize	Taille des icones de menu

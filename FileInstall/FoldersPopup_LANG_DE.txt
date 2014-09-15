@@ -21,6 +21,7 @@ lDialogBrowseButton	Durchsuchen
 lDialogCancelButton	Abbrechen
 lDialogCancelPrompt	Änderungen verwerfen?
 lDialogCancelTitle	Abbrechen - ~1~ ~2~
+lDialogDirectoryOpusDetected	~1~ hat festgestellt, daÃŸ Directory Opus auf diesem System installiert ist.`n`nWollen Sie die Directory Opus Integration einschalten?
 lDialogEdit	Bearbeiten
 lDialogEditDialogPrompt	Geben Sie den neuen Namen für die Dialogbox ein`n(oder einen Teil des Namens):
 lDialogEditDialogTitle	Dialogbox bearbeiten - ~1~ ~2~
@@ -153,6 +154,9 @@ lOptionsDisplayMenuShortcuts	Zeige &numerische Menü-Tastenkürzel
 lOptionsDisplayRecentFolders	Zeige kürzlich verwendete Ordner
 lOptionsDisplaySpecialFolders	Zeige S&pezielle Ordner
 lOptionsDisplaySwitchMenu	Zeige Switch Menü
+lOptionsDOpusDetail	WÃ¤hlen Sie die Directory Opus Programmdatei (dopus.exe) um die Directory Opus Integration einzuschalten.
+lOptionsDOpusPrompt	Programmdatei:
+lOptionsDOpusTitle	Directory Opus Benutzer
 lOptionsGuiIntro	Legen Sie die Maustasten und Tastenkürzel fest, welche ~1~ auslösen.
 lOptionsGuiTitle	Optionen - ~1~ ~2~
 lOptionsIconSize	Symbolgröße im Menü
