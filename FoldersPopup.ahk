@@ -2,7 +2,6 @@
 Bugs:
 
 To-do:
-- adapt mouse position to option
 */
 ;===============================================
 /*
