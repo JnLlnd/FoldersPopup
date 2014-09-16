@@ -952,7 +952,8 @@ if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or Win
 		, % WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
 		or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 		, %lMenuAddThisFolder%...
-	Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
+	; ###_D(A_ThisLabel . ": " . intPopupMenuPosition . " / " . intMenuPosX . " / " . intMenuPosY)
+	Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; at mouse pointer if option 1, 20x20 offset of active window if option 2 and fix location if option 3
 }
 
 return
@@ -1012,7 +1013,8 @@ Menu, %lMainMenuName%
 	, % WindowIsAnExplorer(strTargetClass)  or WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
 	or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 	, %lMenuAddThisFolder%...
-Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; mouse pointer if mouse button, 20x20 offset of active window if keyboard shortcut
+; ###_D(A_ThisLabel . ": " . intPopupMenuPosition . " / " . intMenuPosX . " / " . intMenuPosY)
+Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; at mouse pointer if option 1, 20x20 offset of active window if option 2 and fix location if option 3
 
 return
 ;------------------------------------------------------------
@@ -1022,34 +1024,33 @@ return
 SetMenuPosition:
 ;------------------------------------------------------------
 
-; ####
-CoordMode, Menu, % (blnPopupFix ? "Screen" : "Window")
+; relative to active window if option intPopupMenuPosition = 2
+CoordMode, Mouse, % (intPopupMenuPosition = 2 ? "Window" : "Screen")
+CoordMode, Menu, % (intPopupMenuPosition = 2 ? "Window" : "Screen")
 
-; will be overridden if not fix location
-intMenuPosX := arrPopupFixPosition1
-intMenuPosY := arrPopupFixPosition2
-
-if (blnMouse)
+if (intPopupMenuPosition = 1) ; display menu near mouse pointer location
+	MouseGetPos, intMenuPosX, intMenuPosY
+else if (intPopupMenuPosition = 2) ; display menu at an offset of 20x20 pixel from top-left of active window area
 {
+	intMenuPosX := 20
+	intMenuPosY := 20
+}
+else ; (intPopupMenuPosition =  3) - fix position - use the intMenuPosX and intMenuPosY values from the ini file
+{
+	intMenuPosX := arrPopupFixPosition1
+	intMenuPosY := arrPopupFixPosition2
+}
+; ###_D(A_ThisLabel . ": " . intPopupMenuPosition . " / " . intMenuPosX . " / " . intMenuPosY)
+
+; not related to set position but this is a good place to execute it ;-)
+if (blnMouse)
 	if (blnNewWindow)
 		MouseGetPos, , , strTargetWinId ; sets strTargetWinId for PopupMenuNewWindowMouse
 	else
 		WinActivate, % "ahk_id " . strTargetWinId ; activate for PopupMenuMouse
-	if (!blnPopupFix) ; ####
-		; display menu at mouse pointer location
-		MouseGetPos, intMenuPosX, intMenuPosY
-}
-else
-{
+else (keyboard)
 	if (blnNewWindow)
 		strTargetWinId := WinExist("A") ; sets strTargetWinId for PopupMenuNewWindowKeyboard
-	if (!blnPopupFix) ; ####
-	{
-		; display menu at an offset of 20x20 pixel from top-left client area
-		intMenuPosX := 20
-		intMenuPosY := 20
-	}
-}
 
 return
 ;------------------------------------------------------------
@@ -1220,7 +1221,8 @@ RefreshRecentFolders:
 ToolTip, %lMenuRefreshRecent%...
 Gosub, BuildRecentFoldersMenu
 ToolTip
-CoordMode, Menu, % (blnPopupFix ? "Screen" : "Window") ; ####
+CoordMode, Menu, % (intPopupMenuPosition = 2 ? "Window" : "Screen")
+; ###_D(A_ThisLabel . ": " . intPopupMenuPosition . " / " . intMenuPosX . " / " . intMenuPosY)
 Menu, menuRecentFolders, Show, %intMenuPosX%, %intMenuPosY% ; same position as the calling popup menu
 
 return
@@ -2947,16 +2949,16 @@ Gui, 2:Add, Text, ys x440 Section, %lOptionsTheme%
 Gui, 2:Add, DropDownList, ys x+10 w120 vdrpTheme Sort, %strAvailableThemes%
 GuiControl, ChooseString, drpTheme, %strTheme%
 
-Gui, 2:Add, Text, y+7 x440 Section, Popup the menu:
+Gui, 2:Add, Text, y+7 x440 Section, %lOptionsMenuPositionPrompt%
 
 Gui, 2:Add, Radio, % "y+5 xs vradPopupMenuPosition1 gPopupMenuPositionClicked Group " . (intPopupMenuPosition = 1 ? "Checked" : ""), %lOptionsMenuNearMouse%
 Gui, 2:Add, Radio, % "y+5 xs vradPopupMenuPosition2 gPopupMenuPositionClicked " . (intPopupMenuPosition = 2 ? "Checked" : ""), %lOptionsMenuActiveWindow%
 Gui, 2:Add, Radio, % "y+5 xs vradPopupMenuPosition3 gPopupMenuPositionClicked " . (intPopupMenuPosition = 3 ? "Checked" : ""), %lOptionsMenuFixPosition%
 
-Gui, 2:Add, Text, % "y+5 xs+18 vlblPopupFixPositionX " . (radPopupMenuPosition = 3 ? "" : "hidden"), %lOptionsPopupFixPositionX%
-Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionX center " . (radPopupMenuPosition = 3 ? "" : "hidden"), %arrPopupFixPosition1%
-Gui, 2:Add, Text, % "yp x+5 vlblPopupFixPositionY " . (radPopupMenuPosition = 3 ? "" : "hidden"), %lOptionsPopupFixPositionY%
-Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionY center " . (radPopupMenuPosition = 3 ? "" : "hidden"), %arrPopupFixPosition2%
+Gui, 2:Add, Text, % "y+5 xs+18 vlblPopupFixPositionX " . (intPopupMenuPosition = 3 ? "" : "hidden"), %lOptionsPopupFixPositionX%
+Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionX center " . (intPopupMenuPosition = 3 ? "" : "hidden"), %arrPopupFixPosition1%
+Gui, 2:Add, Text, % "yp x+5 vlblPopupFixPositionY " . (intPopupMenuPosition = 3 ? "" : "hidden"), %lOptionsPopupFixPositionY%
+Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionY center " . (intPopupMenuPosition = 3 ? "" : "hidden"), %arrPopupFixPosition2%
 
 
 Gui, 2:Show, AutoSize Center
