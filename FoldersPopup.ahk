@@ -2,6 +2,7 @@
 Bugs:
 
 To-do:
+- adapt mouse position to option
 */
 ;===============================================
 /*
@@ -592,7 +593,7 @@ IfNotExist, %strIniFile%
 			RecentFolders=10
 			DisplaySwitchMenu=1
 			DisplayMenuShortcuts=0
-			PopupFix=0
+			PopupMenuPosition=1
 			PopupFixPosition=20,20
 			DiagMode=0
 			Startups=1
@@ -616,13 +617,20 @@ if (blnDonor >= 0)
 	IniWrite, %blnDonor%, %strIniFile%, Global, Donor
 	IniDelete, %strIniFile%, Global, Donator
 }
+; backward compatibility with option PopupFix (until v3.1.3)
+IniRead, blnPopupFix, %strIniFile%, Global, PopupFix, -1
+if (blnPopupFix >= 0)
+{
+	IniWrite, % (blnPopupFix ? 3 : 1) , %strIniFile%, Global, PopupMenuPosition
+	IniDelete, %strIniFile%, Global, PopupFix
+}
 
 IniRead, blnDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip, 1
 IniRead, blnDisplayIcons, %strIniFile%, Global, DisplayIcons, 1
 IniRead, blnDisplaySpecialFolders, %strIniFile%, Global, DisplaySpecialFolders, 1
 IniRead, blnDisplayRecentFolders, %strIniFile%, Global, DisplayRecentFolders, 1
 IniRead, blnDisplaySwitchMenu, %strIniFile%, Global, DisplaySwitchMenu, 1
-IniRead, blnPopupFix, %strIniFile%, Global, PopupFix, 0
+IniRead, intPopupMenuPosition, %strIniFile%, Global, PopupMenuPosition, 1
 IniRead, strPopupFixPosition, %strIniFile%, Global, PopupFixPosition, 20,20
 StringSplit, arrPopupFixPosition, strPopupFixPosition, `,
 IniRead, blnDisplayMenuShortcuts, %strIniFile%, Global, DisplayMenuShortcuts, 0
@@ -1014,6 +1022,7 @@ return
 SetMenuPosition:
 ;------------------------------------------------------------
 
+; ####
 CoordMode, Menu, % (blnPopupFix ? "Screen" : "Window")
 
 ; will be overridden if not fix location
@@ -1026,7 +1035,7 @@ if (blnMouse)
 		MouseGetPos, , , strTargetWinId ; sets strTargetWinId for PopupMenuNewWindowMouse
 	else
 		WinActivate, % "ahk_id " . strTargetWinId ; activate for PopupMenuMouse
-	if (!blnPopupFix)
+	if (!blnPopupFix) ; ####
 		; display menu at mouse pointer location
 		MouseGetPos, intMenuPosX, intMenuPosY
 }
@@ -1034,7 +1043,7 @@ else
 {
 	if (blnNewWindow)
 		strTargetWinId := WinExist("A") ; sets strTargetWinId for PopupMenuNewWindowKeyboard
-	if (!blnPopupFix)
+	if (!blnPopupFix) ; ####
 	{
 		; display menu at an offset of 20x20 pixel from top-left client area
 		intMenuPosX := 20
@@ -1211,7 +1220,7 @@ RefreshRecentFolders:
 ToolTip, %lMenuRefreshRecent%...
 Gosub, BuildRecentFoldersMenu
 ToolTip
-CoordMode, Menu, % (blnPopupFix ? "Screen" : "Window")
+CoordMode, Menu, % (blnPopupFix ? "Screen" : "Window") ; ####
 Menu, menuRecentFolders, Show, %intMenuPosX%, %intMenuPosY% ; same position as the calling popup menu
 
 return
@@ -1238,7 +1247,7 @@ if (blnUseDirectoryOpus)
 		if FileExist(strDOpusTempFilePath)
 			Break
 		else
-			Sleep, 10
+			Sleep, 50 ; was 10 and had some gliches - 50 enough?
 	FileRead, strListText, %strDOpusTempFilePath%
 
 	objDOpusListers := Object()
@@ -1259,18 +1268,19 @@ if (blnUseDirectoryOpus)
 	{
 		if !NameIsInObject(objLister.path, objSwitchMenuExplorers)
 		{
+			intExplorersIndex := intExplorersIndex + 1
+			
 			objSwitchMenuExplorer := Object()
 			objSwitchMenuExplorer.Path := objLister.path
 			if InStr(objLister.path, "Lister-Quick-Find-Results")
-				objSwitchMenuExplorer.Name := "Directory Opus Quick Find Results"
+				objSwitchMenuExplorer.Name := "Directory Opus Quick Find Results (" . intExplorersIndex . ")"
 			else if InStr(objLister.path, "coll://")
-				objSwitchMenuExplorer.Name := "Directory Opus Special Collection"
+				objSwitchMenuExplorer.Name := "Directory Opus Collection (" . intExplorersIndex . ")"
 			else
 				objSwitchMenuExplorer.Name := objLister.path
 			objSwitchMenuExplorer.WindowID := objLister.lister
 			objSwitchMenuExplorer.TabID := objLister.tab
 			
-			intExplorersIndex := intExplorersIndex + 1
 			objSwitchMenuExplorers.Insert(intExplorersIndex, objSwitchMenuExplorer)
 			
 			if StrLen(objSwitchMenuExplorer.Path) and !InStr(objSwitchMenuExplorer.Path, "coll://")
@@ -2937,20 +2947,34 @@ Gui, 2:Add, Text, ys x440 Section, %lOptionsTheme%
 Gui, 2:Add, DropDownList, ys x+10 w120 vdrpTheme Sort, %strAvailableThemes%
 GuiControl, ChooseString, drpTheme, %strTheme%
 
-Gui, 2:Add, CheckBox, y+10 xs vblnPopupAlwaysMouse, Always pop menu near mouse
-GuiControl, , blnPopupFix, %blnPopupFix%
+Gui, 2:Add, Text, y+7 x440 Section, Popup the menu:
 
-Gui, 2:Add, CheckBox, y+10 xs vblnPopupFix gPopupFixClicked, %lOptionsPopupFix%
-GuiControl, , blnPopupFix, %blnPopupFix%
+Gui, 2:Add, Radio, % "y+5 xs vradPopupMenuPosition1 gPopupMenuPositionClicked Group " . (intPopupMenuPosition = 1 ? "Checked" : ""), %lOptionsMenuNearMouse%
+Gui, 2:Add, Radio, % "y+5 xs vradPopupMenuPosition2 gPopupMenuPositionClicked " . (intPopupMenuPosition = 2 ? "Checked" : ""), %lOptionsMenuActiveWindow%
+Gui, 2:Add, Radio, % "y+5 xs vradPopupMenuPosition3 gPopupMenuPositionClicked " . (intPopupMenuPosition = 3 ? "Checked" : ""), %lOptionsMenuFixPosition%
 
-Gui, 2:Add, Text, % "y+10 xs+18 vlblPopupFixPositionX " . (blnPopupFix ? "" : "hidden"), %lOptionsPopupFixPositionX%
-Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionX center " . (blnPopupFix ? "" : "hidden"), %arrPopupFixPosition1%
-Gui, 2:Add, Text, % "yp x+5 vlblPopupFixPositionY " . (blnPopupFix ? "" : "hidden"), %lOptionsPopupFixPositionY%
-Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionY center " . (blnPopupFix ? "" : "hidden"), %arrPopupFixPosition2%
+Gui, 2:Add, Text, % "y+5 xs+18 vlblPopupFixPositionX " . (radPopupMenuPosition = 3 ? "" : "hidden"), %lOptionsPopupFixPositionX%
+Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionX center " . (radPopupMenuPosition = 3 ? "" : "hidden"), %arrPopupFixPosition1%
+Gui, 2:Add, Text, % "yp x+5 vlblPopupFixPositionY " . (radPopupMenuPosition = 3 ? "" : "hidden"), %lOptionsPopupFixPositionY%
+Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionY center " . (radPopupMenuPosition = 3 ? "" : "hidden"), %arrPopupFixPosition2%
 
 
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+PopupMenuPositionClicked:
+;------------------------------------------------------------
+Gui, 2:Submit, NoHide
+
+GuiControl, % (radPopupMenuPosition3 ? "Show" : "Hide"), lblPopupFixPositionX
+GuiControl, % (radPopupMenuPosition3 ? "Show" : "Hide"), strPopupFixPositionX
+GuiControl, % (radPopupMenuPosition3 ? "Show" : "Hide"), lblPopupFixPositionY
+GuiControl, % (radPopupMenuPosition3 ? "Show" : "Hide"), strPopupFixPositionY
 
 return
 ;------------------------------------------------------------
@@ -3060,20 +3084,6 @@ return
 
 
 ;------------------------------------------------------------
-PopupFixClicked:
-;------------------------------------------------------------
-Gui, 2:Submit, NoHide
-
-GuiControl, % (blnPopupFix ? "Show" : "Hide"), lblPopupFixPositionX
-GuiControl, % (blnPopupFix ? "Show" : "Hide"), strPopupFixPositionX
-GuiControl, % (blnPopupFix ? "Show" : "Hide"), lblPopupFixPositionY
-GuiControl, % (blnPopupFix ? "Show" : "Hide"), strPopupFixPositionY
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
 ButtonOptionsSave:
 ;------------------------------------------------------------
 Gui, 2:Submit
@@ -3092,9 +3102,16 @@ IniWrite, %blnDisplaySpecialFolders%, %strIniFile%, Global, DisplaySpecialFolder
 IniWrite, %blnDisplayRecentFolders%, %strIniFile%, Global, DisplayRecentFolders
 IniWrite, %intRecentFolders%, %strIniFile%, Global, RecentFolders
 IniWrite, %blnDisplaySwitchMenu%, %strIniFile%, Global, DisplaySwitchMenu
-IniWrite, %blnPopupFix%, %strIniFile%, Global, PopupFix
 IniWrite, %blnDisplayMenuShortcuts%, %strIniFile%, Global, DisplayMenuShortcuts
 
+if (radPopupMenuPosition1)
+	intPopupMenuPosition := 1
+else if (radPopupMenuPosition2)
+	intPopupMenuPosition := 2
+else
+	intPopupMenuPosition := 3
+IniWrite, %intPopupMenuPosition%, %strIniFile%, Global, PopupMenuPosition
+	
 IniWrite, %strPopupFixPositionX%`,%strPopupFixPositionY%, %strIniFile%, Global, PopupFixPosition
 arrPopupFixPosition1 := strPopupFixPositionX
 arrPopupFixPosition2 := strPopupFixPositionY
@@ -3654,12 +3671,16 @@ SwitchExplorer:
 ;------------------------------------------------------------
 
 if StrLen(objSwitchMenuExplorers[A_ThisMenuItemPos].TabID) ; this is a DOpus lister
-	if InStr(objSwitchMenuExplorers[A_ThisMenuItemPos].Path, "coll://")
-		; /acmd Go does not work if path starts with "coll://", use WinActivate instead
-		WinActivate, % "ahk_id " . objSwitchMenuExplorers[A_ThisMenuItemPos].WindowID
-	else
-		; better because can find activate lister, pane and tab
-		RunDOpusRt("/acmd Go ", objSwitchMenuExplorers[A_ThisMenuItemPos].Path, " EXISTINGLISTER") ; activate an existing lister listing this path
+{
+	if InStr(objSwitchMenuExplorers[A_ThisMenuItemPos].Path, "%")
+	{
+		; double % for DOpusRT (http://resource.dopus.com/viewtopic.php?f=3&t=23013#p124395)
+		strDOpusPathOK := objSwitchMenuExplorers[A_ThisMenuItemPos].Path
+		StringReplace, strDOpusPathOK, strDOpusPathOK, % "%", % "%%", A
+		objSwitchMenuExplorers[A_ThisMenuItemPos].Path := strDOpusPathOK
+	}
+	RunDOpusRt("/acmd Go ", objSwitchMenuExplorers[A_ThisMenuItemPos].Path, " EXISTINGLISTER") ; activate an existing lister listing this path
+}
 else
 	WinActivate, % "ahk_id " . objSwitchMenuExplorers[A_ThisMenuItemPos].WindowID
 
