@@ -25,12 +25,14 @@ To-do:
 	* when Add This Folder, read current folder using DOpusRt
 	
 	Other changes
+	* new option to show the popup menu near the mouse pointer, in the active window or at a fix position
 	* prevent intermittent Windows bug showing an error when building recent folders menu if an external drive has been removed
 	* setting the image and recent items special folders reading the Registry for a solution working in all Windows locales
 	* fix bug when showing special folders names in Switch menus
 	* fix bug when duplicate folders were found in Switch menus
 	* prevent paths longer than 260 chars in Switch menu from causing an error
 	* limit menu name to 250 chars maximum in add/edit folder dialog box
+	* different ini variable LatestVersionSkippedBeta to remember latest skipped version in beta mode
 
 	Version: 3.1.3 (2014-09-07)
 	* bug fix: make all special folders menu items work when popup menu is activated from the tray icon
@@ -633,7 +635,7 @@ IniRead, intPopupMenuPosition, %strIniFile%, Global, PopupMenuPosition, 1
 IniRead, strPopupFixPosition, %strIniFile%, Global, PopupFixPosition, 20,20
 StringSplit, arrPopupFixPosition, strPopupFixPosition, `,
 IniRead, blnDisplayMenuShortcuts, %strIniFile%, Global, DisplayMenuShortcuts, 0
-IniRead, strLatestSkipped, %strIniFile%, Global, LatestVersionSkipped, 0.0
+IniRead, strLatestSkipped, %strIniFile%, Global, % "LatestVersionSkipped" . (strCurrentBranch = "beta" ? "Beta" : ""), 0.0
 IniRead, blnDiagMode, %strIniFile%, Global, DiagMode, 0
 IniRead, intStartups, %strIniFile%, Global, Startups, 1
 IniRead, intRecentFolders, %strIniFile%, Global, RecentFolders, 10
@@ -2261,11 +2263,11 @@ if FirstVsSecondIs(strLatestVersion, strCurrentVersion) = 1
 		else
 			Run, http://code.jeanlalonde.ca/beta-testers-wanted-for-folders-popup-v3/
 	IfMsgBox, No
-		IniWrite, %strLatestVersion%, %strIniFile%, Global, LatestVersionSkipped
+		IniWrite, %strLatestVersion%, %strIniFile%, Global, % "LatestVersionSkipped" . (strCurrentBranch = "beta" ? "Beta" : "")
 	IfMsgBox, Cancel ; Remind me
-		IniWrite, 0.0, %strIniFile%, Global, LatestVersionSkipped
+		IniWrite, 0.0, %strIniFile%, Global, % "LatestVersionSkipped" . (strCurrentBranch = "beta" ? "Beta" : "")
 	IfMsgBox, TIMEOUT ; Remind me
-		IniWrite, 0.0, %strIniFile%, Global, LatestVersionSkipped
+		IniWrite, 0.0, %strIniFile%, Global, % "LatestVersionSkipped" . (strCurrentBranch = "beta" ? "Beta" : "")
 }
 else if (A_ThisMenuItem = lMenuUpdate)
 {
