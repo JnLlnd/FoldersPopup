@@ -9,7 +9,13 @@ To-do:
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: 3.2 (2014-09-XX)
+	Version: 3.2.1 (2014-09-17)
+	* When Explorer replacement activated in DOpus, ghost Explorer in the Switch Explorer menu skipped
+	* Removed Flattr from donation platforms
+	* Remove Switch Explorer support for DOpus listers containing an FTP folder (until issue resolved - https://github.com/JnLlnd/FoldersPopup/issues/84)
+	* Addition of the korean language - thanks to Dollnamul
+
+	Version: 3.2 (2014-09-16)
 	
 	Directory Opus integration
 	* collect info about opened DOpus listers using DOpusRt
@@ -345,7 +351,7 @@ To-do:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 3.2 BETA
+;@Ahk2Exe-SetVersion 3.2.1 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -379,6 +385,7 @@ FileCreateDir, %strTempDir%
 FileInstall, FileInstall\FoldersPopup_LANG_DE.txt, %strTempDir%\FoldersPopup_LANG_DE.txt, 1
 FileInstall, FileInstall\FoldersPopup_LANG_FR.txt, %strTempDir%\FoldersPopup_LANG_FR.txt, 1
 FileInstall, FileInstall\FoldersPopup_LANG_NL.txt, %strTempDir%\FoldersPopup_LANG_NL.txt, 1
+FileInstall, FileInstall\FoldersPopup_LANG_KO.txt, %strTempDir%\FoldersPopup_LANG_KO.txt, 1
 FileInstall, FileInstall\default_browser_icon.html, %strTempDir%\default_browser_icon.html, 1
 
 FileInstall, FileInstall\about-32.png, %strTempDir%\about-32.png
@@ -403,7 +410,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.2" ; "major.minor.bugs"
+global strCurrentVersion := "3.2.1" ; "major.minor.bugs"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
@@ -800,7 +807,7 @@ InitLanguageArrays:
 StringSplit, arrOptionsTitles, lOptionsTitles, |
 StringSplit, arrOptionsTitlesSub, lOptionsTitlesSub, |
 StringSplit, arrOptionsTitlesLong, lOptionsTitlesLong, |
-strOptionsLanguageCodes := "EN|FR|DE|NL"
+strOptionsLanguageCodes := "EN|FR|DE|NL|KO"
 StringSplit, arrOptionsLanguageCodes, strOptionsLanguageCodes, |
 StringSplit, arrOptionsLanguageLabels, lOptionsLanguageLabels, |
 
@@ -1062,7 +1069,7 @@ BuildTrayMenu:
 ;------------------------------------------------------------
 
 Menu, Tray, Icon, , , 1 ; last 1 to freeze icon during pause or suspend
-Menu, Tray, NoStandard
+; Menu, Tray, NoStandard
 ;@Ahk2Exe-IgnoreBegin
 ; Piece of code for developement phase only - won't be compiled
 Menu, Tray, Icon, %A_ScriptDir%\Folders-Likes-icon-192-RED-center.ico, 1, 1 ; last 1 to freeze icon during pause or suspend
@@ -1350,6 +1357,14 @@ CollectExplorers(objExplorers, pExplorers)
 		
 		if !StrLen(strType)
 		{
+			/*
+			###_D(""
+				. "pExplorer.LocationURL: !" . pExplorer.LocationURL . "!`n"
+				. "pExplorer.Type: !" . pExplorer.Type . "!`n"
+				. "pExplorer.LocationName: !" . pExplorer.LocationName . "!`n"
+				. "pExplorer.HWND: !" . pExplorer.HWND . "!`n"
+				. "")
+			*/
 			objExplorer := Object()
 			objExplorer.LocationURL := pExplorer.LocationURL
 			strLocationName :=  UriDecode(pExplorer.LocationURL)
@@ -1364,7 +1379,8 @@ CollectExplorers(objExplorers, pExplorers)
 					objExplorer.LocationName := lMenuSpecialExplorer . " (" . pExplorer.HWND . ")" ; will be used in menuSwitchExplorer
 			objExplorer.WindowID := pExplorer.HWND
 
-			objExplorers.Insert(A_Index, objExplorer)
+			if StrLen(pExplorer.HWND)
+				objExplorers.Insert(A_Index, objExplorer)
 		}
 	}
 }
@@ -1397,7 +1413,9 @@ CollectDOpusListersList(objListers, strList)
 			
 			strList := SubStr(strList, StrLen(strSubStr))
 			
-			objListers.Insert(A_Index, objLister)
+			if !InStr(objLister.path, "ftp://")
+				; Swith Explorer to DOpus FTP folder not supported (see https://github.com/JnLlnd/FoldersPopup/issues/84)
+				objListers.Insert(A_Index, objLister)
 		}
 	} until	(!StrLen(strSubStr))
 }
@@ -2261,7 +2279,7 @@ if FirstVsSecondIs(strLatestVersion, strCurrentVersion) = 1
 		if (strCurrentBranch = "prod")
 			Run, http://code.jeanlalonde.ca/folderspopup/
 		else
-			Run, http://code.jeanlalonde.ca/beta-testers-wanted-for-folders-popup-v3/
+			Run, http://code.jeanlalonde.ca/beta-testers-wanted-for-folders-popup-v3-2/
 	IfMsgBox, No
 		IniWrite, %strLatestVersion%, %strIniFile%, Global, % "LatestVersionSkipped" . (strCurrentBranch = "beta" ? "Beta" : "")
 	IfMsgBox, Cancel ; Remind me
@@ -2276,7 +2294,7 @@ else if (A_ThisMenuItem = lMenuUpdate)
 		if (strCurrentBranch = "prod")
 			Run, http://code.jeanlalonde.ca/folderspopup/
 		else
-			Run, http://code.jeanlalonde.ca/folderspopup20beta/
+			Run, http://code.jeanlalonde.ca/beta-testers-wanted-for-folders-popup-v3-2/
 }
 
 return 
@@ -2768,10 +2786,10 @@ Gui, 2:Font, s12 w700, Verdana
 Gui, 2:Add, Link, y10 w420, % L(lDonateText1, strAppName)
 Gui, 2:Font, s8 w400, Verdana
 Gui, 2:Add, Link, x175 w185 y+10, % L(lDonateText2, "http://code.jeanlalonde.ca/support-freeware/")
-loop, 3
+loop, 2
 {
 	Gui, 2:Add, Button, % (A_Index = 1 ? "y+10 Default vbtnDonateDefault " : "") . " xm w150 gButtonDonate" . A_Index, % lDonatePlatformName%A_Index%
-	Gui, 2:Add, Link, x+10 w235 yp, % L(lDonatePlatformComment%A_Index%, (A_Index = 3 ? "https://flattr.com/" : ""))
+	Gui, 2:Add, Link, x+10 w235 yp, % lDonatePlatformComment%A_Index%
 }
 
 Gui, 2:Font, s10 w700, Verdana
@@ -4472,7 +4490,7 @@ RunDOpusRt(strCommand, strLocation := "", strParam := "")
 {
 	global strDirectoryOpusRtPath
 	global strDirectoryOpusPath
-		
+
 	if FileExist(strDirectoryOpusRtPath)
 		Run, % """" . strDirectoryOpusRtPath . """ " . strCommand . " """ . strLocation . """" . strParam
 	else
