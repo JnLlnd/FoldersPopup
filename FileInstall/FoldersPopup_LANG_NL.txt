@@ -54,10 +54,8 @@ lDonateCheckTitle	~1~ maal! - ~2~
 lDonateMenu	S&teun Freeware!
 lDonatePlatformComment1	De meest flexibele manier door je PayPal account of kredietkaart te gebruiken
 lDonatePlatformComment2	Met een officiële factuur voor het geval je het wil terugvorderen.
-lDonatePlatformComment3	Wil je meer weten over <a href="~1~">microgiften</a>?
 lDonatePlatformName1	Met Paypal
 lDonatePlatformName2	Met Share-it
-lDonatePlatformName3	Met Flattr
 lDonateReviewNameLeft1	Download.com
 lDonateReviewNameLeft2	PortableFreeware.com
 lDonateReviewNameLeft3	Softpedia.com
@@ -158,7 +156,7 @@ lOptionsGuiTitle	Opties - ~1~ ~2~
 lOptionsIconSize	Menu iconen grootte
 lOptionsKeyboard	Toetsenbord
 lOptionsLanguage	Taal
-lOptionsLanguageLabels	Engels|Frans|Duits|Nederlands
+lOptionsLanguageLabels	Engels|Frans|Duits|Nederlands|Korean
 lOptionsMouse	Muis
 lOptionsMouseButtonsText	Linkermuisknop|Middenste muisknop|Rechtermuisknop|Speciale muisknop 1|Speciale muisknop 2|Muiswiel omhoog|Muiswiel omlaag|Muiswiel links|Muiswiel rechts|
 lOptionsMouseCheckLButton	Je kan de linkermuisknop niet toewijzen zonder een extra speciale toets erbij.

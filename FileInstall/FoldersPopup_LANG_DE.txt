@@ -55,10 +55,8 @@ lDonateCheckTitle	~1~ mal! - ~2~
 lDonateMenu	&Unterstützen Sie Freeware!
 lDonatePlatformComment1	Die flexibelste Möglichkeit ist Ihr PayPal-Konto oder Ihre Kreditkarte zu nutzen
 lDonatePlatformComment2	Sie könen eine offizielle Rechnung für die Steuer bekommen
-lDonatePlatformComment3	Wollen Sie mehr zu <a href="~1~">microdonations</a> erfahren?
 lDonatePlatformName1	Mit Paypal
 lDonatePlatformName2	Mit Share-it
-lDonatePlatformName3	Mit Flattr
 lDonateReviewNameLeft1	Download.com
 lDonateReviewNameLeft2	PortableFreeware.com
 lDonateReviewNameLeft3	Softpedia.com
@@ -162,7 +160,7 @@ lOptionsGuiTitle	Optionen - ~1~ ~2~
 lOptionsIconSize	Symbolgröße im Menü
 lOptionsKeyboard	Tastatur
 lOptionsLanguage	Sprache
-lOptionsLanguageLabels	Englisch|Französisch|Deutsch|Holländisch
+lOptionsLanguageLabels	Englisch|Französisch|Deutsch|Holländisch|Korean
 lOptionsMouse	Maus
 lOptionsMouseButtonsText	Linke Maustaste|Mittlere Maustaste|Rechte Maustaste|Maus-Spezialtaste 1|Maus-Spezialtaste 2|Mausrad hoch|Mausrad runter|Mausrad nach links|Mausrad nach rechts|
 lOptionsMouseCheckLButton	Die linke Maustaste kann nicht ohne Zusatztaste definiert werden.
