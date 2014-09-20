@@ -1069,15 +1069,15 @@ BuildTrayMenu:
 ;------------------------------------------------------------
 
 Menu, Tray, Icon, , , 1 ; last 1 to freeze icon during pause or suspend
-; Menu, Tray, NoStandard
+Menu, Tray, NoStandard
 ;@Ahk2Exe-IgnoreBegin
 ; Piece of code for developement phase only - won't be compiled
 Menu, Tray, Icon, %A_ScriptDir%\Folders-Likes-icon-192-RED-center.ico, 1, 1 ; last 1 to freeze icon during pause or suspend
-; Menu, Tray, Standard ; REMOVED because caused a BUG in submenu display (first display only) - compiled or not - unexplained...
-; Menu, Tray, Add
+Menu, Tray, Standard
+Menu, Tray, Add
 ; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
-Menu, Tray, Add, % L(lMenuFPMenu, strAppName, lMenuMenu), :%lMainMenuName%
+; Menu, Tray, Add, % L(lMenuFPMenu, strAppName, lMenuMenu), :%lMainMenuName% ; REMOVED seems to cause a BUG in submenu display (first display only) - unexplained...
 Menu, Tray, Add, % L(lMenuSettings, strAppName), GuiShow
 Menu, Tray, Add
 Menu, Tray, Add, %lMenuRunAtStartup%, RunAtStartup
