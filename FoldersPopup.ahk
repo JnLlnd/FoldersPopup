@@ -2902,7 +2902,7 @@ loop, % arrIniKeyNames%0%
 	Gui, 2:Add, Text, x15 ys+15, % arrOptionsTitlesSub%A_Index%
 }
 
-Gui, 2:Add, Text, x15 y+15 h2 w590 0x10 ; Horizontal Line > Etched Gray
+Gui, 2:Add, Text, x15 y+15 h2 w595 0x10 ; Horizontal Line > Etched Gray
 
 Gui, 2:Font, s8 w700
 Gui, 2:Add, Text, x10 y+5 w500 center, %lOptionsOtherOptions%
@@ -2927,7 +2927,7 @@ GuiControl, , blnDisplayIcons, %blnDisplayIcons%
 
 ; Build Gui footer
 
-Gui, 2:Add, Text, x15 y+15 h2 w590 0x10 ; Horizontal Line > Etched Gray
+Gui, 2:Add, Text, x15 y+15 h2 w595 0x10 ; Horizontal Line > Etched Gray
 
 Gui, 2:Font, s8 w700
 Gui, 2:Add, Text, y+5 xs, %lOptionsDOpusTitle%
@@ -2964,11 +2964,11 @@ Gui, 2:Add, Text, % "yp x+10 vlblRecentFolders " . (blnDisplayRecentFolders ? ""
 
 ; column 3
 
-Gui, 2:Add, Text, ys x440 Section, %lOptionsTheme%
+Gui, 2:Add, Text, ys x430 Section, %lOptionsTheme%
 Gui, 2:Add, DropDownList, ys x+10 w120 vdrpTheme Sort, %strAvailableThemes%
 GuiControl, ChooseString, drpTheme, %strTheme%
 
-Gui, 2:Add, Text, y+7 x440 Section, %lOptionsMenuPositionPrompt%
+Gui, 2:Add, Text, y+7 xs Section, %lOptionsMenuPositionPrompt%
 
 Gui, 2:Add, Radio, % "y+5 xs vradPopupMenuPosition1 gPopupMenuPositionClicked Group " . (intPopupMenuPosition = 1 ? "Checked" : ""), %lOptionsMenuNearMouse%
 Gui, 2:Add, Radio, % "y+5 xs vradPopupMenuPosition2 gPopupMenuPositionClicked " . (intPopupMenuPosition = 2 ? "Checked" : ""), %lOptionsMenuActiveWindow%
