@@ -9,11 +9,11 @@ To-do:
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: 3.2.1 (2014-09-17)
+	Version: 3.2.1 (2014-09-20)
 	* When Explorer replacement activated in DOpus, ghost Explorer in the Switch Explorer menu skipped
 	* Removed Flattr from donation platforms
 	* Remove Switch Explorer support for DOpus listers containing an FTP folder (until issue resolved - https://github.com/JnLlnd/FoldersPopup/issues/84)
-	* Addition of the korean language - thanks to Dollnamul
+	* Addition of the korean language - thanks to Om Il-Sung (Dollnamul)
 
 	Version: 3.2 (2014-09-16)
 	
@@ -351,7 +351,7 @@ To-do:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 3.2.1 BETA
+;@Ahk2Exe-SetVersion 3.2.1
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -411,7 +411,7 @@ Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
 global strCurrentVersion := "3.2.1" ; "major.minor.bugs"
-global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
+global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global blnDiagMode := False
 global strDiagFile := A_WorkingDir . "\" . strAppName . "-DIAG.txt"
