@@ -1,5 +1,5 @@
 lAboutText1	~1~ ~2~ (~3~ bits)
-lAboutText2	~1~ wird entwickelt von Jean Lalonde unter`nVerwendung der <a href="http://ahkscript.org/">AutoHotkey</a> Programmiersprache.`n`nDeutsche Übersetzung: Edgar "Fast Edi" Hoffmann`nFranzösische Übersetzung: Jean Lalonde`nHolländische Übersetzung: Pieter Dejonghe`nEnglische Gegenleser: (Hilfe willkommen)`n`nIcons von: <a href="http://www.visualpharm.com">Visual Pharm</a>`nAutoHotkey_L v1.1 Sourcen: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText2	~1~ wird entwickelt von Jean Lalonde unter`nVerwendung der <a href="http://ahkscript.org/">AutoHotkey</a> Programmiersprache.`n`nDeutsche Übersetzung: Edgar "Fast Edi" Hoffmann`nFranzösische Übersetzung: Jean Lalonde`nHolländische Übersetzung: Pieter Dejonghe`Koreanisch Übersetzung: Om Il-Sung`nEnglische Gegenleser: (Hilfe willkommen)`n`nIcons von: <a href="http://www.visualpharm.com">Visual Pharm</a>`nAutoHotkey_L v1.1 Sourcen: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
 lAboutText4	Support unter <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	Über - ~1~ ~2~
@@ -55,10 +55,8 @@ lDonateCheckTitle	~1~ mal! - ~2~
 lDonateMenu	&Unterstützen Sie Freeware!
 lDonatePlatformComment1	Die flexibelste Möglichkeit ist Ihr PayPal-Konto oder Ihre Kreditkarte zu nutzen
 lDonatePlatformComment2	Sie könen eine offizielle Rechnung für die Steuer bekommen
-lDonatePlatformComment3	Wollen Sie mehr zu <a href="~1~">microdonations</a> erfahren?
 lDonatePlatformName1	Mit Paypal
 lDonatePlatformName2	Mit Share-it
-lDonatePlatformName3	Mit Flattr
 lDonateReviewNameLeft1	Download.com
 lDonateReviewNameLeft2	PortableFreeware.com
 lDonateReviewNameLeft3	Softpedia.com
@@ -162,7 +160,7 @@ lOptionsGuiTitle	Optionen - ~1~ ~2~
 lOptionsIconSize	Symbolgröße im Menü
 lOptionsKeyboard	Tastatur
 lOptionsLanguage	Sprache
-lOptionsLanguageLabels	Englisch|Französisch|Deutsch|Holländisch
+lOptionsLanguageLabels	Englisch|Französisch|Deutsch|Holländisch|Koreanisch
 lOptionsMouse	Maus
 lOptionsMouseButtonsText	Linke Maustaste|Mittlere Maustaste|Rechte Maustaste|Maus-Spezialtaste 1|Maus-Spezialtaste 2|Mausrad hoch|Mausrad runter|Mausrad nach links|Mausrad nach rechts|
 lOptionsMouseCheckLButton	Die linke Maustaste kann nicht ohne Zusatztaste definiert werden.

@@ -1,5 +1,5 @@
 lAboutText1	~1~ ~2~ (~3~ bits)
-lAboutText2	~1~ wordt ontwikkeld door Jean Lalonde gebruik`nmakend van <a href="http://ahkscript.org/">AutoHotkey</a> programmeertaal.`n`nNederlandse vertaling: Pieter Dejonghe`nDuitse vertaling: Edgar "Fast Edi" Hoffmann`nFranse vertaling: Jean Lalonde`nAndere talen: (hulp is welkom)`nCorrectie Engelse vertaling: (hulp is welkom)`n`nOntwerp icons: <a href="http://www.visualpharm.com">Visual Pharm</a>`nAutoHotkey_L v1.1 bronbestanden: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText2	~1~ wordt ontwikkeld door Jean Lalonde gebruik`nmakend van <a href="http://ahkscript.org/">AutoHotkey</a> programmeertaal.`n`nNederlandse vertaling: Pieter Dejonghe`nDuitse vertaling: Edgar "Fast Edi" Hoffmann`nFranse vertaling: Jean Lalonde`nKorean vertaling: Om Il-Sung`nAndere talen: (hulp is welkom)`nCorrectie Engelse vertaling: (hulp is welkom)`n`nOntwerp icons: <a href="http://www.visualpharm.com">Visual Pharm</a>`nAutoHotkey_L v1.1 bronbestanden: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
 lAboutText4	Ondersteuning via <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	Over... - ~1~ ~2~
@@ -21,6 +21,7 @@ lDialogBrowseButton	Bladeren
 lDialogCancelButton	Annuleren
 lDialogCancelPrompt	Wijzigingen negeren?
 lDialogCancelTitle	Annuleren - ~1~ ~2~
+lDialogDirectoryOpusDetected	~1~ heeft gemerkt dat Directory Opus geinstalleerd is op jouw computer.`n`nWil je de Directory Opus integratie activeren?
 lDialogEdit	Bewerken
 lDialogEditDialogPrompt	Voer de nieuwe naam voor het dialoogvenster in`n(of een deel van de naam):
 lDialogEditDialogTitle	Bewerk dialoogvenster - ~1~ ~2~
@@ -54,10 +55,8 @@ lDonateCheckTitle	~1~ maal! - ~2~
 lDonateMenu	S&teun Freeware!
 lDonatePlatformComment1	De meest flexibele manier door je PayPal account of kredietkaart te gebruiken
 lDonatePlatformComment2	Met een officiële factuur voor het geval je het wil terugvorderen.
-lDonatePlatformComment3	Wil je meer weten over <a href="~1~">microgiften</a>?
 lDonatePlatformName1	Met Paypal
 lDonatePlatformName2	Met Share-it
-lDonatePlatformName3	Met Flattr
 lDonateReviewNameLeft1	Download.com
 lDonateReviewNameLeft2	PortableFreeware.com
 lDonateReviewNameLeft3	Softpedia.com
@@ -153,12 +152,19 @@ lOptionsDisplayMenuShortcuts	Toon de &Numerieke Menu Sneltoetsen
 lOptionsDisplayRecentFolders	Toon R&ecente Mappen
 lOptionsDisplaySpecialFolders	Toon S&peciale Mappen
 lOptionsDisplaySwitchMenu	Toon S&witch Menu's
+lOptionsDOpusDetail	Selecteer het Directory Opus programma (dopus.exe) om de Directory Opus integratie te activeren.
+lOptionsDOpusPrompt	Programma
+lOptionsDOpusTitle	Directory Opus gebruikers:
 lOptionsGuiIntro	Definieer de muisknoppen en sneltoetsen die ~1~ zullen triggeren.
 lOptionsGuiTitle	Opties - ~1~ ~2~
 lOptionsIconSize	Menu iconen grootte
 lOptionsKeyboard	Toetsenbord
 lOptionsLanguage	Taal
-lOptionsLanguageLabels	Engels|Frans|Duits|Nederlands
+lOptionsLanguageLabels	Engels|Frans|Duits|Nederlands|Korean
+lOptionsMenuActiveWindow	In het actieve venster
+lOptionsMenuFixPosition	Op een vaste positie
+lOptionsMenuNearMouse	In de buurt van de muisaanwijzer
+lOptionsMenuPositionPrompt	Toon het:
 lOptionsMouse	Muis
 lOptionsMouseButtonsText	Linkermuisknop|Middenste muisknop|Rechtermuisknop|Speciale muisknop 1|Speciale muisknop 2|Muiswiel omhoog|Muiswiel omlaag|Muiswiel links|Muiswiel rechts|
 lOptionsMouseCheckLButton	Je kan de linkermuisknop niet toewijzen zonder een extra speciale toets erbij.
