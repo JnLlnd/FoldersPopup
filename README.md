@@ -13,6 +13,35 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### Version: 3.2.1 (2014-09-20)
+* When Explorer replacement activated in DOpus, ghost Explorer in the Switch Explorer menu skipped
+* Removed Flattr from donation platforms
+* Remove Switch Explorer support for DOpus listers containing an FTP folder (until issue resolved - https://github.com/JnLlnd/FoldersPopup/issues/84)
+* Addition of the korean language - thanks to Om Il-Sung (Dollnamul)
+
+### Version: 3.2 (2014-09-16)
+* collect info about opened DOpus listers using DOpusRt
+* collect info about opened Explorers and DOpus listers in two objects, merge the two sets of folders, remove duplicates and build Switch menus
+* adapt SwitchExplorer and SwitchDialog to new object model
+* switch explorer in DOpus using DOpusRt, switch to DOpus if 2 panes or multiple tabs
+* handling coll:// DOpus windows like search results in Switch Menu
+* use DOpus icons for listers in Switch Explorer
+* enable special folders menus when target window is Directory Opus and navigate to special folders using DOpusRt and built-in aliases
+* navigate folders and recent folders in current lister using DOpusRt
+* open new lister using DOpusRt
+* prompt at startup to activate DOpusRt if DOpus found under Program Files
+* when Add This Folder, read current folder using DOpusRt
+
+Other changes
+* new option to show the popup menu near the mouse pointer, in the active window or at a fix position
+* prevent intermittent Windows bug showing an error when building recent folders menu if an external drive has been removed
+* setting the image and recent items special folders reading the Registry for a solution working in all Windows locales
+* fix bug when showing special folders names in Switch menus
+* fix bug when duplicate folders were found in Switch menus
+* prevent paths longer than 260 chars in Switch menu from causing an error
+* limit menu name to 250 chars maximum in add/edit folder dialog box
+* different ini variable LatestVersionSkippedBeta to remember latest skipped version in beta mode
+
 ### Version: 3.1.3 (2014-09-07)
 * bug fix: make all special folders menu items work when popup menu is activated from the tray icon
 * improve handling of the hash (aka Sharp / "#") bug in Shell.Application (see v1.2.6)
