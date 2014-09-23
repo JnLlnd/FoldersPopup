@@ -9,6 +9,9 @@ To-do:
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: 3.2.2 (2014-09-XX)
+	* fix layout in options gui
+
 	Version: 3.2.1 (2014-09-20)
 	* When Explorer replacement activated in DOpus, ghost Explorer in the Switch Explorer menu skipped
 	* Removed Flattr from donation platforms
@@ -350,8 +353,8 @@ To-do:
 ; Note: prefix comma with `
 
 ;@Ahk2Exe-SetName FoldersPopup
-;@Ahk2Exe-SetDescription Popup menu to jump instantly from one folder to another. Freeware.
-;@Ahk2Exe-SetVersion 3.2.1
+;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
+;@Ahk2Exe-SetVersion 3.2.2
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -410,9 +413,10 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.2.1" ; "major.minor.bugs"
+global strCurrentVersion := "3.2.2" ; "major.minor.bugs"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
+global str32or64 := A_PtrSize * 8
 global blnDiagMode := False
 global strDiagFile := A_WorkingDir . "\" . strAppName . "-DIAG.txt"
 global strIniFile := A_WorkingDir . "\" . strAppName . ".ini"
@@ -471,7 +475,7 @@ if (blnDisplayTrayTip)
 			, Hotkey2Text(strModifiers3, strMouseButton3, strOptionsKey3)
 			, Hotkey2Text(strModifiers2, strMouseButton2, strOptionsKey2)
 			, Hotkey2Text(strModifiers4, strMouseButton4, strOptionsKey4))
-		, , 1
+		, , 17 ; 1 info icon + 16 no sound)
 
 OnExit, CleanUpBeforeExit
 
@@ -1091,6 +1095,7 @@ Menu, Tray, Add
 Menu, Tray, Add, % L(lMenuExitFoldersPopup, strAppName), ExitFoldersPopup
 Menu, Tray, Default, % L(lMenuSettings, strAppName)
 Menu, Tray, Color, %strMenuBackgroundColor%
+Menu, Tray, Tip, % strAppName . " " . strAppVersion . " (" . str32or64 . "-bit)`n" . (blnDonor ? lDonateThankyou : lDonateButton)
 
 return
 ;------------------------------------------------------------
@@ -2751,7 +2756,6 @@ Gui, 1:Submit, NoHide
 Gui, 2:New, , % L(lAboutTitle, strAppName, strAppVersion)
 Gui, 2:Color, %strGuiWindowColor%
 Gui, 2:+Owner1
-str32or64 := A_PtrSize  * 8
 Gui, 2:Font, s12 w700, Verdana
 Gui, 2:Add, Link, y10 w350 vlblAboutText1, % L(lAboutText1, strAppName, strAppVersion, str32or64)
 Gui, 2:Font, s8 w400, Verdana
@@ -2885,9 +2889,9 @@ Gui, 2:New, , % L(lOptionsGuiTitle, strAppName, strAppVersion)
 Gui, 2:Color, %strGuiWindowColor%
 Gui, 2:+Owner1
 Gui, 2:Font, s10 w700, Verdana
-Gui, 2:Add, Text, x10 y10 w500 center, % L(lOptionsGuiTitle, strAppName)
+Gui, 2:Add, Text, x10 y10 w595 center, % L(lOptionsGuiTitle, strAppName)
 Gui, 2:Font
-Gui, 2:Add, Text, x10 y+10 w500 center, % L(lOptionsGuiIntro, strAppName)
+Gui, 2:Add, Text, x10 y+10 w595 center, % L(lOptionsGuiIntro, strAppName)
 
 ; Build Hotkey Gui lines
 loop, % arrIniKeyNames%0%
@@ -2905,7 +2909,7 @@ loop, % arrIniKeyNames%0%
 Gui, 2:Add, Text, x15 y+15 h2 w595 0x10 ; Horizontal Line > Etched Gray
 
 Gui, 2:Font, s8 w700
-Gui, 2:Add, Text, x10 y+5 w500 center, %lOptionsOtherOptions%
+Gui, 2:Add, Text, x10 y+5 w595 center, %lOptionsOtherOptions%
 Gui, 2:Font
 
 ; column 1
