@@ -941,9 +941,11 @@ if (blnDisplaySpecialFolders)
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
+	/*
 	Menu, menuSwitch
 		, % (intExplorersIndex ? "Enable" : "Disable")
 		, %lMenuSwitchExplorer%
+	*/
 	Menu, menuSwitch
 		; , % (intDialogsIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
 		, % (intDialogsIndex and WindowIsDialog(strTargetClass) ? "Enable" : "Disable")
@@ -1009,9 +1011,11 @@ if (blnDisplaySpecialFolders)
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
+	/*
 	Menu, menuSwitch
 		, % (intExplorersIndex ? "Enable" : "Disable")
 		, %lMenuSwitchExplorer%
+	*/
 	Menu, menuSwitch
 		; , % (intDialogsIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
 		, % (intDialogsIndex and WindowIsDialog(strTargetClass)? "Enable" : "Disable")
@@ -1246,9 +1250,9 @@ return
 BuildSwitchMenu:
 ;------------------------------------------------------------
 
-Menu, menuSwitchExplorer, Add
-Menu, menuSwitchExplorer, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
-Menu, menuSwitchExplorer, Color, %strMenuBackgroundColor%
+Menu, menuSwitch, Add
+Menu, menuSwitch, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
+Menu, menuSwitch, Color, %strMenuBackgroundColor%
 Menu, menuSwitchDialog, Add
 Menu, menuSwitchDialog, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
 Menu, menuSwitchDialog, Color, %strMenuBackgroundColor%
@@ -1332,7 +1336,7 @@ intShortcutDialog := 0
 for intIndex, objSwitchMenuExplorer in objSwitchMenuExplorers
 {
 	strMenuName := (blnDisplayMenuShortcuts and (intShortcutExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutExplorer, false) . " " : "") . objSwitchMenuExplorer.Name
-	AddMenuIcon("menuSwitchExplorer", strMenuName, "SwitchExplorer", (StrLen(objSwitchMenuExplorer.TabID) ? "DirectoryOpus" : "menuSwitchExplorer"))
+	AddMenuIcon("menuSwitch", strMenuName, "SwitchExplorer", (StrLen(objSwitchMenuExplorer.TabID) ? "DirectoryOpus" : "menuSwitchExplorer"))
 }
 
 for intIndex, objSwitchMenuDialog in objSwitchMenuDialogs
@@ -1340,6 +1344,8 @@ for intIndex, objSwitchMenuDialog in objSwitchMenuDialogs
 	strMenuName := (blnDisplayMenuShortcuts and (intShortcutDialog <= 35) ? "&" . NextMenuShortcut(intShortcutDialog, false) . " " : "") . objSwitchMenuDialog.Name
 	AddMenuIcon("menuSwitchDialog", strMenuName, "SwitchDialog", "menuSwitchDialog")
 }
+
+AddMenuIcon("menuSwitch", lMenuSwitchDialog, ":menuSwitchDialog", "menuSwitchDialog")
 
 return
 ;------------------------------------------------------------
@@ -1478,8 +1484,8 @@ if (blnDisplaySwitchMenu)
 {
 	; Menu, menuSwitch, Add
 	; Menu, menuSwitch, DeleteAll
-	AddMenuIcon("menuSwitch", lMenuSwitchExplorer, ":menuSwitchExplorer", "lMenuSwitchExplorer")
-	AddMenuIcon("menuSwitch", lMenuSwitchDialog, ":menuSwitchDialog", "lMenuSwitchDialog")
+	; AddMenuIcon("menuSwitch", lMenuSwitchExplorer, ":menuSwitchExplorer", "lMenuSwitchExplorer")
+	; AddMenuIcon("menuSwitch", lMenuSwitchDialog, ":menuSwitchDialog", "lMenuSwitchDialog")
 	AddMenuIcon(lMainMenuName, lMenuSwitch, ":menuSwitch", "lMenuSwitch")
 	Menu, menuSwitch, Color, %strMenuBackgroundColor%
 }
