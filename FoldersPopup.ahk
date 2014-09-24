@@ -527,33 +527,40 @@ StringSplit, arrMouseButtons, strMouseButtons, |
 strIconsMenus := "lMenuDesktop|lMenuDocuments|lMenuPictures|lMenuMyComputer|lMenuNetworkNeighborhood|lMenuControlPanel|lMenuRecycleBin"
 	. "|menuRecentFolders|menuSwitchDialog|menuSwitchExplorer|lMenuSpecialFolders|lMenuSwitchExplorer|lMenuSwitchDialog|lMenuSwitch"
 	. "|lMenuRecentFolders|lMenuSettings|lMenuAddThisFolder|lDonateMenu|Submenu|Network|UnknownDocument|Folder"
+	. "|menuSwitchSave|menuSwitchLoad"
 
 if (A_OSVersion = "WIN_XP")
 {
 	strIconsFile := "shell32|shell32|shell32|shell32|shell32|shell32|shell32"
 				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
 				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
+				. "|shell32|shell32"
 	strIconsIndex := "35|127|118|16|19|22|33"
 				. "|4|147|4|4|147|147|147"
 				. "|214|166|111|161|85|10|3|4"
+				. "|1|2"
 }
 else if (A_OSVersion = "WIN_VISTA")
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|shell32|shell32|shell32|imageres|imageres|imageres"
+				. "|imageres|imageres"
 	strIconsIndex := "105|85|67|104|114|22|49"
 				. "|112|174|3|3|175|174|175|"
 				. "112|109|88|161|85|28|2|3"
+				. "|1|2"
 }
 else
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres|imageres|imageres"
+				. "|imageres|imageres"
 	strIconsIndex := "106|189|68|105|115|23|50"
 				. "|113|176|203|203|177|176|177|"
 				. "113|110|217|208|298|29|3|4"
+				. "|1|2"
 }
 
 StringSplit, arrIconsFile, strIconsFile, |
@@ -1345,6 +1352,12 @@ for intIndex, objSwitchMenuDialog in objSwitchMenuDialogs
 	AddMenuIcon("menuSwitchDialog", strMenuName, "SwitchDialog", "menuSwitchDialog")
 }
 
+Menu, menuSwitch, Add
+AddMenuIcon("menuSwitch", "Save this workspace", "SwitchSaveWorkspace", "menuSwitchSave") ; ### language
+AddMenuIcon("menuSwitch", "Load workspace", "SwitchLoadWorkspace", "menuSwitchLoad") ; ### language
+
+Menu, menuSwitch, Add
+
 AddMenuIcon("menuSwitch", lMenuSwitchDialog, ":menuSwitchDialog", "menuSwitchDialog")
 
 return
@@ -1457,6 +1470,32 @@ NameIsInObject(strName, obj)
 			return true
 	return false
 }
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+SwitchSaveWorkspace:
+;------------------------------------------------------------
+
+strWorkspace := ""
+for intIndex, objSwitchMenuExplorer in objSwitchMenuExplorers
+	strWorkspace := strWorkspace . objSwitchMenuExplorer.Name . "`n"
+
+###_D(strWorkspace)
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+SwitchLoadWorkspace:
+;------------------------------------------------------------
+
+loop, parse, strWorkspace, `n
+	if StrLen(A_LoopField) and (A_LoopField <> "Ordinateur")
+		run, %A_LoopField%
+
+return
 ;------------------------------------------------------------
 
 
