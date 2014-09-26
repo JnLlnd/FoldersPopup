@@ -9,6 +9,14 @@ To-do:
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: 3.3 (2014-09-XX)
+	* reorg Switch menu taking SwitchExplorer to Switch menu level, with Switch in dialog box at the bottom of Switch menu
+	* save and restore workspaces prototype
+	* save and restore with positions
+	* add Save this workspace and Load workspace menus to Switch menu
+	* add Workspaces button to main Gui
+	* 
+
 	Version: 3.2.2 (2014-09-XX)
 	* fix layout in options gui
 	* tweaking for MS Word/XL dialog boxes under Windows XP
@@ -355,7 +363,7 @@ To-do:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 3.2.2
+;@Ahk2Exe-SetVersion 3.3
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -395,6 +403,7 @@ FileInstall, FileInstall\default_browser_icon.html, %strTempDir%\default_browser
 FileInstall, FileInstall\about-32.png, %strTempDir%\about-32.png
 FileInstall, FileInstall\add_property-48.png, %strTempDir%\add_property-48.png
 FileInstall, FileInstall\delete_property-48.png, %strTempDir%\delete_property-48.png
+FileInstall, FileInstall\channel_mosaic-48.png, %strTempDir%\channel_mosaic-48.png
 FileInstall, FileInstall\separator-26.png, %strTempDir%\separator-26.png
 FileInstall, FileInstall\down_circular-26.png, %strTempDir%\down_circular-26.png
 FileInstall, FileInstall\edit_property-48.png, %strTempDir%\edit_property-48.png
@@ -414,7 +423,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.2.2" ; "major.minor.bugs"
+global strCurrentVersion := "3.3" ; "major.minor.bugs"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -489,7 +498,7 @@ OnMessage(0x200, "WM_MOUSEMOVE")
 ; To popup menu when left click on the tray icon - See AHK_NOTIFYICON function below
 OnMessage(0x404, "AHK_NOTIFYICON")
 
-; Gosub, GuiShow ; ### only when debugging Gui
+Gosub, GuiShow ; ### only when debugging Gui
 ; Gosub, GuiOptions ; ### only when debugging Gui
 ; Gosub, GuiAddFolder ; ### only when debugging Gui
 ; Gosub, GuiAddFromPopup
@@ -1651,7 +1660,7 @@ Gui, 1:Add, DropDownList, xm+30 yp w480 vdrpMenusList gGuiMenusListChanged
 
 Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, ListView
-	, xm+30 w480 h220 Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFoldersList gGuiFoldersListEvent
+	, xm+30 w480 h240 Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFoldersList gGuiFoldersListEvent
 	, %lGuiLvFoldersHeader%|Hidden Menu|Hidden Submenu|Hidden FavoriteType
 LV_ModifyCol(3, 0) ; hide 3rd column
 LV_ModifyCol(4, 0) ; hide 4th column
@@ -1678,34 +1687,38 @@ Gui, 1:Add, Picture, xs+10 gGuiRemoveFolder, %strTempDir%\delete_property-48.png
 Gui, 1:Font, s8 w400, Arial ; button legend
 Gui, 1:Add, Text, xs y+0 w68 center gGuiRemoveFolder, %lGuiRemoveFolder% ; Static19
 
-Gui, 1:Add, Text, Section x185 ys+240
+Gui, 1:Add, Picture, xs+10 y+35 gGuiWorkspaces, %strTempDir%\channel_mosaic-48.png ; Static20
+Gui, 1:Font, s8 w400, Arial ; button legend
+Gui, 1:Add, Text, xs y+0 w68 center gGuiWorkspaces, Workspaces ; Static21 ### language
+
+Gui, 1:Add, Text, Section x185 ys+260
 
 Gui, 1:Font, s8 w600 italic, Verdana
 Gui, 1:Add, Text, xm yp w520 center, %lGuiDropFilesIncentive%
 
-Gui, 1:Add, Text, xm y+20
+Gui, 1:Add, Text, xm y+60
 Gui, 1:Font, s9 w600, Verdana
 Gui, 1:Add, Button, ys+40 Disabled Default vbtnGuiSave gGuiSave, %lGuiSave% ; Button1
 Gui, 1:Add, Button, yp vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur - Button2
 Gui, 1:Font, s6 w400, Verdana
 GuiCenterButtons(L(lGuiTitle, strAppName, strAppVersion), 50, 30, 40, -80, "btnGuiSave", "btnGuiCancel")
 
-Gui, 1:Add, Picture, x490 yp+3 gGuiAbout Section, %strTempDir%\about-32.png ; Static23
-Gui, 1:Add, Picture, x540 yp gGuiHelp, %strTempDir%\help-32.png ; Static24
+Gui, 1:Add, Picture, x490 yp+23 gGuiAbout Section, %strTempDir%\about-32.png ; Static25
+Gui, 1:Add, Picture, x540 yp gGuiHelp, %strTempDir%\help-32.png ; Static26
 if !(blnDonor)
 {
 	strDonateButtons := "thumbs_up|solutions|handshake|conference|gift"
 	StringSplit, arrDonateButtons, strDonateButtons, |
 	Random, intDonateButton, 1, 5
 
-	Gui, 1:Add, Picture, xm+20 yp gGuiDonate, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png" ; Static25
+	Gui, 1:Add, Picture, xm+20 yp gGuiDonate, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png" ; Static27
 }
 
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs-20 ys+35 w68 center gGuiAbout, %lGuiAbout% ; Static26
-Gui, 1:Add, Text, xs+40 ys+35 w52 center gGuiHelp, %lGuiHelp% ; Static27
+Gui, 1:Add, Text, xs-20 ys+35 w68 center gGuiAbout, %lGuiAbout% ; Static28
+Gui, 1:Add, Text, xs+40 ys+35 w52 center gGuiHelp, %lGuiHelp% ; Static29
 if !(blnDonor)
-	Gui, 1:Add, Text, xm+10 ys+35 w52 center gGuiDonate, %lGuiDonate% ; Static28
+	Gui, 1:Add, Text, xm+10 ys+35 w52 center gGuiDonate, %lGuiDonate% ; Static30
 return
 ;------------------------------------------------------------
 
@@ -1861,6 +1874,30 @@ if (strFavoriteType = "S")
 
 GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lGuiCancel%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiWorkspaces:
+;------------------------------------------------------------
+intGui1WinID := WinExist("A")
+Gui, 1:Submit, NoHide
+Gui, 2:New, , Workspaces ; ### % L(lDialogAddEditFolderTitle, (A_ThisLabel = "GuiEditFolder" ? lDialogEdit : lDialogAdd), strAppName, strAppVersion)
+Gui, 2:+Owner1
+Gui, 2:+OwnDialogs
+Gui, 2:Color, %strGuiWindowColor%
+
+; Gui, 2:Add, Text, % x10 y10 vlblFolderParentMenu, % (blnRadioSubmenu ? lDialogSubmenuParentMenu : lDialogFolderParentMenu)
+; Gui, 2:Add, DropDownList, x10 w300 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
+
+; Gui, 2:Add, Button, y+20 vbtnAddFolderAdd gGuiAddFolderSave, %lDialogAdd%
+; Gui, 2:Add, Button, yp vbtnAddFolderCancel gGuiAddFolderCancel, %lGuiCancel%
+; GuiCenterButtons(L(lDialogAddEditFolderTitle, lDialogAdd, strAppName, strAppVersion), 10, 5, 20, , "btnAddFolderAdd", "btnAddFolderCancel")
+
+Gui, 2:Show, AutoSize Center
+Gui, 1:+Disabled
 
 return
 ;------------------------------------------------------------
@@ -3749,9 +3786,22 @@ return
 SwitchSaveWorkspace:
 ;------------------------------------------------------------
 
+/*
+If no explorer exist
+{
+	Gui, 1:+OwnDialogs 
+	Oops open at least one Explorer to save it
+	return
+}
+*/
+Gosub, GuiShow
+Gosub, GuiWorkspaces
+
+/*
 strWorkspace := ""
 for intIndex, objSwitchMenuExplorer in objSwitchMenuExplorers
 	strWorkspace := strWorkspace . objSwitchMenuExplorer.Name . "|" . objSwitchMenuExplorer.Position . "`n"
+*/
 
 return
 ;------------------------------------------------------------
@@ -4427,7 +4477,7 @@ WM_MOUSEMOVE(wParam, lParam)
 	MouseGetPos, , , , strControl ; Static1, StaticN, Button1, ButtonN
 	StringReplace, strControl, strControl, Static
 	
-	If InStr(".3.4.6.7.9.10.11.12.14.15.16.17.18.19.23.24.25.26.27.28.Button1.Button2.", "." . strControl . ".")
+	If InStr(".3.4.6.7.9.10.11.12.14.15.16.17.18.19.20.21.25.26.27.28.29.30.Button1.Button2.", "." . strControl . ".")
 		DllCall("SetCursor", "UInt", objCursor)
 
 	return
