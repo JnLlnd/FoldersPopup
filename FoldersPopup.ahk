@@ -4034,10 +4034,18 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 	;===In this part (if we reached it), we'll send strLocation to control and restore control's initial text after navigating to specified folder===
 	ControlGetText, strPrevControlText, %strControl%, ahk_id %strWinId% ; we'll get and store control's initial text first
 	
-	ControlSetTextR(strControl, strLocation, "ahk_id " . strWinId) ; set control's text to strLocation
-	ControlSetFocusR(strControl, "ahk_id " . strWinId) ; focus control
+	if !ControlSetTextR(strControl, strLocation, "ahk_id " . strWinId) ; set control's text to strLocation
+		return ; abort if control is not set
+	if InStr(strClass, "bosa_sdm_") ; additional delay for XPs running MS Word or XL 
+		Sleep, 100
+	if !ControlSetFocusR(strControl, "ahk_id " . strWinId) ; focus control
+		return
+	if InStr(strClass, "bosa_sdm_") ; additional delay for XPs running MS Word or XL 
+		Sleep, 100
 	if (WinExist("A") <> strWinId) ; in case that some window just popped out, and initialy active window lost focus
 		WinActivate, ahk_id %strWinId% ; we'll activate initialy active window
+	if InStr(strClass, "bosa_sdm_") ; additional delay for XPs running MS Word or XL 
+		Sleep, 100
 	
 	;=== Avoid accidental hotkey & hotstring triggereing while doing SendInput - can be done simply by #UseHook, but do it if user doesn't have #UseHook in the script ===
 	If (A_IsSuspended)
@@ -4048,7 +4056,7 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 	if (!blnWasSuspended)
 		Suspend, Off
 
-	Sleep, 70 ; give some time to control after sending {Enter} to it
+	Sleep, 100 ; give some time to control after sending {Enter} to it
 	ControlGetText, strControlTextAfterNavigation, %strControl%, ahk_id %strWinId% ; sometimes controls automatically restore their initial text
 	if (strControlTextAfterNavigation <> strPrevControlText) ; if not
 		ControlSetTextR(strControl, strPrevControlText, "ahk_id " . strWinId) ; we'll set control's text to its initial text
@@ -4090,7 +4098,7 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 	Loop, %intTries%
 	{
 		ControlFocus, %strControl%, %strWinTitle% ; focus control
-		Sleep, % (50 * intTries) ; JL added "* intTries"
+		Sleep, % (100 * A_Loop) ; JL added "* A_Loop"
 		ControlGetFocus, strFocusedControl, %strWinTitle% ; check
 		if (strFocusedControl = strControl) ; if OK
 		{
@@ -4099,6 +4107,9 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 			return True
 		}
 	}
+	if (blnDiagMode)
+		Diag("ControlSetFocusR", "Unable to set focus")
+	return false
 }
 ;------------------------------------------------------------
 
@@ -4115,7 +4126,7 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 	Loop, %intTries%
 	{
 		ControlSetText, %strControl%, %strNewText%, %strWinTitle% ; set
-		Sleep, % (50 * intTries) ; JL added "* intTries"
+		Sleep, % (100 * A_Loop) ; JL added "* A_Loop"
 		ControlGetText, strCurControlText, %strControl%, %strWinTitle% ; check
 		if (strCurControlText = strNewText) ; if OK
 		{
@@ -4124,6 +4135,9 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 			return True
 		}
 	}
+	if (blnDiagMode)
+		Diag("ControlSetTextR", "Unable to set text")
+	return false
 }
 ;------------------------------------------------------------
 
