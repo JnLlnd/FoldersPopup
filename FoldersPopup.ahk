@@ -11,6 +11,7 @@ To-do:
 
 	Version: 3.2.2 (2014-09-XX)
 	* fix layout in options gui
+	* tweaking for MS Word/XL dialog boxes under Windows XP
 
 	Version: 3.2.1 (2014-09-20)
 	* When Explorer replacement activated in DOpus, ghost Explorer in the Switch Explorer menu skipped
