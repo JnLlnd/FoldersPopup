@@ -1326,6 +1326,7 @@ for intIndex, objExplorer in objExplorersWindows
 		objSwitchMenuExplorer.Name := objExplorer.LocationName
 		objSwitchMenuExplorer.WindowID := objExplorer.WindowID
 		objSwitchMenuExplorer.TabID := ""
+		objSwitchMenuExplorer.Position := objExplorer.Position
 		
 		intExplorersIndex := intExplorersIndex + 1
 		objSwitchMenuExplorers.Insert(intExplorersIndex, objSwitchMenuExplorer)
@@ -1390,6 +1391,7 @@ CollectExplorers(objExplorers, pExplorers)
 				. "")
 			*/
 			objExplorer := Object()
+			objExplorer.Position := pExplorer.Left . "|" . pExplorer.Top . "|" . pExplorer.Width . "|" . pExplorer.Height
 			objExplorer.LocationURL := pExplorer.LocationURL
 			strLocationName :=  UriDecode(pExplorer.LocationURL)
 			StringReplace, strLocationName, strLocationName, file:///
@@ -1470,32 +1472,6 @@ NameIsInObject(strName, obj)
 			return true
 	return false
 }
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-SwitchSaveWorkspace:
-;------------------------------------------------------------
-
-strWorkspace := ""
-for intIndex, objSwitchMenuExplorer in objSwitchMenuExplorers
-	strWorkspace := strWorkspace . objSwitchMenuExplorer.Name . "`n"
-
-###_D(strWorkspace)
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-SwitchLoadWorkspace:
-;------------------------------------------------------------
-
-loop, parse, strWorkspace, `n
-	if StrLen(A_LoopField) and (A_LoopField <> "Ordinateur")
-		run, %A_LoopField%
-
-return
 ;------------------------------------------------------------
 
 
@@ -3763,6 +3739,35 @@ SwitchDialog:
 ;------------------------------------------------------------
 
 NavigateDialog(objSwitchMenuDialogs[A_ThisMenuItemPos].Path, strTargetWinId, strTargetClass)
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+SwitchSaveWorkspace:
+;------------------------------------------------------------
+
+strWorkspace := ""
+for intIndex, objSwitchMenuExplorer in objSwitchMenuExplorers
+	strWorkspace := strWorkspace . objSwitchMenuExplorer.Name . "|" . objSwitchMenuExplorer.Position . "`n"
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+SwitchLoadWorkspace:
+;------------------------------------------------------------
+
+loop, parse, strWorkspace, `n
+	if StrLen(A_LoopField) and InStr(A_LoopField, ":\") ; exclude special folders
+	{
+		StringSplit, arrWorkspace, A_LoopField, |
+		run, explorer.exe %arrWorkspace1%
+		Sleep, 500
+		WinMove, A, , %arrWorkspace2%, %arrWorkspace3%, %arrWorkspace4%, %arrWorkspace5%
+	}
 
 return
 ;------------------------------------------------------------
