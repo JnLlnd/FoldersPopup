@@ -12,6 +12,7 @@ To-do:
 	Version: 3.2.2 (2014-09-XX)
 	* fix layout in options gui
 	* tweaking for MS Word/XL dialog boxes under Windows XP
+	* remove support for MS Office 2003/2007 file dialog boxes
 
 	Version: 3.2.1 (2014-09-20)
 	* When Explorer replacement activated in DOpus, ghost Explorer in the Switch Explorer menu skipped
@@ -3850,7 +3851,9 @@ WindowIsConsole(strClass)
 WindowIsDialog(strClass)
 ;------------------------------------------------------------
 {
-	return (strClass = "#32770") or InStr(strClass, "bosa_sdm_")
+	return (strClass = "#32770")
+	; or InStr(strClass, "bosa_sdm_")
+	; Removed 2014-09-27  (see http://code.jeanlalonde.ca/folderspopup/#comment-7912)
 }
 ;------------------------------------------------------------
 
@@ -4001,6 +4004,8 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 				Diag("NavigateDialog", "Error: #32770 Edit1 and Edit2 controls not visible")
 			return
 		}
+	/*
+	Remove support for Office 2003/2007 file dialog boxes
 	Else if InStr(strClass, "bosa_sdm_") ; for some MS office dialog windows, which are not #32770 class
 		if ControlIsVisible("ahk_id " . strWinId, "Edit1")
 			strControl := "Edit1"
@@ -4014,6 +4019,7 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 				Diag("NavigateDialog", "Error: bosa_sdm Edit1 and RichEdit20W2 controls not visible")
 			return
 		}
+	*/
 	Else ; in all other cases, open a new Explorer and return from this function
 	{
 		if (A_OSVersion = "WIN_XP")
@@ -4022,7 +4028,7 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 			Run, Explorer %strLocation%
 		; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 		if (blnDiagMode)
-			Diag("NavigateDialog", "Not #32770 or bosa_sdm: open New Explorer")
+			Diag("NavigateDialog", "Not #32770: open New Explorer")
 		return
 	}
 
