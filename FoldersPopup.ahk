@@ -1672,7 +1672,7 @@ Gui, 1:Add, Text, Section x+0 yp
 Gui, 1:Add, Picture, xm ys+25 gGuiMoveFolderUp, %strTempDir%\up_circular-26.png ; 9
 Gui, 1:Add, Picture, xm ys+55 gGuiMoveFolderDown, %strTempDir%\down_circular-26.png ; Static10
 Gui, 1:Add, Picture, xm ys+85 gGuiAddSeparator, %strTempDir%\separator-26.png ; Static11
-Gui, 1:Add, Picture, xm+1 ys+175 gGuiSortFolders, %strTempDir%\generic_sorting2-26-grey.png ; Static12
+Gui, 1:Add, Picture, xm+1 ys+205 gGuiSortFolders, %strTempDir%\generic_sorting2-26-grey.png ; Static12
 
 Gui, 1:Add, Text, Section xs ys
 
@@ -1690,21 +1690,21 @@ Gui, 1:Add, Text, xs y+0 w68 center gGuiRemoveFolder, %lGuiRemoveFolder% ; Stati
 
 Gui, 1:Add, Picture, xs+10 y+35 gGuiWorkspaces, %strTempDir%\channel_mosaic-48.png ; Static20
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs y+0 w68 center gGuiWorkspaces, Workspaces ; Static21 ### language
+Gui, 1:Add, Text, xs y+5 w68 center gGuiWorkspaces, Workspaces ; Static21 ### language
 
-Gui, 1:Add, Text, Section x185 ys+260
+Gui, 1:Add, Text, Section x185 ys+250
 
 Gui, 1:Font, s8 w600 italic, Verdana
 Gui, 1:Add, Text, xm yp w520 center, %lGuiDropFilesIncentive%
 
 Gui, 1:Add, Text, xm y+60
 Gui, 1:Font, s9 w600, Verdana
-Gui, 1:Add, Button, ys+40 Disabled Default vbtnGuiSave gGuiSave, %lGuiSave% ; Button1
+Gui, 1:Add, Button, ys+70 Disabled Default vbtnGuiSave gGuiSave, %lGuiSave% ; Button1
 Gui, 1:Add, Button, yp vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur - Button2
 Gui, 1:Font, s6 w400, Verdana
 GuiCenterButtons(L(lGuiTitle, strAppName, strAppVersion), 50, 30, 40, -80, "btnGuiSave", "btnGuiCancel")
 
-Gui, 1:Add, Picture, x490 yp+23 gGuiAbout Section, %strTempDir%\about-32.png ; Static25
+Gui, 1:Add, Picture, x490 yp+13 gGuiAbout Section, %strTempDir%\about-32.png ; Static25
 Gui, 1:Add, Picture, x540 yp gGuiHelp, %strTempDir%\help-32.png ; Static26
 if !(blnDonor)
 {
@@ -1720,6 +1720,7 @@ Gui, 1:Add, Text, xs-20 ys+35 w68 center gGuiAbout, %lGuiAbout% ; Static28
 Gui, 1:Add, Text, xs+40 ys+35 w52 center gGuiHelp, %lGuiHelp% ; Static29
 if !(blnDonor)
 	Gui, 1:Add, Text, xm+10 ys+35 w52 center gGuiDonate, %lGuiDonate% ; Static30
+
 return
 ;------------------------------------------------------------
 
