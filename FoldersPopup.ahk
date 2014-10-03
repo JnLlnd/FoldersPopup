@@ -9,10 +9,10 @@ To-do:
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: 3.2.2 (2014-09-XX)
+	Version: 3.2.2 (2014-10-02)
 	* fix layout in options gui
-	* tweaking for MS Word/XL dialog boxes under Windows XP
 	* remove support for MS Office 2003/2007 file dialog boxes
+	* German language update
 
 	Version: 3.2.1 (2014-09-20)
 	* When Explorer replacement activated in DOpus, ghost Explorer in the Switch Explorer menu skipped

@@ -13,6 +13,11 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### Version: 3.2.2 (2014-10-02)
+* fix layout in options gui
+* remove support for MS Office 2003/2007 file dialog boxes
+* German language update
+
 ### Version: 3.2.1 (2014-09-20)
 * When Explorer replacement activated in DOpus, ghost Explorer in the Switch Explorer menu skipped
 * Removed Flattr from donation platforms
