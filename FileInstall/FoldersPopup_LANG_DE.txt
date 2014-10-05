@@ -161,6 +161,10 @@ lOptionsIconSize	Symbolgröße im Menü
 lOptionsKeyboard	Tastatur
 lOptionsLanguage	Sprache
 lOptionsLanguageLabels	Englisch|Französisch|Deutsch|Holländisch|Koreanisch
+lOptionsMenuActiveWindow	Im aktiven Fenster
+lOptionsMenuFixPosition	An fester Position
+lOptionsMenuNearMouse	Nahe des Mauszeigers
+lOptionsMenuPositionPrompt	Menü aufpoppen:
 lOptionsMouse	Maus
 lOptionsMouseButtonsText	Linke Maustaste|Mittlere Maustaste|Rechte Maustaste|Maus-Spezialtaste 1|Maus-Spezialtaste 2|Mausrad hoch|Mausrad runter|Mausrad nach links|Mausrad nach rechts|
 lOptionsMouseCheckLButton	Die linke Maustaste kann nicht ohne Zusatztaste definiert werden.
