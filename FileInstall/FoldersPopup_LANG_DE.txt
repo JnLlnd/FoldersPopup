@@ -21,7 +21,6 @@ lDialogBrowseButton	Durchsuchen
 lDialogCancelButton	Abbrechen
 lDialogCancelPrompt	Änderungen verwerfen?
 lDialogCancelTitle	Abbrechen - ~1~ ~2~
-lDialogDirectoryOpusDetected	~1~ hat festgestellt, daÃŸ Directory Opus auf diesem System installiert ist.`n`nWollen Sie die Directory Opus Integration einschalten?
 lDialogEdit	Bearbeiten
 lDialogEditDialogPrompt	Geben Sie den neuen Namen für die Dialogbox ein`n(oder einen Teil des Namens):
 lDialogEditDialogTitle	Dialogbox bearbeiten - ~1~ ~2~
@@ -47,6 +46,7 @@ lDialogSubmenuLabel	Untermenü
 lDialogSubmenuNameEmpty	Kein Name für das Untermenü angegeben. Bitte Namen vergeben.
 lDialogSubmenuParentMenu	Untermenü Elternmenü
 lDialogSubmenuShortName	Kurzname des Untermenüs
+lDialogThirdPartyDetected	~1~ hat festgestellt, daÃŸ ~2~ auf diesem System installiert ist.`n`nWollen Sie die ~2~ Integration einschalten?
 lDialogURLLabel	URL
 lDialogURLShortName	Link short name (for menu)
 lDonateButton	Unterstützen Sie Freeware!
@@ -96,7 +96,7 @@ lHelpText1	Beim Start fügt FoldersPopup ein Symbol im System Tray hinzu und wart
 lHelpText2	Wählen Sie "Einstellungen" um das Einstellungsfenster zu öffnen, wo Sie favorisierte ORDNER, DOKUMENTE oder WEBSEITEN zum Menü hinzufügen können. Sie können diese verschieben, umbenennen oder löschen. Sie können ebenfalls UNTERMENÜS hinzufügen, verschieben oder löschen. Wählen Sie hierzu "Zu bearbeitendes Menü:" in der Dropdown-Auswahl. Klicken Sie auf "Speichern" um die Änderungen zu sichern.
 lHelpText3	Um schnell einen neuen Favoriten zum Popup-Menü hinzuzufügen:`n1) Navigieren Sie zu einem oft benutzten Ordner.`n2) Klicken Sie mit der mittleren Maustaste (oder drücken Sie Windows-K) und wählen Sie "Diesen Ordner hinzufügen".`n3) Vergeben Sie einen kurzen, sprechenden Namen, klicken sie "Hinzufügen" und "Speichern" im Einstellungsfenster.
 lHelpText4	Um schnell ein neues DOKUMENT oder einen WEBLINK zum Popup-Menü hinzuzufügen:`n1) Öffnen Sie das Popup-Menü des Ordners und wählen Sie "Einstellungen" (Shift-Windows-F).`n2) Klicken Sie "Hinzufügen" und wählen Sie die Option "Dokument" oder "Link (URL)".`n3) Vergeben Sie einen kurzen, sprechenden Namen, navigieren Sie zum Dokument oder geben Sie die URL der Webseite ein, klicken Sie "Hinzufügen" und "Speichern" im Einstellungsfenster.
-lHelpText5	TIPS UND TRICKS`n- Aktivieren Sie  die Option "Beim Starten ausführen" im Tray-Menü, um FoldersPopup automatisch beim Systemstart auszuführen.`n- Soll ein bevorzugter Ordner in einem neuen Explorer-Fenster geöffnet werden? Drücken Sie einfach die Shift-Taste zusammen mit der linken und mittleren Maustaste (oder Shift-Windows-K). Dies erlaubt es, einen bevorzugten Ordner aus jedem Fenster heraus zu öffnen.`n- Wählen Sie das "Kürzlich geöffnete Ordner..." Menü (Shift-Windows-R) um eine aktualisierte Liste der kürzlich geöffneten Ordner zu sehen.`n- Konfigurieren Sie die Popup-Menü Trigger: wählen Sie die bevorzugte Maustaste oder das Tastaturkürzel unter "Einstellungen, Optionen".`n- Ebenfalls unter "Optionen": wählen Sie die bevorzugte Sprache, Symbolgröße oder Fensterfarbe. Wählen Sie die Optionen zur Anzeige der bevorzugten Ordner, fügen Sie dem Ordner-Menü numerische Tastenkürzel hinzu oder geben Sie dem Popup-Menü eine feste Position.`n- Directory Opus Benutzer, lesen Sie bitte <a href="http://code.jeanlalonde.ca/folders-popup-now-compatible-with-directory-opus/">this page</a> für weitere Informationen.
+lHelpText5	TIPS UND TRICKS`n- Aktivieren Sie  die Option "Beim Starten ausführen" im Tray-Menü, um FoldersPopup automatisch beim Systemstart auszuführen.`n- Soll ein bevorzugter Ordner in einem neuen Explorer-Fenster geöffnet werden? Drücken Sie einfach die Shift-Taste zusammen mit der linken und mittleren Maustaste (oder Shift-Windows-K). Dies erlaubt es, einen bevorzugten Ordner aus jedem Fenster heraus zu öffnen.`n- Wählen Sie das "Kürzlich geöffnete Ordner..." Menü (Shift-Windows-R) um eine aktualisierte Liste der kürzlich geöffneten Ordner zu sehen.`n- Konfigurieren Sie die Popup-Menü Trigger: wählen Sie die bevorzugte Maustaste oder das Tastaturkürzel unter "Einstellungen, Optionen".`n- Ebenfalls unter "Optionen": wählen Sie die bevorzugte Sprache, Symbolgröße oder Fensterfarbe. Wählen Sie die Optionen zur Anzeige der bevorzugten Ordner, fügen Sie dem Ordner-Menü numerische Tastenkürzel hinzu oder geben Sie dem Popup-Menü eine feste Position.`n- Directory Opus Benutzer, lesen Sie bitte <a href=http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/">Diese Seite</a> für weitere Informationen.`n- Total Commander Benutzer, lesen Sie bitte <a href=http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/">Diese Seite</a> für weitere Informationen.
 lHelpText6	Support für FoldersPopup gibt es auf`n<a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
 lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware!
 lHelpTextLead	FoldersPopup ermöglicht es Ihnen, schnell zwischen häufig benutzten Ordnern, Dokumenten und Webseiten zu wechseln!
@@ -136,7 +136,7 @@ lNavigateFileError	Beim Öffnen des Ordners `n~1~ trat ein Fehler auf.
 lNavigateSpecialError	Beim Öffnen des Speziellen Ordners #~1~ trat ein Fehler auf.
 lOopsTitle	~1~ (~2~)
 lOopsWriteProtectedError	Es scheint, daß ~1~ aus einem SCHREIBGESCHÜTZTEN ORDNER heraus ausgeführt wird, in dem die Konfigurationsdatei "~1~.ini" nicht erstellt werden kann.`n`nVerschieben Sie die ~1~ .EXE Datei in einen STANDARD Ordner Ihrer Wahl und führen Sie es daraus nochmals aus.`n`n~1~ wird beendet.
-lOopsWrongDirectoryOpusPath	Directory Opus Pfad oder Dateiname in der ~1~.ini Konfigurationsdatei falsch:`n"~2~"`n`nGeben Sie den vollen Pfad und Namen der DOpus.exe Datei an, z.B. (ohne Anführungszeichen):`n"DirectoryOpusPath=C:\Program Files\GPSoftware\Directory Opus\dopus.exe"
+lOopsWrongThirdPartyPath	~2~ Pfad oder Dateiname in der ~1~.ini Konfigurationsdatei falsch:`n"~4~"`n`nGeben Sie den vollen Pfad und Namen der .exe Datei an, z.B. (ohne Anführungszeichen):`n"~3~Path=C:\...\...exe"
 lOopsZipFileError	Es scheint, daß ~1~ direkt aus einer .ZIP Datei ausgeführt wird.`n`nSie müssen zuerst die Datei ~1~ .EXE aus dem Archiv in ein Verzeichnis Ihrer Wahl entpacken und dann ausführen.`n`n~1~ wird beendet.
 lOptionsAlt	Alt
 lOptionsArrDescriptions1	Wählen Sie die MAUStaste und die Kombitasten, welche das FoldersPopup Menü im Windows Explorer oder Dateidialogboxen aufruft. Standardmäßig ist dies die mittlere Maustaste ohne zusätzliche Kombitaste.
@@ -152,9 +152,6 @@ lOptionsDisplayMenuShortcuts	Zeige &numerische Menü-Tastenkürzel
 lOptionsDisplayRecentFolders	Zeige kürzlich verwendete Ordner
 lOptionsDisplaySpecialFolders	Zeige S&pezielle Ordner
 lOptionsDisplaySwitchMenu	Zeige Switch Menü
-lOptionsDOpusDetail	WÃ¤hlen Sie die Directory Opus Programmdatei (dopus.exe) um die Directory Opus Integration einzuschalten.
-lOptionsDOpusPrompt	Programmdatei:
-lOptionsDOpusTitle	Directory Opus Benutzer
 lOptionsGuiIntro	Legen Sie die Maustasten und Tastenkürzel fest, welche ~1~ auslösen.
 lOptionsGuiTitle	Optionen - ~1~ ~2~
 lOptionsIconSize	Symbolgröße im Menü
@@ -178,6 +175,9 @@ lOptionsRecentFolders	Zuletzt verwendete Ordner
 lOptionsRunAtStartup	Beim Sta&rt ausführen
 lOptionsShift	Shift
 lOptionsTheme	Thema
+lOptionsThirdPartyDetail	WÃ¤hlen Sie die ~1~ Programmdatei (.exe) um die ~1~ Integration einzuschalten.
+lOptionsThirdPartyPrompt	Programmdatei:
+lOptionsThirdPartyTitle	~1~ Benutzer
 lOptionsTitles	Maus - Ordner Popup|Maus - Neu Explorer|Tastatur - Ordner Popup|Tastatur - Neu Explorer|Zuletzt verwendete Ordner|Einstellungsfenster
 lOptionsTitlesSub	(Pop-Menü überlagert Explorer und Dialogboxen)|(Pop-Menü aus beliebigem Fenster)|(Pop-Menü im Explorer und Dialogboxen)|(Pop-Menü aus beliebigem Fenster)|(Windows-Liste kürzlicher Orte)|(Menükonfiguration und Optionen)
 lOptionsTrayTip	Beim Start &Tray-Tip anzeigen

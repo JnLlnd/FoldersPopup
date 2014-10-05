@@ -21,7 +21,6 @@ lDialogBrowseButton	Bladeren
 lDialogCancelButton	Annuleren
 lDialogCancelPrompt	Wijzigingen negeren?
 lDialogCancelTitle	Annuleren - ~1~ ~2~
-lDialogDirectoryOpusDetected	~1~ heeft gemerkt dat Directory Opus geinstalleerd is op jouw computer.`n`nWil je de Directory Opus integratie activeren?
 lDialogEdit	Bewerken
 lDialogEditDialogPrompt	Voer de nieuwe naam voor het dialoogvenster in`n(of een deel van de naam):
 lDialogEditDialogTitle	Bewerk dialoogvenster - ~1~ ~2~
@@ -47,6 +46,7 @@ lDialogSubmenuLabel	Submenu
 lDialogSubmenuNameEmpty	De naam van dit submenu is leeg. Kies een naam...
 lDialogSubmenuParentMenu	Submenu hoofd menu
 lDialogSubmenuShortName	Korte naam voor het submenu
+lDialogThirdPartyDetected	~1~ heeft gemerkt dat ~2~ geinstalleerd is op jouw computer.`n`nWil je de ~2~ integratie activeren?
 lDialogURLLabel	URL
 lDialogURLShortName	Korte naam voor de webkoppeling (voor in het menu)
 lDonateButton	Steun Freeware!
@@ -96,7 +96,8 @@ lHelpText1	Wanner FoldersPopup gestart wordt dan verschijnt er een icoontje in d
 lHelpText2	Kies "Instellingen" om het FoldersPopup instellingsvenster te openen waar je MAPPEN, DOCUMENTEN of WEBKOPPELINGEN kan toevoegen aan jouw menu. Uiteraard kan je deze ook hernoemen, verplaatsen of verwijderen. Je kan ook SUBMENU's toevoegen, die je ook weer kan hernoemen, verplaatsen of verwijderen. Selecteer het submenu dat je wil aanpassen in de "Te wijzigen menu" uitklaplijst (dropdown list). Klik vervolgens op "Bewaren" om jouw wijzigingen te bewaren.
 lHelpText3	Je kan snel nieuwe favoriete MAP toevoegen aan het popup menu:`n1) Ga naar een vaak gebruikte map.`n2) Druk op de middenste muisknop (of druk Windows-K) en kies voor "Voeg deze map toe".`n3) Geef deze map een korte naam, druk "OK" en "Bewaren" in het instellingsvenster.
 lHelpText4	Om een nieuw favoriet DOCUMENT of WEBKOPPELING (ook wel WEBLINK genaamd) toe te voegen aan het popup menu:`n1) Open het FoldersPopup menu en kies "Instellingen" (Shift-Windows-F).`n2) Klik op "Toevoegen" en kies vervolgens de optie "Document" of "Link (URL)".`n3) Geef de favoriet een korte naam, navigeer naar het document of voeg de URL van de webpagina toe en klik vervolgens op "Toevoegen". Uiteindelijk bewaar je alles in FoldersPopup door op de knop "Bewaren" te klikken in het instellingsvenster.
-lHelpText5	HANDIGE WEETJES`n- Via rechtermuisklik op het FoldersPopup icoontje in de systeembalk kan je de optie "Uitvoeren bij opstarten" activeren om FoldersPopup automatisch te starten tijdens het opstarten van Windwos.`n- Wil je een favoriete map openen in een nieuw Windows verkenner venster?  Druk dan op de middenste muisknop of gebruik de Windows-K toetsencombinatie. Dit laat je ook toe om je favoriete map te openen vanuit een willekeurig ander programma.`n- Stel je popup menu triggers in: kies muis knoppen naar jouw voorkeur of sneltoetsen in "Instellingen, Opties".`n- Eveneens in "Opties": kies de taal van jouw voorkeur, de mogelijkheid om ook recente mappen weer te geven, voeg numerieke sneltoetsen toe aan het mapmenu of prik het popup menu vast op een vaste positie.`n-Directory Opus gebruikers, raadpleeg <a href="http://code.jeanlalonde.ca/folders-popup-now-compatible-with-directory-opus/">this page</a> voor bijkomende informatie.
+lHelpText5	HANDIGE WEETJES`n- Via rechtermuisklik op het FoldersPopup icoontje in de systeembalk kan je de optie "Uitvoeren bij opstarten" activeren om FoldersPopup automatisch te starten tijdens het opstarten van Windwos.`n- Wil je een favoriete map openen in een nieuw Windows verkenner venster?  Druk dan op de middenste muisknop of gebruik de Windows-K toetsencombinatie. Dit laat je ook toe om je favoriete map te openen vanuit een willekeurig ander programma.`n- Stel je popup menu triggers in: kies muis knoppen naar jouw voorkeur of sneltoetsen in "Instellingen, Opties".`n- Eveneens in "Opties": kies de taal van jouw voorkeur, de mogelijkheid om ook recente mappen weer te geven, voeg numerieke sneltoetsen toe aan het mapmenu of prik het popup menu vast op een vaste positie.`n-Directory Opus gebruikers, raadpleeg <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/"deze pagina</a> voor bijkomende informatie.
+lHelpText6	Ondersteuning voor FoldersPopup is beschikbaar via <a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.`n-Total Commander gebruikers, raadpleeg <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/"deze pagina</a> voor bijkomende informatie.
 lHelpText6	Ondersteuning voor FoldersPopup is beschikbaar via <a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
 lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware.
 lHelpTextLead	FoldersPopup laat je snel wisselen tussen de mappen, documenten en webpagina's die je vaak gebruikt!
@@ -136,7 +137,7 @@ lNavigateFileError	Een fout trad op tijdens het openen van deze map:`n~1~.
 lNavigateSpecialError	Een fout trad op tijdens het openen van de speciale map #~1~.
 lOopsTitle	~1~ (~2~)
 lOopsWriteProtectedError	~1~ werd gestart vanuit een map die tegen schrijven beschermd is en dus kan het configuratiebestand "~1~.ini" niet worden aangemaakt.`n`nVerplaats de ~1~. EXE naar een normale map en start het programma vanuit deze map.`n`n~1~ wordt nu afgesloten.
-lOopsWrongDirectoryOpusPath	Verkeerde padnaam of bestandsnaam voor Directory Opus in het ~1~.ini bestand:`n"~2~"`n`nGeef het volledige pad en naam van het DOpus.exe bestand, bij voorbeeld (zonder de aanhalingstekens uiteraard):`n"DirectoryOpusPath=C:\Program Files\GPSoftware\Directory Opus\dopus.exe"
+lOopsWrongThirdPartyPath	Verkeerde padnaam of bestandsnaam voor ~2~ in het ~1~.ini bestand:`n"~4~"`n`nGeef het volledige pad en naam van het DOpus.exe bestand, bij voorbeeld (zonder de aanhalingstekens uiteraard):`n"~3~Path=C:\...\...exe"
 lOopsZipFileError	Blijkbaar heb je ~1~ direct gestart vanuit een .ZIP bestand.`n`nJe moet het ~1~ .EXE bestand uit het .ZIP bestand uitpakken in een map van jouw keuze vooraleer het te starten.`n`n~1~ wordt nu afgesloten.
 lOptionsAlt	Alt
 lOptionsArrDescriptions1	Kies de combinatie van MUISknop en speciale toetsen (CTRL/ALT/SHIFT/WIN) die het popup menu voor mappen opent in Windows Verkenner of in bestandsdialoogvensters. Standaard is dit de middenste muisknop zonder een speciale toets.
@@ -152,9 +153,9 @@ lOptionsDisplayMenuShortcuts	Toon de &Numerieke Menu Sneltoetsen
 lOptionsDisplayRecentFolders	Toon R&ecente Mappen
 lOptionsDisplaySpecialFolders	Toon S&peciale Mappen
 lOptionsDisplaySwitchMenu	Toon S&witch Menu's
-lOptionsDOpusDetail	Selecteer het Directory Opus programma (dopus.exe) om de Directory Opus integratie te activeren.
-lOptionsDOpusPrompt	Programma
-lOptionsDOpusTitle	Directory Opus gebruikers:
+lOptionsThirdPartyDetail	Selecteer het ~1~ programma (.exe) om de ~1~ integratie te activeren.
+lOptionsThirdPartyPrompt	Programma:
+lOptionsThirdPartyTitle	~1~ gebruikers
 lOptionsGuiIntro	Definieer de muisknoppen en sneltoetsen die ~1~ zullen triggeren.
 lOptionsGuiTitle	Opties - ~1~ ~2~
 lOptionsIconSize	Menu iconen grootte

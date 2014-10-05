@@ -15,7 +15,10 @@ To-do:
 	* save and restore with positions
 	* add Save this workspace and Load workspace menus to Switch menu
 	* add Workspaces button to main Gui
-	* 
+	* show popup menu in TotalCommander windows
+	* Total Commander configuration in Options
+	* ini configuration for TotalCommander window
+	* automatic detection for Total Commander support
 
 	Version: 3.2.2 (2014-10-02)
 	* fix layout in options gui
@@ -499,7 +502,7 @@ OnMessage(0x200, "WM_MOUSEMOVE")
 ; To popup menu when left click on the tray icon - See AHK_NOTIFYICON function below
 OnMessage(0x404, "AHK_NOTIFYICON")
 
-Gosub, GuiShow ; ### only when debugging Gui
+; Gosub, GuiShow ; ### only when debugging Gui
 ; Gosub, GuiOptions ; ### only when debugging Gui
 ; Gosub, GuiAddFolder ; ### only when debugging Gui
 ; Gosub, GuiAddFromPopup
@@ -682,6 +685,15 @@ if (blnUseDirectoryOpus)
 else
 	if (strDirectoryOpusPath <> "NO")
 		Gosub, CheckDirectoryOpus
+
+IniRead, strTotalCommanderPath, %strIniFile%, Global, TotalCommanderPath, %A_Space% ; empty string if not found
+if StrLen(strTotalCommanderPath)
+	blnUseTotalCommander := FileExist(strTotalCommanderPath)
+if (blnUseTotalCommander)
+	Gosub, SetTCCommand
+else
+	if (strTotalCommanderPath <> "NO")
+		Gosub, CheckTotalCommander
 
 IniRead, strTheme, %strIniFile%, Global, Theme
 if (strTheme = "ERROR") ; if Theme not found, we have a v1 or v2 ini file - add the themes to the ini file
@@ -937,15 +949,15 @@ if WindowIsDirectoryOpus(strTargetClass)
 if (blnDisplaySpecialFolders)
 {
 	Menu, menuSpecialFolders
-		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass) or WindowIsTotalCommander(strTargetClass)
 		or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
 		, %lMenuMyComputer%
 	Menu, menuSpecialFolders
-		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)  or WindowIsTotalCommander(strTargetClass)
 		or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
 		, %lMenuNetworkNeighborhood%
 
-	; There is no point to navigate a dialog box or console to Control Panel or Recycle Bin, unknown for FreeCommander and DirectoryOpus
+	; There is no point to navigate a dialog box or console to Control Panel or Recycle Bin, unknown for FreeCommander
 	Menu, menuSpecialFolders
 		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
 		or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
@@ -971,17 +983,20 @@ if (blnDisplaySwitchMenu)
 }
 
 if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass)
-	or WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass) or WindowIsDialog(strTargetClass))
+	or WindowIsFreeCommander(strTargetClass) or WindowIsTotalCommander(strTargetClass)
+	or WindowIsDirectoryOpus(strTargetClass) or WindowIsDialog(strTargetClass))
 {
 	; Enable Add This Folder only if the mouse is over an Explorer (tested on WIN_XP and WIN_7) or a dialog box (works on WIN_7, not on WIN_XP)
 	; Other tests shown that WIN_8 behaves like WIN_7. So, I assume WIN_8 to work. If someone could confirm (until I can test it myself)?
 	if (blnDiagMode)
 		Diag("ShowMenu", "Folders Menu " 
-			. (WindowIsAnExplorer(strTargetClass)  or WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
+			. (WindowIsAnExplorer(strTargetClass)  or WindowIsFreeCommander(strTargetClass)
+			or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
 			or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT")
 			. " Add this folder")
 	Menu, %lMainMenuName%
-		, % WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
+		, % WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+		or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
 		or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 		, %lMenuAddThisFolder%...
 	; ###_D(A_ThisLabel . ": " . intPopupMenuPosition . " / " . intMenuPosX . " / " . intMenuPosY)
@@ -1013,7 +1028,8 @@ if (blnDiagMode)
 	Diag("WinTitle", strDiag)
 	Diag("WinId", strTargetWinId)
 	Diag("Class", strTargetClass)
-	Diag("ShowMenu", "Folders Menu " . (WindowIsAnExplorer(strTargetClass)  or WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
+	Diag("ShowMenu", "Folders Menu " . (WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass) 
+	or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
 		or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT") . " Add this folder")
 }
 
@@ -1044,7 +1060,8 @@ if (blnDisplaySwitchMenu)
 ; or a dialog box under WIN_7 (does not work under WIN_XP).
 ; Other tests shown that WIN_8 behaves like WIN_7.
 Menu, %lMainMenuName%
-	, % WindowIsAnExplorer(strTargetClass)  or WindowIsFreeCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
+	, % WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+	or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
 	or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 	, %lMenuAddThisFolder%...
 ; ###_D(A_ThisLabel . ": " . intPopupMenuPosition . " / " . intMenuPosX . " / " . intMenuPosY)
@@ -1884,6 +1901,10 @@ return
 ;------------------------------------------------------------
 GuiWorkspaces:
 ;------------------------------------------------------------
+
+MsgBox, Not finished...
+return
+
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
 Gui, 2:New, , Workspaces ; ### % L(lDialogAddEditFolderTitle, (A_ThisLabel = "GuiEditFolder" ? lDialogEdit : lDialogAdd), strAppName, strAppVersion)
@@ -2189,7 +2210,9 @@ else
 		WinGetTitle, strWindowTitle, A ; to check later if this window is closed unexpectedly
 	} Until (StrLen(strWindowTitle))
 
-	if WindowIsFreeCommander(strTargetClass)
+	if WindowIsTotalCommander(strTargetClass)
+		###_D("###")
+	else if WindowIsFreeCommander(strTargetClass)
 	{
 		if (WinExist("A") <> strTargetWinId) ; in case that some window just popped out, and initialy active window lost focus
 		{
@@ -2995,12 +3018,20 @@ GuiControl, , blnDisplayIcons, %blnDisplayIcons%
 Gui, 2:Add, Text, x15 y+15 h2 w595 0x10 ; Horizontal Line > Etched Gray
 
 Gui, 2:Font, s8 w700
-Gui, 2:Add, Text, y+5 xs, %lOptionsDOpusTitle%
+Gui, 2:Add, Text, y+5 xs, % L(lOptionsThirdPartyTitle, "Directory Opus")
 Gui, 2:Font
-Gui, 2:Add, Text, y+5 xs, %lOptionsDOpusDetail%
-Gui, 2:Add, Text, y+10 xs, %lOptionsDOpusPrompt%
+Gui, 2:Add, Text, y+5 xs, % L(lOptionsThirdPartyDetail, "Directory Opus")
+Gui, 2:Add, Text, y+10 xs, %lOptionsThirdPartyPrompt%
 Gui, 2:Add, Edit, x+10 yp w300 h20 vstrDirectoryOpusPath, %strDirectoryOpusPath%
 Gui, 2:Add, Button, x+10 yp vbtnSelectDOpusPath gButtonSelectDOpusPath default, %lDialogBrowseButton%
+
+Gui, 2:Font, s8 w700
+Gui, 2:Add, Text, y+5 xs, %lOptionsTCTitle%
+Gui, 2:Font
+Gui, 2:Add, Text, y+5 xs, %lOptionsTCDetail%
+Gui, 2:Add, Text, y+10 xs, %lOptionsTCPrompt%
+Gui, 2:Add, Edit, x+10 yp w300 h20 vstrTotalCommanderPath, %strTotalCommanderPath%
+Gui, 2:Add, Button, x+10 yp vbtnSelectTCPath gButtonSelectTCPath default, %lDialogBrowseButton%
 
 Gui, 2:Add, Button, y+20 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
 Gui, 2:Add, Button, yp vbtnOptionsCancel gButtonOptionsCancel, %lGuiCancel%
@@ -3081,6 +3112,26 @@ if !(StrLen(strNewDOpusLocation))
 	return
 
 GuiControl, 2:, strDirectoryOpusPath, %strNewDOpusLocation%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ButtonSelectTCPath:
+;------------------------------------------------------------
+
+if StrLen(strTotalCommanderPath) and (strTotalCommanderPath <> "NO")
+	strCurrentTCLocation := strTotalCommanderPath
+else
+	strCurrentTCLocation := strCheckTotalCommanderPath
+
+FileSelectFile, strNewTCLocation, 3, %strCurrentTCLocation%, %lDialogAddFolderSelect%
+
+if !(StrLen(strNewTCLocation))
+	return
+
+GuiControl, 2:, strTotalCommanderPath, %strNewTCLocation%
 
 return
 ;------------------------------------------------------------
@@ -3609,6 +3660,8 @@ else if WindowIsFreeCommander(strTargetClass)
 	if (blnDiagMode)
 		Diag("NavigateResult", ErrorLevel)
 }
+else if WindowIsTotalCommander(strTargetClass)
+	###_D("###")
 else ; dialog box
 {
 	if (blnDiagMode)
@@ -3712,6 +3765,8 @@ else ; this is the console, FreeCommander or a dialog box
 		NavigateConsole(strLocation, strTargetWinId)
 	else if WindowIsFreeCommander(strTargetClass)
 		NavigateFreeCommander(strLocation, strTargetWinId, strTargetControl)
+	else if WindowIsTotalCommander(strTargetClass)
+		###_D("###")
 	else
 		NavigateDialog(strLocation, strTargetWinId, strTargetClass)
 }
@@ -3745,6 +3800,8 @@ else ; this is the console, FreeCommander or a dialog box
 		NavigateConsole(objRecentFolders[A_ThisMenuItemPos], strTargetWinId)
 	else if WindowIsFreeCommander(strTargetClass)
 		NavigateFreeCommander(objRecentFolders[A_ThisMenuItemPos], strTargetWinId, strTargetControl)
+	else if WindowIsTotalCommander(strTargetClass)
+		###_D("###")
 	else
 		NavigateDialog(objRecentFolders[A_ThisMenuItemPos], strTargetWinId, strTargetClass)
 
@@ -3788,6 +3845,9 @@ return
 SwitchSaveWorkspace:
 ;------------------------------------------------------------
 
+MsgBox, Not finished...
+return
+
 /*
 If no explorer exist
 {
@@ -3812,6 +3872,9 @@ return
 ;------------------------------------------------------------
 SwitchLoadWorkspace:
 ;------------------------------------------------------------
+
+MsgBox, Not finished...
+return
 
 loop, parse, strWorkspace, `n
 	if StrLen(A_LoopField) and InStr(A_LoopField, ":\") ; exclude special folders
@@ -3893,6 +3956,7 @@ CanOpenFavorite(strMouseOrKeyboard, ByRef strWinId, ByRef strClass, ByRef strCon
 {
 	
 	global blnUseDirectoryOpus
+	global blnUseTotalCommander
 	
 	if (strMouseOrKeyboard = "PopupMenuMouse")
 		MouseGetPos, , , strWinId, strControlID
@@ -3904,7 +3968,9 @@ CanOpenFavorite(strMouseOrKeyboard, ByRef strWinId, ByRef strClass, ByRef strCon
 	WinGetClass strClass, % "ahk_id " . strWinId
 
 	blnCanOpenFavorite := WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or WindowIsConsole(strClass)
-		or WindowIsDialog(strClass) or WindowIsFreeCommander(strClass) or (WindowIsDirectoryOpus(strClass) and blnUseDirectoryOpus)
+		or WindowIsDialog(strClass) or WindowIsFreeCommander(strClass)
+		or (WindowIsTotalCommander(strClass) and blnUseTotalCommander)
+		or (WindowIsDirectoryOpus(strClass) and blnUseDirectoryOpus)
 
 	if (blnDiagMode)
 	{
@@ -3964,6 +4030,15 @@ WindowIsFreeCommander(strClass)
 ;------------------------------------------------------------
 {
 	return InStr(strClass, "FreeCommanderXE")
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+WindowIsTotalCommander(strClass)
+;------------------------------------------------------------
+{
+	return InStr(strClass, "TTOTAL_CMD")
 }
 ;------------------------------------------------------------
 
@@ -4620,7 +4695,7 @@ RunDOpusRt(strCommand, strLocation := "", strParam := "")
 	if FileExist(strDirectoryOpusRtPath)
 		Run, % """" . strDirectoryOpusRtPath . """ " . strCommand . " """ . strLocation . """" . strParam
 	else
-		Oops(lOopsWrongDirectoryOpusPath, strAppName, strDirectoryOpusPath)
+		Oops(lOopsWrongThirdPartyPath, strAppName, "Directory Opus", "DirectoryOpus", strDirectoryOpusPath)
 }
 ;------------------------------------------------------------
 
@@ -4633,7 +4708,7 @@ strCheckDirectoryOpusPath := A_ProgramFiles . "\GPSoftware\Directory Opus\dopus.
 
 if FileExist(strCheckDirectoryOpusPath)
 {
-	MsgBox, 52, %strAppName%, % L(lDialogDirectoryOpusDetected, strAppName)
+	MsgBox, 52, %strAppName%, % L(lDialogThirdPartyDetected, strAppName, "Directory Opus")
 	IfMsgBox, No
 		strDirectoryOpusPath := "NO"
 	else
@@ -4662,3 +4737,50 @@ objIconsIndex["DirectoryOpus"] := 1
 
 return
 ;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+CheckTotalCommander:
+;------------------------------------------------------------
+
+RegRead, strCheckTotalCommanderPath, HKEY_CURRENT_USER, Software\Ghisler\Total Commander\, InstallDir
+If !StrLen(strCheckTotalCommanderPath)
+	RegRead, strCheckTotalCommanderPath, HKEY_LOCAL_MACHINE, Software\Ghisler\Total Commander\, InstallDir
+
+if FileExist(strCheckTotalCommanderPath . "\TOTALCMD64.EXE")
+	strCheckTotalCommanderPath := strCheckTotalCommanderPath . "\TOTALCMD64.EXE"
+else
+	strCheckTotalCommanderPath := strCheckTotalCommanderPath . "\TOTALCMD.EXE"
+
+if FileExist(strCheckTotalCommanderPath)
+{
+	MsgBox, 52, %strAppName%, % L(lDialogThirdPartyDetected, strAppName, "Total Commander")
+	IfMsgBox, No
+		strTotalCommanderPath := "NO"
+	else
+	{
+		strTotalCommanderPath := strCheckTotalCommanderPath
+		Gosub, SetTCCommand
+	}
+	blnUseTotalCommander := (strTotalCommanderPath <> "NO")
+	IniWrite, %strTotalCommanderPath%, %strIniFile%, Global, TotalCommanderPath
+}
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+SetTCCommand:
+;------------------------------------------------------------
+
+strTCTempFilePath := strTempDir . "\tc-list.txt"
+
+; additional icon for Directory Opus
+objIconsFile["TotalCommander"] := strTotalCommanderPath
+objIconsIndex["TotalCommander"] := 1
+
+return
+;------------------------------------------------------------
+
+
