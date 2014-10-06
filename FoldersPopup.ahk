@@ -19,6 +19,8 @@ To-do:
 	* Total Commander configuration in Options
 	* ini configuration for TotalCommander window
 	* automatic detection for Total Commander support
+	* add this folder from Total Commander window
+	* change DOpus command to open a new lister to Go with NEW parameter
 
 	Version: 3.2.2 (2014-10-02)
 	* fix layout in options gui
@@ -367,7 +369,7 @@ To-do:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 3.3
+;@Ahk2Exe-SetVersion 3.3 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -428,7 +430,7 @@ Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
 global strCurrentVersion := "3.3" ; "major.minor.bugs"
-global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
+global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
 global blnDiagMode := False
@@ -942,24 +944,25 @@ If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass, strTargetContro
 blnMouse := InStr(A_ThisLabel, "Mouse")
 blnNewWindow := false
 Gosub, SetMenuPosition ; sets strTargetWinId or activate the window strTargetWinId set by CanOpenFavorite
-if WindowIsDirectoryOpus(strTargetClass)
-	Click ; to make sure the lister under the mouse become active
+
+if WindowIsDirectoryOpus(strTargetClass) or WindowIsTotalCommander(strTargetClass)
+	Click ; to make sure the DOpus lister or TC pane under the mouse become active
 
 ; Can't find how to navigate a dialog box to My Computer or Network Neighborhood... is this is feasible?
 if (blnDisplaySpecialFolders)
 {
 	Menu, menuSpecialFolders
-		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass) or WindowIsTotalCommander(strTargetClass)
+		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
 		or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
 		, %lMenuMyComputer%
 	Menu, menuSpecialFolders
-		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)  or WindowIsTotalCommander(strTargetClass)
+		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
 		or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
 		, %lMenuNetworkNeighborhood%
 
 	; There is no point to navigate a dialog box or console to Control Panel or Recycle Bin, unknown for FreeCommander
 	Menu, menuSpecialFolders
-		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass) or WindowIsTotalCommander(strTargetClass)
 		or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
 		, %lMenuControlPanel%
 	Menu, menuSpecialFolders
@@ -2211,7 +2214,11 @@ else
 	} Until (StrLen(strWindowTitle))
 
 	if WindowIsTotalCommander(strTargetClass)
-		###_D("###")
+	{
+		cm_CopySrcPathToClip := 2029
+		SendMessage, 0x433, %cm_CopySrcPathToClip%, , , ahk_class TTOTAL_CMD ; 
+		WinGetTitle, strWindowThisTitle, A ; to check if the window was closed unexpectedly
+	}
 	else if WindowIsFreeCommander(strTargetClass)
 	{
 		if (WinExist("A") <> strTargetWinId) ; in case that some window just popped out, and initialy active window lost focus
@@ -3023,15 +3030,15 @@ Gui, 2:Font
 Gui, 2:Add, Text, y+5 xs, % L(lOptionsThirdPartyDetail, "Directory Opus")
 Gui, 2:Add, Text, y+10 xs, %lOptionsThirdPartyPrompt%
 Gui, 2:Add, Edit, x+10 yp w300 h20 vstrDirectoryOpusPath, %strDirectoryOpusPath%
-Gui, 2:Add, Button, x+10 yp vbtnSelectDOpusPath gButtonSelectDOpusPath default, %lDialogBrowseButton%
+Gui, 2:Add, Button, x+10 yp vbtnSelectDOpusPath gButtonSelectDOpusPath, %lDialogBrowseButton%
 
 Gui, 2:Font, s8 w700
-Gui, 2:Add, Text, y+5 xs, %lOptionsTCTitle%
+Gui, 2:Add, Text, y+5 xs, % L(lOptionsThirdPartyTitle, "Total Commander")
 Gui, 2:Font
-Gui, 2:Add, Text, y+5 xs, %lOptionsTCDetail%
-Gui, 2:Add, Text, y+10 xs, %lOptionsTCPrompt%
+Gui, 2:Add, Text, y+5 xs,  % L(lOptionsThirdPartyDetail, "Total Commander")
+Gui, 2:Add, Text, y+10 xs, %lOptionsThirdPartyPrompt%
 Gui, 2:Add, Edit, x+10 yp w300 h20 vstrTotalCommanderPath, %strTotalCommanderPath%
-Gui, 2:Add, Button, x+10 yp vbtnSelectTCPath gButtonSelectTCPath default, %lDialogBrowseButton%
+Gui, 2:Add, Button, x+10 yp vbtnSelectTCPath gButtonSelectTCPath, %lDialogBrowseButton%
 
 Gui, 2:Add, Button, y+20 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
 Gui, 2:Add, Button, yp vbtnOptionsCancel gButtonOptionsCancel, %lGuiCancel%
@@ -3124,7 +3131,7 @@ ButtonSelectTCPath:
 if StrLen(strTotalCommanderPath) and (strTotalCommanderPath <> "NO")
 	strCurrentTCLocation := strTotalCommanderPath
 else
-	strCurrentTCLocation := strCheckTotalCommanderPath
+	strCurrentTCLocation := GetTotalCommanderPath()
 
 FileSelectFile, strNewTCLocation, 3, %strCurrentTCLocation%, %lDialogAddFolderSelect%
 
@@ -3277,6 +3284,15 @@ if (blnUseDirectoryOpus)
 	blnUseDirectoryOpus := FileExist(strDirectoryOpusPath)
 	if (blnUseDirectoryOpus)
 		Gosub, SetDOpusRt
+}
+
+IniWrite, %strTotalCommanderPath%, %strIniFile%, Global, TotalCommanderPath
+blnUseTotalCommander := StrLen(strTotalCommanderPath)
+if (blnUseTotalCommander)
+{
+	blnUseTotalCommander := FileExist(strTotalCommanderPath)
+	if (blnUseTotalCommander)
+		Gosub, SetTCCommand
 }
 
 ; if language or theme changed, offer to restart the app
@@ -3602,7 +3618,9 @@ if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetCla
 		Diag("Navigate", "RunNewWindow")
 	
 	if (blnUseDirectoryOpus)
-		RunDOpusRt("/open", strLocation) ; open in a new lister
+		RunDOpusRt("/acmd Go ", strLocation, " NEW") ; open in a new lister
+	else if (blnUseTotalCommander)
+		NewTotalCommander(strLocation, strTargetWinId, strTargetControl)
 	else
 		if (A_OSVersion = "WIN_XP")
 			ComObjCreate("Shell.Application").Explore(strLocation)
@@ -3613,9 +3631,6 @@ if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetCla
 	; ComObjCreate("WScript.Shell").Exec("Explorer.exe /e /select," . strLocation) ; not tested on XP
 	; ComObjCreate("Shell.Application").Open(strLocation)
 	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
-	
-	if (blnDiagMode)
-		Diag("NavigateResult", ErrorLevel)
 }
 else if WindowIsAnExplorer(strTargetClass)
 {
@@ -3623,9 +3638,6 @@ else if WindowIsAnExplorer(strTargetClass)
 		Diag("Navigate", "NavigateExplorer")
 	
 	NavigateExplorer(strLocation, strTargetWinId)
-	
-	if (blnDiagMode)
-		Diag("NavigateResult", ErrorLevel)
 }
 else if WindowIsConsole(strTargetClass)
 {
@@ -3633,9 +3645,6 @@ else if WindowIsConsole(strTargetClass)
 		Diag("Navigate", "NavigateConsole")
 	
 	NavigateConsole(strLocation, strTargetWinId)
-
-	if (blnDiagMode)
-		Diag("NavigateResult", ErrorLevel)
 }
 else if WindowIsDirectoryOpus(strTargetClass)
 {
@@ -3646,9 +3655,6 @@ else if WindowIsDirectoryOpus(strTargetClass)
 		NavigateDirectoryOpus(strLocation, strTargetWinId)
 	else
 		NavigateExplorer(strLocation, strTargetWinId)
-
-	if (blnDiagMode)
-		Diag("NavigateResult", ErrorLevel)
 }
 else if WindowIsFreeCommander(strTargetClass)
 {
@@ -3656,12 +3662,14 @@ else if WindowIsFreeCommander(strTargetClass)
 		Diag("Navigate", "NavigateFreeCommander")
 	
 	NavigateFreeCommander(strLocation, strTargetWinId, strTargetControl)
-
-	if (blnDiagMode)
-		Diag("NavigateResult", ErrorLevel)
 }
 else if WindowIsTotalCommander(strTargetClass)
-	###_D("###")
+{
+	if (blnDiagMode)
+		Diag("Navigate", "NavigateTotalCommander")
+	
+	NavigateTotalCommander(strLocation, strTargetWinId, strTargetControl)
+}
 else ; dialog box
 {
 	if (blnDiagMode)
@@ -3671,10 +3679,10 @@ else ; dialog box
 	}
 	
 	NavigateDialog(strLocation, strTargetWinId, strTargetClass)
-
-	if (blnDiagMode)
-		Diag("NavigateResult", ErrorLevel)
 }
+
+if (blnDiagMode)
+	Diag("NavigateResult", ErrorLevel)
 
 return
 ;------------------------------------------------------------
@@ -3684,7 +3692,16 @@ return
 OpenSpecialFolder:
 ;------------------------------------------------------------
 
-if (blnUseDirectoryOpus)
+if (blnDiagMode)
+{
+	Diag("A_ThisHotkey", A_ThisHotkey)
+	Diag("Navigate", "SpecialFolder")
+}
+
+strLocation := ""
+blnNewWindow := InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass) or WindowIsTray(strTargetClass)
+
+if (blnUseDirectoryOpus) and !WindowIsAnExplorer(strTargetClass)
 {
 	if (A_ThisMenuItem = lMenuDesktop)
 		strDOpusAlias := "desktop"
@@ -3700,79 +3717,103 @@ if (blnUseDirectoryOpus)
 		strDOpusAlias := "network"
 	else if (A_ThisMenuItem = lMenuPictures)
 		strDOpusAlias := "mypictures"
+	
+	if (blnNewWindow)
+		RunDOpusRt("/acmd Go ", "/" . strDOpusAlias, " NEW") ; open special folder in a new lister
+	else
+		NavigateDirectoryOpus("/" . strDOpusAlias, strTargetWinId)
 }
+else if (blnUseTotalCommander) and !WindowIsAnExplorer(strTargetClass)
+{
+	intTCCommand := 0
+	if (A_ThisMenuItem = lMenuDesktop)
+		intTCCommand := 2121 ; cm_OpenDesktop
+	else if (A_ThisMenuItem = lMenuControlPanel)
+		intTCCommand := 2123 ; cm_OpenControls
+	else if (A_ThisMenuItem = lMenuDocuments)
+		strLocation := A_MyDocuments
+	else if (A_ThisMenuItem = lMenuRecycleBin)
+		intTCCommand := 2127 ; cm_OpenRecycled
+	else if (A_ThisMenuItem = lMenuMyComputer)
+		intTCCommand := 2122 ; cm_OpenDrives
+	else if (A_ThisMenuItem = lMenuNetworkNeighborhood)
+		intTCCommand := 2125 ; cm_OpenNetwork
+	else if (A_ThisMenuItem = lMenuPictures)
+		RegRead, strLocation, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Pictures
+	
+	if (intTCCommand)
+		if (blnNewWindow)
+			SendMessage, 0x433, %intTCCommand%, , , ahk_class TTOTAL_CMD
+			; FIX new #####
+		else
+			SendMessage, 0x433, %intTCCommand%, , , ahk_class TTOTAL_CMD
+	else ; with strLocation
+		if (blnNewWindow)
+			NewTotalCommander(strLocation, strTargetWinId, strTargetControl)
+		else
+			NavigateTotalCommander(strLocation, strTargetWinId, strTargetControl)
 
-; ShellSpecialFolderConstants: http://msdn.microsoft.com/en-us/library/windows/desktop/bb774096%28v=vs.85%29.aspx
-if (A_ThisMenuItem = lMenuDesktop)
-	intSpecialFolder := 0
-else if (A_ThisMenuItem = lMenuControlPanel)
-	intSpecialFolder := 3
-else if (A_ThisMenuItem = lMenuDocuments)
-	intSpecialFolder := 5
-else if (A_ThisMenuItem = lMenuRecycleBin)
-	intSpecialFolder := 10
-else if (A_ThisMenuItem = lMenuMyComputer)
-	intSpecialFolder := 17
-else if (A_ThisMenuItem = lMenuNetworkNeighborhood)
-	intSpecialFolder := 18
-else if (A_ThisMenuItem = lMenuPictures)
-	intSpecialFolder := 39
+}
+else ; this is Explorer, Console, FreeCommander or a dialog box
+{
+	; ShellSpecialFolderConstants: http://msdn.microsoft.com/en-us/library/windows/desktop/bb774096%28v=vs.85%29.aspx
+	if (A_ThisMenuItem = lMenuDesktop)
+		intSpecialFolder := 0
+	else if (A_ThisMenuItem = lMenuControlPanel)
+		intSpecialFolder := 3
+	else if (A_ThisMenuItem = lMenuDocuments)
+		intSpecialFolder := 5
+	else if (A_ThisMenuItem = lMenuRecycleBin)
+		intSpecialFolder := 10
+	else if (A_ThisMenuItem = lMenuMyComputer)
+		intSpecialFolder := 17
+	else if (A_ThisMenuItem = lMenuNetworkNeighborhood)
+		intSpecialFolder := 18
+	else if (A_ThisMenuItem = lMenuPictures)
+		intSpecialFolder := 39
+	
+	if (blnNewWindow)
+		ComObjCreate("Shell.Application").Explore(intSpecialFolder)
+		; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
+	else
+	{
+		if WindowIsAnExplorer(strTargetClass)
+			NavigateExplorer(intSpecialFolder, strTargetWinId)
+		else ; this is Console, FreeCommander or a dialog box
+		{
+			if (intSpecialFolder = 0)
+				strLocation := A_Desktop
+			else if (intSpecialFolder = 5)
+				strLocation := A_MyDocuments
+			else if (intSpecialFolder = 39)
+				RegRead, strLocation, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Pictures
+			else
+				; We cannot open the special folders lMenuMyComputer, lMenuNetworkNeighborhood, lMenuControlPanel and lMenuRecycleBin
+				; in the current window. Need to open an Explorer with ComObjCreate
+				blnNewWindow := true
+			
+			if (blnNewWindow)
+				ComObjCreate("Shell.Application").Explore(intSpecialFolder)
+			else if WindowIsConsole(strTargetClass)
+				NavigateConsole(strLocation, strTargetWinId)
+			else if WindowIsFreeCommander(strTargetClass)
+				NavigateFreeCommander(strLocation, strTargetWinId, strTargetControl)
+			else
+				NavigateDialog(strLocation, strTargetWinId, strTargetClass)
+		}
+	}
+}
 
 if (blnDiagMode)
 {
 	Diag("A_ThisHotkey", A_ThisHotkey)
 	Diag("Navigate", "SpecialFolder")
-	Diag("SpecialFolder", intSpecialFolder)
+	Diag("SpecialFolderWindows", intSpecialFolder)
 	Diag("SpecialFolderDOpus", strDOpusAlias)
+	Diag("SpecialFolderTCCommand", intTCCommand)
+	Diag("SpecialFolderLocation", strLocation)
+	Diag("SpecialFolderNewWindow", blnNewWindow)
 }
-
-if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass) or WindowIsTray(strTargetClass)
-	if (blnUseDirectoryOpus)
-		RunDOpusRt("/open", "/" . strDOpusAlias) ; open special folder in a new lister
-	else
-		ComObjCreate("Shell.Application").Explore(intSpecialFolder)
-		; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
-else if WindowIsAnExplorer(strTargetClass)
-	NavigateExplorer(intSpecialFolder, strTargetWinId)
-else if WindowIsDirectoryOpus(strTargetClass)
-	if (blnUseDirectoryOpus)
-		NavigateDirectoryOpus("/" . strDOpusAlias, strTargetWinId)
-	else
-		NavigateExplorer(intSpecialFolder, strTargetWinId)
-else ; this is the console, FreeCommander or a dialog box
-{
-	blnOpenNewExplorer := false
-	if (intSpecialFolder = 0)
-		strLocation := A_Desktop
-	else if (intSpecialFolder = 5)
-		strLocation := A_MyDocuments
-	else if (intSpecialFolder = 39)
-		RegRead, strLocation, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Pictures
-	else
-	{
-		; We cannot open the special folders lMenuMyComputer, lMenuNetworkNeighborhood, lMenuControlPanel and lMenuRecycleBin
-		; in the current window. Need to open an Explorer with ComObjCreate
-		
-		if (blnDiagMode)
-			Diag("NavigateResult", "SpecialFolderNotSupported")
-		
-		blnOpenNewExplorer := true
-	}
-
-	if (blnOpenNewExplorer)
-		ComObjCreate("Shell.Application").Explore(intSpecialFolder)
-	else if WindowIsConsole(strTargetClass)
-		NavigateConsole(strLocation, strTargetWinId)
-	else if WindowIsFreeCommander(strTargetClass)
-		NavigateFreeCommander(strLocation, strTargetWinId, strTargetControl)
-	else if WindowIsTotalCommander(strTargetClass)
-		###_D("###")
-	else
-		NavigateDialog(strLocation, strTargetWinId, strTargetClass)
-}
-
-if (blnDiagMode)
-	Diag("NavigateResult", ErrorLevel)
 
 return
 ;------------------------------------------------------------
@@ -3784,7 +3825,9 @@ OpenRecentFolder:
 
 if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
 	if (blnUseDirectoryOpus)
-		RunDOpusRt("/open", objRecentFolders[A_ThisMenuItemPos]) ; open in a new lister
+		RunDOpusRt("/acmd Go ", objRecentFolders[A_ThisMenuItemPos], " NEW") ; open in a new lister
+	else if (blnUseTotalCommander)
+		NewTotalCommander(objRecentFolders[A_ThisMenuItemPos], strTargetWinId, strTargetControl)
 	else
 		; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 		ComObjCreate("Shell.Application").Explore(objRecentFolders[A_ThisMenuItemPos])
@@ -3801,7 +3844,10 @@ else ; this is the console, FreeCommander or a dialog box
 	else if WindowIsFreeCommander(strTargetClass)
 		NavigateFreeCommander(objRecentFolders[A_ThisMenuItemPos], strTargetWinId, strTargetControl)
 	else if WindowIsTotalCommander(strTargetClass)
-		###_D("###")
+	if (blnUseTotalCommander)
+		NavigateTotalCommander(objRecentFolders[A_ThisMenuItemPos], strTargetWinId, strTargetControl)
+	else
+		NavigateExplorer(objRecentFolders[A_ThisMenuItemPos], strTargetWinId)
 	else
 		NavigateDialog(objRecentFolders[A_ThisMenuItemPos], strTargetWinId, strTargetClass)
 
@@ -4157,6 +4203,52 @@ NavigateFreeCommander(strLocation, strWinId, strControl)
 	SendInput, {Enter}
 }
 ;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+NavigateTotalCommander(strLocation, strWinId, strControl)
+;------------------------------------------------------------
+{
+	global strTotalCommanderPath
+	
+	/*
+	###_D(""
+		. "strLocation: " . strLocation . "`n"
+		. "strWinId: " . strWinId . "`n"
+		. "strControl: " . strControl . "`n"
+		. "")
+	*/
+	
+	if (WinExist("A") <> strWinId) ; in case that some window just popped out, and initialy active window lost focus
+	{
+		WinActivate, ahk_id %strWinId% ; we'll activate initialy active window
+		Sleep, 200
+	}
+	Run, %strTotalCommanderPath% /O /S "/L=%strLocation%" ; /O existing file list, /S source-dest /L=source (active pane) - change folder in the active pane/tab
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+NewTotalCommander(strLocation, strWinId, strControl)
+;------------------------------------------------------------
+{
+	global strTotalCommanderPath
+	global strTotalCommanderNewTabOrWindow
+	
+	/*
+	###_D(""
+		. "strLocation: " . strLocation . "`n"
+		. "strWinId: " . strWinId . "`n"
+		. "strControl: " . strControl . "`n"
+		. "")
+	*/
+	
+	; strTotalCommanderNewTabOrWindow in ini file should contain "/O /T" to open in an new tab of the existing file list (default), or "/N" to open in a new file list
+	Run, %strTotalCommanderPath% %strTotalCommanderNewTabOrWindow% /S "/L=%strLocation%" ; /L= left pane of the new window
+}
+;------------------------------------------------------------
+
 
 
 ;------------------------------------------------------------
@@ -4743,14 +4835,7 @@ return
 CheckTotalCommander:
 ;------------------------------------------------------------
 
-RegRead, strCheckTotalCommanderPath, HKEY_CURRENT_USER, Software\Ghisler\Total Commander\, InstallDir
-If !StrLen(strCheckTotalCommanderPath)
-	RegRead, strCheckTotalCommanderPath, HKEY_LOCAL_MACHINE, Software\Ghisler\Total Commander\, InstallDir
-
-if FileExist(strCheckTotalCommanderPath . "\TOTALCMD64.EXE")
-	strCheckTotalCommanderPath := strCheckTotalCommanderPath . "\TOTALCMD64.EXE"
-else
-	strCheckTotalCommanderPath := strCheckTotalCommanderPath . "\TOTALCMD.EXE"
+strCheckTotalCommanderPath := GetTotalCommanderPath()
 
 if FileExist(strCheckTotalCommanderPath)
 {
@@ -4764,6 +4849,7 @@ if FileExist(strCheckTotalCommanderPath)
 	}
 	blnUseTotalCommander := (strTotalCommanderPath <> "NO")
 	IniWrite, %strTotalCommanderPath%, %strIniFile%, Global, TotalCommanderPath
+	IniWrite, /O /T, %strIniFile%, Global, TotalCommanderNewTabOrWindow
 }
 
 return
@@ -4771,14 +4857,35 @@ return
 
 
 ;------------------------------------------------------------
+GetTotalCommanderPath()
+;------------------------------------------------------------
+{
+	RegRead, strPath, HKEY_CURRENT_USER, Software\Ghisler\Total Commander\, InstallDir
+	If !StrLen(strPath)
+		RegRead, strPath, HKEY_LOCAL_MACHINE, Software\Ghisler\Total Commander\, InstallDir
+
+	if FileExist(strPath . "\TOTALCMD64.EXE")
+		strPath := strPath . "\TOTALCMD64.EXE"
+	else
+		strPath := strPath . "\TOTALCMD.EXE"
+	return strPath
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 SetTCCommand:
 ;------------------------------------------------------------
 
+IniRead, strTotalCommanderNewTabOrWindow, %strIniFile%, Global, TotalCommanderNewTabOrWindow, %A_Space% ; empty string if not found
+
+/*
 strTCTempFilePath := strTempDir . "\tc-list.txt"
 
 ; additional icon for Directory Opus
 objIconsFile["TotalCommander"] := strTotalCommanderPath
 objIconsIndex["TotalCommander"] := 1
+*/
 
 return
 ;------------------------------------------------------------
