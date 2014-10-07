@@ -2,6 +2,9 @@
 Bugs:
 
 To-do:
+- choose Workspace icon
+- continue Workspace
+
 */
 ;===============================================
 /*
@@ -541,40 +544,40 @@ strMouseButtons := "None|LButton|MButton|RButton|XButton1|XButton2|WheelUp|Wheel
 StringSplit, arrMouseButtons, strMouseButtons, |
 
 strIconsMenus := "lMenuDesktop|lMenuDocuments|lMenuPictures|lMenuMyComputer|lMenuNetworkNeighborhood|lMenuControlPanel|lMenuRecycleBin"
-	. "|menuRecentFolders|menuSwitchDialog|menuSwitchExplorer|lMenuSpecialFolders|lMenuSwitchExplorer|lMenuSwitchDialog|lMenuSwitch"
+	. "|menuRecentFolders|menuSwitchDialog|menuSwitchExplorer|lMenuSpecialFolders|lMenuSwitchDialog|lMenuSwitch"
 	. "|lMenuRecentFolders|lMenuSettings|lMenuAddThisFolder|lDonateMenu|Submenu|Network|UnknownDocument|Folder"
 	. "|menuSwitchSave|menuSwitchLoad"
 
 if (A_OSVersion = "WIN_XP")
 {
 	strIconsFile := "shell32|shell32|shell32|shell32|shell32|shell32|shell32"
-				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
+				. "|shell32|shell32|shell32|shell32|shell32|shell32"
 				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
 				. "|shell32|shell32"
 	strIconsIndex := "35|127|118|16|19|22|33"
-				. "|4|147|4|4|147|147|147"
+				. "|4|147|4|4|147|147"
 				. "|214|166|111|161|85|10|3|4"
 				. "|1|2"
 }
 else if (A_OSVersion = "WIN_VISTA")
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
-				. "|imageres|imageres|imageres|imageres|imageres|imageres|imageres"
+				. "|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|shell32|shell32|shell32|imageres|imageres|imageres"
 				. "|imageres|imageres"
 	strIconsIndex := "105|85|67|104|114|22|49"
-				. "|112|174|3|3|175|174|175|"
+				. "|112|174|3|3|174|175|"
 				. "112|109|88|161|85|28|2|3"
 				. "|1|2"
 }
 else
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
-				. "|imageres|imageres|imageres|imageres|imageres|imageres|imageres"
+				. "|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres|imageres|imageres"
 				. "|imageres|imageres"
 	strIconsIndex := "106|189|68|105|115|23|50"
-				. "|113|176|203|203|177|176|177|"
+				. "|113|176|203|203|176|177|"
 				. "113|110|217|208|298|29|3|4"
 				. "|1|2"
 }
@@ -974,11 +977,6 @@ if (blnDisplaySpecialFolders)
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
-	/*
-	Menu, menuSwitch
-		, % (intExplorersIndex ? "Enable" : "Disable")
-		, %lMenuSwitchExplorer%
-	*/
 	Menu, menuSwitch
 		; , % (intDialogsIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
 		, % (intDialogsIndex and WindowIsDialog(strTargetClass) ? "Enable" : "Disable")
@@ -1048,11 +1046,6 @@ if (blnDisplaySpecialFolders)
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
-	/*
-	Menu, menuSwitch
-		, % (intExplorersIndex ? "Enable" : "Disable")
-		, %lMenuSwitchExplorer%
-	*/
 	Menu, menuSwitch
 		; , % (intDialogsIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
 		, % (intDialogsIndex and WindowIsDialog(strTargetClass)? "Enable" : "Disable")
@@ -1526,12 +1519,9 @@ Menu, %lMainMenuName%, Add
 if (blnDisplaySpecialFolders)
 	AddMenuIcon(lMainMenuName, lMenuSpecialFolders, ":menuSpecialFolders", "lMenuSpecialFolders")
 
-if (blnDisplaySwitchMenu)
+if (blnDisplaySwitchMenu) and !(blnUseTotalCommander)
+; remove Total Commander exclusion when listing all paths is possible
 {
-	; Menu, menuSwitch, Add
-	; Menu, menuSwitch, DeleteAll
-	; AddMenuIcon("menuSwitch", lMenuSwitchExplorer, ":menuSwitchExplorer", "lMenuSwitchExplorer")
-	; AddMenuIcon("menuSwitch", lMenuSwitchDialog, ":menuSwitchDialog", "lMenuSwitchDialog")
 	AddMenuIcon(lMainMenuName, lMenuSwitch, ":menuSwitch", "lMenuSwitch")
 	Menu, menuSwitch, Color, %strMenuBackgroundColor%
 }
@@ -3701,7 +3691,7 @@ if (blnDiagMode)
 strLocation := ""
 blnNewWindow := InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass) or WindowIsTray(strTargetClass)
 
-if (blnUseDirectoryOpus) and !WindowIsAnExplorer(strTargetClass)
+if (blnUseDirectoryOpus) and !WindowIsAnExplorer(strTargetClass) and !WindowIsDialog(strTargetClass)
 {
 	if (A_ThisMenuItem = lMenuDesktop)
 		strDOpusAlias := "desktop"
@@ -3723,7 +3713,7 @@ if (blnUseDirectoryOpus) and !WindowIsAnExplorer(strTargetClass)
 	else
 		NavigateDirectoryOpus("/" . strDOpusAlias, strTargetWinId)
 }
-else if (blnUseTotalCommander) and !WindowIsAnExplorer(strTargetClass)
+else if (blnUseTotalCommander) and !WindowIsAnExplorer(strTargetClass) and !WindowIsDialog(strTargetClass)
 {
 	intTCCommand := 0
 	if (A_ThisMenuItem = lMenuDesktop)
@@ -4849,6 +4839,7 @@ if FileExist(strCheckTotalCommanderPath)
 	}
 	blnUseTotalCommander := (strTotalCommanderPath <> "NO")
 	IniWrite, %strTotalCommanderPath%, %strIniFile%, Global, TotalCommanderPath
+	; strTotalCommanderNewTabOrWindow in ini file should contain "/O /T" to open in an new tab of the existing file list (default), or "/N" to open in a new file list
 	IniWrite, /O /T, %strIniFile%, Global, TotalCommanderNewTabOrWindow
 }
 

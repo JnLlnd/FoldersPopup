@@ -130,7 +130,6 @@ lMenuSpecialFolders	&Spezielle Ordner
 lMenuSuspendHotkeys	Suspend Hotkeys
 lMenuSwitch	S&witch
 lMenuSwitchDialog	Sw&itch in &Dialogbox
-lMenuSwitchExplorer	Zum &Explorer wechseln
 lMenuUpdate	Nach &Update suchen
 lNavigateFileError	Beim Öffnen des Ordners `n~1~ trat ein Fehler auf.
 lNavigateSpecialError	Beim Öffnen des Speziellen Ordners #~1~ trat ein Fehler auf.

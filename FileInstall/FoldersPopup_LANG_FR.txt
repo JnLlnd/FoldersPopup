@@ -128,9 +128,8 @@ lMenuSettings	&Paramètres de ~1~
 lMenuSpecialExplorer	Fenêtre spéciale de l'Explorateur
 lMenuSpecialFolders	&Dossiers spéciaux
 lMenuSuspendHotkeys	Suspendre les déclencheurs (Hotkeys)
-lMenuSwitch	&Basculer
-lMenuSwitchDialog	Basculer dans cette &boîte de dialogue
-lMenuSwitchExplorer	Basculer vers l'&Explorateur
+lMenuSwitch	Environnement
+lMenuSwitchDialog	Ouvrir dans cette &boîte de dialogue
 lMenuUpdate	Mettre à jour
 lNavigateFileError	Une erreur s'est produite lors de l'ouverture du dossier:`n~1~.
 lNavigateSpecialError	Une erreur s'est produite lors de l'ouverture du dossier spécial #~1~.

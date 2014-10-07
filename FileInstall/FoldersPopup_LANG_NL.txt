@@ -131,7 +131,6 @@ lMenuSpecialFolders	&Speciale Mappen
 lMenuSuspendHotkeys	Pauzeer Hotkeys
 lMenuSwitch	S&witch
 lMenuSwitchDialog	Switch in &dialoogvenster
-lMenuSwitchExplorer	Naar Verkenner omschakelen
 lMenuUpdate	Controleren op nieuwe versies
 lNavigateFileError	Een fout trad op tijdens het openen van deze map:`n~1~.
 lNavigateSpecialError	Een fout trad op tijdens het openen van de speciale map #~1~.
