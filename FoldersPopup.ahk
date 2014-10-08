@@ -2,9 +2,11 @@
 Bugs:
 
 To-do:
-- choose Workspace icon
 - continue Workspace
-
+- remove lMenuSwitchDialog icon and in language
+- remove switch in dialog commented code
+- if no explorer, disable save/load workspace
+- in dialog, if no explorer, disable Workspace
 */
 ;===============================================
 /*
@@ -557,29 +559,29 @@ if (A_OSVersion = "WIN_XP")
 	strIconsIndex := "35|127|118|16|19|22|33"
 				. "|4|147|4|4|147|147"
 				. "|214|166|111|161|85|10|3|4"
-				. "|1|2"
+				. "|7|7"
 }
 else if (A_OSVersion = "WIN_VISTA")
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
-				. "|imageres|imageres|imageres|imageres|imageres|imageres"
+				. "|imageres|imageres|imageres|imageres|imageres|shell32"
 				. "|imageres|imageres|shell32|shell32|shell32|imageres|imageres|imageres"
-				. "|imageres|imageres"
+				. "|shell32|shell32"
 	strIconsIndex := "105|85|67|104|114|22|49"
-				. "|112|174|3|3|174|175|"
+				. "|112|174|3|3|258|251|"
 				. "112|109|88|161|85|28|2|3"
-				. "|1|2"
+				. "|259|259"
 }
 else
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
-				. "|imageres|imageres|imageres|imageres|imageres|imageres"
+				. "|imageres|imageres|imageres|imageres|shell32|shell32"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres|imageres|imageres"
-				. "|imageres|imageres"
+				. "|shell32|shell32"
 	strIconsIndex := "106|189|68|105|115|23|50"
-				. "|113|176|203|203|176|177|"
+				. "|113|176|203|203|258|251|"
 				. "113|110|217|208|298|29|3|4"
-				. "|1|2"
+				. "|259|259"
 }
 
 StringSplit, arrIconsFile, strIconsFile, |
@@ -945,11 +947,14 @@ If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass, strTargetContro
 }
 
 blnMouse := InStr(A_ThisLabel, "Mouse")
-blnNewWindow := false
+blnNewWindow := false ; used in SetMenuPosition and BuildSwitchMenu
 Gosub, SetMenuPosition ; sets strTargetWinId or activate the window strTargetWinId set by CanOpenFavorite
 
 if WindowIsDirectoryOpus(strTargetClass) or WindowIsTotalCommander(strTargetClass)
+{
 	Click ; to make sure the DOpus lister or TC pane under the mouse become active
+	Sleep, 20
+}
 
 ; Can't find how to navigate a dialog box to My Computer or Network Neighborhood... is this is feasible?
 if (blnDisplaySpecialFolders)
@@ -977,10 +982,15 @@ if (blnDisplaySpecialFolders)
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
+	Menu, %lMainMenuName%
+		, % (blnUseTotalCommander ? "Disable" : "Enable") ; enable Total Commander when listing all paths is possible
+		, %lMenuSwitch%
+	/*
 	Menu, menuSwitch
 		; , % (intDialogsIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
 		, % (intDialogsIndex and WindowIsDialog(strTargetClass) ? "Enable" : "Disable")
 		, %lMenuSwitchDialog%
+	*/
 }
 
 if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass)
@@ -1017,10 +1027,16 @@ if !(blnMenuReady)
 	return
 
 blnMouse := InStr(A_ThisLabel, "Mouse")
-blnNewWindow := true
+blnNewWindow := true ; used in SetMenuPosition and BuildSwitchMenu
 Gosub, SetMenuPosition ; sets strTargetWinId
 
 WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
+
+if WindowIsTotalCommander(strTargetClass)
+{
+	Click ; to make sure the TC pane under the mouse become active before creating a new tab
+	Sleep, 20
+}
 
 if (blnDiagMode)
 {
@@ -1046,10 +1062,15 @@ if (blnDisplaySpecialFolders)
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
+	Menu, %lMainMenuName%
+		, % (blnUseTotalCommander ? "Disable" : "Enable") ; enable Total Commander when listing all paths is possible
+		, %lMenuSwitch%
+	/*
 	Menu, menuSwitch
 		; , % (intDialogsIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
 		, % (intDialogsIndex and WindowIsDialog(strTargetClass)? "Enable" : "Disable")
 		, %lMenuSwitchDialog%
+	*/
 }
 
 ; Enable "Add This Folder" only if the target window is an Explorer (tested on WIN_XP and WIN_7)
@@ -1281,13 +1302,6 @@ return
 BuildSwitchMenu:
 ;------------------------------------------------------------
 
-Menu, menuSwitch, Add
-Menu, menuSwitch, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
-Menu, menuSwitch, Color, %strMenuBackgroundColor%
-Menu, menuSwitchDialog, Add
-Menu, menuSwitchDialog, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
-Menu, menuSwitchDialog, Color, %strMenuBackgroundColor%
-
 if (blnUseDirectoryOpus)
 {
 	FileDelete, %strDOpusTempFilePath%
@@ -1308,14 +1322,17 @@ objExplorersWindows := Object()
 CollectExplorers(objExplorersWindows, ComObjCreate("Shell.Application").Windows)
 
 objSwitchMenuExplorers := Object()
-objSwitchMenuDialogs := Object()
 
 intExplorersIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
-intDialogsIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
 
 if (blnUseDirectoryOpus)
 	for intIndex, objLister in objDOpusListers
 	{
+		; if popup menu is for dialog box and we have no path or collection, skip it
+		if (WindowIsDialog(strTargetClass) and !(blnNewWindow))
+			and (!StrLen(objLister.path) or InStr(objLister.path, "coll://"))
+			continue
+		
 		if !NameIsInObject(objLister.path, objSwitchMenuExplorers)
 		{
 			intExplorersIndex := intExplorersIndex + 1
@@ -1332,16 +1349,16 @@ if (blnUseDirectoryOpus)
 			objSwitchMenuExplorer.TabID := objLister.tab
 			
 			objSwitchMenuExplorers.Insert(intExplorersIndex, objSwitchMenuExplorer)
-			
-			if StrLen(objSwitchMenuExplorer.Path) and !InStr(objSwitchMenuExplorer.Path, "coll://")
-			{
-				intDialogsIndex := intDialogsIndex + 1
-				objSwitchMenuDialogs.Insert(intDialogsIndex, objSwitchMenuExplorer)
-			}
 		}
 	}
 
 for intIndex, objExplorer in objExplorersWindows
+{
+	; if popup menu is for dialog box and we have no path, skip it
+	if (WindowIsDialog(strTargetClass) and !(blnNewWindow))
+		and !StrLen(objExplorer.LocationURL)
+		continue
+		
 	if !NameIsInObject(objExplorer.LocationName, objSwitchMenuExplorers)
 	{
 		; ###_D(intIndex . ": " . objExplorer.LocationName . " : ok")
@@ -1361,29 +1378,29 @@ for intIndex, objExplorer in objExplorersWindows
 			objSwitchMenuDialogs.Insert(intDialogsIndex, objSwitchMenuExplorer)
 		}
 	}
+}
 
-intShortcutExplorer := 0
-intShortcutDialog := 0
+Menu, menuSwitch, Add
+Menu, menuSwitch, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
+Menu, menuSwitch, Color, %strMenuBackgroundColor%
+
+intShortcutSwitch := 0
 
 for intIndex, objSwitchMenuExplorer in objSwitchMenuExplorers
 {
-	strMenuName := (blnDisplayMenuShortcuts and (intShortcutExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutExplorer, false) . " " : "") . objSwitchMenuExplorer.Name
-	AddMenuIcon("menuSwitch", strMenuName, "SwitchExplorer", (StrLen(objSwitchMenuExplorer.TabID) ? "DirectoryOpus" : "menuSwitchExplorer"))
+	strMenuName := (blnDisplayMenuShortcuts and (intShortcutSwitch <= 35) ? "&" . NextMenuShortcut(intShortcutSwitch, false) . " " : "") . objSwitchMenuExplorer.Name
+	if !WindowIsDialog(strTargetClass) or (blnNewWindow)
+		AddMenuIcon("menuSwitch", strMenuName, "SwitchExplorer", (StrLen(objSwitchMenuExplorer.TabID) ? "DirectoryOpus" : "menuSwitchExplorer"))
+	else
+		AddMenuIcon("menuSwitch", strMenuName, "SwitchDialog", "menuSwitchDialog")
 }
 
-for intIndex, objSwitchMenuDialog in objSwitchMenuDialogs
+if !WindowIsDialog(strTargetClass) or (blnNewWindow)
 {
-	strMenuName := (blnDisplayMenuShortcuts and (intShortcutDialog <= 35) ? "&" . NextMenuShortcut(intShortcutDialog, false) . " " : "") . objSwitchMenuDialog.Name
-	AddMenuIcon("menuSwitchDialog", strMenuName, "SwitchDialog", "menuSwitchDialog")
+	Menu, menuSwitch, Add
+	AddMenuIcon("menuSwitch", lMenuSwitchSave, "SwitchSaveWorkspace", "menuSwitchSave")
+	AddMenuIcon("menuSwitch", lMenuSwitchLoad, "SwitchLoadWorkspace", "menuSwitchLoad")
 }
-
-Menu, menuSwitch, Add
-AddMenuIcon("menuSwitch", "Save this workspace", "SwitchSaveWorkspace", "menuSwitchSave") ; ### language
-AddMenuIcon("menuSwitch", "Load workspace", "SwitchLoadWorkspace", "menuSwitchLoad") ; ### language
-
-Menu, menuSwitch, Add
-
-AddMenuIcon("menuSwitch", lMenuSwitchDialog, ":menuSwitchDialog", "menuSwitchDialog")
 
 return
 ;------------------------------------------------------------
@@ -1519,8 +1536,7 @@ Menu, %lMainMenuName%, Add
 if (blnDisplaySpecialFolders)
 	AddMenuIcon(lMainMenuName, lMenuSpecialFolders, ":menuSpecialFolders", "lMenuSpecialFolders")
 
-if (blnDisplaySwitchMenu) and !(blnUseTotalCommander)
-; remove Total Commander exclusion when listing all paths is possible
+if (blnDisplaySwitchMenu)
 {
 	AddMenuIcon(lMainMenuName, lMenuSwitch, ":menuSwitch", "lMenuSwitch")
 	Menu, menuSwitch, Color, %strMenuBackgroundColor%
@@ -1700,7 +1716,7 @@ Gui, 1:Add, Text, xs y+0 w68 center gGuiRemoveFolder, %lGuiRemoveFolder% ; Stati
 
 Gui, 1:Add, Picture, xs+10 y+35 gGuiWorkspaces, %strTempDir%\channel_mosaic-48.png ; Static20
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs y+5 w68 center gGuiWorkspaces, Workspaces ; Static21 ### language
+Gui, 1:Add, Text, xs y+5 w68 center gGuiWorkspaces, %lDialogWorkspace% ; Static21
 
 Gui, 1:Add, Text, Section x185 ys+250
 
@@ -3689,7 +3705,7 @@ if (blnDiagMode)
 }
 
 strLocation := ""
-blnNewWindow := InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass) or WindowIsTray(strTargetClass)
+blnNewSpecialWindow := InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass) or WindowIsTray(strTargetClass)
 
 if (blnUseDirectoryOpus) and !WindowIsAnExplorer(strTargetClass) and !WindowIsDialog(strTargetClass)
 {
@@ -3708,7 +3724,7 @@ if (blnUseDirectoryOpus) and !WindowIsAnExplorer(strTargetClass) and !WindowIsDi
 	else if (A_ThisMenuItem = lMenuPictures)
 		strDOpusAlias := "mypictures"
 	
-	if (blnNewWindow)
+	if (blnNewSpecialWindow)
 		RunDOpusRt("/acmd Go ", "/" . strDOpusAlias, " NEW") ; open special folder in a new lister
 	else
 		NavigateDirectoryOpus("/" . strDOpusAlias, strTargetWinId)
@@ -3732,13 +3748,13 @@ else if (blnUseTotalCommander) and !WindowIsAnExplorer(strTargetClass) and !Wind
 		RegRead, strLocation, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Pictures
 	
 	if (intTCCommand)
-		if (blnNewWindow)
+		if (blnNewSpecialWindow)
 			SendMessage, 0x433, %intTCCommand%, , , ahk_class TTOTAL_CMD
 			; FIX new #####
 		else
 			SendMessage, 0x433, %intTCCommand%, , , ahk_class TTOTAL_CMD
 	else ; with strLocation
-		if (blnNewWindow)
+		if (blnNewSpecialWindow)
 			NewTotalCommander(strLocation, strTargetWinId, strTargetControl)
 		else
 			NavigateTotalCommander(strLocation, strTargetWinId, strTargetControl)
@@ -3762,7 +3778,7 @@ else ; this is Explorer, Console, FreeCommander or a dialog box
 	else if (A_ThisMenuItem = lMenuPictures)
 		intSpecialFolder := 39
 	
-	if (blnNewWindow)
+	if (blnNewSpecialWindow)
 		ComObjCreate("Shell.Application").Explore(intSpecialFolder)
 		; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 	else
@@ -3780,9 +3796,9 @@ else ; this is Explorer, Console, FreeCommander or a dialog box
 			else
 				; We cannot open the special folders lMenuMyComputer, lMenuNetworkNeighborhood, lMenuControlPanel and lMenuRecycleBin
 				; in the current window. Need to open an Explorer with ComObjCreate
-				blnNewWindow := true
+				blnNewSpecialWindow := true
 			
-			if (blnNewWindow)
+			if (blnNewSpecialWindow)
 				ComObjCreate("Shell.Application").Explore(intSpecialFolder)
 			else if WindowIsConsole(strTargetClass)
 				NavigateConsole(strLocation, strTargetWinId)
@@ -3802,7 +3818,7 @@ if (blnDiagMode)
 	Diag("SpecialFolderDOpus", strDOpusAlias)
 	Diag("SpecialFolderTCCommand", intTCCommand)
 	Diag("SpecialFolderLocation", strLocation)
-	Diag("SpecialFolderNewWindow", blnNewWindow)
+	Diag("SpecialFolderNewWindow", blnNewSpecialWindow)
 }
 
 return
@@ -3871,7 +3887,7 @@ return
 SwitchDialog:
 ;------------------------------------------------------------
 
-NavigateDialog(objSwitchMenuDialogs[A_ThisMenuItemPos].Path, strTargetWinId, strTargetClass)
+NavigateDialog(objSwitchMenuExplorers[A_ThisMenuItemPos].Path, strTargetWinId, strTargetClass)
 
 return
 ;------------------------------------------------------------
