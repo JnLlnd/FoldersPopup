@@ -49,7 +49,7 @@ lDialogSubmenuShortName	Nom court du sous-menu
 lDialogThirdPartyDetected	~1~ a détecté que ~2~ est installé sur votre ordinateur.`n`nVoulez-vous activer l'intégration avec ~2~?
 lDialogURLLabel	Lien (URL)
 lDialogURLShortName	Nom court de ce lien
-lDialogWorkspace	Environnement
+lDialogSwitch	Groupes
 lDonateButton	Soutenez ce gratuiciel!
 lDonateCheckPrompt	Vous aimez ~1~?`n`n~1~ n'est pas seulement GRATUIT mais aussi distribué SANS ces attrapes publicitaires dont on ne sait jamais si elles transportent des virus ou encore des logiciels espions ou malveillants.`n`nCela fait maintenant ~2~ fois que ~1~ est appelé pour faciliter votre travail quotidien. Que diriez-vous de soutenir ce gratuiciel à votre tour?
 lDonateCheckTitle	~1~ fois! - ~2~
@@ -129,10 +129,10 @@ lMenuSettings	&Paramètres de ~1~
 lMenuSpecialExplorer	Fenêtre spéciale de l'Explorateur
 lMenuSpecialFolders	&Dossiers spéciaux
 lMenuSuspendHotkeys	Suspendre les déclencheurs (Hotkeys)
-lMenuSwitch	Environnement
-lMenuSwitchDialog	Ouvrir dans cette &boîte de dialogue
-lMenuSwitchLoad	Ouvrir un environnement
-lMenuSwitchSave	Enregistrer cet environnement
+lMenuSwitch	Explorateurs
+lMenuSwitchDOpus	Listes Directory Opus et
+lMenuSwitchLoad	Ouvrir un groupe
+lMenuSwitchSave	Enregistrer ce groupe
 lMenuUpdate	Mettre à jour
 lNavigateFileError	Une erreur s'est produite lors de l'ouverture du dossier:`n~1~.
 lNavigateSpecialError	Une erreur s'est produite lors de l'ouverture du dossier spécial #~1~.

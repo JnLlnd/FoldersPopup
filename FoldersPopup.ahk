@@ -3,8 +3,6 @@ Bugs:
 
 To-do:
 - continue Workspace
-- remove lMenuSwitchDialog icon and in language
-- remove switch in dialog commented code
 - if no explorer, disable save/load workspace
 - in dialog, if no explorer, disable Workspace
 */
@@ -546,42 +544,42 @@ strMouseButtons := "None|LButton|MButton|RButton|XButton1|XButton2|WheelUp|Wheel
 StringSplit, arrMouseButtons, strMouseButtons, |
 
 strIconsMenus := "lMenuDesktop|lMenuDocuments|lMenuPictures|lMenuMyComputer|lMenuNetworkNeighborhood|lMenuControlPanel|lMenuRecycleBin"
-	. "|menuRecentFolders|menuSwitchDialog|menuSwitchExplorer|lMenuSpecialFolders|lMenuSwitchDialog|lMenuSwitch"
+	. "|menuRecentFolders|menuSwitchDialog|menuSwitchExplorer|lMenuSpecialFolders|lMenuSwitch"
 	. "|lMenuRecentFolders|lMenuSettings|lMenuAddThisFolder|lDonateMenu|Submenu|Network|UnknownDocument|Folder"
 	. "|menuSwitchSave|menuSwitchLoad"
 
 if (A_OSVersion = "WIN_XP")
 {
 	strIconsFile := "shell32|shell32|shell32|shell32|shell32|shell32|shell32"
-				. "|shell32|shell32|shell32|shell32|shell32|shell32"
+				. "|shell32|shell32|shell32|shell32|shell32"
 				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
 				. "|shell32|shell32"
 	strIconsIndex := "35|127|118|16|19|22|33"
-				. "|4|147|4|4|147|147"
+				. "|4|147|4|4|147"
 				. "|214|166|111|161|85|10|3|4"
 				. "|7|7"
 }
 else if (A_OSVersion = "WIN_VISTA")
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
-				. "|imageres|imageres|imageres|imageres|imageres|shell32"
+				. "|imageres|imageres|imageres|imageres|shell32"
 				. "|imageres|imageres|shell32|shell32|shell32|imageres|imageres|imageres"
 				. "|shell32|shell32"
 	strIconsIndex := "105|85|67|104|114|22|49"
-				. "|112|174|3|3|258|251|"
+				. "|112|174|3|3|251|"
 				. "112|109|88|161|85|28|2|3"
 				. "|259|259"
 }
 else
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
-				. "|imageres|imageres|imageres|imageres|shell32|shell32"
+				. "|imageres|imageres|imageres|imageres|shell32"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres|imageres|imageres"
 				. "|shell32|shell32"
 	strIconsIndex := "106|189|68|105|115|23|50"
-				. "|113|176|203|203|258|251|"
+				. "|113|176|203|203|99|"
 				. "113|110|217|208|298|29|3|4"
-				. "|259|259"
+				. "|297|46"
 }
 
 StringSplit, arrIconsFile, strIconsFile, |
@@ -950,7 +948,7 @@ blnMouse := InStr(A_ThisLabel, "Mouse")
 blnNewWindow := false ; used in SetMenuPosition and BuildSwitchMenu
 Gosub, SetMenuPosition ; sets strTargetWinId or activate the window strTargetWinId set by CanOpenFavorite
 
-if WindowIsDirectoryOpus(strTargetClass) or WindowIsTotalCommander(strTargetClass)
+if (A_ThisLabel = "PopupMenuMouse") and (WindowIsDirectoryOpus(strTargetClass) or WindowIsTotalCommander(strTargetClass))
 {
 	Click ; to make sure the DOpus lister or TC pane under the mouse become active
 	Sleep, 20
@@ -984,13 +982,7 @@ if (blnDisplaySwitchMenu)
 	Gosub, BuildSwitchMenu
 	Menu, %lMainMenuName%
 		, % (blnUseTotalCommander ? "Disable" : "Enable") ; enable Total Commander when listing all paths is possible
-		, %lMenuSwitch%
-	/*
-	Menu, menuSwitch
-		; , % (intDialogsIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
-		, % (intDialogsIndex and WindowIsDialog(strTargetClass) ? "Enable" : "Disable")
-		, %lMenuSwitchDialog%
-	*/
+		, % (blnUseDirectoryOpus ? lMenuSwitchDOpus . " " : "") . lMenuSwitch
 }
 
 if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass)
@@ -1032,7 +1024,7 @@ Gosub, SetMenuPosition ; sets strTargetWinId
 
 WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
 
-if WindowIsTotalCommander(strTargetClass)
+if (A_ThisLabel = "PopupMenuMouse") and WindowIsTotalCommander(strTargetClass)
 {
 	Click ; to make sure the TC pane under the mouse become active before creating a new tab
 	Sleep, 20
@@ -1064,13 +1056,7 @@ if (blnDisplaySwitchMenu)
 	Gosub, BuildSwitchMenu
 	Menu, %lMainMenuName%
 		, % (blnUseTotalCommander ? "Disable" : "Enable") ; enable Total Commander when listing all paths is possible
-		, %lMenuSwitch%
-	/*
-	Menu, menuSwitch
-		; , % (intDialogsIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
-		, % (intDialogsIndex and WindowIsDialog(strTargetClass)? "Enable" : "Disable")
-		, %lMenuSwitchDialog%
-	*/
+		, % (blnUseDirectoryOpus ? lMenuSwitchDOpus . " " : "") . lMenuSwitch
 }
 
 ; Enable "Add This Folder" only if the target window is an Explorer (tested on WIN_XP and WIN_7)
@@ -1538,7 +1524,7 @@ if (blnDisplaySpecialFolders)
 
 if (blnDisplaySwitchMenu)
 {
-	AddMenuIcon(lMainMenuName, lMenuSwitch, ":menuSwitch", "lMenuSwitch")
+	AddMenuIcon(lMainMenuName, (blnUseDirectoryOpus ? lMenuSwitchDOpus . " " : "") . lMenuSwitch, ":menuSwitch", "lMenuSwitch")
 	Menu, menuSwitch, Color, %strMenuBackgroundColor%
 }
 
@@ -1716,7 +1702,7 @@ Gui, 1:Add, Text, xs y+0 w68 center gGuiRemoveFolder, %lGuiRemoveFolder% ; Stati
 
 Gui, 1:Add, Picture, xs+10 y+35 gGuiWorkspaces, %strTempDir%\channel_mosaic-48.png ; Static20
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs y+5 w68 center gGuiWorkspaces, %lDialogWorkspace% ; Static21
+Gui, 1:Add, Text, xs y+5 w68 center gGuiWorkspaces, %lDialogSwitch% ; Static21
 
 Gui, 1:Add, Text, Section x185 ys+250
 
