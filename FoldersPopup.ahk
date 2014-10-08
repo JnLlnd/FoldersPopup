@@ -3,8 +3,6 @@ Bugs:
 
 To-do:
 - continue Workspace
-- if no explorer, disable save/load workspace
-- in dialog, if no explorer, disable Workspace
 */
 ;===============================================
 /*
@@ -14,10 +12,12 @@ To-do:
 
 	Version: 3.3 (2014-10-XX)
 	* reorg Switch menu taking SwitchExplorer to Switch menu level, with Switch in dialog box at the bottom of Switch menu
-	* save and restore workspaces prototype
-	* save and restore with positions
-	* add Save this workspace and Load workspace menus to Switch menu
-	* add Workspaces button to main Gui
+	* rename Switch to Explorers
+	* integrate with DOpus listers
+	* save and restore groups of Explorers prototype
+	* save and restore groups with positions prototype
+	* add Save this group and Load a group menus to Explorers menu
+	* add Groups button to main Gui
 	* show popup menu in TotalCommander windows
 	* Total Commander configuration in Options
 	* ini configuration for TotalCommander window
@@ -981,7 +981,7 @@ if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
 	Menu, %lMainMenuName%
-		, % (blnUseTotalCommander ? "Disable" : "Enable") ; enable Total Commander when listing all paths is possible
+		, % (blnUseTotalCommander or !intExplorersIndex ? "Disable" : "Enable") ; disable for Total Commander (re-enable when listing all paths is possible)
 		, % (blnUseDirectoryOpus ? lMenuSwitchDOpus . " " : "") . lMenuSwitch
 }
 
@@ -1055,7 +1055,7 @@ if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
 	Menu, %lMainMenuName%
-		, % (blnUseTotalCommander ? "Disable" : "Enable") ; enable Total Commander when listing all paths is possible
+		, % (blnUseTotalCommander or !intExplorersIndex ? "Disable" : "Enable") ; enable Total Commander when listing all paths is possible
 		, % (blnUseDirectoryOpus ? lMenuSwitchDOpus . " " : "") . lMenuSwitch
 }
 
