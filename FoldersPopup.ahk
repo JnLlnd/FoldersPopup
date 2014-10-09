@@ -677,6 +677,7 @@ IniRead, blnDiagMode, %strIniFile%, Global, DiagMode, 0
 IniRead, intStartups, %strIniFile%, Global, Startups, 1
 IniRead, intRecentFolders, %strIniFile%, Global, RecentFolders, 10
 IniRead, intIconSize, %strIniFile%, Global, IconSize, 24
+IniRead, strGroups, %strIniFile%, Global, Groups, %A_Space% ; empty string if not found
 
 IniRead, blnDonor, %strIniFile%, Global, Donor, 0 ; Please, be fair. Don't cheat with this.
 if !(blnDonor)
@@ -981,8 +982,11 @@ if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
 	Menu, %lMainMenuName%
-		, % (blnUseTotalCommander or !intExplorersIndex ? "Disable" : "Enable") ; disable for Total Commander (re-enable when listing all paths is possible)
+		, % (blnUseTotalCommander ? "Disable" : "Enable") ; disable for Total Commander (re-enable when listing all paths is possible)
 		, % (blnUseDirectoryOpus ? lMenuSwitchDOpus . " " : "") . lMenuSwitch
+	Menu, menuSwitch
+		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Save group menu if no Explorer
+		, %lMenuSwitchSave%
 }
 
 if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass)
@@ -1055,8 +1059,11 @@ if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
 	Menu, %lMainMenuName%
-		, % (blnUseTotalCommander or !intExplorersIndex ? "Disable" : "Enable") ; enable Total Commander when listing all paths is possible
+		, % (blnUseTotalCommander ? "Disable" : "Enable") ; enable Total Commander when listing all paths is possible
 		, % (blnUseDirectoryOpus ? lMenuSwitchDOpus . " " : "") . lMenuSwitch
+	Menu, menuSwitch
+		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Save group menu if no Explorer
+		, %lMenuSwitchSave%
 }
 
 ; Enable "Add This Folder" only if the target window is an Explorer (tested on WIN_XP and WIN_7)
@@ -1316,23 +1323,25 @@ if (blnUseDirectoryOpus)
 	{
 		; if popup menu is for dialog box and we have no path or collection, skip it
 		if (WindowIsDialog(strTargetClass) and !(blnNewWindow))
-			and (!StrLen(objLister.path) or InStr(objLister.path, "coll://"))
+			and (!StrLen(objLister.Path) or InStr(objLister.Path, "coll://"))
 			continue
 		
-		if !NameIsInObject(objLister.path, objSwitchMenuExplorers)
+		if !NameIsInObject(objLister.Path, objSwitchMenuExplorers)
 		{
 			intExplorersIndex := intExplorersIndex + 1
 			
 			objSwitchMenuExplorer := Object()
-			objSwitchMenuExplorer.Path := objLister.path
-			if InStr(objLister.path, "Lister-Quick-Find-Results")
+			objSwitchMenuExplorer.Path := objLister.Path
+			if InStr(objLister.Path, "Lister-Quick-Find-Results")
 				objSwitchMenuExplorer.Name := "Directory Opus Quick Find Results (" . intExplorersIndex . ")"
-			else if InStr(objLister.path, "coll://")
+			else if InStr(objLister.Path, "coll://")
 				objSwitchMenuExplorer.Name := "Directory Opus Collection (" . intExplorersIndex . ")"
 			else
-				objSwitchMenuExplorer.Name := objLister.path
-			objSwitchMenuExplorer.WindowID := objLister.lister
-			objSwitchMenuExplorer.TabID := objLister.tab
+				objSwitchMenuExplorer.Name := objLister.Path
+			objSwitchMenuExplorer.WindowID := objLister.Lister
+			objSwitchMenuExplorer.TabID := objLister.Tab
+			objSwitchMenuExplorer.Position := objLister.Position
+			objSwitchMenuExplorer.WindowType := "DO"
 			
 			objSwitchMenuExplorers.Insert(intExplorersIndex, objSwitchMenuExplorer)
 		}
@@ -1354,15 +1363,10 @@ for intIndex, objExplorer in objExplorersWindows
 		objSwitchMenuExplorer.WindowID := objExplorer.WindowID
 		objSwitchMenuExplorer.TabID := ""
 		objSwitchMenuExplorer.Position := objExplorer.Position
+		objSwitchMenuExplorer.WindowType := "EX"
 		
 		intExplorersIndex := intExplorersIndex + 1
 		objSwitchMenuExplorers.Insert(intExplorersIndex, objSwitchMenuExplorer)
-		
-		if StrLen(objSwitchMenuExplorer.Path)
-		{
-			intDialogsIndex := intDialogsIndex + 1
-			objSwitchMenuDialogs.Insert(intDialogsIndex, objSwitchMenuExplorer)
-		}
 	}
 }
 
@@ -1376,17 +1380,22 @@ for intIndex, objSwitchMenuExplorer in objSwitchMenuExplorers
 {
 	strMenuName := (blnDisplayMenuShortcuts and (intShortcutSwitch <= 35) ? "&" . NextMenuShortcut(intShortcutSwitch, false) . " " : "") . objSwitchMenuExplorer.Name
 	if !WindowIsDialog(strTargetClass) or (blnNewWindow)
-		AddMenuIcon("menuSwitch", strMenuName, "SwitchExplorer", (StrLen(objSwitchMenuExplorer.TabID) ? "DirectoryOpus" : "menuSwitchExplorer"))
+		AddMenuIcon("menuSwitch", strMenuName, "SwitchExplorer", (objSwitchMenuExplorer.WindowType = "DO" ? "DirectoryOpus" : "menuSwitchExplorer"))
 	else
 		AddMenuIcon("menuSwitch", strMenuName, "SwitchDialog", "menuSwitchDialog")
 }
 
-if !WindowIsDialog(strTargetClass) or (blnNewWindow)
-{
+Menu, menuSwitchGroups, Add
+Menu, menuSwitchGroups, DeleteAll
+Menu, menuSwitchGroups, Color, %strMenuBackgroundColor%
+
+Loop, Parse, strGroups, |
+	AddMenuIcon("menuSwitchGroups", A_LoopField, "SwitchLoadWorkspace", "lMenuSwitch")
+
+if (intExplorersIndex)
 	Menu, menuSwitch, Add
-	AddMenuIcon("menuSwitch", lMenuSwitchSave, "SwitchSaveWorkspace", "menuSwitchSave")
-	AddMenuIcon("menuSwitch", lMenuSwitchLoad, "SwitchLoadWorkspace", "menuSwitchLoad")
-}
+AddMenuIcon("menuSwitch", lMenuSwitchSave, "SwitchSaveWorkspace", "menuSwitchSave")
+AddMenuIcon("menuSwitch", lMenuSwitchLoad, ":menuSwitchGroups", "menuSwitchLoad")
 
 return
 ;------------------------------------------------------------
@@ -1456,19 +1465,22 @@ CollectDOpusListersList(objListers, strList)
 		
 		if (StrLen(strSubStr))
 		{
-			objLister.active_lister := ParseDOpusListerProperty(strSubStr, "active_lister")
-			objLister.active_tab := ParseDOpusListerProperty(strSubStr, "active_tab")
-			objLister.lister := ParseDOpusListerProperty(strSubStr, "lister")
-			objLister.side := ParseDOpusListerProperty(strSubStr, "side")
-			objLister.tab := ParseDOpusListerProperty(strSubStr, "tab")
-			objLister.tab_state := ParseDOpusListerProperty(strSubStr, "tab_state")
-			objLister.path := SubStr(strSubStr, InStr(strSubStr, ">") + 1)
+			objLister.Active_lister := ParseDOpusListerProperty(strSubStr, "active_lister")
+			objLister.Active_tab := ParseDOpusListerProperty(strSubStr, "active_tab")
+			objLister.Lister := ParseDOpusListerProperty(strSubStr, "lister")
+			objLister.Side := ParseDOpusListerProperty(strSubStr, "side")
+			objLister.Tab := ParseDOpusListerProperty(strSubStr, "tab")
+			objLister.Tab_state := ParseDOpusListerProperty(strSubStr, "tab_state")
+			objLister.Path := SubStr(strSubStr, InStr(strSubStr, ">") + 1)
+
+			WinGetPos, intX, intY, intW, intH, % "ahk_id " . objLister.lister
+			objLister.Position := intX . "|" . intY . "|" . intW . "|" . intH
 			
-			strList := SubStr(strList, StrLen(strSubStr))
-			
-			if !InStr(objLister.path, "ftp://")
+			if !InStr(objLister.Path, "ftp://")
 				; Swith Explorer to DOpus FTP folder not supported (see https://github.com/JnLlnd/FoldersPopup/issues/84)
 				objListers.Insert(A_Index, objLister)
+				
+			strList := SubStr(strList, StrLen(strSubStr))
 		}
 	} until	(!StrLen(strSubStr))
 }
@@ -3883,27 +3895,43 @@ return
 SwitchSaveWorkspace:
 ;------------------------------------------------------------
 
-MsgBox, Not finished...
-return
-
-/*
-If no explorer exist
+InputBox, strGroupName, , Group name? ; ### language
+if GroupExists(strGroupName)
 {
-	Gui, 1:+OwnDialogs 
-	Oops open at least one Explorer to save it
-	return
+	MsgBox, 52, %strAppName%, % L("Group ""~1~"" exists. Replace it?", strGroupName) ; ### language
+	IfMsgBox, No
+		return
 }
-*/
-Gosub, GuiShow
-Gosub, GuiWorkspaces
 
-/*
-strWorkspace := ""
+if GroupExists(strGroupName)
+	IniDelete, %strIniFile%, Group-%strGroupName%
+else
+{
+	strGroups := strGroups . (StrLen(strGroups) ? "|" : "") . strGroupName
+	IniWrite, %strGroups%, %strIniFile%, Global, Groups
+}
+
 for intIndex, objSwitchMenuExplorer in objSwitchMenuExplorers
-	strWorkspace := strWorkspace . objSwitchMenuExplorer.Name . "|" . objSwitchMenuExplorer.Position . "`n"
-*/
+	IniWrite, % objSwitchMenuExplorer.Name . "|" . objSwitchMenuExplorer.WindowType . "|" . objSwitchMenuExplorer.Position, %strIniFile%, Group-%strGroupName%, Explorer%intIndex%
+
+MsgBox, , %strAppName%, % L("Group ""~1~"" saved.", strGroupName) ; ### language
 
 return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GroupExists(strGroup)
+;------------------------------------------------------------
+{
+	global strGroups
+	
+	Loop, Parse, strGroups, |
+		if (A_LoopField = strGroup)
+			return True
+		
+	return False
+}
 ;------------------------------------------------------------
 
 
@@ -3911,17 +3939,20 @@ return
 SwitchLoadWorkspace:
 ;------------------------------------------------------------
 
-MsgBox, Not finished...
-return
+Loop
+{
+	IniRead, strExplorer, %strIniFile%, Group-%A_ThisMenuItem%, Explorer%A_Index%
+	if (strExplorer = "ERROR")
+		Break
 
-loop, parse, strWorkspace, `n
-	if StrLen(A_LoopField) and InStr(A_LoopField, ":\") ; exclude special folders
+	StringSplit, arrThisExplorer, strExplorer, |
+	if (arrThisExplorer2 = "EX")
 	{
-		StringSplit, arrWorkspace, A_LoopField, |
-		run, explorer.exe %arrWorkspace1%
+		run, explorer.exe %arrThisExplorer1%
 		Sleep, 500
-		WinMove, A, , %arrWorkspace2%, %arrWorkspace3%, %arrWorkspace4%, %arrWorkspace5%
+		WinMove, A, , %arrThisExplorer3%, %arrThisExplorer4%, %arrThisExplorer5%, %arrThisExplorer6%
 	}
+}
 
 return
 ;------------------------------------------------------------
@@ -3934,6 +3965,7 @@ WinGetClassA()
 	WinGetClass strClass, A
 	return strClass
 }
+;------------------------------------------------------------
 
 
 ;------------------------------------------------------------
