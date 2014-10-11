@@ -1,5 +1,7 @@
 /*
 Bugs:
+- when DO and TC active, openspecialfolder doses not work in TC
+- see OpenFavorite when DO and TC active
 
 To-do:
 - enable Workspace for TC
@@ -989,9 +991,6 @@ if (blnDisplaySpecialFolders)
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
-	Menu, %lMainMenuName%
-		, % (blnUseTotalCommander ? "Disable" : "Enable") ; disable for Total Commander (re-enable when listing all paths is possible)
-		, % (blnUseDirectoryOpus ? lMenuSwitchDOpus . " " : "") . lMenuSwitch
 	Menu, menuSwitch
 		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Save group menu if no Explorer
 		, %lMenuSwitchSave%
@@ -1066,9 +1065,6 @@ if (blnDisplaySpecialFolders)
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
-	Menu, %lMainMenuName%
-		, % (blnUseTotalCommander ? "Disable" : "Enable") ; enable Total Commander when listing all paths is possible
-		, % (blnUseDirectoryOpus ? lMenuSwitchDOpus . " " : "") . lMenuSwitch
 	Menu, menuSwitch
 		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Save group menu if no Explorer
 		, %lMenuSwitchSave%
@@ -1319,6 +1315,14 @@ if (blnUseDirectoryOpus)
 	CollectDOpusListersList(objDOpusListers, strListText) ; list all listers, excluding special folders like Recycle Bin
 }
 
+if (blnUseTotalCommander)
+{
+	objTCLists := Object()
+	; List available folders. Need solution from TC developer to list folders in all tabs:
+	; see http://www.ghisler.ch/board/viewtopic.php?t=41198
+	CollectTCLists(objTCLists)
+}
+
 objExplorersWindows := Object()
 CollectExplorers(objExplorersWindows, ComObjCreate("Shell.Application").Windows)
 
@@ -1329,7 +1333,7 @@ intExplorersIndex := 0 ; used in PopupMenu... to check if we disable the menu wh
 if (blnUseDirectoryOpus)
 	for intIndex, objLister in objDOpusListers
 	{
-		; if popup menu is for dialog box and we have no path or collection, skip it
+		; if popup menu is for dialog box and we have no path or have a collection, skip it
 		if (WindowIsDialog(strTargetClass) and !(blnNewWindow))
 			and (!StrLen(objLister.Path) or InStr(objLister.Path, "coll://"))
 			continue
@@ -1355,6 +1359,23 @@ if (blnUseDirectoryOpus)
 		}
 	}
 
+if (blnUseTotalCommander)
+	for intIndex, objTCList in objTCLists
+	{
+		if !NameIsInObject(objTCList.Path, objSwitchMenuExplorers)
+		{
+			intExplorersIndex := intExplorersIndex + 1
+			
+			objSwitchMenuExplorer := Object()
+			objSwitchMenuExplorer.Path := objTCList.Path
+			objSwitchMenuExplorer.Name := objTCList.Path
+			objSwitchMenuExplorer.WindowID := objTCList.WindowID
+			objSwitchMenuExplorer.WindowType := "TC"
+			
+			objSwitchMenuExplorers.Insert(intExplorersIndex, objSwitchMenuExplorer)
+		}
+	}
+
 for intIndex, objExplorer in objExplorersWindows
 {
 	; if popup menu is for dialog box and we have no path, skip it
@@ -1364,7 +1385,6 @@ for intIndex, objExplorer in objExplorersWindows
 		
 	if !NameIsInObject(objExplorer.LocationName, objSwitchMenuExplorers)
 	{
-		; ###_D(intIndex . ": " . objExplorer.LocationName . " : ok")
 		objSwitchMenuExplorer := Object()
 		objSwitchMenuExplorer.Path := objExplorer.LocationURL
 		objSwitchMenuExplorer.Name := objExplorer.LocationName
@@ -1379,7 +1399,7 @@ for intIndex, objExplorer in objExplorersWindows
 }
 
 Menu, menuSwitch, Add
-Menu, menuSwitch, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
+Menu, menuSwitch, DeleteAll
 Menu, menuSwitch, Color, %strMenuBackgroundColor%
 
 intShortcutSwitch := 0
@@ -1388,7 +1408,7 @@ for intIndex, objSwitchMenuExplorer in objSwitchMenuExplorers
 {
 	strMenuName := (blnDisplayMenuShortcuts and (intShortcutSwitch <= 35) ? "&" . NextMenuShortcut(intShortcutSwitch, false) . " " : "") . objSwitchMenuExplorer.Name
 	if !WindowIsDialog(strTargetClass) or (blnNewWindow)
-		AddMenuIcon("menuSwitch", strMenuName, "SwitchExplorer", (objSwitchMenuExplorer.WindowType = "DO" ? "DirectoryOpus" : "menuSwitchExplorer"))
+		AddMenuIcon("menuSwitch", strMenuName, "SwitchExplorer", (objSwitchMenuExplorer.WindowType = "DO" ? "DirectoryOpus" : (objSwitchMenuExplorer.WindowType = "TC" ? "TotalCommander" : "menuSwitchExplorer")))
 	else
 		AddMenuIcon("menuSwitch", strMenuName, "SwitchDialog", "menuSwitchDialog")
 }
@@ -1436,7 +1456,7 @@ CollectExplorers(objExplorers, pExplorers)
 			*/
 			objExplorer := Object()
 			objExplorer.Position := pExplorer.Left . "|" . pExplorer.Top . "|" . pExplorer.Width . "|" . pExplorer.Height
-			objExplorer.LocationURL := pExplorer.LocationURL
+			objExplorer.LocationURL := pExplorer.LocationURL ; empty for some special folders like Recycle bin - do not show in dialog box
 			strLocationName :=  UriDecode(pExplorer.LocationURL)
 			StringReplace, strLocationName, strLocationName, file:///
 			StringReplace, strLocationName, strLocationName, /, \, A
@@ -1458,8 +1478,52 @@ CollectExplorers(objExplorers, pExplorers)
 
 
 ;------------------------------------------------------------
+CollectTCLists(objLists)
+;------------------------------------------------------------
+{
+	objClipboardBK := ClipboardAll
+
+	cm_CopySrcPathToClip := 2029
+	cm_CopyTrgPathToClip := 2030
+	intTCWindows := 0
+
+	WinGet, arrIDs, List, ahk_class TTOTAL_CMD
+	Loop, %arrIDs%
+	{
+		strWindowId := arrIDs%A_Index%
+		ClipBoard := ""
+		sleep, 20
+		SendMessage, 0x433, %cm_CopySrcPathToClip%, , , ahk_id %strWindowId%
+		sleep, 20
+		if StrLen(ClipBoard)
+		{
+			objTCList := Object()
+			objTCList.Path := ClipBoard
+			objTCList.WindowId := strWindowId
+			objLists.Insert(intTCWindows, objTCList)
+			ClipBoard := ""
+			sleep, 20
+		}
+		SendMessage, 0x433, %cm_CopyTrgPathToClip%, , ,  ahk_id %strWindowId%
+		sleep, 20
+		if StrLen(ClipBoard)
+		{
+			objTCList := Object()
+			objTCList.Path := ClipBoard
+			objTCList.WindowId := strWindowId
+			objLists.Insert(intTCWindows, objTCList)
+		}
+	}
+	
+	Clipboard := objClipboardBK
+	objClipboardBK :=
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 CollectDOpusListersList(objListers, strList)
-; list all DirectoryOpus listers, excluding special folders like Recycle Bin
+; list all DirectoryOpus listers, excluding special folders like Recycle Bin, Network because they are not included in dopus-list.txt
 ;------------------------------------------------------------
 {
 	strList := SubStr(strList, InStr(strList, "<path"))
@@ -1517,6 +1581,7 @@ NameIsInObject(strName, obj)
 	loop, % obj.MaxIndex()
 		if (strName = obj[A_Index].Name)
 			return true
+		
 	return false
 }
 ;------------------------------------------------------------
@@ -3895,7 +3960,7 @@ return
 SwitchExplorer:
 ;------------------------------------------------------------
 
-if StrLen(objSwitchMenuExplorers[A_ThisMenuItemPos].TabID) ; this is a DOpus lister
+if (objSwitchMenuExplorers[A_ThisMenuItemPos].WindowType = "DO") ; this is a DOpus lister
 {
 	if InStr(objSwitchMenuExplorers[A_ThisMenuItemPos].Path, "%")
 	{
@@ -3906,7 +3971,7 @@ if StrLen(objSwitchMenuExplorers[A_ThisMenuItemPos].TabID) ; this is a DOpus lis
 	}
 	RunDOpusRt("/acmd Go ", objSwitchMenuExplorers[A_ThisMenuItemPos].Path, " EXISTINGLISTER") ; activate an existing lister listing this path
 }
-else
+else ; Explorer or TotalCommander
 	WinActivate, % "ahk_id " . objSwitchMenuExplorers[A_ThisMenuItemPos].WindowID
 
 return
@@ -4776,6 +4841,16 @@ AddMenuIcon(strMenuName, ByRef strMenuItemName, strLabel, strIconValue)
 	global objIconsFile
 	global objIconsIndex
 
+	/*
+	###_D(""
+		. "strMenuName: " . strMenuName . "`n"
+		. "strMenuItemName: " . strMenuItemName . "`n"
+		. "strLabel: " . strLabel . "`n"
+		. "strIconValue: " . strIconValue . "`n"
+		. "objIconsFile[strIconValue]: " . objIconsFile[strIconValue] . "`n"
+		. "objIconsIndex[strIconValue]: " . objIconsIndex[strIconValue] . "`n"
+		. "")
+	*/
 	; The names of menus and menu items can be up to 260 characters long.
 	if StrLen(strMenuItemName) > 260
 		strMenuItemName := SubStr(strMenuItemName, 1, 256) . "..." ; minus one for the luck ;-)
@@ -4944,13 +5019,9 @@ SetTCCommand:
 
 IniRead, strTotalCommanderNewTabOrWindow, %strIniFile%, Global, TotalCommanderNewTabOrWindow, %A_Space% ; empty string if not found
 
-/*
-strTCTempFilePath := strTempDir . "\tc-list.txt"
-
-; additional icon for Directory Opus
+; additional icon for TotalCommander
 objIconsFile["TotalCommander"] := strTotalCommanderPath
 objIconsIndex["TotalCommander"] := 1
-*/
 
 return
 ;------------------------------------------------------------
