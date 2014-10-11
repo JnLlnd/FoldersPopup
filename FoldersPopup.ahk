@@ -2,7 +2,10 @@
 Bugs:
 
 To-do:
-- continue Workspace
+- enable Workspace for TC
+- save/load groups language
+- manage group gui
+- close before load
 */
 ;===============================================
 /*
@@ -13,16 +16,21 @@ To-do:
 	Version: 3.3 (2014-10-XX)
 	* reorg Switch menu taking SwitchExplorer to Switch menu level, with Switch in dialog box at the bottom of Switch menu
 	* rename Switch to Explorers
-	* integrate with DOpus listers
-	* save and restore groups of Explorers prototype
-	* save and restore groups with positions prototype
+	* integrate with DOpus listers in Explorers menu
+	* save and restore groups of Explorers
+	* save and restore groups with positions
 	* add Save this group and Load a group menus to Explorers menu
 	* add Groups button to main Gui
-	* show popup menu in TotalCommander windows
+	
+	* automatic detection for Total Commander support
 	* Total Commander configuration in Options
 	* ini configuration for TotalCommander window
-	* automatic detection for Total Commander support
+	* special TotalCommanderNewTabOrWindow swith in ini file
+	* show popup menu in TotalCommander windows
 	* add this folder from Total Commander window
+	* navigate regular and special folder in TotalCommander existing window
+	* open regular and special folder in new TotalCommander window or tab according to TotalCommanderNewTabOrWindow
+
 	* change DOpus command to open a new lister to Go with NEW parameter
 
 	Version: 3.2.2 (2014-10-02)
@@ -969,7 +977,7 @@ if (blnDisplaySpecialFolders)
 
 	; There is no point to navigate a dialog box or console to Control Panel or Recycle Bin, unknown for FreeCommander
 	Menu, menuSpecialFolders
-		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass) or WindowIsTotalCommander(strTargetClass)
+		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
 		or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
 		, %lMenuControlPanel%
 	Menu, menuSpecialFolders
@@ -1712,9 +1720,9 @@ Gui, 1:Add, Picture, xs+10 gGuiRemoveFolder, %strTempDir%\delete_property-48.png
 Gui, 1:Font, s8 w400, Arial ; button legend
 Gui, 1:Add, Text, xs y+0 w68 center gGuiRemoveFolder, %lGuiRemoveFolder% ; Static19
 
-Gui, 1:Add, Picture, xs+10 y+35 gGuiWorkspaces, %strTempDir%\channel_mosaic-48.png ; Static20
+Gui, 1:Add, Picture, xs+10 y+35 gGuiManageGroups, %strTempDir%\channel_mosaic-48.png ; Static20
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs y+5 w68 center gGuiWorkspaces, %lDialogSwitch% ; Static21
+Gui, 1:Add, Text, xs y+5 w68 center gGuiManageGroups, %lDialogSwitch% ; Static21
 
 Gui, 1:Add, Text, Section x185 ys+250
 
@@ -1906,7 +1914,7 @@ return
 
 
 ;------------------------------------------------------------
-GuiWorkspaces:
+GuiManageGroups:
 ;------------------------------------------------------------
 
 MsgBox, Not finished...
@@ -3745,18 +3753,42 @@ else if (blnUseTotalCommander) and !WindowIsAnExplorer(strTargetClass) and !Wind
 	else if (A_ThisMenuItem = lMenuPictures)
 		RegRead, strLocation, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Pictures
 	
-	if (intTCCommand)
-		if (blnNewSpecialWindow)
-			SendMessage, 0x433, %intTCCommand%, , , ahk_class TTOTAL_CMD
-			; FIX new #####
-		else
-			SendMessage, 0x433, %intTCCommand%, , , ahk_class TTOTAL_CMD
-	else ; with strLocation
-		if (blnNewSpecialWindow)
-			NewTotalCommander(strLocation, strTargetWinId, strTargetControl)
-		else
-			NavigateTotalCommander(strLocation, strTargetWinId, strTargetControl)
-
+	if (intTCCommand = 2123)
+		Run, Control ; workaround for command 2123 cm_OpenControls not working in my tests with TC v8.51a
+	else
+	{
+		if (intTCCommand)
+			if (blnNewSpecialWindow)
+			{
+				if !WinExist("ahk_class TTOTAL_CMD") ; open a first instance and get PID
+					or InStr(strTotalCommanderNewTabOrWindow, "/N") ; open a new instance and get PID
+					{
+						Run, %strTotalCommanderPath%, , , intTcPid
+						WinWait, ahk_pid %intTcPid%, , 10
+						Sleep, 200 ; wait additional time to make sure SendMessage works
+					}
+				if !InStr(strTotalCommanderNewTabOrWindow, "/N") ; open the folder in a new tab
+				{
+					intTCCommandOpenNewTab := 3001 ; cm_OpenNewTab
+					SendMessage, 0x433, %intTCCommandOpenNewTab%, , , ahk_class TTOTAL_CMD
+				}
+				SendMessage, 0x433, %intTCCommand%, , , ahk_class TTOTAL_CMD
+				WinActivate, ahk_class TTOTAL_CMD
+			}
+			else
+			{
+				SendMessage, 0x433, %intTCCommand%, , , ahk_class TTOTAL_CMD
+				WinActivate, ahk_class TTOTAL_CMD
+			}
+		else ; with strLocation
+			if (blnNewSpecialWindow)
+				NewTotalCommander(strLocation, strTargetWinId, strTargetControl)
+			else
+			{
+				NavigateTotalCommander(strLocation, strTargetWinId, strTargetControl)
+				WinActivate, ahk_class TTOTAL_CMD
+			}
+	}
 }
 else ; this is Explorer, Console, FreeCommander or a dialog box
 {
@@ -3952,6 +3984,14 @@ Loop
 		Sleep, 500
 		WinMove, A, , %arrThisExplorer3%, %arrThisExplorer4%, %arrThisExplorer5%, %arrThisExplorer6%
 	}
+	else if (arrThisExplorer2 = "DO")
+	{
+		; adapt to DOpus left/right and tabs
+		RunDOpusRt("/acmd Go ", arrThisExplorer1, " NEW") ; open in a new lister
+		Sleep, 500
+		WinMove, A, , %arrThisExplorer3%, %arrThisExplorer4%, %arrThisExplorer5%, %arrThisExplorer6%
+	}
+
 }
 
 return
