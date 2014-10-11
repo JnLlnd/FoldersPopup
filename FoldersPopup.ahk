@@ -32,6 +32,7 @@ To-do:
 	* add this folder from Total Commander window
 	* navigate regular and special folder in TotalCommander existing window
 	* open regular and special folder in new TotalCommander window or tab according to TotalCommanderNewTabOrWindow
+	* TotalCommander support in Explorers menu
 
 	* change DOpus command to open a new lister to Go with NEW parameter
 
@@ -442,7 +443,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.3" ; "major.minor.bugs"
+global strCurrentVersion := "3.2.9.1" ; "major.minor.bugs"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
