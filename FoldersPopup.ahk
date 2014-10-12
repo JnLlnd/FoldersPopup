@@ -1,10 +1,7 @@
 /*
 Bugs:
-- when DO and TC active, openspecialfolder doses not work in TC
-- see OpenFavorite when DO and TC active
 
 To-do:
-- enable Workspace for TC
 - save/load groups language
 - manage group gui
 - close before load
@@ -518,9 +515,10 @@ OnMessage(0x200, "WM_MOUSEMOVE")
 ; To popup menu when left click on the tray icon - See AHK_NOTIFYICON function below
 OnMessage(0x404, "AHK_NOTIFYICON")
 
-; Gosub, GuiShow ; ### only when debugging Gui
-; Gosub, GuiOptions ; ### only when debugging Gui
-; Gosub, GuiAddFolder ; ### only when debugging Gui
+; ### only when debugging Gui
+; Gosub, GuiShow
+; Gosub, GuiOptions
+; Gosub, GuiAddFolder
 ; Gosub, GuiAddFromPopup
 ; Gosub, GuiAddFromDropFiles
 ; Gosub, GuiEditFolder
@@ -1014,7 +1012,6 @@ if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or Win
 		or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
 		or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 		, %lMenuAddThisFolder%...
-	; ###_D(A_ThisLabel . ": " . intPopupMenuPosition . " / " . intMenuPosX . " / " . intMenuPosY)
 	Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; at mouse pointer if option 1, 20x20 offset of active window if option 2 and fix location if option 3
 }
 
@@ -1079,7 +1076,6 @@ Menu, %lMainMenuName%
 	or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
 	or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 	, %lMenuAddThisFolder%...
-; ###_D(A_ThisLabel . ": " . intPopupMenuPosition . " / " . intMenuPosX . " / " . intMenuPosY)
 Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; at mouse pointer if option 1, 20x20 offset of active window if option 2 and fix location if option 3
 
 return
@@ -1106,7 +1102,6 @@ else ; (intPopupMenuPosition =  3) - fix position - use the intMenuPosX and intM
 	intMenuPosX := arrPopupFixPosition1
 	intMenuPosY := arrPopupFixPosition2
 }
-; ###_D(A_ThisLabel . ": " . intPopupMenuPosition . " / " . intMenuPosX . " / " . intMenuPosY)
 
 ; not related to set position but this is a good place to execute it ;-)
 if (blnMouse)
@@ -1289,7 +1284,6 @@ ToolTip, %lMenuRefreshRecent%...
 Gosub, BuildRecentFoldersMenu
 ToolTip
 CoordMode, Menu, % (intPopupMenuPosition = 2 ? "Window" : "Screen")
-; ###_D(A_ThisLabel . ": " . intPopupMenuPosition . " / " . intMenuPosX . " / " . intMenuPosY)
 Menu, menuRecentFolders, Show, %intMenuPosX%, %intMenuPosY% ; same position as the calling popup menu
 
 return
@@ -1568,7 +1562,6 @@ ParseDOpusListerProperty(strSource, strProperty)
 	if !(intStartPos)
 		return ""
 	strSource := SubStr(strSource, intStartPos + StrLen(strProperty) + 3)
-	; ###_D(strProperty . ": " . strSource)
 	intEndPos := InStr(strSource, """")
 	return SubStr(strSource, 1, intEndPos - 1)
 }
@@ -1610,7 +1603,7 @@ if (blnDisplaySpecialFolders)
 
 if (blnDisplaySwitchMenu)
 {
-	AddMenuIcon(lMainMenuName, (blnUseDirectoryOpus ? lMenuSwitchDOpus . " " : "") . lMenuSwitch, ":menuSwitch", "lMenuSwitch")
+	AddMenuIcon(lMainMenuName, (blnUseDirectoryOpus ? lMenuSwitchDOpus . " / " : "") . (blnUseTotalCommander ? lMenuSwitchTC . " / " : "") . lMenuSwitch, ":menuSwitch", "lMenuSwitch")
 	Menu, menuSwitch, Color, %strMenuBackgroundColor%
 }
 
@@ -1703,7 +1696,6 @@ BuildOneMenu(strMenu)
 						; not sure it is required to have a physical file with .html extension - but keep it as is by safety
 					else ; this is a document
 						GetIcon4Location(arrThisMenu[A_Index].FolderLocation, strDefaultIcon, intDefaultIcon)
-					; ###_D(arrThisMenu[A_Index].FolderLocation . " (" . arrThisMenu[A_Index].FavoriteType . ") " . strDefaultIcon . " / " . intDefaultIcon)
 					
 					if StrLen(strDefaultIcon) and !InStr(strDefaultIcon, "%")
 						Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %strDefaultIcon%, %intDefaultIcon%, %intIconSize%
@@ -1988,7 +1980,7 @@ return
 
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
-Gui, 2:New, , Workspaces ; ### % L(lDialogAddEditFolderTitle, (A_ThisLabel = "GuiEditFolder" ? lDialogEdit : lDialogAdd), strAppName, strAppVersion)
+Gui, 2:New, , Title ; ### % L(lDialogAddEditFolderTitle, (A_ThisLabel = "GuiEditFolder" ? lDialogEdit : lDialogAdd), strAppName, strAppVersion)
 Gui, 2:+Owner1
 Gui, 2:+OwnDialogs
 Gui, 2:Color, %strGuiWindowColor%
@@ -3729,10 +3721,7 @@ else if WindowIsDirectoryOpus(strTargetClass)
 	if (blnDiagMode)
 		Diag("Navigate", "DirectoryOpus")
 
-	if (blnUseDirectoryOpus)
-		NavigateDirectoryOpus(strLocation, strTargetWinId)
-	else
-		NavigateExplorer(strLocation, strTargetWinId)
+	NavigateDirectoryOpus(strLocation, strTargetWinId)
 }
 else if WindowIsFreeCommander(strTargetClass)
 {
@@ -3779,7 +3768,7 @@ if (blnDiagMode)
 strLocation := ""
 blnNewSpecialWindow := InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass) or WindowIsTray(strTargetClass)
 
-if (blnUseDirectoryOpus) and !WindowIsAnExplorer(strTargetClass) and !WindowIsDialog(strTargetClass)
+if (blnNewSpecialWindow and blnUseDirectoryOpus) or WindowIsDirectoryOpus(strTargetClass)
 {
 	if (A_ThisMenuItem = lMenuDesktop)
 		strDOpusAlias := "desktop"
@@ -3801,7 +3790,7 @@ if (blnUseDirectoryOpus) and !WindowIsAnExplorer(strTargetClass) and !WindowIsDi
 	else
 		NavigateDirectoryOpus("/" . strDOpusAlias, strTargetWinId)
 }
-else if (blnUseTotalCommander) and !WindowIsAnExplorer(strTargetClass) and !WindowIsDialog(strTargetClass)
+else if (blnNewSpecialWindow and blnUseTotalCommander) or WindowIsTotalCommander(strTargetClass)
 {
 	intTCCommand := 0
 	if (A_ThisMenuItem = lMenuDesktop)
@@ -3993,6 +3982,9 @@ return
 SwitchSaveWorkspace:
 ;------------------------------------------------------------
 
+MsgBox, Not finished...
+return
+
 InputBox, strGroupName, , Group name? ; ### language
 if GroupExists(strGroupName)
 {
@@ -4036,6 +4028,9 @@ GroupExists(strGroup)
 ;------------------------------------------------------------
 SwitchLoadWorkspace:
 ;------------------------------------------------------------
+
+MsgBox, Not finished...
+return
 
 Loop
 {
