@@ -2,6 +2,7 @@
 Bugs:
 
 To-do:
+- Win-K shortcut not available in Win 8.1 (available: Win-A, Win-J, Win-N used by OneNote, Win-Y)
 - save/load groups language
 - manage group gui
 - close before load
@@ -12,7 +13,14 @@ To-do:
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: 3.3 (2014-10-XX)
+	Version: 3.2.7.2 (2014-10-13)
+	* add a checkbox in options to let Total Commander users choose to open new folders (Shift-Middle-Mouse) in a new tab or in a new window
+	* fix bug making new folders opening in Explorer instead of Total Commander (or Directory Opus) when called from the Tray left-click menu
+	* inserts small delays (1/10 sec.) when opening TC special folders to improve reliability
+	
+	Version: 3.2.7.1 (2014-10-12)
+	* 3.2.7.1 is the starting version number used for beta testing phase
+	
 	* reorg Switch menu taking SwitchExplorer to Switch menu level, with Switch in dialog box at the bottom of Switch menu
 	* rename Switch to Explorers
 	* integrate with DOpus listers in Explorers menu
@@ -440,7 +448,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.2.7.1" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "3.2.7.2" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -702,6 +710,7 @@ else
 		Gosub, CheckDirectoryOpus
 
 IniRead, strTotalCommanderPath, %strIniFile%, Global, TotalCommanderPath, %A_Space% ; empty string if not found
+IniRead, blnTotalCommanderUseTabs, %strIniFile%, Global, TotalCommanderUseTabs, 1 ; empty string if not found
 if StrLen(strTotalCommanderPath)
 	blnUseTotalCommander := FileExist(strTotalCommanderPath)
 if (blnUseTotalCommander)
@@ -3109,6 +3118,8 @@ Gui, 2:Add, Text, y+5 xs,  % L(lOptionsThirdPartyDetail, "Total Commander")
 Gui, 2:Add, Text, y+10 xs, %lOptionsThirdPartyPrompt%
 Gui, 2:Add, Edit, x+10 yp w300 h20 vstrTotalCommanderPath, %strTotalCommanderPath%
 Gui, 2:Add, Button, x+10 yp vbtnSelectTCPath gButtonSelectTCPath, %lDialogBrowseButton%
+Gui, 2:Add, Checkbox, x+10 yp vblnTotalCommanderUseTabs, %lOptionsTotalCommanderUseTabs%
+GuiControl, , blnTotalCommanderUseTabs, %blnTotalCommanderUseTabs%
 
 Gui, 2:Add, Button, y+20 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
 Gui, 2:Add, Button, yp vbtnOptionsCancel gButtonOptionsCancel, %lGuiCancel%
@@ -3357,6 +3368,7 @@ if (blnUseDirectoryOpus)
 }
 
 IniWrite, %strTotalCommanderPath%, %strIniFile%, Global, TotalCommanderPath
+IniWrite, %blnTotalCommanderUseTabs%, %strIniFile%, Global, TotalCommanderUseTabs
 blnUseTotalCommander := StrLen(strTotalCommanderPath)
 if (blnUseTotalCommander)
 {
@@ -3364,6 +3376,10 @@ if (blnUseTotalCommander)
 	if (blnUseTotalCommander)
 		Gosub, SetTCCommand
 }
+if (blnTotalCommanderUseTabs)
+	strTotalCommanderNewTabOrWindow := "/O /T" ; open new folder in a new tab
+else
+	strTotalCommanderNewTabOrWindow := "/N" ; open new folder in a new window (TC instance)
 
 ; if language or theme changed, offer to restart the app
 if (strLanguageCodePrev <> strLanguageCode) or (strThemePrev <> strTheme)
@@ -3820,19 +3836,24 @@ else if (blnNewSpecialWindow and blnUseTotalCommander) or WindowIsTotalCommander
 					{
 						Run, %strTotalCommanderPath%, , , intTcPid
 						WinWait, ahk_pid %intTcPid%, , 10
-						Sleep, 200 ; wait additional time to make sure SendMessage works
+						Sleep, 200 ; wait additional time to improve SendMessage reliability
 					}
 				if !InStr(strTotalCommanderNewTabOrWindow, "/N") ; open the folder in a new tab
 				{
 					intTCCommandOpenNewTab := 3001 ; cm_OpenNewTab
+					Sleep, 100 ; wait to improve SendMessage reliability
 					SendMessage, 0x433, %intTCCommandOpenNewTab%, , , ahk_class TTOTAL_CMD
 				}
+				Sleep, 100 ; wait to reduce risk SendMessage not working
 				SendMessage, 0x433, %intTCCommand%, , , ahk_class TTOTAL_CMD
+				Sleep, 100 ; wait to improve SendMessage reliability
 				WinActivate, ahk_class TTOTAL_CMD
 			}
 			else
 			{
+				Sleep, 100 ; wait to improve SendMessage reliability
 				SendMessage, 0x433, %intTCCommand%, , , ahk_class TTOTAL_CMD
+				Sleep, 100 ; wait to improve SendMessage reliability
 				WinActivate, ahk_class TTOTAL_CMD
 			}
 		else ; with strLocation
@@ -4171,7 +4192,7 @@ WindowIsAnExplorer(strClass)
 WindowIsDesktop(strClass)
 ;------------------------------------------------------------
 {
-	return (strClass = "ProgMan") or (strClass = "WorkerW")
+	return (strClass = "ProgMan") or (strClass = "WorkerW") or (strClass = "Shell_TrayWnd")
 }
 ;------------------------------------------------------------
 
@@ -4984,8 +5005,10 @@ if FileExist(strCheckTotalCommanderPath)
 	}
 	blnUseTotalCommander := (strTotalCommanderPath <> "NO")
 	IniWrite, %strTotalCommanderPath%, %strIniFile%, Global, TotalCommanderPath
-	; strTotalCommanderNewTabOrWindow in ini file should contain "/O /T" to open in an new tab of the existing file list (default), or "/N" to open in a new file list
-	IniWrite, /O /T, %strIniFile%, Global, TotalCommanderNewTabOrWindow
+	blnTotalCommanderUseTabs := 1
+	IniWrite, %blnTotalCommanderUseTabs%, %strIniFile%, Global, TotalCommanderUseTabs
+	; strTotalCommanderNewTabOrWindow will contain "/O /T" to open in a new tab if TotalCommanderUseTabs is 1 (default) or "/N" to open in a new file list
+	strTotalCommanderNewTabOrWindow := "/O /T"
 }
 
 return
@@ -5013,7 +5036,11 @@ GetTotalCommanderPath()
 SetTCCommand:
 ;------------------------------------------------------------
 
-IniRead, strTotalCommanderNewTabOrWindow, %strIniFile%, Global, TotalCommanderNewTabOrWindow, %A_Space% ; empty string if not found
+IniRead, blnTotalCommanderUseTabs, %strIniFile%, Global, TotalCommanderUseTabs, 1 ; should be intialized here but true by default for safety
+if (blnTotalCommanderUseTabs)
+	strTotalCommanderNewTabOrWindow := "/O /T" ; open new folder in a new tab
+else
+	strTotalCommanderNewTabOrWindow := "/N" ; open new folder in a new window (TC instance)
 
 ; additional icon for TotalCommander
 objIconsFile["TotalCommander"] := strTotalCommanderPath
