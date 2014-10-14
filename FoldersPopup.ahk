@@ -13,6 +13,10 @@ To-do:
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: 3.2.7.3 (2014-10-XX)
+	* save group GUI with selector, group name of load options
+	*
+
 	Version: 3.2.7.2 (2014-10-13)
 	* add a checkbox in options to let Total Commander users choose to open new folders (Shift-Middle-Mouse) in a new tab or in a new window
 	* fix bug making new folders opening in Explorer instead of Total Commander (or Directory Opus) when called from the Tray left-click menu
@@ -448,7 +452,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.2.7.2" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "3.2.7.3" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -531,6 +535,8 @@ OnMessage(0x404, "AHK_NOTIFYICON")
 ; Gosub, GuiAddFromDropFiles
 ; Gosub, GuiEditFolder
 ; Gosub, PopupMenuNewWindowKeyboard
+Gosub, BuildSwitchMenu
+Gosub, SwitchSaveGroup
 
 return
 
@@ -1426,7 +1432,7 @@ Loop, Parse, strGroups, |
 
 if (intExplorersIndex)
 	Menu, menuSwitch, Add
-AddMenuIcon("menuSwitch", lMenuSwitchSave, "SwitchSaveWorkspace", "menuSwitchSave")
+AddMenuIcon("menuSwitch", lMenuSwitchSave, "SwitchSaveGroup", "menuSwitchSave")
 AddMenuIcon("menuSwitch", lMenuSwitchLoad, ":menuSwitchGroups", "menuSwitchLoad")
 
 return
@@ -1496,9 +1502,9 @@ CollectTCLists(objLists)
 	{
 		strWindowId := arrIDs%A_Index%
 		ClipBoard := ""
-		sleep, 20
+		sleep, 50
 		SendMessage, 0x433, %cm_CopySrcPathToClip%, , , ahk_id %strWindowId%
-		sleep, 20
+		sleep, 50
 		if StrLen(ClipBoard)
 		{
 			objTCList := Object()
@@ -1506,10 +1512,10 @@ CollectTCLists(objLists)
 			objTCList.WindowId := strWindowId
 			objLists.Insert(intTCWindows, objTCList)
 			ClipBoard := ""
-			sleep, 20
+			sleep, 50
 		}
 		SendMessage, 0x433, %cm_CopyTrgPathToClip%, , ,  ahk_id %strWindowId%
-		sleep, 20
+		sleep, 50
 		if StrLen(ClipBoard)
 		{
 			objTCList := Object()
@@ -1984,8 +1990,8 @@ return
 GuiManageGroups:
 ;------------------------------------------------------------
 
-MsgBox, Not finished...
-return
+; MsgBox, Not finished...
+; return
 
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
@@ -4000,12 +4006,59 @@ return
 
 
 ;------------------------------------------------------------
-SwitchSaveWorkspace:
+SwitchSaveGroup:
 ;------------------------------------------------------------
 
-MsgBox, Not finished...
+; MsgBox, Not finished...
+; return
+
+Gui, 2:New, , % L(lGuiSwitchSaveTitle, lMenuSwitchSave, strAppName, strAppVersion)
+Gui, Margin, 10, 10
+Gui, 2:Color, %strGuiWindowColor%
+
+Gui, 2:Font, s10 w700, Verdana
+Gui, 2:Add, Text, x10 y10 w470 center, %lMenuSwitchSave%
+Gui, 2:Font
+
+Gui, 2:Add, Text, x10 y+15 w470 center, %lGuiSwitchSaveSelect%
+
+Gui, 2:Add, ListView
+	, xm w480 h170 Checked Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvGroupList
+	, %lGuiSwitchSaveLvHeader%|Hidden
+; LV_ModifyCol(7, 0) ; hide 7th column
+
+for intIndex, objSwitchMenuExplorer in objSwitchMenuExplorers
+{
+	arrExplorerPosition := objSwitchMenuExplorer.Position
+	StringSplit, arrExplorerPosition, arrExplorerPosition, "|"
+	LV_Add("Check", objSwitchMenuExplorer.Name, arrExplorerPosition1, arrExplorerPosition2, arrExplorerPosition3, arrExplorerPosition4, objSwitchMenuExplorer.WindowType
+		, objSwitchMenuExplorer.Path . " | " . objSwitchMenuExplorer.Name . " | " . objSwitchMenuExplorer.WindowID . " | " . objSwitchMenuExplorer.Position . " | " . objSwitchMenuExplorer.TabID)
+}
+
+LV_Modify(1, "Select Focus")
+Loop, 4
+	LV_ModifyCol(A_Index + 1, "Right")
+Loop, 7
+	LV_ModifyCol(A_Index, "AutoHdr")
+
+Gui, 2:Add, Text, x10 y+10 w300, %lGuiSwitchSaveName%
+Gui, 2:Add, Edit, x10 y+5 w300 Limit250 vstrSwitchSaveName
+
+Gui, 2:Add, Text, x10, %lGuiSwitchSaveRestoreOption%:
+Gui, 2:Add, Radio, x+10 yp section vblnRadioAddWindows checked, %lGuiSwitchSaveAddWindowsLabel%
+Gui, 2:Add, Radio, xs y+5 vblnRadioReplaceWindows, %lGuiSwitchSaveReplaceWindowsLabel%
+
+Gui, 2:Add, Button, y+20 vbtnSwitchSaveSave gButtonSwitchSaveSave, %lGuiSave%
+Gui, 2:Add, Button, yp vbtnSwitchSaveCancel gButtonSwitchSaveCancel, %lGuiCancel%
+GuiCenterButtons(L(lGuiSwitchSaveTitle, lMenuSwitchSave, strAppName, strAppVersion), 10, 5, 20, , "btnSwitchSaveSave", "btnSwitchSaveCancel")
+
+Gui, 2:Show, AutoSize Center
+
+
 return
 
+
+; ####
 InputBox, strGroupName, , Group name? ; ### language
 if GroupExists(strGroupName)
 {
@@ -4032,6 +4085,41 @@ return
 
 
 ;------------------------------------------------------------
+ButtonSwitchSaveSave:
+;------------------------------------------------------------
+
+/*
+Loop % LV_GetCount()
+{
+	LV_GetText(strName, A_Index, 1)
+	LV_GetText(strLocation, A_Index, 2)
+	LV_GetText(strMenu, A_Index, 3)
+	LV_GetText(strSubmenu, A_Index, 4)
+	LV_GetText(strFavoriteType, A_Index, 5)
+
+	objFolder := Object() ; new menu item
+	objFolder.FolderName := strName ; display name of this menu item
+	objFolder.FolderLocation := strLocation ; path for this menu item
+	objFolder.MenuName := strCurrentMenu ; parent menu of this menu item - do not use strMenu because lack of lMainMenuName
+	objFolder.SubmenuFullName := strSubmenu ; if menu, full name of the submenu
+	objFolder.FavoriteType := strFavoriteType ; "F" folder, "D" document or "S" submenu
+	arrMenus[strCurrentMenu].Insert(objFolder) ; add this menu item to parent menu - do not use strMenu because lack of lMainMenuName
+}
+*/
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ButtonSwitchSaveCancel:
+;------------------------------------------------------------
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 GroupExists(strGroup)
 ;------------------------------------------------------------
 {
@@ -4050,8 +4138,8 @@ GroupExists(strGroup)
 SwitchLoadWorkspace:
 ;------------------------------------------------------------
 
-MsgBox, Not finished...
-return
+; MsgBox, Not finished...
+; return
 
 Loop
 {

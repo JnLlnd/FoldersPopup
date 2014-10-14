@@ -201,4 +201,12 @@ global lUpdatePrompt := "Update ~1~ from v~2~ to v~3~?"
 global lUpdateTitle := "Update ~1~?"
 global lUpdateYouHaveLatest := "You have the latest version: ~1~.`n`nVisit the ~2~ web page anyway?"
 
+global lGuiSwitchSaveTitle := "~1~ - ~2~ ~3~"
+global lGuiSwitchSaveLvHeader := "Path|Left|Top|Width|Height|Type"
+global lGuiSwitchSaveSelect := "Select the folders to save in this group"
+global lGuiSwitchSaveName := "Group short name (for menu)"
+global lGuiSwitchSaveRestoreOption := "When restoring this group"
+global lGuiSwitchSaveAddWindowsLabel := "Add to existing windows"
+global lGuiSwitchSaveReplaceWindowsLabel := "Replace existing windows"
+
 return
