@@ -1363,6 +1363,8 @@ if (blnUseDirectoryOpus)
 			objSwitchMenuExplorer.WindowID := objLister.Lister
 			objSwitchMenuExplorer.TabID := objLister.Tab
 			objSwitchMenuExplorer.Position := objLister.Position
+			objSwitchMenuExplorer.MinMax := objLister.MinMax
+			objSwitchMenuExplorer.Pane := objLister.Pane
 			objSwitchMenuExplorer.WindowType := "DO"
 			
 			objSwitchMenuExplorers.Insert(intExplorersIndex, objSwitchMenuExplorer)
@@ -1380,6 +1382,9 @@ if (blnUseTotalCommander)
 			objSwitchMenuExplorer.Path := objTCList.Path
 			objSwitchMenuExplorer.Name := objTCList.Path
 			objSwitchMenuExplorer.WindowID := objTCList.WindowID
+			objSwitchMenuExplorer.Position := objTCList.Position
+			objSwitchMenuExplorer.MinMax := objTCList.MinMax
+			objSwitchMenuExplorer.Pane := objTCList.Pane
 			objSwitchMenuExplorer.WindowType := "TC"
 			
 			objSwitchMenuExplorers.Insert(intExplorersIndex, objSwitchMenuExplorer)
@@ -1401,6 +1406,7 @@ for intIndex, objExplorer in objExplorersWindows
 		objSwitchMenuExplorer.WindowID := objExplorer.WindowID
 		objSwitchMenuExplorer.TabID := ""
 		objSwitchMenuExplorer.Position := objExplorer.Position
+		objSwitchMenuExplorer.MinMax := objExplorer.MinMax
 		objSwitchMenuExplorer.WindowType := "EX"
 		
 		intExplorersIndex := intExplorersIndex + 1
@@ -1478,7 +1484,9 @@ CollectExplorers(objExplorers, pExplorers)
 				else
 					objExplorer.LocationName := lMenuSpecialExplorer . " (" . pExplorer.HWND . ")" ; will be used in menuSwitchExplorer
 			objExplorer.WindowID := pExplorer.HWND
-
+			WinGet, intMinMax, MinMax, % "ahk_id " . pExplorer.HWND
+			objExplorer.MinMax := intMinMax
+			
 			if StrLen(pExplorer.HWND)
 				objExplorers.Insert(A_Index, objExplorer)
 		}
@@ -1501,26 +1509,36 @@ CollectTCLists(objLists)
 	Loop, %arrIDs%
 	{
 		strWindowId := arrIDs%A_Index%
+		WinGetPos, intX, intY, intW, intH, ahk_id %strWindowId%
+		WinGet, intMinMax, MinMax, ahk_id %strWindowId%
 		ClipBoard := ""
 		sleep, 50
 		SendMessage, 0x433, %cm_CopySrcPathToClip%, , , ahk_id %strWindowId%
-		sleep, 50
+		ClipWait, 2, 1 ; wait up to 2 seconds for text (1) in the Clipboard
+		sleep, 10 ; wait 10 additional seconds to improve reliability
 		if StrLen(ClipBoard)
 		{
 			objTCList := Object()
 			objTCList.Path := ClipBoard
 			objTCList.WindowId := strWindowId
+			objTCList.Position := intX . "|" . intY . "|" . intW . "|" . intH
+			objTCList.MinMax := intMinMax
+			objTCList.Pane := 1
 			objLists.Insert(intTCWindows, objTCList)
 			ClipBoard := ""
 			sleep, 50
 		}
 		SendMessage, 0x433, %cm_CopyTrgPathToClip%, , ,  ahk_id %strWindowId%
-		sleep, 50
+		ClipWait, 2, 1 ; wait up to 2 seconds for text (1) in the Clipboard
+		sleep, 10 ; wait 10 additional seconds to improve reliability
 		if StrLen(ClipBoard)
 		{
 			objTCList := Object()
 			objTCList.Path := ClipBoard
 			objTCList.WindowId := strWindowId
+			objTCList.Position := intX . "|" . intY . "|" . intW . "|" . intH
+			objTCList.MinMax := intMinMax
+			objTCList.Pane := 2
 			objLists.Insert(intTCWindows, objTCList)
 		}
 	}
@@ -1557,6 +1575,9 @@ CollectDOpusListersList(objListers, strList)
 
 			WinGetPos, intX, intY, intW, intH, % "ahk_id " . objLister.lister
 			objLister.Position := intX . "|" . intY . "|" . intW . "|" . intH
+			WinGet, intMinMax, MinMax, % "ahk_id " . objLister.lister
+			objLister.MinMax := intMinMax
+			objLister.Pane := objLister.Side
 			
 			if !InStr(objLister.Path, "ftp://")
 				; Swith Explorer to DOpus FTP folder not supported (see https://github.com/JnLlnd/FoldersPopup/issues/84)
@@ -1768,9 +1789,8 @@ Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, ListView
 	, xm+30 w480 h240 Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFoldersList gGuiFoldersListEvent
 	, %lGuiLvFoldersHeader%|Hidden Menu|Hidden Submenu|Hidden FavoriteType
-LV_ModifyCol(3, 0) ; hide 3rd column
-LV_ModifyCol(4, 0) ; hide 4th column
-LV_ModifyCol(5, 0) ; hide 5th column
+Loop, 3
+	LV_ModifyCol(A_Index + 2, 0) ; hide 3rd-5th columns
 
 Gui, 1:Add, Text, Section x+0 yp
 
@@ -4013,38 +4033,45 @@ SwitchSaveGroup:
 ; return
 
 Gui, 2:New, , % L(lGuiSwitchSaveTitle, lMenuSwitchSave, strAppName, strAppVersion)
-Gui, Margin, 10, 10
+Gui, 2:Margin, 10, 10
 Gui, 2:Color, %strGuiWindowColor%
 
 Gui, 2:Font, s10 w700, Verdana
-Gui, 2:Add, Text, x10 y10 w470 center, %lMenuSwitchSave%
+Gui, 2:Add, Text, x10 y10 w670 center, %lMenuSwitchSave%
 Gui, 2:Font
 
-Gui, 2:Add, Text, x10 y+15 w470 center, %lGuiSwitchSaveSelect%
+Gui, 2:Add, Text, x10 y+15 w670 center, %lGuiSwitchSaveSelect%
 
 Gui, 2:Add, ListView
-	, xm w480 h170 Checked Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvGroupList
-	, %lGuiSwitchSaveLvHeader%|Hidden
-; LV_ModifyCol(7, 0) ; hide 7th column
+	, xm w680 h200 Checked Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvGroupList
+	, %lGuiSwitchSaveLvHeader%|Hidden: Path|Pane|WindowID|Position|TabID
+Loop, 4
+	LV_ModifyCol(A_Index + 3, "Right")
 
 for intIndex, objSwitchMenuExplorer in objSwitchMenuExplorers
 {
 	arrExplorerPosition := objSwitchMenuExplorer.Position
 	StringSplit, arrExplorerPosition, arrExplorerPosition, "|"
-	LV_Add("Check", objSwitchMenuExplorer.Name, arrExplorerPosition1, arrExplorerPosition2, arrExplorerPosition3, arrExplorerPosition4, objSwitchMenuExplorer.WindowType
-		, objSwitchMenuExplorer.Path . " | " . objSwitchMenuExplorer.Name . " | " . objSwitchMenuExplorer.WindowID . " | " . objSwitchMenuExplorer.Position . " | " . objSwitchMenuExplorer.TabID)
+	LV_Add("Check", objSwitchMenuExplorer.Name
+		, (objSwitchMenuExplorer.WindowType = "DO" ? "Directory Opus" : (objSwitchMenuExplorer.WindowType = "TC" ? "Total Commander" : "Windows Explorer"))
+		, (objSwitchMenuExplorer.MinMax = -1 ? "Minimized" : (objSwitchMenuExplorer.MinMax = "1" ? "Maximized" : "Normal"))
+		, (objSwitchMenuExplorer.MinMax = 0 ? arrExplorerPosition1 : "-")
+		, (objSwitchMenuExplorer.MinMax = 0 ? arrExplorerPosition2 : "-")
+		, (objSwitchMenuExplorer.MinMax = 0 ? arrExplorerPosition3 : "-")
+		, (objSwitchMenuExplorer.MinMax = 0 ? arrExplorerPosition4 : "-")
+		, objSwitchMenuExplorer.Path, objSwitchMenuExplorer.Pane, objSwitchMenuExplorer.WindowID, objSwitchMenuExplorer.Position, objSwitchMenuExplorer.TabID)
 }
 
 LV_Modify(1, "Select Focus")
-Loop, 4
-	LV_ModifyCol(A_Index + 1, "Right")
-Loop, 7
+Loop, 12
 	LV_ModifyCol(A_Index, "AutoHdr")
+Loop, 5
+	LV_ModifyCol(A_Index + 7, 0) ; hide 8th-12th columns
 
-Gui, 2:Add, Text, x10 y+10 w300, %lGuiSwitchSaveName%
-Gui, 2:Add, Edit, x10 y+5 w300 Limit250 vstrSwitchSaveName
+Gui, 2:Add, Text, x10 y+10 w250 section, %lGuiSwitchSaveName%
+Gui, 2:Add, Edit, x10 y+5 w250 Limit248 vstrSwitchSaveName ; maximum length of ini section name is 255 ("Group-" is prepended)
 
-Gui, 2:Add, Text, x10, %lGuiSwitchSaveRestoreOption%:
+Gui, 2:Add, Text, ys x300, %lGuiSwitchSaveRestoreOption%:
 Gui, 2:Add, Radio, x+10 yp section vblnRadioAddWindows checked, %lGuiSwitchSaveAddWindowsLabel%
 Gui, 2:Add, Radio, xs y+5 vblnRadioReplaceWindows, %lGuiSwitchSaveReplaceWindowsLabel%
 
@@ -4054,32 +4081,6 @@ GuiCenterButtons(L(lGuiSwitchSaveTitle, lMenuSwitchSave, strAppName, strAppVersi
 
 Gui, 2:Show, AutoSize Center
 
-
-return
-
-
-; ####
-InputBox, strGroupName, , Group name? ; ### language
-if GroupExists(strGroupName)
-{
-	MsgBox, 52, %strAppName%, % L("Group ""~1~"" exists. Replace it?", strGroupName) ; ### language
-	IfMsgBox, No
-		return
-}
-
-if GroupExists(strGroupName)
-	IniDelete, %strIniFile%, Group-%strGroupName%
-else
-{
-	strGroups := strGroups . (StrLen(strGroups) ? "|" : "") . strGroupName
-	IniWrite, %strGroups%, %strIniFile%, Global, Groups
-}
-
-for intIndex, objSwitchMenuExplorer in objSwitchMenuExplorers
-	IniWrite, % objSwitchMenuExplorer.Name . "|" . objSwitchMenuExplorer.WindowType . "|" . objSwitchMenuExplorer.Position, %strIniFile%, Group-%strGroupName%, Explorer%intIndex%
-
-MsgBox, , %strAppName%, % L("Group ""~1~"" saved.", strGroupName) ; ### language
-
 return
 ;------------------------------------------------------------
 
@@ -4087,25 +4088,46 @@ return
 ;------------------------------------------------------------
 ButtonSwitchSaveSave:
 ;------------------------------------------------------------
+Gui, 2:Submit, NoHide
 
-/*
-Loop % LV_GetCount()
+if !StrLen(strSwitchSaveName)
 {
-	LV_GetText(strName, A_Index, 1)
-	LV_GetText(strLocation, A_Index, 2)
-	LV_GetText(strMenu, A_Index, 3)
-	LV_GetText(strSubmenu, A_Index, 4)
-	LV_GetText(strFavoriteType, A_Index, 5)
-
-	objFolder := Object() ; new menu item
-	objFolder.FolderName := strName ; display name of this menu item
-	objFolder.FolderLocation := strLocation ; path for this menu item
-	objFolder.MenuName := strCurrentMenu ; parent menu of this menu item - do not use strMenu because lack of lMainMenuName
-	objFolder.SubmenuFullName := strSubmenu ; if menu, full name of the submenu
-	objFolder.FavoriteType := strFavoriteType ; "F" folder, "D" document or "S" submenu
-	arrMenus[strCurrentMenu].Insert(objFolder) ; add this menu item to parent menu - do not use strMenu because lack of lMainMenuName
+	Oops(lGuiSwitchSaveNameEmpty)
+	return
 }
-*/
+
+if GroupExists(strSwitchSaveName)
+{
+	MsgBox, 52, %strAppName%, % L(lGuiSwitchSaveReplaceGroup, strSwitchSaveName)
+	IfMsgBox, No
+		return
+}
+
+if GroupExists(strSwitchSaveName)
+	IniDelete, %strIniFile%, Group-%strSwitchSaveName%
+else
+{
+	strGroups := strGroups . (StrLen(strGroups) ? "|" : "") . strSwitchSaveName
+	IniWrite, %strGroups%, %strIniFile%, Global, Groups
+}
+
+IniWrite, % (blnRadioReplaceWindows ? "Replace" : "Add"), %strIniFile%, Group-%strSwitchSaveName%, WhenRestoringThisGroup
+intRow := 0
+Loop
+{
+	intRow := LV_GetNext(intRow, "Checked")
+    if !(intRow)
+        break
+	IniWrite, % objSwitchMenuExplorers[intRow].Name
+		. "|" . objSwitchMenuExplorers[intRow].WindowType
+		. "|" . objSwitchMenuExplorers[intRow].MinMax
+		. "|" . objSwitchMenuExplorers[intRow].Position
+		. "|" . objSwitchMenuExplorers[intRow].Pane
+		, %strIniFile%, Group-%strSwitchSaveName%, Explorer%A_Index%
+}
+
+Oops(lGuiSwitchSaveGroupSaved, strSwitchSaveName)
+Gosub, ButtonSwitchSaveCancel
 
 return
 ;------------------------------------------------------------
@@ -4114,6 +4136,8 @@ return
 ;------------------------------------------------------------
 ButtonSwitchSaveCancel:
 ;------------------------------------------------------------
+
+Gui, 2:Destroy
 
 return
 ;------------------------------------------------------------
@@ -4140,6 +4164,8 @@ SwitchLoadWorkspace:
 
 ; MsgBox, Not finished...
 ; return
+
+; ####
 
 Loop
 {
@@ -4956,6 +4982,10 @@ AddMenuIcon(strMenuName, ByRef strMenuItemName, strLabel, strIconValue)
 		. "objIconsIndex[strIconValue]: " . objIconsIndex[strIconValue] . "`n"
 		. "")
 	*/
+	
+	if !StrLen(strMenuItemName)
+		return
+	
 	; The names of menus and menu items can be up to 260 characters long.
 	if StrLen(strMenuItemName) > 260
 		strMenuItemName := SubStr(strMenuItemName, 1, 256) . "..." ; minus one for the luck ;-)

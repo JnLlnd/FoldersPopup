@@ -202,11 +202,13 @@ global lUpdateTitle := "Update ~1~?"
 global lUpdateYouHaveLatest := "You have the latest version: ~1~.`n`nVisit the ~2~ web page anyway?"
 
 global lGuiSwitchSaveTitle := "~1~ - ~2~ ~3~"
-global lGuiSwitchSaveLvHeader := "Path|Left|Top|Width|Height|Type"
+global lGuiSwitchSaveLvHeader := "Path|Application|Window state|Left|Top|Width|Height"
 global lGuiSwitchSaveSelect := "Select the folders to save in this group"
 global lGuiSwitchSaveName := "Group short name (for menu)"
 global lGuiSwitchSaveRestoreOption := "When restoring this group"
 global lGuiSwitchSaveAddWindowsLabel := "Add to existing windows"
 global lGuiSwitchSaveReplaceWindowsLabel := "Replace existing windows"
-
+global lGuiSwitchSaveReplaceGroup := "Group ""~1~"" exists. Replace it?"
+global lGuiSwitchSaveNameEmpty := "The group name is empty. Please, choose a group name."
+global lGuiSwitchSaveGroupSaved := "Group ""~1~"" saved."
 return
