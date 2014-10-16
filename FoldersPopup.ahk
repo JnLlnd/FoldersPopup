@@ -2,10 +2,9 @@
 Bugs:
 
 To-do:
-- Win-K shortcut not available in Win 8.1 (available: Win-A, Win-J, Win-N used by OneNote, Win-Y)
-- save/load groups language
+- load with TC and DO
 - manage group gui
-- close before load
+- Win-K shortcut not available in Win 8.1 (available: Win-A, Win-J, Win-N used by OneNote, Win-Y)
 */
 ;===============================================
 /*
@@ -15,7 +14,10 @@ To-do:
 
 	Version: 3.2.7.3 (2014-10-XX)
 	* save group GUI with selector, group name of load options
-	*
+	* save group GUI improvements
+	* load group and read replace setting
+	* close other Explorers, TC and DO before loading a group when group setting is replace
+	* open Explorers instances in a group
 
 	Version: 3.2.7.2 (2014-10-13)
 	* add a checkbox in options to let Total Commander users choose to open new folders (Shift-Middle-Mouse) in a new tab or in a new window
@@ -535,8 +537,8 @@ OnMessage(0x404, "AHK_NOTIFYICON")
 ; Gosub, GuiAddFromDropFiles
 ; Gosub, GuiEditFolder
 ; Gosub, PopupMenuNewWindowKeyboard
-Gosub, BuildSwitchMenu
-Gosub, SwitchSaveGroup
+; Gosub, BuildSwitchMenu
+; Gosub, SwitchSaveGroup
 
 return
 
@@ -1434,8 +1436,10 @@ Menu, menuSwitchGroups, DeleteAll
 Menu, menuSwitchGroups, Color, %strMenuBackgroundColor%
 
 Loop, Parse, strGroups, |
-	AddMenuIcon("menuSwitchGroups", A_LoopField, "SwitchLoadWorkspace", "lMenuSwitch")
-
+{
+	IniRead, blnReplaceWhenRestoringThisGroup, %striniFile%, Group-%A_LoopField%, ReplaceWhenRestoringThisGroup, %A_Space% ; empty if not found
+	AddMenuIcon("menuSwitchGroups", A_LoopField . " (" . (blnReplaceWhenRestoringThisGroup ? lMenuSwitchReplace : lMenuSwitchAdd) . ")" , "SwitchLoadGroup", "lMenuSwitch")
+}
 if (intExplorersIndex)
 	Menu, menuSwitch, Add
 AddMenuIcon("menuSwitch", lMenuSwitchSave, "SwitchSaveGroup", "menuSwitchSave")
@@ -1639,7 +1643,8 @@ if (blnDisplaySpecialFolders)
 
 if (blnDisplaySwitchMenu)
 {
-	AddMenuIcon(lMainMenuName, (blnUseDirectoryOpus ? lMenuSwitchDOpus . " / " : "") . (blnUseTotalCommander ? lMenuSwitchTC . " / " : "") . lMenuSwitch, ":menuSwitch", "lMenuSwitch")
+	strBuildMenuFullName := (blnUseDirectoryOpus ? lMenuSwitchDOpus . " + " : "") . (blnUseTotalCommander ? lMenuSwitchTC . " + " : "") . lMenuSwitch
+	AddMenuIcon(lMainMenuName, strBuildMenuFullName, ":menuSwitch", "lMenuSwitch")
 	Menu, menuSwitch, Color, %strMenuBackgroundColor%
 }
 
@@ -3860,8 +3865,8 @@ else if (blnNewSpecialWindow and blnUseTotalCommander) or WindowIsTotalCommander
 				if !WinExist("ahk_class TTOTAL_CMD") ; open a first instance and get PID
 					or InStr(strTotalCommanderNewTabOrWindow, "/N") ; open a new instance and get PID
 					{
-						Run, %strTotalCommanderPath%, , , intTcPid
-						WinWait, ahk_pid %intTcPid%, , 10
+						Run, %strTotalCommanderPath%
+						WinWait, A, , 10
 						Sleep, 200 ; wait additional time to improve SendMessage reliability
 					}
 				if !InStr(strTotalCommanderNewTabOrWindow, "/N") ; open the folder in a new tab
@@ -4035,6 +4040,7 @@ SwitchSaveGroup:
 Gui, 2:New, , % L(lGuiSwitchSaveTitle, lMenuSwitchSave, strAppName, strAppVersion)
 Gui, 2:Margin, 10, 10
 Gui, 2:Color, %strGuiWindowColor%
+Gui, 2:+OwnDialogs
 
 Gui, 2:Font, s10 w700, Verdana
 Gui, 2:Add, Text, x10 y10 w670 center, %lMenuSwitchSave%
@@ -4069,16 +4075,18 @@ Loop, 5
 	LV_ModifyCol(A_Index + 7, 0) ; hide 8th-12th columns
 
 Gui, 2:Add, Text, x10 y+10 w250 section, %lGuiSwitchSaveName%
-Gui, 2:Add, Edit, x10 y+5 w250 Limit248 vstrSwitchSaveName ; maximum length of ini section name is 255 ("Group-" is prepended)
+Gui, 2:Add, Edit, x10 y+5 w250 Limit248 vstrSwitchSaveName, %strSwitchSaveName% ; maximum length of ini section name is 255 ("Group-" is prepended)
 
 Gui, 2:Add, Text, ys x300, %lGuiSwitchSaveRestoreOption%:
-Gui, 2:Add, Radio, x+10 yp section vblnRadioAddWindows checked, %lGuiSwitchSaveAddWindowsLabel%
-Gui, 2:Add, Radio, xs y+5 vblnRadioReplaceWindows, %lGuiSwitchSaveReplaceWindowsLabel%
+Gui, 2:Add, Radio, x+10 yp section vblnRadioReplaceWindows checked, %lGuiSwitchSaveReplaceWindowsLabel%
+Gui, 2:Add, Radio, xs y+5 vblnRadioAddWindows, %lGuiSwitchSaveAddWindowsLabel%
 
 Gui, 2:Add, Button, y+20 vbtnSwitchSaveSave gButtonSwitchSaveSave, %lGuiSave%
 Gui, 2:Add, Button, yp vbtnSwitchSaveCancel gButtonSwitchSaveCancel, %lGuiCancel%
 GuiCenterButtons(L(lGuiSwitchSaveTitle, lMenuSwitchSave, strAppName, strAppVersion), 10, 5, 20, , "btnSwitchSaveSave", "btnSwitchSaveCancel")
 
+GuiControl, Focus, strSwitchSaveName
+GuiControl, +Default, btnSwitchSaveSave
 Gui, 2:Show, AutoSize Center
 
 return
@@ -4111,7 +4119,7 @@ else
 	IniWrite, %strGroups%, %strIniFile%, Global, Groups
 }
 
-IniWrite, % (blnRadioReplaceWindows ? "Replace" : "Add"), %strIniFile%, Group-%strSwitchSaveName%, WhenRestoringThisGroup
+IniWrite, %blnRadioReplaceWindows%, %strIniFile%, Group-%strSwitchSaveName%, ReplaceWhenRestoringThisGroup
 intRow := 0
 Loop
 {
@@ -4123,11 +4131,16 @@ Loop
 		. "|" . objSwitchMenuExplorers[intRow].MinMax
 		. "|" . objSwitchMenuExplorers[intRow].Position
 		. "|" . objSwitchMenuExplorers[intRow].Pane
+		. "|" . objSwitchMenuExplorers[intRow].WindowID
 		, %strIniFile%, Group-%strSwitchSaveName%, Explorer%A_Index%
 }
 
-Oops(lGuiSwitchSaveGroupSaved, strSwitchSaveName)
+strUseMenuLoad := strBuildMenuFullName . "... " . lMenuSwitchLoad
+StringReplace, strUseMenuLoad, strUseMenuLoad, &, , All
+Oops(lGuiSwitchSaveGroupSaved, strSwitchSaveName, strUseMenuLoad)
+
 Gosub, ButtonSwitchSaveCancel
+strSwitchSaveName := ""
 
 return
 ;------------------------------------------------------------
@@ -4159,7 +4172,7 @@ GroupExists(strGroup)
 
 
 ;------------------------------------------------------------
-SwitchLoadWorkspace:
+SwitchLoadGroup:
 ;------------------------------------------------------------
 
 ; MsgBox, Not finished...
@@ -4167,19 +4180,34 @@ SwitchLoadWorkspace:
 
 ; ####
 
-Loop
-{
-	IniRead, strExplorer, %strIniFile%, Group-%A_ThisMenuItem%, Explorer%A_Index%
-	if (strExplorer = "ERROR")
-		Break
+strGroup := "Group-" . A_ThisMenuItem
+StringLeft, strGroup, strGroup, % InStr(strGroup, "(") - 2
 
-	StringSplit, arrThisExplorer, strExplorer, |
-	if (arrThisExplorer2 = "EX")
-	{
-		run, explorer.exe %arrThisExplorer1%
-		Sleep, 500
-		WinMove, A, , %arrThisExplorer3%, %arrThisExplorer4%, %arrThisExplorer5%, %arrThisExplorer6%
-	}
+IniRead, blnReplaceWhenRestoringThisGroup, %strIniFile%, %strGroup%, ReplaceWhenRestoringThisGroup, 0 ; false if not found
+
+if (blnReplaceWhenRestoringThisGroup)
+	Gosub, CloseBeforeRestoringGroup
+
+objIniExplorersInGroup := Object()
+Gosub, Group2Object
+
+while, intExplorer := WindowOfType("EX")
+{
+	Run, % "explorer.exe " . objIniExplorersInGroup[intExplorer].Name,
+		, % (objIniExplorersInGroup[intExplorer].MinMax = -1 ? "Min" : (objIniExplorersInGroup[intExplorer].MinMax = 1 ? "Max" : ""))
+	WinWait, A, , 5
+	Sleep, 20
+	if !(objIniExplorersInGroup[intExplorer].MinMax) ; windo normal, not min nor max
+		WinMove, A, 
+			, % objIniExplorersInGroup[intExplorer].Left
+			, % objIniExplorersInGroup[intExplorer].Top
+			, % objIniExplorersInGroup[intExplorer].Width
+			, % objIniExplorersInGroup[intExplorer].Height
+	
+	objIniExplorersInGroup.Remove(intExplorer)
+}
+
+/*
 	else if (arrThisExplorer2 = "DO")
 	{
 		; adapt to DOpus left/right and tabs
@@ -4187,10 +4215,114 @@ Loop
 		Sleep, 500
 		WinMove, A, , %arrThisExplorer3%, %arrThisExplorer4%, %arrThisExplorer5%, %arrThisExplorer6%
 	}
+	else if (arrThisExplorer2 = "TC")
+	{
+	}
+*/
 
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+CloseBeforeRestoringGroup:
+;------------------------------------------------------------
+
+intSleepTime := 67 ; for visual effect only...
+
+strWindowsId := ""
+for objExplorer in ComObjCreate("Shell.Application").Windows
+	; do not close in this loop as it mess up the handlers
+	strWindowsId := strWindowsId . objExplorer.HWND . "|"
+StringTrimRight, strWindowsId, strWindowsId, 1
+Loop, Parse, strWindowsId, |
+{
+	WinClose, ahk_id %A_LoopField%
+	Sleep, %intSleepTime%
+}
+
+if (blnUseTotalCommander)
+{
+	WinGet, arrIDs, List, ahk_class TTOTAL_CMD
+	Loop, %arrIDs%
+	{
+		WinClose, % "ahk_id " . arrIDs%A_Index%
+		Sleep, %intSleepTime%
+	}
+}
+
+if (blnUseTotalCommander)
+{
+	WinGet, arrIDs, List, ahk_class dopus.lister
+	Loop, %arrIDs%
+	{
+		WinClose, % "ahk_id " . arrIDs%A_Index%
+		Sleep, %intSleepTime%
+	}
+}
+	
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+Group2Object:
+;------------------------------------------------------------
+
+Loop
+{
+	IniRead, strExplorer, %strIniFile%, %strGroup%, Explorer%A_Index%
+	if (strExplorer = "ERROR")
+		Break
+
+	StringSplit, arrThisExplorer, strExplorer, |
+	/*
+	1	objSwitchMenuExplorers[intRow].Name
+	2	objSwitchMenuExplorers[intRow].WindowType
+	3	objSwitchMenuExplorers[intRow].MinMax
+	4	objSwitchMenuExplorers[intRow].Left
+	5	objSwitchMenuExplorers[intRow].Top
+	6	objSwitchMenuExplorers[intRow].Width
+	7	objSwitchMenuExplorers[intRow].Height
+	8	objSwitchMenuExplorers[intRow].Pane
+	9	objSwitchMenuExplorers[intRow].WindowId
+	*/
+	
+	objIniEntry := Object()
+	objIniEntry.Name := arrThisExplorer1
+	objIniEntry.WindowType := arrThisExplorer2
+	objIniEntry.MinMax := arrThisExplorer3
+	objIniEntry.Left := arrThisExplorer4
+	objIniEntry.Top := arrThisExplorer5
+	objIniEntry.Width := arrThisExplorer6
+	objIniEntry.Height := arrThisExplorer7
+	objIniEntry.Pane := arrThisExplorer8
+	objIniEntry.WindowId := arrThisExplorer9
+	
+	objIniExplorersInGroup.Insert(A_Index, objIniEntry)
 }
 
 return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+WindowOfType(strType)
+;------------------------------------------------------------
+{
+	global objIniExplorersInGroup
+
+	intFound := 0
+	for intIndex, intEntry in objIniExplorersInGroup
+		if (objIniExplorersInGroup[intIndex].WindowType = strType)
+		{
+			intFound := intIndex
+			break
+		}
+			
+	return intFound
+}
+
 ;------------------------------------------------------------
 
 
