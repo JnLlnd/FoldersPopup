@@ -2,7 +2,8 @@
 Bugs:
 
 To-do:
-- load with TC and DO
+- load with DO
+- load with TC
 - manage group gui
 - Win-K shortcut not available in Win 8.1 (available: Win-A, Win-J, Win-N used by OneNote, Win-Y)
 */
@@ -18,6 +19,7 @@ To-do:
 	* load group and read replace setting
 	* close other Explorers, TC and DO before loading a group when group setting is replace
 	* open Explorers instances in a group
+	* addition of Swedish language, thanks to Åke Engelbrektson
 
 	Version: 3.2.7.2 (2014-10-13)
 	* add a checkbox in options to let Total Commander users choose to open new folders (Shift-Middle-Mouse) in a new tab or in a new window
@@ -1009,7 +1011,7 @@ if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
 	Menu, menuSwitch
-		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Save group menu if no Explorer
+		, % (!intExplorersExist ? "Disable" : "Enable") ; disable Save group menu if no Explorer
 		, %lMenuSwitchSave%
 }
 
@@ -1082,7 +1084,7 @@ if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
 	Menu, menuSwitch
-		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Save group menu if no Explorer
+		, % (!intExplorersExist ? "Disable" : "Enable") ; disable Save group menu if no Explorer
 		, %lMenuSwitchSave%
 }
 
@@ -1341,7 +1343,8 @@ CollectExplorers(objExplorersWindows, ComObjCreate("Shell.Application").Windows)
 
 objSwitchMenuExplorers := Object()
 
-intExplorersIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
+intExplorersIndex := 0
+intExplorersExist := 0 ; used in PopupMenu... to check if we disable the menu when empty
 
 if (blnUseDirectoryOpus)
 	for intIndex, objLister in objDOpusListers
@@ -1369,6 +1372,11 @@ if (blnUseDirectoryOpus)
 			objSwitchMenuExplorer.MinMax := objLister.MinMax
 			objSwitchMenuExplorer.Pane := objLister.Pane
 			objSwitchMenuExplorer.WindowType := "DO"
+			if FileExist(objSwitchMenuExplorer.Name)
+			{
+				objSwitchMenuExplorer.NameExist := 1
+				intExplorersExist := intExplorersExist + 1
+			}	
 			
 			objSwitchMenuExplorers.Insert(intExplorersIndex, objSwitchMenuExplorer)
 		}
@@ -1389,6 +1397,11 @@ if (blnUseTotalCommander)
 			objSwitchMenuExplorer.MinMax := objTCList.MinMax
 			objSwitchMenuExplorer.Pane := objTCList.Pane
 			objSwitchMenuExplorer.WindowType := "TC"
+			if FileExist(objSwitchMenuExplorer.Name)
+			{
+				objSwitchMenuExplorer.NameExist := 1
+				intExplorersExist := intExplorersExist + 1
+			}	
 			
 			objSwitchMenuExplorers.Insert(intExplorersIndex, objSwitchMenuExplorer)
 		}
@@ -1403,6 +1416,8 @@ for intIndex, objExplorer in objExplorersWindows
 		
 	if !NameIsInObject(objExplorer.LocationName, objSwitchMenuExplorers)
 	{
+		intExplorersIndex := intExplorersIndex + 1
+		
 		objSwitchMenuExplorer := Object()
 		objSwitchMenuExplorer.Path := objExplorer.LocationURL
 		objSwitchMenuExplorer.Name := objExplorer.LocationName
@@ -1411,8 +1426,12 @@ for intIndex, objExplorer in objExplorersWindows
 		objSwitchMenuExplorer.Position := objExplorer.Position
 		objSwitchMenuExplorer.MinMax := objExplorer.MinMax
 		objSwitchMenuExplorer.WindowType := "EX"
-		
-		intExplorersIndex := intExplorersIndex + 1
+		if FileExist(objSwitchMenuExplorer.Name)
+		{
+			objSwitchMenuExplorer.NameExist := 1
+			intExplorersExist := intExplorersExist + 1
+		}	
+	
 		objSwitchMenuExplorers.Insert(intExplorersIndex, objSwitchMenuExplorer)
 	}
 }
@@ -4057,6 +4076,8 @@ Loop, 4
 
 for intIndex, objSwitchMenuExplorer in objSwitchMenuExplorers
 {
+	if !(objSwitchMenuExplorer.NameExist)
+		Continue
 	arrExplorerPosition := objSwitchMenuExplorer.Position
 	StringSplit, arrExplorerPosition, arrExplorerPosition, "|"
 	LV_Add("Check", objSwitchMenuExplorer.Name
@@ -4208,7 +4229,7 @@ while, intExplorer := WindowOfType("EX")
 	objIniExplorersInGroup.Remove(intExplorer)
 }
 
-/*
+/* ####
 	else if (arrThisExplorer2 = "DO")
 	{
 		; adapt to DOpus left/right and tabs
@@ -4252,7 +4273,7 @@ if (blnUseTotalCommander)
 	}
 }
 
-if (blnUseTotalCommander)
+if (blnUseDirectoryOpus)
 {
 	WinGet, arrIDs, List, ahk_class dopus.lister
 	Loop, %arrIDs%
