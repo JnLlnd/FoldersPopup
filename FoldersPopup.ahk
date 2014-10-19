@@ -20,6 +20,7 @@ To-do:
 	* close other Explorers, TC and DO before loading a group when group setting is replace
 	* open Explorers instances in a group
 	* addition of Swedish language, thanks to Åke Engelbrektson
+	* fix a bug when user select a hotkey replacement for Middle-mouse button that involves a modifier key (e.g. Shift+Right-click)
 
 	Version: 3.2.7.2 (2014-10-13)
 	* add a checkbox in options to let Total Commander users choose to open new folders (Shift-Middle-Mouse) in a new tab or in a new window
@@ -965,7 +966,10 @@ If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass, strTargetContro
 {
 	StringReplace, strThisHotkey, A_ThisHotkey, $ ; remove $ from hotkey
 	if (A_ThisLabel = "PopupMenuMouse")
-		SendInput, {%strThisHotkey%} ; for example {MButton}
+	{
+		SplitModifiersFromKey(strThisHotkey, strThisHotkeyModifiers, strThisHotkeyKey)
+		SendInput, %strThisHotkeyModifiers%{%strThisHotkeyKey%} ; for example {MButton} or +{LButton}
+	}
 	else
 	{
 		StringLower, strThisHotkey, strThisHotkey
