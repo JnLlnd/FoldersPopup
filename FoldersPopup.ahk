@@ -1370,8 +1370,8 @@ if (blnUseDirectoryOpus)
 				objSwitchMenuExplorer.Name := "Directory Opus Collection (" . intExplorersIndex . ")"
 			else
 				objSwitchMenuExplorer.Name := objLister.Path
-			objSwitchMenuExplorer.WindowID := objLister.Lister
-			objSwitchMenuExplorer.TabID := objLister.Tab
+			objSwitchMenuExplorer.WindowId := objLister.Lister
+			objSwitchMenuExplorer.TabId := objLister.Tab
 			objSwitchMenuExplorer.Position := objLister.Position
 			objSwitchMenuExplorer.MinMax := objLister.MinMax
 			objSwitchMenuExplorer.Pane := objLister.Pane
@@ -1396,7 +1396,7 @@ if (blnUseTotalCommander)
 			objSwitchMenuExplorer := Object()
 			objSwitchMenuExplorer.Path := objTCList.Path
 			objSwitchMenuExplorer.Name := objTCList.Path
-			objSwitchMenuExplorer.WindowID := objTCList.WindowID
+			objSwitchMenuExplorer.WindowId := objTCList.WindowId
 			objSwitchMenuExplorer.Position := objTCList.Position
 			objSwitchMenuExplorer.MinMax := objTCList.MinMax
 			objSwitchMenuExplorer.Pane := objTCList.Pane
@@ -1425,8 +1425,8 @@ for intIndex, objExplorer in objExplorersWindows
 		objSwitchMenuExplorer := Object()
 		objSwitchMenuExplorer.Path := objExplorer.LocationURL
 		objSwitchMenuExplorer.Name := objExplorer.LocationName
-		objSwitchMenuExplorer.WindowID := objExplorer.WindowID
-		objSwitchMenuExplorer.TabID := ""
+		objSwitchMenuExplorer.WindowId := objExplorer.WindowId
+		objSwitchMenuExplorer.TabId := ""
 		objSwitchMenuExplorer.Position := objExplorer.Position
 		objSwitchMenuExplorer.MinMax := objExplorer.MinMax
 		objSwitchMenuExplorer.WindowType := "EX"
@@ -1511,7 +1511,7 @@ CollectExplorers(objExplorers, pExplorers)
 					objExplorer.LocationName := pExplorer.LocationName ; see http://msdn.microsoft.com/en-us/library/aa752084#properties
 				else
 					objExplorer.LocationName := lMenuSpecialExplorer . " (" . pExplorer.HWND . ")" ; will be used in menuSwitchExplorer
-			objExplorer.WindowID := pExplorer.HWND
+			objExplorer.WindowId := pExplorer.HWND
 			WinGet, intMinMax, MinMax, % "ahk_id " . pExplorer.HWND
 			objExplorer.MinMax := intMinMax
 			
@@ -4038,7 +4038,7 @@ if (objSwitchMenuExplorers[A_ThisMenuItemPos].WindowType = "DO") ; this is a DOp
 	RunDOpusRt("/acmd Go ", objSwitchMenuExplorers[A_ThisMenuItemPos].Path, " EXISTINGLISTER") ; activate an existing lister listing this path
 }
 else ; Explorer or TotalCommander
-	WinActivate, % "ahk_id " . objSwitchMenuExplorers[A_ThisMenuItemPos].WindowID
+	WinActivate, % "ahk_id " . objSwitchMenuExplorers[A_ThisMenuItemPos].WindowId
 
 return
 ;------------------------------------------------------------
@@ -4074,7 +4074,7 @@ Gui, 2:Add, Text, x10 y+15 w670 center, %lGuiSwitchSaveSelect%
 
 Gui, 2:Add, ListView
 	, xm w680 h200 Checked Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvGroupList
-	, %lGuiSwitchSaveLvHeader%|Hidden: Path|Pane|WindowID|Position|TabID
+	, %lGuiSwitchSaveLvHeader%|Hidden: Path|Pane|WindowId|Position|TabId
 Loop, 4
 	LV_ModifyCol(A_Index + 3, "Right")
 
@@ -4091,7 +4091,7 @@ for intIndex, objSwitchMenuExplorer in objSwitchMenuExplorers
 		, (objSwitchMenuExplorer.MinMax = 0 ? arrExplorerPosition2 : "-")
 		, (objSwitchMenuExplorer.MinMax = 0 ? arrExplorerPosition3 : "-")
 		, (objSwitchMenuExplorer.MinMax = 0 ? arrExplorerPosition4 : "-")
-		, objSwitchMenuExplorer.Path, objSwitchMenuExplorer.Pane, objSwitchMenuExplorer.WindowID, objSwitchMenuExplorer.Position, objSwitchMenuExplorer.TabID)
+		, objSwitchMenuExplorer.Path, objSwitchMenuExplorer.Pane, objSwitchMenuExplorer.WindowId, objSwitchMenuExplorer.Position, objSwitchMenuExplorer.TabId)
 }
 
 LV_Modify(1, "Select Focus")
@@ -4157,7 +4157,7 @@ Loop
 		. "|" . objSwitchMenuExplorers[intRow].MinMax
 		. "|" . objSwitchMenuExplorers[intRow].Position
 		. "|" . objSwitchMenuExplorers[intRow].Pane
-		. "|" . objSwitchMenuExplorers[intRow].WindowID
+		. "|" . objSwitchMenuExplorers[intRow].WindowId
 		, %strIniFile%, Group-%strSwitchSaveName%, Explorer%A_Index%
 }
 
@@ -4217,34 +4217,90 @@ if (blnReplaceWhenRestoringThisGroup)
 objIniExplorersInGroup := Object()
 Gosub, Group2Object
 
-while, intExplorer := WindowOfType("EX")
+while, intExplorer := WindowOfType("EX") ; returns the index of the first Explorer saved window in the group
 {
 	Run, % "explorer.exe " . objIniExplorersInGroup[intExplorer].Name,
 		, % (objIniExplorersInGroup[intExplorer].MinMax = -1 ? "Min" : (objIniExplorersInGroup[intExplorer].MinMax = 1 ? "Max" : ""))
+	Sleep, 200
 	WinWait, A, , 5
 	Sleep, 20
-	if !(objIniExplorersInGroup[intExplorer].MinMax) ; windo normal, not min nor max
+	if !(objIniExplorersInGroup[intExplorer].MinMax) ; window normal, not min nor max
 		WinMove, A, 
 			, % objIniExplorersInGroup[intExplorer].Left
 			, % objIniExplorersInGroup[intExplorer].Top
 			, % objIniExplorersInGroup[intExplorer].Width
 			, % objIniExplorersInGroup[intExplorer].Height
 	
-	objIniExplorersInGroup.Remove(intExplorer)
+	objIniExplorersInGroup.Remove(intExplorer) ; remove the first Explorer saved window from the group
 }
 
-/* ####
-	else if (arrThisExplorer2 = "DO")
+while, intDOWindow := WindowOfType("DO") ; returns the index of the first DOpus saved window in the group
+{
+	strFirstWindowId := objIniExplorersInGroup[intDOWindow].WindowId
+	strNewWindowId := ""
+	
+	while, intDOIndex := DOpusWindowOfId(strFirstWindowId) ; returns the paths of the first group of DOpus windows (grouped by WindowsId)
 	{
-		; adapt to DOpus left/right and tabs
-		RunDOpusRt("/acmd Go ", arrThisExplorer1, " NEW") ; open in a new lister
-		Sleep, 500
-		WinMove, A, , %arrThisExplorer3%, %arrThisExplorer4%, %arrThisExplorer5%, %arrThisExplorer6%
+		; ###_D("top: " . objIniExplorersInGroup.MaxIndex() . " " . strFirstWindowId)
+		; ###_D(intDOIndex . " / " . objIniExplorersInGroup[intDOIndex].Name . " / " . objIniExplorersInGroup[intDOWindow].WindowId)
+
+		if !StrLen(strNewWindowId) ; the window does not exist, create it with the first path in the pane 1
+		{
+			; ###_D(objIniExplorersInGroup[intDOWindow].Name . " / " . objIniExplorersInGroup[intDOWindow].MinMax)
+			; ###_D(objIniExplorersInGroup[intDOWindow].WindowId . " Not exist")
+			; ###_D("Y a t-t-il un pane 2? " . (DOpusWindowOfPane(2, strFirstWindowId) ? "oui" : "non"))
+			RunDOpusRt("/acmd Go ", objIniExplorersInGroup[intDOWindow].Name, " NEW "
+				. objIniExplorersInGroup[intDOWindow].Left
+				. "," . objIniExplorersInGroup[intDOWindow].Top
+				. "," . objIniExplorersInGroup[intDOWindow].Width
+				. "," . objIniExplorersInGroup[intDOWindow].Height
+				. (objIniExplorersInGroup[intDOWindow].MinMax = -1 ? ",min" : (objIniExplorersInGroup[intDOWindow].MinMax = 1 ? ",max" : " norm"))
+				. " ") ; open in a new lister
+			Sleep, 200
+			WinWait, A, , 5
+			Sleep, 20
+			
+			strNewWindowId := WinExist("A")
+			objIniExplorersInGroup.Remove(intDOWindow) ; remove the first DOpus saved window from the group
+			; ###_D("new: " . objIniExplorersInGroup.MaxIndex() . " " . strNewWindowId)
+		}
+		else ; the window exist, add other path of pane tabs or pane 2
+		{
+			while, intDOIndexPane := DOpusWindowOfPane(1, strFirstWindowId) ; returns the paths of the windows of the left pane for this group of windows
+			{
+				/*
+				###_D(objIniExplorersInGroup[intDOIndexPane].WindowId . " Exist NewId is: " . strNewWindowId . "`n"
+					. "pane 1 path : " . objIniExplorersInGroup[intDOIndexPane].Name
+					. "")
+				*/
+				RunDOpusRt("/acmd Go ", objIniExplorersInGroup[intDOIndexPane].Name, " NEWTAB") ; open in a new tab of pane 1
+				Sleep, 200
+				objIniExplorersInGroup.Remove(intDOIndexPane) ; remove the first DOpus saved window from the group
+			}
+			blnNewPane2 := true
+			while, intDOIndexPane := DOpusWindowOfPane(2, strFirstWindowId) ; returns the paths of the windows of the right pane for this group of windows
+			{
+				/*
+				###_D(objIniExplorersInGroup[intDOIndexPane].WindowId . " Exist NewId is: " . strNewWindowId . "`n"
+					. "pane 2 path : " . objIniExplorersInGroup[intDOIndexPane].Name
+					. "")
+				*/
+				if (blnNewPane2)
+				{
+					RunDOpusRt("/acmd Go ", objIniExplorersInGroup[intDOIndexPane].Name, " OPENINRIGHT") ; open in a first tab of pane 2
+					Sleep, 100
+					blnNewPane2 := false
+				}
+				else
+				{
+					RunDOpusRt("/acmd Go ", objIniExplorersInGroup[intDOIndexPane].Name, " OPENINRIGHT NEWTAB") ; open in a new tab of pane 2
+					Sleep, 100
+				}
+				objIniExplorersInGroup.Remove(intDOIndexPane) ; remove the first DOpus saved window from the group
+			}
+		}
 	}
-	else if (arrThisExplorer2 = "TC")
-	{
-	}
-*/
+}
 
 return
 ;------------------------------------------------------------
@@ -4342,9 +4398,60 @@ WindowOfType(strType)
 	for intIndex, intEntry in objIniExplorersInGroup
 		if (objIniExplorersInGroup[intIndex].WindowType = strType)
 		{
+			; ###_D("WindowOfType " . strType . " in " . intIndex . " Yes: " . objIniExplorersInGroup[intIndex].Name)
 			intFound := intIndex
 			break
 		}
+		; else
+			; ###_D("WindowOfType " . strType . " in " . intIndex . " No: " . objIniExplorersInGroup[intIndex].Name)
+			
+	return intFound
+}
+
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+DOpusWindowOfId(strId)
+;------------------------------------------------------------
+{
+	global objIniExplorersInGroup
+
+	intFound := 0
+	for intIndex, intEntry in objIniExplorersInGroup
+		if (objIniExplorersInGroup[intIndex].WindowId = strId)
+		{
+			; ###_D("WindowOfId " . strId . " in " . intIndex . " Yes: " . objIniExplorersInGroup[intIndex].Name)
+			intFound := intIndex
+			break
+		}
+		; else
+			; ###_D("WindowOfId " . strId . " in " . intIndex . " No: " . objIniExplorersInGroup[intIndex].Name)
+			
+	return intFound
+}
+
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+DOpusWindowOfPane(intPane, strId)
+; intPane can be 0 or 1 if in left side, or 2 if in right side
+;------------------------------------------------------------
+{
+	global objIniExplorersInGroup
+
+	intFound := 0
+	for intIndex, intEntry in objIniExplorersInGroup
+		if ((objIniExplorersInGroup[intIndex].WindowId = strId))
+			and ((intPane = 1 and objIniExplorersInGroup[intIndex].Pane <= 1) or (intPane = 2 and objIniExplorersInGroup[intIndex].Pane = 2))
+			{
+				; ###_D("Pane " . objIniExplorersInGroup[intIndex].Pane . " vs " . intPane . " WindowOfId " . strId . " vs " . objIniExplorersInGroup[intIndex].WindowId . " in " . intIndex . " Yes: " . objIniExplorersInGroup[intIndex].Name)
+				intFound := intIndex
+				break
+			}
+		; else
+			; ###_D("Pane " . objIniExplorersInGroup[intIndex].Pane . " vs " . intPane . "WindowOfId " . strId . " vs " . objIniExplorersInGroup[intIndex].WindowId . " in " . intIndex . " No: " . objIniExplorersInGroup[intIndex].Name)
 			
 	return intFound
 }
