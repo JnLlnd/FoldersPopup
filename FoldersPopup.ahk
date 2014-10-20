@@ -19,6 +19,7 @@ To-do:
 	* load group and read replace setting
 	* close other Explorers, TC and DO before loading a group when group setting is replace
 	* open Explorers instances in a group
+	* open Directory Opus instances in a group
 	* addition of Swedish language, thanks to Åke Engelbrektson
 	* fix a bug when user select a hotkey replacement for Middle-mouse button that involves a modifier key (e.g. Shift+Right-click)
 
@@ -1374,7 +1375,7 @@ if (blnUseDirectoryOpus)
 			objSwitchMenuExplorer.TabId := objLister.Tab
 			objSwitchMenuExplorer.Position := objLister.Position
 			objSwitchMenuExplorer.MinMax := objLister.MinMax
-			objSwitchMenuExplorer.Pane := objLister.Pane
+			objSwitchMenuExplorer.Pane := (objLister.Pane = 0 ? 1 : objLister.Pane) ; consider pane 0 as pane 1
 			objSwitchMenuExplorer.WindowType := "DO"
 			if FileExist(objSwitchMenuExplorer.Name)
 			{
@@ -4074,7 +4075,7 @@ Gui, 2:Add, Text, x10 y+15 w670 center, %lGuiSwitchSaveSelect%
 
 Gui, 2:Add, ListView
 	, xm w680 h200 Checked Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvGroupList
-	, %lGuiSwitchSaveLvHeader%|Hidden: Path|Pane|WindowId|Position|TabId
+	, %lGuiSwitchSaveLvHeader%|Hidden: Path|WindowId|Position|TabId
 Loop, 4
 	LV_ModifyCol(A_Index + 3, "Right")
 
@@ -4091,14 +4092,15 @@ for intIndex, objSwitchMenuExplorer in objSwitchMenuExplorers
 		, (objSwitchMenuExplorer.MinMax = 0 ? arrExplorerPosition2 : "-")
 		, (objSwitchMenuExplorer.MinMax = 0 ? arrExplorerPosition3 : "-")
 		, (objSwitchMenuExplorer.MinMax = 0 ? arrExplorerPosition4 : "-")
-		, objSwitchMenuExplorer.Path, objSwitchMenuExplorer.Pane, objSwitchMenuExplorer.WindowId, objSwitchMenuExplorer.Position, objSwitchMenuExplorer.TabId)
+		, (objSwitchMenuExplorer.Pane ? objSwitchMenuExplorer.Pane : "-")
+		, objSwitchMenuExplorer.Path, objSwitchMenuExplorer.WindowId, objSwitchMenuExplorer.Position, objSwitchMenuExplorer.TabId)
 }
 
 LV_Modify(1, "Select Focus")
 Loop, 12
 	LV_ModifyCol(A_Index, "AutoHdr")
-Loop, 5
-	LV_ModifyCol(A_Index + 7, 0) ; hide 8th-12th columns
+Loop, % (blnUseDirectoryOpus ? 4 : 5)
+	LV_ModifyCol(A_Index + (blnUseDirectoryOpus ? 8 : 7), 0) ; hide 8th-12th columns
 
 Gui, 2:Add, Text, x10 y+10 w250 section, %lGuiSwitchSaveName%
 Gui, 2:Add, Edit, x10 y+5 w250 Limit248 vstrSwitchSaveName, %strSwitchSaveName% ; maximum length of ini section name is 255 ("Group-" is prepended)
@@ -4206,6 +4208,8 @@ SwitchLoadGroup:
 
 ; ####
 
+intSleepAfterWindowCommand := 500
+
 strGroup := "Group-" . A_ThisMenuItem
 StringLeft, strGroup, strGroup, % InStr(strGroup, "(") - 2
 
@@ -4221,7 +4225,7 @@ while, intExplorer := WindowOfType("EX") ; returns the index of the first Explor
 {
 	Run, % "explorer.exe " . objIniExplorersInGroup[intExplorer].Name,
 		, % (objIniExplorersInGroup[intExplorer].MinMax = -1 ? "Min" : (objIniExplorersInGroup[intExplorer].MinMax = 1 ? "Max" : ""))
-	Sleep, 200
+	Sleep, %intSleepAfterWindowCommand%
 	WinWait, A, , 5
 	Sleep, 20
 	if !(objIniExplorersInGroup[intExplorer].MinMax) ; window normal, not min nor max
@@ -4238,6 +4242,7 @@ while, intDOWindow := WindowOfType("DO") ; returns the index of the first DOpus 
 {
 	strFirstWindowId := objIniExplorersInGroup[intDOWindow].WindowId
 	strNewWindowId := ""
+	; ###_D("new window")
 	
 	while, intDOIndex := DOpusWindowOfId(strFirstWindowId) ; returns the paths of the first group of DOpus windows (grouped by WindowsId)
 	{
@@ -4249,18 +4254,25 @@ while, intDOWindow := WindowOfType("DO") ; returns the index of the first DOpus 
 			; ###_D(objIniExplorersInGroup[intDOWindow].Name . " / " . objIniExplorersInGroup[intDOWindow].MinMax)
 			; ###_D(objIniExplorersInGroup[intDOWindow].WindowId . " Not exist")
 			; ###_D("Y a t-t-il un pane 2? " . (DOpusWindowOfPane(2, strFirstWindowId) ? "oui" : "non"))
-			RunDOpusRt("/acmd Go ", objIniExplorersInGroup[intDOWindow].Name, " NEW "
-				. objIniExplorersInGroup[intDOWindow].Left
-				. "," . objIniExplorersInGroup[intDOWindow].Top
-				. "," . objIniExplorersInGroup[intDOWindow].Width
-				. "," . objIniExplorersInGroup[intDOWindow].Height
-				. (objIniExplorersInGroup[intDOWindow].MinMax = -1 ? ",min" : (objIniExplorersInGroup[intDOWindow].MinMax = 1 ? ",max" : " norm"))
-				. " ") ; open in a new lister
-			Sleep, 200
+			RunDOpusRt("/acmd Go ", objIniExplorersInGroup[intDOWindow].Name, " NEW=nodual") ; open in a new lister
+			Sleep, %intSleepAfterWindowCommand%
 			WinWait, A, , 5
-			Sleep, 20
+			Sleep, 100
 			
 			strNewWindowId := WinExist("A")
+			if !(objIniExplorersInGroup[intDOWindow].MinMax) ; window normal, not min nor max
+				WinMove, A,
+					, % objIniExplorersInGroup[intDOWindow].Left
+					, % objIniExplorersInGroup[intDOWindow].Top
+					, % objIniExplorersInGroup[intDOWindow].Width
+					, % objIniExplorersInGroup[intDOWindow].Height
+			else
+				if (objIniExplorersInGroup[intDOWindow].MinMax = -1)
+					WinMinimize, A
+				else
+					WinMaximize, A
+
+			; ###_D("new lister: " . WinExist("A") . " / " . objIniExplorersInGroup[intDOWindow].MinMax)
 			objIniExplorersInGroup.Remove(intDOWindow) ; remove the first DOpus saved window from the group
 			; ###_D("new: " . objIniExplorersInGroup.MaxIndex() . " " . strNewWindowId)
 		}
@@ -4274,7 +4286,8 @@ while, intDOWindow := WindowOfType("DO") ; returns the index of the first DOpus 
 					. "")
 				*/
 				RunDOpusRt("/acmd Go ", objIniExplorersInGroup[intDOIndexPane].Name, " NEWTAB") ; open in a new tab of pane 1
-				Sleep, 200
+				; ###_D("other tabs in 1")
+				Sleep, %intSleepAfterWindowCommand%
 				objIniExplorersInGroup.Remove(intDOIndexPane) ; remove the first DOpus saved window from the group
 			}
 			blnNewPane2 := true
@@ -4288,13 +4301,15 @@ while, intDOWindow := WindowOfType("DO") ; returns the index of the first DOpus 
 				if (blnNewPane2)
 				{
 					RunDOpusRt("/acmd Go ", objIniExplorersInGroup[intDOIndexPane].Name, " OPENINRIGHT") ; open in a first tab of pane 2
-					Sleep, 100
+					; ###_D("first tab in 2")
+					Sleep, %intSleepAfterWindowCommand%
 					blnNewPane2 := false
 				}
 				else
 				{
 					RunDOpusRt("/acmd Go ", objIniExplorersInGroup[intDOIndexPane].Name, " OPENINRIGHT NEWTAB") ; open in a new tab of pane 2
-					Sleep, 100
+					; ###_D("other tabs in 2")
+					Sleep, %intSleepAfterWindowCommand%
 				}
 				objIniExplorersInGroup.Remove(intDOIndexPane) ; remove the first DOpus saved window from the group
 			}
@@ -4443,8 +4458,7 @@ DOpusWindowOfPane(intPane, strId)
 
 	intFound := 0
 	for intIndex, intEntry in objIniExplorersInGroup
-		if ((objIniExplorersInGroup[intIndex].WindowId = strId))
-			and ((intPane = 1 and objIniExplorersInGroup[intIndex].Pane <= 1) or (intPane = 2 and objIniExplorersInGroup[intIndex].Pane = 2))
+		if (objIniExplorersInGroup[intIndex].Pane = intPane and objIniExplorersInGroup[intIndex].WindowId = strId)
 			{
 				; ###_D("Pane " . objIniExplorersInGroup[intIndex].Pane . " vs " . intPane . " WindowOfId " . strId . " vs " . objIniExplorersInGroup[intIndex].WindowId . " in " . intIndex . " Yes: " . objIniExplorersInGroup[intIndex].Name)
 				intFound := intIndex

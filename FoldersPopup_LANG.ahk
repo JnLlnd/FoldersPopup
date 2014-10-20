@@ -202,7 +202,7 @@ global lUpdateTitle := "Update ~1~?"
 global lUpdateYouHaveLatest := "You have the latest version: ~1~.`n`nVisit the ~2~ web page anyway?"
 
 global lGuiSwitchSaveTitle := "~1~ - ~2~ ~3~"
-global lGuiSwitchSaveLvHeader := "Path|Application|Window state|Left|Top|Width|Height"
+global lGuiSwitchSaveLvHeader := "Path|Application|Window state|Left|Top|Width|Height|Side"
 global lGuiSwitchSaveSelect := "Select the folders to save in this group"
 global lGuiSwitchSaveName := "Group short name (for menu)"
 global lGuiSwitchSaveRestoreOption := "When restoring this group"
