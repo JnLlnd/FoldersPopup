@@ -1,9 +1,7 @@
 /*
 Bugs:
 
-To-do:
-- load with DO
-- load with TC
+To-do for v4:
 - manage group gui
 - Win-K shortcut not available in Win 8.1 (available: Win-A, Win-J, Win-N used by OneNote, Win-Y)
 */
@@ -13,32 +11,44 @@ To-do:
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: 3.2.7.3 (2014-10-XX)
+	Version: 3.3 (2014-10-XX)
+	
+	TotalCommander integration
+	* automatic detection for Total Commander support
+	* Total Commander configuration in Options
+	* ini configuration for TotalCommander window
+	* special TotalCommanderNewTabOrWindow swith in ini file
+	* add a checkbox in options to let Total Commander users choose to open new folders (Shift-Middle-Mouse) in a new tab or in a new window
+	* show popup menu in TotalCommander windows
+	* add this folder from Total Commander window
+	* navigate regular and special folder in TotalCommander existing window
+	* open regular and special folder in new TotalCommander window or tab according to TotalCommanderNewTabOrWindow
+	* inserts small delays when opening TC special folders to improve reliability
+	
+	Other changes
+	* addition of Swedish language, thanks to Åke Engelbrektson
+	* fix a bug when user select a hotkey replacement for Middle-mouse button that involves a modifier key (e.g. Shift+Right-click)
+	* fix bug with icons on Windows Server (disable icons)
+	* fix bug making new folders opening in Explorer instead of Total Commander (or Directory Opus) when called from the Tray left-click menu
+	* change DOpus command to open a new lister to Go with NEW parameter
+
+	Retained for v4
 	* save group GUI with selector, group name of load options
 	* save group GUI improvements
 	* load group and read replace setting
 	* close other Explorers, TC and DO before loading a group when group setting is replace
 	* open Explorers instances in a group
 	* open Directory Opus instances in a group
-	* addition of Swedish language, thanks to Åke Engelbrektson
-	* fix a bug when user select a hotkey replacement for Middle-mouse button that involves a modifier key (e.g. Shift+Right-click)
 
-	Version: 3.2.7.2 (2014-10-13)
+	Version: 3.2.7.2 BETA (2014-10-13)
+	Published in v3.3 prod
 	* add a checkbox in options to let Total Commander users choose to open new folders (Shift-Middle-Mouse) in a new tab or in a new window
 	* fix bug making new folders opening in Explorer instead of Total Commander (or Directory Opus) when called from the Tray left-click menu
-	* inserts small delays (1/10 sec.) when opening TC special folders to improve reliability
+	* inserts small delays when opening TC special folders to improve reliability
 	
-	Version: 3.2.7.1 (2014-10-12)
-	* 3.2.7.1 is the starting version number used for beta testing phase
-	
-	* reorg Switch menu taking SwitchExplorer to Switch menu level, with Switch in dialog box at the bottom of Switch menu
-	* rename Switch to Explorers
-	* integrate with DOpus listers in Explorers menu
-	* save and restore groups of Explorers
-	* save and restore groups with positions
-	* add Save this group and Load a group menus to Explorers menu
-	* add Groups button to main Gui
-	
+	Version: 3.2.7.1 BETA (2014-10-12) starting version number used for beta testing phase
+
+	Published in v3.3 prod
 	* automatic detection for Total Commander support
 	* Total Commander configuration in Options
 	* ini configuration for TotalCommander window
@@ -47,9 +57,17 @@ To-do:
 	* add this folder from Total Commander window
 	* navigate regular and special folder in TotalCommander existing window
 	* open regular and special folder in new TotalCommander window or tab according to TotalCommanderNewTabOrWindow
-	* TotalCommander support in Explorers menu
-
 	* change DOpus command to open a new lister to Go with NEW parameter
+
+	Retained for v4
+	* reorg Switch menu taking SwitchExplorer to Switch menu level, with Switch in dialog box at the bottom of Switch menu
+	* rename Switch to Explorers
+	* integrate with DOpus listers in Explorers menu
+	* save and restore groups of Explorers
+	* save and restore groups with positions
+	* add Save this group and Load a group menus to Explorers menu
+	* add Groups button to main Gui
+	* TotalCommander support in Explorers menu (if tabs issue solved)
 
 	Version: 3.2.2 (2014-10-02)
 	* fix layout in options gui
@@ -573,6 +591,7 @@ strMouseButtons := "None|LButton|MButton|RButton|XButton1|XButton2|WheelUp|Wheel
 ; leave last | to enable default value on the last item
 StringSplit, arrMouseButtons, strMouseButtons, |
 
+/* ***v4
 strIconsMenus := "lMenuDesktop|lMenuDocuments|lMenuPictures|lMenuMyComputer|lMenuNetworkNeighborhood|lMenuControlPanel|lMenuRecycleBin"
 	. "|menuRecentFolders|menuSwitchDialog|menuSwitchExplorer|lMenuSpecialFolders|lMenuSwitch"
 	. "|lMenuRecentFolders|lMenuSettings|lMenuAddThisFolder|lDonateMenu|Submenu|Network|UnknownDocument|Folder"
@@ -611,6 +630,41 @@ else
 				. "113|110|217|208|298|29|3|4"
 				. "|297|46"
 }
+*/
+
+; ***v3.3
+strIconsMenus := "lMenuDesktop|lMenuDocuments|lMenuPictures|lMenuMyComputer|lMenuNetworkNeighborhood|lMenuControlPanel|lMenuRecycleBin"
+	. "|menuRecentFolders|menuSwitchDialog|menuSwitchExplorer|lMenuSpecialFolders|lMenuSwitchExplorer|lMenuSwitchDialog|lMenuSwitch"
+	. "|lMenuRecentFolders|lMenuSettings|lMenuAddThisFolder|lDonateMenu|Submenu|Network|UnknownDocument|Folder"
+
+if (A_OSVersion = "WIN_XP")
+{
+	strIconsFile := "shell32|shell32|shell32|shell32|shell32|shell32|shell32"
+				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
+				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
+	strIconsIndex := "35|127|118|16|19|22|33"
+				. "|4|147|4|4|147|147|147"
+				. "|214|166|111|161|85|10|3|4"
+}
+else if (A_OSVersion = "WIN_VISTA")
+{
+	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
+				. "|imageres|imageres|imageres|imageres|imageres|imageres|imageres"
+				. "|imageres|imageres|shell32|shell32|shell32|imageres|imageres|imageres"
+	strIconsIndex := "105|85|67|104|114|22|49"
+				. "|112|174|3|3|175|174|175|"
+				. "112|109|88|161|85|28|2|3"
+}
+else
+{
+	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
+				. "|imageres|imageres|imageres|imageres|imageres|imageres|imageres"
+				. "|imageres|imageres|imageres|imageres|shell32|imageres|imageres|imageres"
+	strIconsIndex := "106|189|68|105|115|23|50"
+				. "|113|176|203|203|177|176|177|"
+				. "113|110|217|208|298|29|3|4"
+}
+; ***/v3.3
 
 StringSplit, arrIconsFile, strIconsFile, |
 StringSplit, arrIconsIndex, strIconsIndex, |
@@ -695,6 +749,7 @@ if (blnPopupFix >= 0)
 
 IniRead, blnDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip, 1
 IniRead, blnDisplayIcons, %strIniFile%, Global, DisplayIcons, 1
+blnDisplayIcons := (blnDisplayIcons and OSVersionIsWorkstation())
 IniRead, blnDisplaySpecialFolders, %strIniFile%, Global, DisplaySpecialFolders, 1
 IniRead, blnDisplayRecentFolders, %strIniFile%, Global, DisplayRecentFolders, 1
 IniRead, blnDisplaySwitchMenu, %strIniFile%, Global, DisplaySwitchMenu, 1
@@ -1012,6 +1067,7 @@ if (blnDisplaySpecialFolders)
 		, %lMenuRecycleBin%
 }
 
+/* ***v4
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
@@ -1019,6 +1075,21 @@ if (blnDisplaySwitchMenu)
 		, % (!intExplorersExist ? "Disable" : "Enable") ; disable Save group menu if no Explorer
 		, %lMenuSwitchSave%
 }
+*/
+
+; ***v3.3
+if (blnDisplaySwitchMenu)
+{
+	Gosub, BuildSwitchMenu
+	Menu, menuSwitch
+		, % (intExplorersIndex ? "Enable" : "Disable")
+		, %lMenuSwitchExplorer%
+	Menu, menuSwitch
+		; , % (intDialogsIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
+		, % (intDialogsIndex and WindowIsDialog(strTargetClass) ? "Enable" : "Disable")
+		, %lMenuSwitchDialog%
+}
+; ***/v3.3
 
 if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass)
 	or WindowIsFreeCommander(strTargetClass) or WindowIsTotalCommander(strTargetClass)
@@ -1085,6 +1156,7 @@ if (blnDisplaySpecialFolders)
 	Menu, menuSpecialFolders, Enable, %lMenuRecycleBin%
 }
 
+/* ***v4
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
@@ -1092,6 +1164,21 @@ if (blnDisplaySwitchMenu)
 		, % (!intExplorersExist ? "Disable" : "Enable") ; disable Save group menu if no Explorer
 		, %lMenuSwitchSave%
 }
+*/
+
+; ***v3.3
+if (blnDisplaySwitchMenu)
+{
+	Gosub, BuildSwitchMenu
+	Menu, menuSwitch
+		, % (intExplorersIndex ? "Enable" : "Disable")
+		, %lMenuSwitchExplorer%
+	Menu, menuSwitch
+		; , % (intDialogsIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
+		, % (intDialogsIndex and WindowIsDialog(strTargetClass)? "Enable" : "Disable")
+		, %lMenuSwitchDialog%
+}
+; ***/v3.3
 
 ; Enable "Add This Folder" only if the target window is an Explorer (tested on WIN_XP and WIN_7)
 ; or a dialog box under WIN_7 (does not work under WIN_XP).
@@ -1319,6 +1406,15 @@ return
 BuildSwitchMenu:
 ;------------------------------------------------------------
 
+; ***v3.3
+Menu, menuSwitchExplorer, Add
+Menu, menuSwitchExplorer, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
+Menu, menuSwitchExplorer, Color, %strMenuBackgroundColor%
+Menu, menuSwitchDialog, Add
+Menu, menuSwitchDialog, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
+Menu, menuSwitchDialog, Color, %strMenuBackgroundColor%
+; ***/v3.3
+
 if (blnUseDirectoryOpus)
 {
 	FileDelete, %strDOpusTempFilePath%
@@ -1335,6 +1431,7 @@ if (blnUseDirectoryOpus)
 	CollectDOpusListersList(objDOpusListers, strListText) ; list all listers, excluding special folders like Recycle Bin
 }
 
+/* ***v4 if tabs resolved
 if (blnUseTotalCommander)
 {
 	objTCLists := Object()
@@ -1342,15 +1439,56 @@ if (blnUseTotalCommander)
 	; see http://www.ghisler.ch/board/viewtopic.php?t=41198
 	CollectTCLists(objTCLists)
 }
+*/
 
 objExplorersWindows := Object()
 CollectExplorers(objExplorersWindows, ComObjCreate("Shell.Application").Windows)
 
+; ***v3.3
+objSwitchMenuDialogs := Object()
+; ***/v3.3
 objSwitchMenuExplorers := Object()
 
 intExplorersIndex := 0
+; ***v3.3
+intExplorersIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
+intDialogsIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
+; ***/v3.3
+/* ***v4
 intExplorersExist := 0 ; used in PopupMenu... to check if we disable the menu when empty
+*/
 
+; ***v3.3
+if (blnUseDirectoryOpus)
+	for intIndex, objLister in objDOpusListers
+	{
+		if !NameIsInObject(objLister.path, objSwitchMenuExplorers)
+		{
+			intExplorersIndex := intExplorersIndex + 1
+			
+			objSwitchMenuExplorer := Object()
+			objSwitchMenuExplorer.Path := objLister.path
+			if InStr(objLister.path, "Lister-Quick-Find-Results")
+				objSwitchMenuExplorer.Name := "Directory Opus Quick Find Results (" . intExplorersIndex . ")"
+			else if InStr(objLister.path, "coll://")
+				objSwitchMenuExplorer.Name := "Directory Opus Collection (" . intExplorersIndex . ")"
+			else
+				objSwitchMenuExplorer.Name := objLister.path
+			objSwitchMenuExplorer.WindowID := objLister.lister
+			objSwitchMenuExplorer.TabID := objLister.tab
+			
+			objSwitchMenuExplorers.Insert(intExplorersIndex, objSwitchMenuExplorer)
+			
+			if StrLen(objSwitchMenuExplorer.Path) and !InStr(objSwitchMenuExplorer.Path, "coll://")
+			{
+				intDialogsIndex := intDialogsIndex + 1
+				objSwitchMenuDialogs.Insert(intDialogsIndex, objSwitchMenuExplorer)
+			}
+		}
+	}
+; ////v3.3
+
+/* ***v4
 if (blnUseDirectoryOpus)
 	for intIndex, objLister in objDOpusListers
 	{
@@ -1386,7 +1524,9 @@ if (blnUseDirectoryOpus)
 			objSwitchMenuExplorers.Insert(intExplorersIndex, objSwitchMenuExplorer)
 		}
 	}
+*/
 
+/* ***v4 if tabs resolved
 if (blnUseTotalCommander)
 	for intIndex, objTCList in objTCLists
 	{
@@ -1411,7 +1551,46 @@ if (blnUseTotalCommander)
 			objSwitchMenuExplorers.Insert(intExplorersIndex, objSwitchMenuExplorer)
 		}
 	}
+*/
 
+; ***v3.3
+for intIndex, objExplorer in objExplorersWindows
+	if !NameIsInObject(objExplorer.LocationName, objSwitchMenuExplorers)
+	{
+		; ###_D(intIndex . ": " . objExplorer.LocationName . " : ok")
+		objSwitchMenuExplorer := Object()
+		objSwitchMenuExplorer.Path := objExplorer.LocationURL
+		objSwitchMenuExplorer.Name := objExplorer.LocationName
+		objSwitchMenuExplorer.WindowID := objExplorer.WindowID
+		objSwitchMenuExplorer.TabID := ""
+		
+		intExplorersIndex := intExplorersIndex + 1
+		objSwitchMenuExplorers.Insert(intExplorersIndex, objSwitchMenuExplorer)
+		
+		if StrLen(objSwitchMenuExplorer.Path)
+		{
+			intDialogsIndex := intDialogsIndex + 1
+			objSwitchMenuDialogs.Insert(intDialogsIndex, objSwitchMenuExplorer)
+		}
+	}
+
+intShortcutExplorer := 0
+intShortcutDialog := 0
+
+for intIndex, objSwitchMenuExplorer in objSwitchMenuExplorers
+{
+	strMenuName := (blnDisplayMenuShortcuts and (intShortcutExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutExplorer, false) . " " : "") . objSwitchMenuExplorer.Name
+	AddMenuIcon("menuSwitchExplorer", strMenuName, "SwitchExplorer", (StrLen(objSwitchMenuExplorer.TabID) ? "DirectoryOpus" : "menuSwitchExplorer"))
+}
+
+for intIndex, objSwitchMenuDialog in objSwitchMenuDialogs
+{
+	strMenuName := (blnDisplayMenuShortcuts and (intShortcutDialog <= 35) ? "&" . NextMenuShortcut(intShortcutDialog, false) . " " : "") . objSwitchMenuDialog.Name
+	AddMenuIcon("menuSwitchDialog", strMenuName, "SwitchDialog", "menuSwitchDialog")
+}
+; ***/v3.3
+
+/* ***v4
 for intIndex, objExplorer in objExplorersWindows
 {
 	; if popup menu is for dialog box and we have no path, skip it
@@ -1469,6 +1648,7 @@ if (intExplorersIndex)
 	Menu, menuSwitch, Add
 AddMenuIcon("menuSwitch", lMenuSwitchSave, "SwitchSaveGroup", "menuSwitchSave")
 AddMenuIcon("menuSwitch", lMenuSwitchLoad, ":menuSwitchGroups", "menuSwitchLoad")
+*/
 
 return
 ;------------------------------------------------------------
@@ -1524,6 +1704,7 @@ CollectExplorers(objExplorers, pExplorers)
 ;------------------------------------------------------------
 
 
+/* ***v4
 ;------------------------------------------------------------
 CollectTCLists(objLists)
 ;------------------------------------------------------------
@@ -1576,6 +1757,7 @@ CollectTCLists(objLists)
 	objClipboardBK :=
 }
 ;------------------------------------------------------------
+*/
 
 
 ;------------------------------------------------------------
@@ -1666,12 +1848,26 @@ Menu, %lMainMenuName%, Add
 if (blnDisplaySpecialFolders)
 	AddMenuIcon(lMainMenuName, lMenuSpecialFolders, ":menuSpecialFolders", "lMenuSpecialFolders")
 
+/* ***v4
 if (blnDisplaySwitchMenu)
 {
 	strBuildMenuFullName := (blnUseDirectoryOpus ? lMenuSwitchDOpus . " + " : "") . (blnUseTotalCommander ? lMenuSwitchTC . " + " : "") . lMenuSwitch
 	AddMenuIcon(lMainMenuName, strBuildMenuFullName, ":menuSwitch", "lMenuSwitch")
 	Menu, menuSwitch, Color, %strMenuBackgroundColor%
 }
+*/
+
+; ***v3.3
+if (blnDisplaySwitchMenu)
+{
+	; Menu, menuSwitch, Add
+	; Menu, menuSwitch, DeleteAll
+	AddMenuIcon("menuSwitch", lMenuSwitchExplorer, ":menuSwitchExplorer", "lMenuSwitchExplorer")
+	AddMenuIcon("menuSwitch", lMenuSwitchDialog, ":menuSwitchDialog", "lMenuSwitchDialog")
+	AddMenuIcon(lMainMenuName, lMenuSwitch, ":menuSwitch", "lMenuSwitch")
+	Menu, menuSwitch, Color, %strMenuBackgroundColor%
+}
+; ***/v3.3
 
 if (blnDisplayRecentFolders)
 	AddMenuIcon(lMainMenuName, lMenuRecentFolders . "...", "RefreshRecentFolders", "lMenuRecentFolders")
@@ -1831,21 +2027,21 @@ Gui, 1:Add, Picture, xm+1 ys+205 gGuiSortFolders, %strTempDir%\generic_sorting2-
 
 Gui, 1:Add, Text, Section xs ys
 
-Gui, 1:Add, Picture, xs+10 ys+7 gGuiAddFolder, %strTempDir%\add_property-48.png ; Static14
 Gui, 1:Font, s8 w400, Arial ; button legend
+
+Gui, 1:Add, Picture, xs+10 ys+7 gGuiAddFolder, %strTempDir%\add_property-48.png ; Static14
 Gui, 1:Add, Text, xs y+0 w68 center gGuiAddFolder, %lGuiAddFolder% ; Static15
 
 Gui, 1:Add, Picture, xs+10 gGuiEditFolder, %strTempDir%\edit_property-48.png ; Static16
-Gui, 1:Font, s8 w400, Arial ; button legend
 Gui, 1:Add, Text, xs y+0 w68 center gGuiEditFolder, %lGuiEditFolder% ; Static17
 
 Gui, 1:Add, Picture, xs+10 gGuiRemoveFolder, %strTempDir%\delete_property-48.png ; Static18
-Gui, 1:Font, s8 w400, Arial ; button legend
 Gui, 1:Add, Text, xs y+0 w68 center gGuiRemoveFolder, %lGuiRemoveFolder% ; Static19
 
+/* ***v4
 Gui, 1:Add, Picture, xs+10 y+35 gGuiManageGroups, %strTempDir%\channel_mosaic-48.png ; Static20
-Gui, 1:Font, s8 w400, Arial ; button legend
 Gui, 1:Add, Text, xs y+5 w68 center gGuiManageGroups, %lDialogSwitch% ; Static21
+*/
 
 Gui, 1:Add, Text, Section x185 ys+250
 
@@ -2036,6 +2232,7 @@ return
 ;------------------------------------------------------------
 
 
+/* ***v4
 ;------------------------------------------------------------
 GuiManageGroups:
 ;------------------------------------------------------------
@@ -2062,6 +2259,7 @@ Gui, 1:+Disabled
 
 return
 ;------------------------------------------------------------
+*/
 
 
 ;------------------------------------------------------------
@@ -3154,6 +3352,8 @@ GuiControl, , blnDisplayTrayTip, %blnDisplayTrayTip%
 
 Gui, 2:Add, CheckBox, y+10 xs vblnDisplayIcons, %lOptionsDisplayIcons%
 GuiControl, , blnDisplayIcons, %blnDisplayIcons%
+if !OSVersionIsWorkstation()
+	GuiControl, Disable, blnDisplayIcons
 
 ; Build Gui footer
 
@@ -4027,7 +4227,12 @@ return
 SwitchExplorer:
 ;------------------------------------------------------------
 
+/* ***v4
 if (objSwitchMenuExplorers[A_ThisMenuItemPos].WindowType = "DO") ; this is a DOpus lister
+*/
+; ***v3.3
+if StrLen(objSwitchMenuExplorers[A_ThisMenuItemPos].TabID) ; this is a DOpus lister
+; ***/v3.3
 {
 	if InStr(objSwitchMenuExplorers[A_ThisMenuItemPos].Path, "%")
 	{
@@ -4038,7 +4243,7 @@ if (objSwitchMenuExplorers[A_ThisMenuItemPos].WindowType = "DO") ; this is a DOp
 	}
 	RunDOpusRt("/acmd Go ", objSwitchMenuExplorers[A_ThisMenuItemPos].Path, " EXISTINGLISTER") ; activate an existing lister listing this path
 }
-else ; Explorer or TotalCommander
+else ; Explorer
 	WinActivate, % "ahk_id " . objSwitchMenuExplorers[A_ThisMenuItemPos].WindowId
 
 return
@@ -4049,12 +4254,18 @@ return
 SwitchDialog:
 ;------------------------------------------------------------
 
+/* ***v4
 NavigateDialog(objSwitchMenuExplorers[A_ThisMenuItemPos].Path, strTargetWinId, strTargetClass)
+*/
+; ***v3.3
+NavigateDialog(objSwitchMenuDialogs[A_ThisMenuItemPos].Path, strTargetWinId, strTargetClass)
+; ***/v3.3
 
 return
 ;------------------------------------------------------------
 
 
+/* ***v4
 ;------------------------------------------------------------
 SwitchSaveGroup:
 ;------------------------------------------------------------
@@ -4280,11 +4491,9 @@ while, intDOWindow := WindowOfType("DO") ; returns the index of the first DOpus 
 		{
 			while, intDOIndexPane := DOpusWindowOfPane(1, strFirstWindowId) ; returns the paths of the windows of the left pane for this group of windows
 			{
-				/*
-				###_D(objIniExplorersInGroup[intDOIndexPane].WindowId . " Exist NewId is: " . strNewWindowId . "`n"
-					. "pane 1 path : " . objIniExplorersInGroup[intDOIndexPane].Name
-					. "")
-				*/
+				; ###_D(objIniExplorersInGroup[intDOIndexPane].WindowId . " Exist NewId is: " . strNewWindowId . "`n"
+				;	. "pane 1 path : " . objIniExplorersInGroup[intDOIndexPane].Name
+				;	. "")
 				RunDOpusRt("/acmd Go ", objIniExplorersInGroup[intDOIndexPane].Name, " NEWTAB") ; open in a new tab of pane 1
 				; ###_D("other tabs in 1")
 				Sleep, %intSleepAfterWindowCommand%
@@ -4293,11 +4502,9 @@ while, intDOWindow := WindowOfType("DO") ; returns the index of the first DOpus 
 			blnNewPane2 := true
 			while, intDOIndexPane := DOpusWindowOfPane(2, strFirstWindowId) ; returns the paths of the windows of the right pane for this group of windows
 			{
-				/*
-				###_D(objIniExplorersInGroup[intDOIndexPane].WindowId . " Exist NewId is: " . strNewWindowId . "`n"
-					. "pane 2 path : " . objIniExplorersInGroup[intDOIndexPane].Name
-					. "")
-				*/
+				; ###_D(objIniExplorersInGroup[intDOIndexPane].WindowId . " Exist NewId is: " . strNewWindowId . "`n"
+				;	. "pane 2 path : " . objIniExplorersInGroup[intDOIndexPane].Name
+				;	. "")
 				if (blnNewPane2)
 				{
 					RunDOpusRt("/acmd Go ", objIniExplorersInGroup[intDOIndexPane].Name, " OPENINRIGHT") ; open in a first tab of pane 2
@@ -4373,17 +4580,16 @@ Loop
 		Break
 
 	StringSplit, arrThisExplorer, strExplorer, |
-	/*
-	1	objSwitchMenuExplorers[intRow].Name
-	2	objSwitchMenuExplorers[intRow].WindowType
-	3	objSwitchMenuExplorers[intRow].MinMax
-	4	objSwitchMenuExplorers[intRow].Left
-	5	objSwitchMenuExplorers[intRow].Top
-	6	objSwitchMenuExplorers[intRow].Width
-	7	objSwitchMenuExplorers[intRow].Height
-	8	objSwitchMenuExplorers[intRow].Pane
-	9	objSwitchMenuExplorers[intRow].WindowId
-	*/
+
+	; 1	objSwitchMenuExplorers[intRow].Name
+	; 2	objSwitchMenuExplorers[intRow].WindowType
+	; 3	objSwitchMenuExplorers[intRow].MinMax
+	; 4	objSwitchMenuExplorers[intRow].Left
+	; 5	objSwitchMenuExplorers[intRow].Top
+	; 6	objSwitchMenuExplorers[intRow].Width
+	; 7	objSwitchMenuExplorers[intRow].Height
+	; 8	objSwitchMenuExplorers[intRow].Pane
+	; 9	objSwitchMenuExplorers[intRow].WindowId
 	
 	objIniEntry := Object()
 	objIniEntry.Name := arrThisExplorer1
@@ -4471,6 +4677,7 @@ DOpusWindowOfPane(intPane, strId)
 }
 
 ;------------------------------------------------------------
+*/
 
 
 ;------------------------------------------------------------
@@ -5189,8 +5396,13 @@ WM_MOUSEMOVE(wParam, lParam)
 	
 	MouseGetPos, , , , strControl ; Static1, StaticN, Button1, ButtonN
 	StringReplace, strControl, strControl, Static
-	
+
+/* ***v4
 	If InStr(".3.4.6.7.9.10.11.12.14.15.16.17.18.19.20.21.25.26.27.28.29.30.Button1.Button2.", "." . strControl . ".")
+*/
+; ***v3.3
+	If InStr(".3.4.6.7.9.10.11.12.14.15.16.17.18.19.23.24.25.26.27.28.Button1.Button2.", "." . strControl . ".")
+; ***/v3.3
 		DllCall("SetCursor", "UInt", objCursor)
 
 	return
@@ -5444,6 +5656,48 @@ objIconsFile["TotalCommander"] := strTotalCommanderPath
 objIconsIndex["TotalCommander"] := 1
 
 return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+OSVersionIsWorkstation()
+;------------------------------------------------------------
+{
+	If (OSVersion := GetOSVersionInfo())
+		return (OSVersion.ProductType = 1)
+	else
+		return false
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GetOSVersionInfo()
+; by shajul (http://www.autohotkey.com/board/topic/54639-getosversion/?p=414249)
+; reference: http://msdn.microsoft.com/en-ca/library/windows/desktop/ms724833(v=vs.85).aspx
+;------------------------------------------------------------
+{
+	static Ver
+	If !Ver
+	{
+		VarSetCapacity(OSVer, 284, 0)
+		NumPut(284, OSVer, 0, "UInt")
+		If !DllCall("GetVersionExW", "Ptr", &OSVer)
+		   return 0 ; GetSysErrorText(A_LastError)
+		Ver := Object()
+		Ver.MajorVersion      := NumGet(OSVer, 4, "UInt")
+		Ver.MinorVersion      := NumGet(OSVer, 8, "UInt")
+		Ver.BuildNumber       := NumGet(OSVer, 12, "UInt")
+		Ver.PlatformId        := NumGet(OSVer, 16, "UInt")
+		Ver.ServicePackString := StrGet(&OSVer+20, 128, "UTF-16")
+		Ver.ServicePackMajor  := NumGet(OSVer, 276, "UShort")
+		Ver.ServicePackMinor  := NumGet(OSVer, 278, "UShort")
+		Ver.SuiteMask         := NumGet(OSVer, 280, "UShort")
+		Ver.ProductType       := NumGet(OSVer, 282, "UChar") ; 1 = VER_NT_WORKSTATION, 2 = VER_NT_DOMAIN_CONTROLLER, 3 = VER_NT_SERVER
+		Ver.EasyVersion       := Ver.MajorVersion . "." . Ver.MinorVersion . "." . Ver.BuildNumber
+	}
+	return Ver
+}
 ;------------------------------------------------------------
 
 
