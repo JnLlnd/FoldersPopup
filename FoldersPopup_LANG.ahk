@@ -164,6 +164,9 @@ global lOptionsDisplayMenuShortcuts := "Display &Numeric Menu Shortcuts"
 global lOptionsDisplayRecentFolders := "Display R&ecent Folders"
 global lOptionsDisplaySpecialFolders := "Display S&pecial Folders"
 global lOptionsDisplaySwitchMenu := "Display E&xplorers Menu"
+; ***v3.3
+global lOptionsDisplaySwitchMenu := "Display Switch Menu"
+; ***/v3.3
 global lOptionsGuiIntro := "Define the mouse buttons and keyboard hotkeys that will trigger ~1~."
 global lOptionsGuiTitle := "Options - ~1~ ~2~"
 global lOptionsIconSize := "Menu icons size"
