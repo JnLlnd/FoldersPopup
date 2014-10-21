@@ -117,10 +117,9 @@ lMenuMyComputer	&Mein Computer
 lMenuNetworkNeighborhood	&Netzwerkumgebung
 lMenuPictures	&Bilder
 lMenuRecentFolders	&Kürzlich verwendete Ordner
-lMenuRecentFoldersShortcut	K
 lMenuRecycleBin	&Papierkorb
 lMenuRefreshRecent	Menü der kürzlich verwendeten Ordner wird aktualisiert
-lMenuReservedShortcuts	SKWFD
+lMenuReservedShortcuts	SWKFD
 lMenuReservedShortcutsDonate	U
 lMenuRunAtStartup	&Beim Start von Windows ausführen
 lMenuSeparator	----------------
@@ -155,7 +154,7 @@ lOptionsGuiTitle	Optionen - ~1~ ~2~
 lOptionsIconSize	Symbolgröße im Menü
 lOptionsKeyboard	Tastatur
 lOptionsLanguage	Sprache
-lOptionsLanguageLabels	Englisch|Französisch|Deutsch|Holländisch|Koreanisch
+lOptionsLanguageLabels	Englisch|Französisch|Deutsch|Holländisch|Koreanisch|Schwedisch
 lOptionsMenuActiveWindow	Im aktiven Fenster
 lOptionsMenuFixPosition	An fester Position
 lOptionsMenuNearMouse	Nahe des Mauszeigers

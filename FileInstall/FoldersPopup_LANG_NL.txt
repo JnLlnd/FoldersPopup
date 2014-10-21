@@ -118,10 +118,9 @@ lMenuMyComputer	&Mijn Computer
 lMenuNetworkNeighborhood	Mijn &Netwerklocaties
 lMenuPictures	Afbeeldingen
 lMenuRecentFolders	&Recente bezochte mappen
-lMenuRecentFoldersShortcut	R
 lMenuRecycleBin	Prullenbak
 lMenuRefreshRecent	Vernieuwen van het menu met de recent bezochten mappen
-lMenuReservedShortcuts	SRWFA
+lMenuReservedShortcuts	SWRFA
 lMenuReservedShortcutsDonate	T
 lMenuRunAtStartup	Uitvoe&ren bij opstarten
 lMenuSeparator	----------------
@@ -159,7 +158,7 @@ lOptionsGuiTitle	Opties - ~1~ ~2~
 lOptionsIconSize	Menu iconen grootte
 lOptionsKeyboard	Toetsenbord
 lOptionsLanguage	Taal
-lOptionsLanguageLabels	Engels|Frans|Duits|Nederlands|Korean
+lOptionsLanguageLabels	Engels|Frans|Duits|Nederlands|Korean|Zweeds
 lOptionsMenuActiveWindow	In het actieve venster
 lOptionsMenuFixPosition	Op een vaste positie
 lOptionsMenuNearMouse	In de buurt van de muisaanwijzer

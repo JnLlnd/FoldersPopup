@@ -118,10 +118,9 @@ lMenuMyComputer	Ordinateur
 lMenuNetworkNeighborhood	Réseau
 lMenuPictures	Images
 lMenuRecentFolders	&Emplacements récents
-lMenuRecentFoldersShortcut	E
 lMenuRecycleBin	Corbeille
 lMenuRefreshRecent	Actualisation des dossiers récents en cours
-lMenuReservedShortcuts	DEBPA
+lMenuReservedShortcuts	DBEPA
 lMenuReservedShortcutsDonate	S
 lMenuRunAtStartup	Exécuter au démarrage
 lMenuSeparator	----------------
@@ -130,6 +129,7 @@ lMenuSpecialExplorer	Fenêtre spéciale de l'Explorateur
 lMenuSpecialFolders	&Dossiers spéciaux
 lMenuSuspendHotkeys	Suspendre les déclencheurs (Hotkeys)
 lMenuSwitch	Explorateurs
+lMenuSwitch	&Basculer
 lMenuSwitchDOpus	Listes Directory Opus et
 lMenuSwitchLoad	Ouvrir un groupe
 lMenuSwitchSave	Enregistrer ce groupe
@@ -159,7 +159,7 @@ lOptionsGuiTitle	Options - ~1~ ~2~
 lOptionsIconSize	Taille des icones de menu
 lOptionsKeyboard	Clavier
 lOptionsLanguage	Langue
-lOptionsLanguageLabels	Anglais|Français|Allemand|Néerlandais|Coréen
+lOptionsLanguageLabels	Anglais|Français|Allemand|Néerlandais|Coréen|Suédois
 lOptionsMenuActiveWindow	Dans la fenêtre active
 lOptionsMenuFixPosition	À une position fixe
 lOptionsMenuNearMouse	Près du pointeur de la souris
