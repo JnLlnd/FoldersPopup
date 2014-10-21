@@ -17,13 +17,14 @@ To-do for v4:
 	* automatic detection for Total Commander support
 	* Total Commander configuration in Options
 	* ini configuration for TotalCommander window
-	* special TotalCommanderNewTabOrWindow swith in ini file
+	* special TotalCommanderNewTabOrWindow switch in ini file
 	* add a checkbox in options to let Total Commander users choose to open new folders (Shift-Middle-Mouse) in a new tab or in a new window
 	* show popup menu in TotalCommander windows
 	* add this folder from Total Commander window
 	* navigate regular and special folder in TotalCommander existing window
 	* open regular and special folder in new TotalCommander window or tab according to TotalCommanderNewTabOrWindow
 	* inserts small delays when opening TC special folders to improve reliability
+	* disable Switch menu first time TC is enabled until the tabs issue is resolved in TC
 	
 	Other changes
 	* addition of Swedish language, thanks to Åke Engelbrektson
@@ -52,7 +53,7 @@ To-do for v4:
 	* automatic detection for Total Commander support
 	* Total Commander configuration in Options
 	* ini configuration for TotalCommander window
-	* special TotalCommanderNewTabOrWindow swith in ini file
+	* special TotalCommanderNewTabOrWindow switch in ini file
 	* show popup menu in TotalCommander windows
 	* add this folder from Total Commander window
 	* navigate regular and special folder in TotalCommander existing window
@@ -67,7 +68,7 @@ To-do for v4:
 	* save and restore groups with positions
 	* add Save this group and Load a group menus to Explorers menu
 	* add Groups button to main Gui
-	* TotalCommander support in Explorers menu (if tabs issue solved)
+	* TotalCommander support in Explorers menu (if tabs issue resolved)
 
 	Version: 3.2.2 (2014-10-02)
 	* fix layout in options gui
@@ -5611,6 +5612,10 @@ if FileExist(strCheckTotalCommanderPath)
 	{
 		strTotalCommanderPath := strCheckTotalCommanderPath
 		Gosub, SetTCCommand
+		
+		; disable Switch menu for TC users until the tabs issue is resolved
+		blnDisplaySwitchMenu := 0
+		IniWrite, %blnDisplaySwitchMenu%, %strIniFile%, Global, DisplaySwitchMenu
 	}
 	blnUseTotalCommander := (strTotalCommanderPath <> "NO")
 	IniWrite, %strTotalCommanderPath%, %strIniFile%, Global, TotalCommanderPath
