@@ -11,7 +11,7 @@ To-do for v4:
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: 3.3 (2014-10-XX)
+	Version: 3.2.7.3 BETA (2014-10-20) - release candidate for v3.3 PROD
 	
 	TotalCommander integration
 	* automatic detection for Total Commander support
@@ -2724,7 +2724,7 @@ else if (A_ThisMenuItem = lMenuUpdate)
 		if (strCurrentBranch = "prod")
 			Run, http://code.jeanlalonde.ca/folderspopup/
 		else
-			Run, http://code.jeanlalonde.ca/beta-testers-wanted-for-folders-popup-v3-2/
+			Run, http://code.jeanlalonde.ca/folders-popup-compatible-with-total-commander-beta-testers-wanted/
 }
 
 return 
