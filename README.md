@@ -13,6 +13,27 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### Version: 3.3 (2014-10-24)
+	
+TotalCommander integration
+* automatic detection for Total Commander support
+* Total Commander configuration in Options
+* ini configuration for TotalCommander
+* add a checkbox in options to let Total Commander users choose to open new folders (Shift+Middle-Mouse) in a new tab or in a new window
+* new TotalCommanderUseTabs and TotalCommanderNewTabOrWindow switches in ini file
+* show popup menu in TotalCommander windows
+* add this folder from Total Commander window
+* navigate regular and special folder in TotalCommander existing window
+* open regular and special folder in new TotalCommander window or tab according to TotalCommanderNewTabOrWindow
+* disable Switch menu first time TC is enabled until the tabs issue is resolved in TC
+
+Other changes
+* addition of Swedish language, thanks to Åke Engelbrektson
+* fix a bug when user select a hotkey replacement for Middle-mouse button that involves a modifier key (e.g. Shift+Right-click)
+* fix bug with icons on Windows Server (disable icons)
+* fix bug making new folders opening in Explorer instead of Total Commander or Directory Opus when called from the Tray left-click menu
+* change DOpus command to open a new lister to Go with NEW parameter
+
 ### Version: 3.2.2 (2014-10-02)
 * fix layout in options gui
 * remove support for MS Office 2003/2007 file dialog boxes

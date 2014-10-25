@@ -11,14 +11,14 @@ To-do for v4:
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
-	Version: 3.2.7.3 BETA (2014-10-20) - release candidate for v3.3 PROD
+	Version: 3.3 (2014-10-24)
 	
 	TotalCommander integration
 	* automatic detection for Total Commander support
 	* Total Commander configuration in Options
 	* ini configuration for TotalCommander window
-	* special TotalCommanderNewTabOrWindow switch in ini file
 	* add a checkbox in options to let Total Commander users choose to open new folders (Shift-Middle-Mouse) in a new tab or in a new window
+	* new TotalCommanderUseTabs and TotalCommanderNewTabOrWindow switches in ini file
 	* show popup menu in TotalCommander windows
 	* add this folder from Total Commander window
 	* navigate regular and special folder in TotalCommander existing window
@@ -417,7 +417,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 3.3 BETA
+;@Ahk2Exe-SetVersion 3.3
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -478,8 +478,8 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.2.7.3" ; "major.minor.bugs" or "major.minor.beta.release"
-global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
+global strCurrentVersion := "3.3" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
 global blnDiagMode := False
@@ -779,7 +779,7 @@ else
 		Gosub, CheckDirectoryOpus
 
 IniRead, strTotalCommanderPath, %strIniFile%, Global, TotalCommanderPath, %A_Space% ; empty string if not found
-IniRead, blnTotalCommanderUseTabs, %strIniFile%, Global, TotalCommanderUseTabs, 1 ; empty string if not found
+IniRead, blnTotalCommanderUseTabs, %strIniFile%, Global, TotalCommanderUseTabs, 1 ; use tabs by default
 if StrLen(strTotalCommanderPath)
 	blnUseTotalCommander := FileExist(strTotalCommanderPath)
 if (blnUseTotalCommander)
