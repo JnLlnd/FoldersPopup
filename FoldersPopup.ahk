@@ -592,7 +592,6 @@ strMouseButtons := "None|LButton|MButton|RButton|XButton1|XButton2|WheelUp|Wheel
 ; leave last | to enable default value on the last item
 StringSplit, arrMouseButtons, strMouseButtons, |
 
-/* ***v4
 strIconsMenus := "lMenuDesktop|lMenuDocuments|lMenuPictures|lMenuMyComputer|lMenuNetworkNeighborhood|lMenuControlPanel|lMenuRecycleBin"
 	. "|menuRecentFolders|menuSwitchDialog|menuSwitchExplorer|lMenuSpecialFolders|lMenuSwitch"
 	. "|lMenuRecentFolders|lMenuSettings|lMenuAddThisFolder|lDonateMenu|Submenu|Network|UnknownDocument|Folder"
@@ -631,41 +630,6 @@ else
 				. "113|110|217|208|298|29|3|4"
 				. "|297|46"
 }
-*/
-
-; ***v3.3
-strIconsMenus := "lMenuDesktop|lMenuDocuments|lMenuPictures|lMenuMyComputer|lMenuNetworkNeighborhood|lMenuControlPanel|lMenuRecycleBin"
-	. "|menuRecentFolders|menuSwitchDialog|menuSwitchExplorer|lMenuSpecialFolders|lMenuSwitchExplorer|lMenuSwitchDialog|lMenuSwitch"
-	. "|lMenuRecentFolders|lMenuSettings|lMenuAddThisFolder|lDonateMenu|Submenu|Network|UnknownDocument|Folder"
-
-if (A_OSVersion = "WIN_XP")
-{
-	strIconsFile := "shell32|shell32|shell32|shell32|shell32|shell32|shell32"
-				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
-				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
-	strIconsIndex := "35|127|118|16|19|22|33"
-				. "|4|147|4|4|147|147|147"
-				. "|214|166|111|161|85|10|3|4"
-}
-else if (A_OSVersion = "WIN_VISTA")
-{
-	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
-				. "|imageres|imageres|imageres|imageres|imageres|imageres|imageres"
-				. "|imageres|imageres|shell32|shell32|shell32|imageres|imageres|imageres"
-	strIconsIndex := "105|85|67|104|114|22|49"
-				. "|112|174|3|3|175|174|175|"
-				. "112|109|88|161|85|28|2|3"
-}
-else
-{
-	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
-				. "|imageres|imageres|imageres|imageres|imageres|imageres|imageres"
-				. "|imageres|imageres|imageres|imageres|shell32|imageres|imageres|imageres"
-	strIconsIndex := "106|189|68|105|115|23|50"
-				. "|113|176|203|203|177|176|177|"
-				. "113|110|217|208|298|29|3|4"
-}
-; ***/v3.3
 
 StringSplit, arrIconsFile, strIconsFile, |
 StringSplit, arrIconsIndex, strIconsIndex, |
@@ -1068,7 +1032,6 @@ if (blnDisplaySpecialFolders)
 		, %lMenuRecycleBin%
 }
 
-/* ***v4
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
@@ -1076,21 +1039,6 @@ if (blnDisplaySwitchMenu)
 		, % (!intExplorersExist ? "Disable" : "Enable") ; disable Save group menu if no Explorer
 		, %lMenuSwitchSave%
 }
-*/
-
-; ***v3.3
-if (blnDisplaySwitchMenu)
-{
-	Gosub, BuildSwitchMenu
-	Menu, menuSwitch
-		, % (intExplorersIndex ? "Enable" : "Disable")
-		, %lMenuSwitchExplorer%
-	Menu, menuSwitch
-		; , % (intDialogsIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
-		, % (intDialogsIndex and WindowIsDialog(strTargetClass) ? "Enable" : "Disable")
-		, %lMenuSwitchDialog%
-}
-; ***/v3.3
 
 if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass)
 	or WindowIsFreeCommander(strTargetClass) or WindowIsTotalCommander(strTargetClass)
@@ -1157,7 +1105,6 @@ if (blnDisplaySpecialFolders)
 	Menu, menuSpecialFolders, Enable, %lMenuRecycleBin%
 }
 
-/* ***v4
 if (blnDisplaySwitchMenu)
 {
 	Gosub, BuildSwitchMenu
@@ -1165,21 +1112,6 @@ if (blnDisplaySwitchMenu)
 		, % (!intExplorersExist ? "Disable" : "Enable") ; disable Save group menu if no Explorer
 		, %lMenuSwitchSave%
 }
-*/
-
-; ***v3.3
-if (blnDisplaySwitchMenu)
-{
-	Gosub, BuildSwitchMenu
-	Menu, menuSwitch
-		, % (intExplorersIndex ? "Enable" : "Disable")
-		, %lMenuSwitchExplorer%
-	Menu, menuSwitch
-		; , % (intDialogsIndex and DialogIsSupported(strTargetWinId)? "Enable" : "Disable")
-		, % (intDialogsIndex and WindowIsDialog(strTargetClass)? "Enable" : "Disable")
-		, %lMenuSwitchDialog%
-}
-; ***/v3.3
 
 ; Enable "Add This Folder" only if the target window is an Explorer (tested on WIN_XP and WIN_7)
 ; or a dialog box under WIN_7 (does not work under WIN_XP).
@@ -1407,15 +1339,6 @@ return
 BuildSwitchMenu:
 ;------------------------------------------------------------
 
-; ***v3.3
-Menu, menuSwitchExplorer, Add
-Menu, menuSwitchExplorer, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
-Menu, menuSwitchExplorer, Color, %strMenuBackgroundColor%
-Menu, menuSwitchDialog, Add
-Menu, menuSwitchDialog, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
-Menu, menuSwitchDialog, Color, %strMenuBackgroundColor%
-; ***/v3.3
-
 if (blnUseDirectoryOpus)
 {
 	FileDelete, %strDOpusTempFilePath%
@@ -1432,7 +1355,7 @@ if (blnUseDirectoryOpus)
 	CollectDOpusListersList(objDOpusListers, strListText) ; list all listers, excluding special folders like Recycle Bin
 }
 
-/* ***v4 if tabs resolved
+/* when TC tabs resolved
 if (blnUseTotalCommander)
 {
 	objTCLists := Object()
@@ -1445,51 +1368,11 @@ if (blnUseTotalCommander)
 objExplorersWindows := Object()
 CollectExplorers(objExplorersWindows, ComObjCreate("Shell.Application").Windows)
 
-; ***v3.3
-objSwitchMenuDialogs := Object()
-; ***/v3.3
 objSwitchMenuExplorers := Object()
 
 intExplorersIndex := 0
-; ***v3.3
-intExplorersIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
-intDialogsIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
-; ***/v3.3
-/* ***v4
 intExplorersExist := 0 ; used in PopupMenu... to check if we disable the menu when empty
-*/
 
-; ***v3.3
-if (blnUseDirectoryOpus)
-	for intIndex, objLister in objDOpusListers
-	{
-		if !NameIsInObject(objLister.path, objSwitchMenuExplorers)
-		{
-			intExplorersIndex := intExplorersIndex + 1
-			
-			objSwitchMenuExplorer := Object()
-			objSwitchMenuExplorer.Path := objLister.path
-			if InStr(objLister.path, "Lister-Quick-Find-Results")
-				objSwitchMenuExplorer.Name := "Directory Opus Quick Find Results (" . intExplorersIndex . ")"
-			else if InStr(objLister.path, "coll://")
-				objSwitchMenuExplorer.Name := "Directory Opus Collection (" . intExplorersIndex . ")"
-			else
-				objSwitchMenuExplorer.Name := objLister.path
-			objSwitchMenuExplorer.WindowID := objLister.lister
-			objSwitchMenuExplorer.TabID := objLister.tab
-			
-			objSwitchMenuExplorers.Insert(intExplorersIndex, objSwitchMenuExplorer)
-			
-			if StrLen(objSwitchMenuExplorer.Path) and !InStr(objSwitchMenuExplorer.Path, "coll://")
-			{
-				intDialogsIndex := intDialogsIndex + 1
-				objSwitchMenuDialogs.Insert(intDialogsIndex, objSwitchMenuExplorer)
-			}
-		}
-	}
-; ////v3.3
-
-/* ***v4
 if (blnUseDirectoryOpus)
 	for intIndex, objLister in objDOpusListers
 	{
@@ -1525,9 +1408,8 @@ if (blnUseDirectoryOpus)
 			objSwitchMenuExplorers.Insert(intExplorersIndex, objSwitchMenuExplorer)
 		}
 	}
-*/
 
-/* ***v4 if tabs resolved
+/* when TC tabs resolved
 if (blnUseTotalCommander)
 	for intIndex, objTCList in objTCLists
 	{
@@ -1554,44 +1436,6 @@ if (blnUseTotalCommander)
 	}
 */
 
-; ***v3.3
-for intIndex, objExplorer in objExplorersWindows
-	if !NameIsInObject(objExplorer.LocationName, objSwitchMenuExplorers)
-	{
-		; ###_D(intIndex . ": " . objExplorer.LocationName . " : ok")
-		objSwitchMenuExplorer := Object()
-		objSwitchMenuExplorer.Path := objExplorer.LocationURL
-		objSwitchMenuExplorer.Name := objExplorer.LocationName
-		objSwitchMenuExplorer.WindowID := objExplorer.WindowID
-		objSwitchMenuExplorer.TabID := ""
-		
-		intExplorersIndex := intExplorersIndex + 1
-		objSwitchMenuExplorers.Insert(intExplorersIndex, objSwitchMenuExplorer)
-		
-		if StrLen(objSwitchMenuExplorer.Path)
-		{
-			intDialogsIndex := intDialogsIndex + 1
-			objSwitchMenuDialogs.Insert(intDialogsIndex, objSwitchMenuExplorer)
-		}
-	}
-
-intShortcutExplorer := 0
-intShortcutDialog := 0
-
-for intIndex, objSwitchMenuExplorer in objSwitchMenuExplorers
-{
-	strMenuName := (blnDisplayMenuShortcuts and (intShortcutExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutExplorer, false) . " " : "") . objSwitchMenuExplorer.Name
-	AddMenuIcon("menuSwitchExplorer", strMenuName, "SwitchExplorer", (StrLen(objSwitchMenuExplorer.TabID) ? "DirectoryOpus" : "menuSwitchExplorer"))
-}
-
-for intIndex, objSwitchMenuDialog in objSwitchMenuDialogs
-{
-	strMenuName := (blnDisplayMenuShortcuts and (intShortcutDialog <= 35) ? "&" . NextMenuShortcut(intShortcutDialog, false) . " " : "") . objSwitchMenuDialog.Name
-	AddMenuIcon("menuSwitchDialog", strMenuName, "SwitchDialog", "menuSwitchDialog")
-}
-; ***/v3.3
-
-/* ***v4
 for intIndex, objExplorer in objExplorersWindows
 {
 	; if popup menu is for dialog box and we have no path, skip it
@@ -1649,7 +1493,6 @@ if (intExplorersIndex)
 	Menu, menuSwitch, Add
 AddMenuIcon("menuSwitch", lMenuSwitchSave, "SwitchSaveGroup", "menuSwitchSave")
 AddMenuIcon("menuSwitch", lMenuSwitchLoad, ":menuSwitchGroups", "menuSwitchLoad")
-*/
 
 return
 ;------------------------------------------------------------
@@ -1705,7 +1548,7 @@ CollectExplorers(objExplorers, pExplorers)
 ;------------------------------------------------------------
 
 
-/* ***v4
+/* when TC tabs resolved
 ;------------------------------------------------------------
 CollectTCLists(objLists)
 ;------------------------------------------------------------
@@ -1849,26 +1692,12 @@ Menu, %lMainMenuName%, Add
 if (blnDisplaySpecialFolders)
 	AddMenuIcon(lMainMenuName, lMenuSpecialFolders, ":menuSpecialFolders", "lMenuSpecialFolders")
 
-/* ***v4
 if (blnDisplaySwitchMenu)
 {
 	strBuildMenuFullName := (blnUseDirectoryOpus ? lMenuSwitchDOpus . " + " : "") . (blnUseTotalCommander ? lMenuSwitchTC . " + " : "") . lMenuSwitch
 	AddMenuIcon(lMainMenuName, strBuildMenuFullName, ":menuSwitch", "lMenuSwitch")
 	Menu, menuSwitch, Color, %strMenuBackgroundColor%
 }
-*/
-
-; ***v3.3
-if (blnDisplaySwitchMenu)
-{
-	; Menu, menuSwitch, Add
-	; Menu, menuSwitch, DeleteAll
-	AddMenuIcon("menuSwitch", lMenuSwitchExplorer, ":menuSwitchExplorer", "lMenuSwitchExplorer")
-	AddMenuIcon("menuSwitch", lMenuSwitchDialog, ":menuSwitchDialog", "lMenuSwitchDialog")
-	AddMenuIcon(lMainMenuName, lMenuSwitch, ":menuSwitch", "lMenuSwitch")
-	Menu, menuSwitch, Color, %strMenuBackgroundColor%
-}
-; ***/v3.3
 
 if (blnDisplayRecentFolders)
 	AddMenuIcon(lMainMenuName, lMenuRecentFolders . "...", "RefreshRecentFolders", "lMenuRecentFolders")
@@ -2039,10 +1868,8 @@ Gui, 1:Add, Text, xs y+0 w68 center gGuiEditFolder, %lGuiEditFolder% ; Static17
 Gui, 1:Add, Picture, xs+10 gGuiRemoveFolder, %strTempDir%\delete_property-48.png ; Static18
 Gui, 1:Add, Text, xs y+0 w68 center gGuiRemoveFolder, %lGuiRemoveFolder% ; Static19
 
-/* ***v4
 Gui, 1:Add, Picture, xs+10 y+35 gGuiManageGroups, %strTempDir%\channel_mosaic-48.png ; Static20
 Gui, 1:Add, Text, xs y+5 w68 center gGuiManageGroups, %lDialogSwitch% ; Static21
-*/
 
 Gui, 1:Add, Text, Section x185 ys+250
 
@@ -2233,7 +2060,6 @@ return
 ;------------------------------------------------------------
 
 
-/* ***v4
 ;------------------------------------------------------------
 GuiManageGroups:
 ;------------------------------------------------------------
@@ -2260,7 +2086,6 @@ Gui, 1:+Disabled
 
 return
 ;------------------------------------------------------------
-*/
 
 
 ;------------------------------------------------------------
@@ -4228,12 +4053,7 @@ return
 SwitchExplorer:
 ;------------------------------------------------------------
 
-/* ***v4
 if (objSwitchMenuExplorers[A_ThisMenuItemPos].WindowType = "DO") ; this is a DOpus lister
-*/
-; ***v3.3
-if StrLen(objSwitchMenuExplorers[A_ThisMenuItemPos].TabID) ; this is a DOpus lister
-; ***/v3.3
 {
 	if InStr(objSwitchMenuExplorers[A_ThisMenuItemPos].Path, "%")
 	{
@@ -4255,18 +4075,12 @@ return
 SwitchDialog:
 ;------------------------------------------------------------
 
-/* ***v4
 NavigateDialog(objSwitchMenuExplorers[A_ThisMenuItemPos].Path, strTargetWinId, strTargetClass)
-*/
-; ***v3.3
-NavigateDialog(objSwitchMenuDialogs[A_ThisMenuItemPos].Path, strTargetWinId, strTargetClass)
-; ***/v3.3
 
 return
 ;------------------------------------------------------------
 
 
-/* ***v4
 ;------------------------------------------------------------
 SwitchSaveGroup:
 ;------------------------------------------------------------
@@ -4678,7 +4492,6 @@ DOpusWindowOfPane(intPane, strId)
 }
 
 ;------------------------------------------------------------
-*/
 
 
 ;------------------------------------------------------------
@@ -5398,12 +5211,7 @@ WM_MOUSEMOVE(wParam, lParam)
 	MouseGetPos, , , , strControl ; Static1, StaticN, Button1, ButtonN
 	StringReplace, strControl, strControl, Static
 
-/* ***v4
 	If InStr(".3.4.6.7.9.10.11.12.14.15.16.17.18.19.20.21.25.26.27.28.29.30.Button1.Button2.", "." . strControl . ".")
-*/
-; ***v3.3
-	If InStr(".3.4.6.7.9.10.11.12.14.15.16.17.18.19.23.24.25.26.27.28.Button1.Button2.", "." . strControl . ".")
-; ***/v3.3
 		DllCall("SetCursor", "UInt", objCursor)
 
 	return
