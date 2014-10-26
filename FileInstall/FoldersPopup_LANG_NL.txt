@@ -12,7 +12,7 @@ lDialogAdd	Toevoegen
 lDialogAddDialogAlready	Dit dialoogvenster wordt reeds ondersteund.
 lDialogAddDialogPrompt	Voer de nieuwe naam voor het dialoogvenster in`n(of een deel van de naam):
 lDialogAddDialogTitle	Voeg nieuw dialoogvenster toe - ~1~ ~2~
-lDialogAddEditFolderTitle	~1~ Favoriet - ~2~ ~3~
+lDialogAddEditFavoriteTitle	~1~ Favoriet - ~2~ ~3~
 lDialogAddFileSelect	Selecteer het nieuwe document:
 lDialogAddFolderManuallyPrompt	Sorry, we kunnen de huidige map niet ontdekken in dit venstertype.`n`nWil je het handmatig toevoegen?
 lDialogAddFolderManuallyTitle	Voeg deze map toe - ~1~ ~2~
@@ -26,16 +26,16 @@ lDialogEditDialogPrompt	Voer de nieuwe naam voor het dialoogvenster in`n(of een 
 lDialogEditDialogTitle	Bewerk dialoogvenster - ~1~ ~2~
 lDialogFavoriteDoesNotExistPrompt	De favoriet "~1~" bestaat niet of is niet beschikbaar.`n`nIndien deze favoriet zich op een netwerkschijf bevindt, probeer dan opnieuw na aanmelding op het netwerk.`n`nIndien een favoriet een link bevat naar een webpagina, kies dan de "Link (URL)" optie wanneer je de favoriet aanmaakt.
 lDialogFavoriteDoesNotExistTitle	Favorite does not exist - ~1~
+lDialogFavoriteLocationEmpty	Deze locatie is leeg. Kies alstublieft een locatie.
+lDialogFavoriteNameEmpty	De naam van de favoriet is leeg. Kies een naam...
+lDialogFavoriteNameNoSeparator	De naam voor een submenu mag het gereserveerde letterteken "~1~" niet bevatten.
+lDialogFavoriteNameNotNew	De naam "~1~" is reeds in gebruik in dit menu. Kies alstublieft een andere naam.
+lDialogFavoriteParentMenu	Favoriet hoofd menu
+lDialogFavoriteRemovePrompt	Verwijder het submenu "~1~"`nen ALLE inhoud (mappen en submenu's)?
+lDialogFavoriteRemoveTitle	Verwijder favoriet - ~1~
 lDialogFileLabel	Document
 lDialogFileShortName	Document naam (voor in het menu)
 lDialogFolderLabel	Map
-lDialogFolderLocationEmpty	Deze locatie is leeg. Kies alstublieft een locatie.
-lDialogFolderNameEmpty	De naam van de favoriet is leeg. Kies een naam...
-lDialogFolderNameNoSeparator	De naam voor een submenu mag het gereserveerde letterteken "~1~" niet bevatten.
-lDialogFolderNameNotNew	De naam "~1~" is reeds in gebruik in dit menu. Kies alstublieft een andere naam.
-lDialogFolderParentMenu	Favoriet hoofd menu
-lDialogFolderRemovePrompt	Verwijder het submenu "~1~"`nen ALLE inhoud (mappen en submenu's)?
-lDialogFolderRemoveTitle	Verwijder favoriet - ~1~
 lDialogFolderShortName	Korte naam voor de map (voor in het menu)
 lDialogInvalidHotkey	Met je huidige toetsenbordindeling kan de sneltoets "~1~" niet gebruikt worden als een trigger voor het popup menu.`n`nGelieve het "~2~ Settings" venster te openen vanuit het taakbalkmenu en selecteers "Opties". Gelieve in dit venster een andere sneltoets te kiezen voor "~3~".
 lDialogOpenThisMenu	Open dit menu
@@ -73,19 +73,19 @@ lDonateTitle	Steun freeware! - ~1~ ~2~
 lGui2Close	Sluiten
 lGuiAbout	Over
 lGuiAddDialog	Toevoegen
-lGuiAddFolder	Toevoegen
+lGuiAddFavorite	Toevoegen
 lGuiCancel	&Annuleren
 lGuiClose	&Sluiten
 lGuiDonate	Steun
 lGuiDropFilesIncentive	Je kan je favoriete mappen naar dit venster slepen en neerzetten
-lGuiEditFolder	Bewerken
+lGuiEditFavorite	Bewerken
 lGuiHelp	Hulp
 lGuiLvDialogsHeader	Ondersteunde dialoogvensters`n(deel van de naam volstaat)
-lGuiLvFoldersHeader	Naam|Locatie
-lGuiMoveFolderDown	Naar beneden
-lGuiMoveFolderUp	Naar boven
+lGuiLvFavoritesHeader	Naam|Locatie
+lGuiMoveFavoriteDown	Naar beneden
+lGuiMoveFavoriteUp	Naar boven
 lGuiOptions	Opties
-lGuiRemoveFolder	Verwijderen
+lGuiRemoveFavorite	Verwijderen
 lGuiSave	Bewaren
 lGuiSeparator	Se&parator
 lGuiSubmenuDropdownLabel	Te wijzigen menu:
@@ -96,8 +96,7 @@ lHelpText1	Wanner FoldersPopup gestart wordt dan verschijnt er een icoontje in d
 lHelpText2	Kies "Instellingen" om het FoldersPopup instellingsvenster te openen waar je MAPPEN, DOCUMENTEN of WEBKOPPELINGEN kan toevoegen aan jouw menu. Uiteraard kan je deze ook hernoemen, verplaatsen of verwijderen. Je kan ook SUBMENU's toevoegen, die je ook weer kan hernoemen, verplaatsen of verwijderen. Selecteer het submenu dat je wil aanpassen in de "Te wijzigen menu" uitklaplijst (dropdown list). Klik vervolgens op "Bewaren" om jouw wijzigingen te bewaren.
 lHelpText3	Je kan snel nieuwe favoriete MAP toevoegen aan het popup menu:`n1) Ga naar een vaak gebruikte map.`n2) Druk op de middenste muisknop (of druk Windows-K) en kies voor "Voeg deze map toe".`n3) Geef deze map een korte naam, druk "OK" en "Bewaren" in het instellingsvenster.
 lHelpText4	Om een nieuw favoriet DOCUMENT of WEBKOPPELING (ook wel WEBLINK genaamd) toe te voegen aan het popup menu:`n1) Open het FoldersPopup menu en kies "Instellingen" (Shift-Windows-F).`n2) Klik op "Toevoegen" en kies vervolgens de optie "Document" of "Link (URL)".`n3) Geef de favoriet een korte naam, navigeer naar het document of voeg de URL van de webpagina toe en klik vervolgens op "Toevoegen". Uiteindelijk bewaar je alles in FoldersPopup door op de knop "Bewaren" te klikken in het instellingsvenster.
-lHelpText5	HANDIGE WEETJES`n- Via rechtermuisklik op het FoldersPopup icoontje in de systeembalk kan je de optie "Uitvoeren bij opstarten" activeren om FoldersPopup automatisch te starten tijdens het opstarten van Windwos.`n- Wil je een favoriete map openen in een nieuw Windows verkenner venster?  Druk dan op de middenste muisknop of gebruik de Windows-K toetsencombinatie. Dit laat je ook toe om je favoriete map te openen vanuit een willekeurig ander programma.`n- Stel je popup menu triggers in: kies muis knoppen naar jouw voorkeur of sneltoetsen in "Instellingen, Opties".`n- Eveneens in "Opties": kies de taal van jouw voorkeur, de mogelijkheid om ook recente mappen weer te geven, voeg numerieke sneltoetsen toe aan het mapmenu of prik het popup menu vast op een vaste positie.`n-Directory Opus gebruikers, raadpleeg <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/"deze pagina</a> voor bijkomende informatie.
-lHelpText6	Ondersteuning voor FoldersPopup is beschikbaar via <a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.`n-Total Commander gebruikers, raadpleeg <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/"deze pagina</a> voor bijkomende informatie.
+lHelpText5	HANDIGE WEETJES`n- Via rechtermuisklik op het FoldersPopup icoontje in de systeembalk kan je de optie "Uitvoeren bij opstarten" activeren om FoldersPopup automatisch te starten tijdens het opstarten van Windwos.`n- Wil je een favoriete map openen in een nieuw Windows verkenner venster?  Druk dan op de middenste muisknop of gebruik de Windows-K toetsencombinatie. Dit laat je ook toe om je favoriete map te openen vanuit een willekeurig ander programma.`n- Stel je popup menu triggers in: kies muis knoppen naar jouw voorkeur of sneltoetsen in "Instellingen, Opties".`n- Eveneens in "Opties": kies de taal van jouw voorkeur, de mogelijkheid om ook recente mappen weer te geven, voeg numerieke sneltoetsen toe aan het mapmenu of prik het popup menu vast op een vaste positie.`n-Directory Opus gebruikers, raadpleeg <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/"deze pagina</a> voor bijkomende informatie.`n-Total Commander gebruikers, raadpleeg <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/"deze pagina</a> voor bijkomende informatie.
 lHelpText6	Ondersteuning voor FoldersPopup is beschikbaar via <a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
 lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware.
 lHelpTextLead	FoldersPopup laat je snel wisselen tussen de mappen, documenten en webpagina's die je vaak gebruikt!
@@ -128,7 +127,6 @@ lMenuSettings	&~1~ Instellingen
 lMenuSpecialExplorer	Speciaal verkenner venster
 lMenuSpecialFolders	&Speciale Mappen
 lMenuSuspendHotkeys	Pauzeer Hotkeys
-lMenuSwitch	S&witch
 lMenuUpdate	Controleren op nieuwe versies
 lNavigateFileError	Een fout trad op tijdens het openen van deze map:`n~1~.
 lNavigateSpecialError	Een fout trad op tijdens het openen van de speciale map #~1~.
@@ -145,14 +143,11 @@ lOptionsArrDescriptions5	Kies de sneltoets of muisknop combinatie die er voor zo
 lOptionsChangeHotkey	Wijzigen
 lOptionsChangeHotkeyTitle	Wijzig sneltoets - ~1~ ~2~
 lOptionsCtrl	Ctrl
+lOptionsDisplayGroupMenu	Toon S&witch Menu's
 lOptionsDisplayIcons	Toon Menu Iconen
 lOptionsDisplayMenuShortcuts	Toon de &Numerieke Menu Sneltoetsen
 lOptionsDisplayRecentFolders	Toon R&ecente Mappen
 lOptionsDisplaySpecialFolders	Toon S&peciale Mappen
-lOptionsDisplaySwitchMenu	Toon S&witch Menu's
-lOptionsThirdPartyDetail	Selecteer het ~1~ programma (.exe) om de ~1~ integratie te activeren.
-lOptionsThirdPartyPrompt	Programma:
-lOptionsThirdPartyTitle	~1~ gebruikers
 lOptionsGuiIntro	Definieer de muisknoppen en sneltoetsen die ~1~ zullen triggeren.
 lOptionsGuiTitle	Opties - ~1~ ~2~
 lOptionsIconSize	Menu iconen grootte
@@ -176,6 +171,9 @@ lOptionsRecentFolders	R&ecente Mappen
 lOptionsRunAtStartup	&Uitvoeren bij Opstarten
 lOptionsShift	Shift
 lOptionsTheme	Thema
+lOptionsThirdPartyDetail	Selecteer het ~1~ programma (.exe) om de ~1~ integratie te activeren.
+lOptionsThirdPartyPrompt	Programma:
+lOptionsThirdPartyTitle	~1~ gebruikers
 lOptionsTitles	Muis - Folders Popup|Muis - Nieuwe Verkenner|Toetsenbord - Folders Popup|Toetsenbord - Nieuwe Verkenner|Recente Mappen|Instellingen
 lOptionsTitlesSub	(toon menu in de Verkenner en dialoogvensters)|(toon menu in een willekeurig venster)|(toon menu in de Verkenner en dialoogvensters)|(toon menu in een willekeurig venster)|(lijst met recent bezochte Windows locaties)|(menu configuratie and opties)
 lOptionsTrayTip	Toon &Startup Systeembalk Tip

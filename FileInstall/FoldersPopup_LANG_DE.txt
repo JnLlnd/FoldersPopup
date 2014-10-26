@@ -12,7 +12,7 @@ lDialogAdd	Hinzufügen
 lDialogAddDialogAlready	Diese Dialogbox-Typ wird schon unterstützt.
 lDialogAddDialogPrompt	Geben Sie den neuen Namen für die Dialogbox an`n(oder einen Teil des Namens):
 lDialogAddDialogTitle	Dialogbox hinzufügen - ~1~ ~2~
-lDialogAddEditFolderTitle	~1~ Favoriten - ~2~ ~3~
+lDialogAddEditFavoriteTitle	~1~ Favoriten - ~2~ ~3~
 lDialogAddFileSelect	Neue Datei wählen:
 lDialogAddFolderManuallyPrompt	Entschuldigung, der aktuelle Ordner kann in diesem Fenstertyp nicht ermittelt werden.`n`nWollen Sie es jetzt von Hand hinzufügen?
 lDialogAddFolderManuallyTitle	Diesen Dokumente hinzufügen - ~1~ ~2~
@@ -26,16 +26,16 @@ lDialogEditDialogPrompt	Geben Sie den neuen Namen für die Dialogbox ein`n(oder e
 lDialogEditDialogTitle	Dialogbox bearbeiten - ~1~ ~2~
 lDialogFavoriteDoesNotExistPrompt	Der Favorit "~1~" existiert nicht oder ist nicht verfügbar.`n`nSollte sich dieser Favorit auf einem Netzlaufwerk befinden, versuchen Sie es nach erfolgter Authentifizierung nochmals.`n`nSollte dieser Favorit ein Link auf eine Webseite sein, wählen Sie die Option "Link (URL)" wenn Sie den Favoriten hinzufügen.
 lDialogFavoriteDoesNotExistTitle	Favorit existiert nicht - ~1~
+lDialogFavoriteLocationEmpty	Dieser Ort ist leer. Bitte wählen Sie einen Ort.
+lDialogFavoriteNameEmpty	Der Name des Favorite ist leer. Bitte wählen Sie einen kurzen Namen.
+lDialogFavoriteNameNoSeparator	Das Untermenü darf das reservierte Zeichen "~1~" nicht enthalten.
+lDialogFavoriteNameNotNew	Der Name ~1~ wird bereits in diesem Menü verwendet. Bitte wählen Sie einen anderen Namen.
+lDialogFavoriteParentMenu	Favorite Hauptmenü
+lDialogFavoriteRemovePrompt	Entfernen des Untermenü "~1~"`nund ALL seines Inhalts (Ordner und Untermenüs)?
+lDialogFavoriteRemoveTitle	Entfernen des Favorite - ~1~
 lDialogFileLabel	Dokumente
 lDialogFileShortName	Dokument-Kurzname (für Menü)
 lDialogFolderLabel	Ordner
-lDialogFolderLocationEmpty	Dieser Ort ist leer. Bitte wählen Sie einen Ort.
-lDialogFolderNameEmpty	Der Name des Favorite ist leer. Bitte wählen Sie einen kurzen Namen.
-lDialogFolderNameNoSeparator	Das Untermenü darf das reservierte Zeichen "~1~" nicht enthalten.
-lDialogFolderNameNotNew	Der Name ~1~ wird bereits in diesem Menü verwendet. Bitte wählen Sie einen anderen Namen.
-lDialogFolderParentMenu	Favorite Hauptmenü
-lDialogFolderRemovePrompt	Entfernen des Untermenü "~1~"`nund ALL seines Inhalts (Ordner und Untermenüs)?
-lDialogFolderRemoveTitle	Entfernen des Favorite - ~1~
 lDialogFolderShortName	Kurzname des Ordners für das Menü
 lDialogInvalidHotkey	Mit dem derzeitigen Tastaturlayout kann das Tastenkürzel "~1~" nicht verwendet werden, um das Popup-Menü aufzurufen (kein gültiger Tasten Name).`n`nBitte öffnen Sie das "~2~ Einstellungen" aus dem Tray-Menü und klicken Sie auf "Optionen". Wählen Sie in diesem Dialog ein anderes Tastenkürzel für "~3~".
 lDialogOpenThisMenu	Dieses Menü öffnen
@@ -73,19 +73,19 @@ lDonateTitle	Unterstützen Sie Freeware! - ~1~ ~2~
 lGui2Close	Schliessen
 lGuiAbout	Über
 lGuiAddDialog	Hinzufügen
-lGuiAddFolder	Hinzufügen
+lGuiAddFavorite	Hinzufügen
 lGuiCancel	&Abbrechen
 lGuiClose	&Schliessen
 lGuiDonate	Unterstützen
 lGuiDropFilesIncentive	Sie können Ihre Favoriten in dieses Fenster ziehen
-lGuiEditFolder	Bearbeiten
+lGuiEditFavorite	Bearbeiten
 lGuiHelp	Hilfe
 lGuiLvDialogsHeader	Unterstützte Dialoge`n(Teile der Namen)
-lGuiLvFoldersHeader	Name|Ort
-lGuiMoveFolderDown	Nach u&nten bewegen
-lGuiMoveFolderUp	Nach o&ben bewegen
+lGuiLvFavoritesHeader	Name|Ort
+lGuiMoveFavoriteDown	Nach u&nten bewegen
+lGuiMoveFavoriteUp	Nach o&ben bewegen
 lGuiOptions	Optionen
-lGuiRemoveFolder	Entfernen
+lGuiRemoveFavorite	Entfernen
 lGuiSave	&Speichern
 lGuiSeparator	Se&parator
 lGuiSubmenuDropdownLabel	Zu bearbeitendes Menü:
@@ -127,7 +127,6 @@ lMenuSettings	&~1~ Einstellungen
 lMenuSpecialExplorer	Spezielles Explorer-Fenster
 lMenuSpecialFolders	&Spezielle Ordner
 lMenuSuspendHotkeys	Suspend Hotkeys
-lMenuSwitch	S&witch
 lMenuUpdate	Nach &Update suchen
 lNavigateFileError	Beim Öffnen des Ordners `n~1~ trat ein Fehler auf.
 lNavigateSpecialError	Beim Öffnen des Speziellen Ordners #~1~ trat ein Fehler auf.
@@ -144,11 +143,11 @@ lOptionsArrDescriptions5	Wählen Sie die Tastenkombination oder Maustasten-Kombin
 lOptionsChangeHotkey	Ändern
 lOptionsChangeHotkeyTitle	Tastenkürzel ändern - ~1~ ~2~
 lOptionsCtrl	Strg
+lOptionsDisplayGroupMenu	Zeige Switch Menü
 lOptionsDisplayIcons	Zeige Icons im Menü
 lOptionsDisplayMenuShortcuts	Zeige &numerische Menü-Tastenkürzel
 lOptionsDisplayRecentFolders	Zeige kürzlich verwendete Ordner
 lOptionsDisplaySpecialFolders	Zeige S&pezielle Ordner
-lOptionsDisplaySwitchMenu	Zeige Switch Menü
 lOptionsGuiIntro	Legen Sie die Maustasten und Tastenkürzel fest, welche ~1~ auslösen.
 lOptionsGuiTitle	Optionen - ~1~ ~2~
 lOptionsIconSize	Symbolgröße im Menü

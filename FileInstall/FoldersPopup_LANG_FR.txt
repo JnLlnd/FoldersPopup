@@ -12,7 +12,7 @@ lDialogAdd	Ajouter
 lDialogAddDialogAlready	Ce type de boîte de dialogue est déjà pris en charge.
 lDialogAddDialogPrompt	Entrez le nom de la nouvelle boîte de dialogue`n(ou une partie du nom):
 lDialogAddDialogTitle	Ajouter Boîte de dialogue - ~1~ ~2~
-lDialogAddEditFolderTitle	~1~ un favori - ~2~ ~3~
+lDialogAddEditFavoriteTitle	~1~ un favori - ~2~ ~3~
 lDialogAddFileSelect	Choisir un nouveau document:
 lDialogAddFolderManuallyPrompt	Désolé, nous ne pouvons détecter automatiquement le dossier actif dans ce type de fenêtre.`n`nVoulez-vous ajouter ce dossier manuellement?
 lDialogAddFolderManuallyTitle	Ajouter un dossier - ~1~ ~2~
@@ -26,17 +26,18 @@ lDialogEditDialogPrompt	Entrez le nouveau nom de la boîte de dialogue`n(ou une p
 lDialogEditDialogTitle	Modifier Boîte de dialogue - ~1~ ~2~
 lDialogFavoriteDoesNotExistPrompt	Le favori "~1~" n'existe pas ou n'est pas disponible.`n`nSi ce favori réside sur un lecteur réseau, veuillez essayer à nouveau après l'authentification réseau.`n`nSi un favori est un lien vers une page web, choisissez l'option "Lien (URL)" lorsque vous ajoutez le favori.
 lDialogFavoriteDoesNotExistTitle	Favori introuvable - ~1~
+lDialogFavoriteLocationEmpty	L'emplacement est vide. Veuillez indiquer l'emplacement du dossier.
+lDialogFavoriteNameEmpty	Le nom du favori est vide. Veuillez indiquer un nom court pour ce favori.
+lDialogFavoriteNameNoSeparator	Le nom du sous-menu ne doit pas inclure le caractère réservé "~1~".
+lDialogFavoriteNameNotNew	Le nom "~1~" est déjà présent dans ce menu. Veuillez choisir un nouveau nom.
+lDialogFavoriteParentMenu	Menu contenant ce favori
+lDialogFavoriteRemovePrompt	Supprimer le sous-menu "~1~"`net TOUT son contenu (dossiers et sous-menus)?
+lDialogFavoriteRemoveTitle	Supprimer un favori - ~1~
 lDialogFileLabel	Document
 lDialogFileShortName	Nom du document (pour les menus)
 lDialogFolderLabel	Dossier
-lDialogFolderLocationEmpty	L'emplacement est vide. Veuillez indiquer l'emplacement du dossier.
-lDialogFolderNameEmpty	Le nom du favori est vide. Veuillez indiquer un nom court pour ce favori.
-lDialogFolderNameNoSeparator	Le nom du sous-menu ne doit pas inclure le caractère réservé "~1~".
-lDialogFolderNameNotNew	Le nom "~1~" est déjà présent dans ce menu. Veuillez choisir un nouveau nom.
-lDialogFolderParentMenu	Menu contenant ce favori
-lDialogFolderRemovePrompt	Supprimer le sous-menu "~1~"`net TOUT son contenu (dossiers et sous-menus)?
-lDialogFolderRemoveTitle	Supprimer un favori - ~1~
 lDialogFolderShortName	Nom court du dossier pour les menus
+lDialogGroups	Groupes
 lDialogInvalidHotkey	Avec votre configuration actuelle de clavier, la touche de raccourci "~1~" ne peut être utilisée comme un déclencheur pour le menu popup.`n`nVeuillez ouvrir la fenêtre "Paramètres de ~2~" dans la zone de notification et cliquez sur "Options". Dans cette boîte de dialogue, choisissez une autre touche de raccourci pour "~3~".
 lDialogOpenThisMenu	Ouvrir ce menu
 lDialogSave	Enregistrer
@@ -49,7 +50,6 @@ lDialogSubmenuShortName	Nom court du sous-menu
 lDialogThirdPartyDetected	~1~ a détecté que ~2~ est installé sur votre ordinateur.`n`nVoulez-vous activer l'intégration avec ~2~?
 lDialogURLLabel	Lien (URL)
 lDialogURLShortName	Nom court de ce lien
-lDialogSwitch	Groupes
 lDonateButton	Soutenez ce gratuiciel!
 lDonateCheckPrompt	Vous aimez ~1~?`n`n~1~ n'est pas seulement GRATUIT mais aussi distribué SANS ces attrapes publicitaires dont on ne sait jamais si elles transportent des virus ou encore des logiciels espions ou malveillants.`n`nCela fait maintenant ~2~ fois que ~1~ est appelé pour faciliter votre travail quotidien. Que diriez-vous de soutenir ce gratuiciel à votre tour?
 lDonateCheckTitle	~1~ fois! - ~2~
@@ -74,19 +74,19 @@ lDonateTitle	Soutenez ce gratuiciel! - ~1~ ~2~
 lGui2Close	Fermer
 lGuiAbout	À propos
 lGuiAddDialog	Ajouter
-lGuiAddFolder	Ajouter
+lGuiAddFavorite	Ajouter
 lGuiCancel	Annuler
 lGuiClose	Fermer
 lGuiDonate	Soutien
 lGuiDropFilesIncentive	Vous pouvez glisser-déposer vos favoris sur cette fenêtre!
-lGuiEditFolder	Modifier
+lGuiEditFavorite	Modifier
 lGuiHelp	Aide
 lGuiLvDialogsHeader	Boîtes de dialogue prises en charge`n(une partie du nom suffit)
-lGuiLvFoldersHeader	Nom|Emplacement
-lGuiMoveFolderDown	En bas
-lGuiMoveFolderUp	En haut
+lGuiLvFavoritesHeader	Nom|Emplacement
+lGuiMoveFavoriteDown	En bas
+lGuiMoveFavoriteUp	En haut
 lGuiOptions	Options
-lGuiRemoveFolder	Supprimer
+lGuiRemoveFavorite	Supprimer
 lGuiSave	Enregistrer
 lGuiSeparator	Séparation
 lGuiSubmenuDropdownLabel	Menu à modifier:
@@ -112,6 +112,10 @@ lMenuDialogNotSupported	Ce type de boîte de dialogue n'est pas encore pris en ch
 lMenuDocuments	Documents
 lMenuExitFoldersPopup	Quitter ~1~
 lMenuFPMenu	~2~ ~1~
+lMenuGroup	Explorateurs
+lMenuGroupDOpus	Listes Directory Opus et
+lMenuGroupLoad	Ouvrir un groupe
+lMenuGroupSave	Enregistrer ce groupe
 lMenuHelp	Aide
 lMenuMenu	Menu
 lMenuMyComputer	Ordinateur
@@ -128,11 +132,6 @@ lMenuSettings	&Paramètres de ~1~
 lMenuSpecialExplorer	Fenêtre spéciale de l'Explorateur
 lMenuSpecialFolders	&Dossiers spéciaux
 lMenuSuspendHotkeys	Suspendre les déclencheurs (Hotkeys)
-lMenuSwitch	Explorateurs
-lMenuSwitch	&Basculer
-lMenuSwitchDOpus	Listes Directory Opus et
-lMenuSwitchLoad	Ouvrir un groupe
-lMenuSwitchSave	Enregistrer ce groupe
 lMenuUpdate	Mettre à jour
 lNavigateFileError	Une erreur s'est produite lors de l'ouverture du dossier:`n~1~.
 lNavigateSpecialError	Une erreur s'est produite lors de l'ouverture du dossier spécial #~1~.
@@ -149,11 +148,11 @@ lOptionsArrDescriptions5	Choisissez la combinaison de touches du clavier ou le b
 lOptionsChangeHotkey	Modifier
 lOptionsChangeHotkeyTitle	Modification de déclencheur - ~1~ ~2~
 lOptionsCtrl	Ctrl
+lOptionsDisplayGroupMenu	Afficher le menu Explorateurs
 lOptionsDisplayIcons	Afficher les icônes des menus
 lOptionsDisplayMenuShortcuts	Afficher les raccourcis numériques
 lOptionsDisplayRecentFolders	Afficher les emplacements récents
 lOptionsDisplaySpecialFolders	Afficher les dossiers spéciaux
-lOptionsDisplaySwitchMenu	Afficher les menus Basculer
 lOptionsGuiIntro	Choisisr les boutons de la souris et les raccourcis du clavier déclenchant ~1~.
 lOptionsGuiTitle	Options - ~1~ ~2~
 lOptionsIconSize	Taille des icones de menu
@@ -182,6 +181,7 @@ lOptionsThirdPartyPrompt	Fichier:
 lOptionsThirdPartyTitle	Utilisateurs de ~1~
 lOptionsTitles	Souris - Popup|Souris - Nouvel explorateur|Clavier - Popup|Clavier - Nouvel explorateur|Emplacements récents|Paramètres
 lOptionsTitlesSub	(dans l'Explorateur et les boîtes de dialogue)|(dans n'importe quelle fenêtre)|(dans l'Explorateur et les boîtes de dialogue)|(dans n'importe quelle fenêtre)|(liste des emplacements récents de Windows)|(configuration du menu et options)
+lOptionsTotalCommanderUseTabs	Utiliser les onglets
 lOptionsTrayTip	Afficher la notification au démarrage
 lOptionsTriggerFor	Déclencheur pour:
 lOptionsWin	Win

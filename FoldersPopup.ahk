@@ -231,7 +231,7 @@ To-do for v4:
 	* in edit folder dialog box, set focus to and select folder name
 	* on-demand recent folders update to keep the popup menu snappy regardless of the number of recent items to parse or the performance of the PC
 	* option in settings to choose the number of recent folders in popup menu, now default to 10
-	* refactor (code merge) of GuiAddFolderSave and GuiEditFolderSave
+	* refactor (code merge) of GuiAddFavoriteSave and GuiEditFavoriteSave
 	* allow to add this folder from a network folder starting with "\\"
 	* fix bug with up arrow to go to parent menu
 	* addition of Dutch translation (thanks to Pieter Dejonghe!)
@@ -408,9 +408,9 @@ To-do for v4:
 	* propose the deepest folder name as default name for a new folder
 
 */ 
-;===============================================
-
+;========================================================================================================================
 ; --- COMPILER DIRECTIVES ---
+;========================================================================================================================
 
 ; Doc: http://fincs.ahk4.net/Ahk2ExeDirectives.htm
 ; Note: prefix comma with `
@@ -421,9 +421,9 @@ To-do for v4:
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
-;============================================================
+;========================================================================================================================
 ; INITIALIZATION
-;============================================================
+;========================================================================================================================
 
 #NoEnv
 #SingleInstance force
@@ -445,36 +445,7 @@ ListLines, On
 ; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
 
-strTempDir := A_WorkingDir . "\_temp"
-FileCreateDir, %strTempDir%
-
-FileInstall, FileInstall\FoldersPopup_LANG_DE.txt, %strTempDir%\FoldersPopup_LANG_DE.txt, 1
-FileInstall, FileInstall\FoldersPopup_LANG_FR.txt, %strTempDir%\FoldersPopup_LANG_FR.txt, 1
-FileInstall, FileInstall\FoldersPopup_LANG_NL.txt, %strTempDir%\FoldersPopup_LANG_NL.txt, 1
-FileInstall, FileInstall\FoldersPopup_LANG_KO.txt, %strTempDir%\FoldersPopup_LANG_KO.txt, 1
-FileInstall, FileInstall\FoldersPopup_LANG_SV.txt, %strTempDir%\FoldersPopup_LANG_SV.txt, 1
-FileInstall, FileInstall\default_browser_icon.html, %strTempDir%\default_browser_icon.html, 1
-
-FileInstall, FileInstall\about-32.png, %strTempDir%\about-32.png
-FileInstall, FileInstall\add_property-48.png, %strTempDir%\add_property-48.png
-FileInstall, FileInstall\delete_property-48.png, %strTempDir%\delete_property-48.png
-FileInstall, FileInstall\channel_mosaic-48.png, %strTempDir%\channel_mosaic-48.png
-FileInstall, FileInstall\separator-26.png, %strTempDir%\separator-26.png
-FileInstall, FileInstall\down_circular-26.png, %strTempDir%\down_circular-26.png
-FileInstall, FileInstall\edit_property-48.png, %strTempDir%\edit_property-48.png
-FileInstall, FileInstall\generic_sorting2-26-grey.png, %strTempDir%\generic_sorting2-26-grey.png
-FileInstall, FileInstall\help-32.png, %strTempDir%\help-32.png
-FileInstall, FileInstall\left-12.png, %strTempDir%\left-12.png
-FileInstall, FileInstall\settings-32.png, %strTempDir%\settings-32.png
-FileInstall, FileInstall\up-12.png, %strTempDir%\up-12.png
-FileInstall, FileInstall\up_circular-26.png, %strTempDir%\up_circular-26.png
-
-FileInstall, FileInstall\thumbs_up-32.png, %strTempDir%\thumbs_up-32.png
-FileInstall, FileInstall\solutions-32.png, %strTempDir%\solutions-32.png
-FileInstall, FileInstall\handshake-32.png, %strTempDir%\handshake-32.png
-FileInstall, FileInstall\conference-32.png, %strTempDir%\conference-32.png
-FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
-
+Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
@@ -520,8 +491,8 @@ Gosub, LoadTheme
 ; build even if blnDisplaySpecialFolders or blnDisplaySwitchMenu are false because they could become true
 ; no need to build Recent folders menu at startup since this menu is refreshed on demand
 Gosub, BuildSpecialFoldersMenu
-Gosub, BuildSwitchMenu ; need to be initialized here - will be updated at each call to popup menu
-Gosub, BuildFoldersMenus
+Gosub, BuildGroupMenu ; need to be initialized here - will be updated at each call to popup menu
+Gosub, BuildFavoritesMenus
 Gosub, BuildGui
 Gosub, Check4Update
 Gosub, BuildTrayMenu
@@ -556,22 +527,55 @@ OnMessage(0x404, "AHK_NOTIFYICON")
 ; ### only when debugging Gui
 ; Gosub, GuiShow
 ; Gosub, GuiOptions
-; Gosub, GuiAddFolder
+; Gosub, GuiAddFavorite
 ; Gosub, GuiAddFromPopup
 ; Gosub, GuiAddFromDropFiles
-; Gosub, GuiEditFolder
+; Gosub, GuiEditFavorite
 ; Gosub, PopupMenuNewWindowKeyboard
-; Gosub, BuildSwitchMenu
-; Gosub, SwitchSaveGroup
+; Gosub, BuildGroupMenu
+; Gosub, GroupSave
 
 return
 
 #Include %A_ScriptDir%\FoldersPopup_LANG.ahk
 
 
-;============================================================
-; BACK END FUNCTIONS AND COMMANDS
-;============================================================
+;-----------------------------------------------------------
+InitFileInstall:
+;-----------------------------------------------------------
+
+strTempDir := A_WorkingDir . "\_temp"
+FileCreateDir, %strTempDir%
+
+FileInstall, FileInstall\FoldersPopup_LANG_DE.txt, %strTempDir%\FoldersPopup_LANG_DE.txt, 1
+FileInstall, FileInstall\FoldersPopup_LANG_FR.txt, %strTempDir%\FoldersPopup_LANG_FR.txt, 1
+FileInstall, FileInstall\FoldersPopup_LANG_NL.txt, %strTempDir%\FoldersPopup_LANG_NL.txt, 1
+FileInstall, FileInstall\FoldersPopup_LANG_KO.txt, %strTempDir%\FoldersPopup_LANG_KO.txt, 1
+FileInstall, FileInstall\FoldersPopup_LANG_SV.txt, %strTempDir%\FoldersPopup_LANG_SV.txt, 1
+FileInstall, FileInstall\default_browser_icon.html, %strTempDir%\default_browser_icon.html, 1
+
+FileInstall, FileInstall\about-32.png, %strTempDir%\about-32.png
+FileInstall, FileInstall\add_property-48.png, %strTempDir%\add_property-48.png
+FileInstall, FileInstall\delete_property-48.png, %strTempDir%\delete_property-48.png
+FileInstall, FileInstall\channel_mosaic-48.png, %strTempDir%\channel_mosaic-48.png
+FileInstall, FileInstall\separator-26.png, %strTempDir%\separator-26.png
+FileInstall, FileInstall\down_circular-26.png, %strTempDir%\down_circular-26.png
+FileInstall, FileInstall\edit_property-48.png, %strTempDir%\edit_property-48.png
+FileInstall, FileInstall\generic_sorting2-26-grey.png, %strTempDir%\generic_sorting2-26-grey.png
+FileInstall, FileInstall\help-32.png, %strTempDir%\help-32.png
+FileInstall, FileInstall\left-12.png, %strTempDir%\left-12.png
+FileInstall, FileInstall\settings-32.png, %strTempDir%\settings-32.png
+FileInstall, FileInstall\up-12.png, %strTempDir%\up-12.png
+FileInstall, FileInstall\up_circular-26.png, %strTempDir%\up_circular-26.png
+
+FileInstall, FileInstall\thumbs_up-32.png, %strTempDir%\thumbs_up-32.png
+FileInstall, FileInstall\solutions-32.png, %strTempDir%\solutions-32.png
+FileInstall, FileInstall\handshake-32.png, %strTempDir%\handshake-32.png
+FileInstall, FileInstall\conference-32.png, %strTempDir%\conference-32.png
+FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
+
+return
+;-----------------------------------------------------------
 
 
 ;-----------------------------------------------------------
@@ -593,9 +597,9 @@ strMouseButtons := "None|LButton|MButton|RButton|XButton1|XButton2|WheelUp|Wheel
 StringSplit, arrMouseButtons, strMouseButtons, |
 
 strIconsMenus := "lMenuDesktop|lMenuDocuments|lMenuPictures|lMenuMyComputer|lMenuNetworkNeighborhood|lMenuControlPanel|lMenuRecycleBin"
-	. "|menuRecentFolders|menuSwitchDialog|menuSwitchExplorer|lMenuSpecialFolders|lMenuSwitch"
+	. "|menuRecentFolders|menuGroupDialog|menuGroupExplorer|lMenuSpecialFolders|lMenuGroup"
 	. "|lMenuRecentFolders|lMenuSettings|lMenuAddThisFolder|lDonateMenu|Submenu|Network|UnknownDocument|Folder"
-	. "|menuSwitchSave|menuSwitchLoad"
+	. "|menuGroupSave|menuGroupLoad"
 
 if (A_OSVersion = "WIN_XP")
 {
@@ -651,7 +655,7 @@ LoadIniFile:
 
 ; reinit after Settings save if already exist
 Global arrMenus := Object() ; list of menus (Main and submenus), non-hierachical
-arrMainMenu := Object() ; array of folders of the Main menu
+arrMainMenu := Object() ; array of favorites of the Main menu
 arrMenus.Insert(lMainMenuName, arrMainMenu) ; lMainMenuName is used in the objects but not saved/restores in the ini file
 
 strPopupHotkeyMouseDefault := arrHotkeyDefaults1 ; "MButton"
@@ -717,7 +721,7 @@ IniRead, blnDisplayIcons, %strIniFile%, Global, DisplayIcons, 1
 blnDisplayIcons := (blnDisplayIcons and OSVersionIsWorkstation())
 IniRead, blnDisplaySpecialFolders, %strIniFile%, Global, DisplaySpecialFolders, 1
 IniRead, blnDisplayRecentFolders, %strIniFile%, Global, DisplayRecentFolders, 1
-IniRead, blnDisplaySwitchMenu, %strIniFile%, Global, DisplaySwitchMenu, 1
+IniRead, blnDisplayGroupMenu, %strIniFile%, Global, DisplaySwitchMenu, 1 ; keep "Switch" in label instead of "Group" for backward compatibility
 IniRead, intPopupMenuPosition, %strIniFile%, Global, PopupMenuPosition, 1
 IniRead, strPopupFixPosition, %strIniFile%, Global, PopupFixPosition, 20,20
 StringSplit, arrPopupFixPosition, strPopupFixPosition, `,
@@ -800,38 +804,38 @@ else
 	
 Loop
 {
-	IniRead, strIniLine, %strIniFile%, Folders, Folder%A_Index%
+	IniRead, strIniLine, %strIniFile%, Folders, Folder%A_Index% ; keep "Folders" label instead of "Favorite" for backward compatibility
 	if (strIniLine = "ERROR")
 		Break
 	strIniLine := strIniLine . "|||" ; additional "|" to make sure we have all empty items
-	; 1 FolderName, 2 FolderLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType
-	StringSplit, arrThisFolder, strIniLine, |
+	; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType
+	StringSplit, arrThisFavorite, strIniLine, |
 
-	objFolder := Object() ; new menu item
-	objFolder.FolderName := arrThisFolder1 ; display name of this menu item
-	objFolder.FolderLocation := arrThisFolder2 ; path for this menu item
-	objFolder.MenuName := lMainMenuName . arrThisFolder3 ; parent menu of this menu item, adding main menu name
+	objFavorite := Object() ; new menu item
+	objFavorite.FavoriteName := arrThisFavorite1 ; display name of this menu item
+	objFavorite.FavoriteLocation := arrThisFavorite2 ; path for this menu item
+	objFavorite.MenuName := lMainMenuName . arrThisFavorite3 ; parent menu of this menu item, adding main menu name
 
-	if StrLen(arrThisFolder4)
-		objFolder.SubmenuFullName := lMainMenuName . arrThisFolder4 ; full name of the submenu, adding main menu name
+	if StrLen(arrThisFavorite4)
+		objFavorite.SubmenuFullName := lMainMenuName . arrThisFavorite4 ; full name of the submenu, adding main menu name
 	else
-		objFolder.SubmenuFullName := ""
-	if StrLen(arrThisFolder5)
+		objFavorite.SubmenuFullName := ""
+	if StrLen(arrThisFavorite5)
 		
-		objFolder.FavoriteType := arrThisFolder5 ; "F" folder, "D" document, "U" URL or "S" submenu
+		objFavorite.FavoriteType := arrThisFavorite5 ; "F" folder, "D" document, "U" URL or "S" submenu
 		
 	else ; for upward compatibility from v1 and v2 ini files
-		if StrLen(objFolder.SubmenuFullName)
-			objFolder.FavoriteType := "S" ; "S" submenu
+		if StrLen(objFavorite.SubmenuFullName)
+			objFavorite.FavoriteType := "S" ; "S" submenu
 		else ; for upward compatibility from v1 ini files
-			objFolder.FavoriteType := "F" ; "F" folder
+			objFavorite.FavoriteType := "F" ; "F" folder
 
-	if (objFolder.FavoriteType = "S") ; then this is a new submenu
+	if (objFavorite.FavoriteType = "S") ; then this is a new submenu
 	{
 		arrSubMenu := Object() ; create submenu
-		arrMenus.Insert(objFolder.SubmenuFullName, arrSubMenu) ; add this submenu to the array of menus
+		arrMenus.Insert(objFavorite.SubmenuFullName, arrSubMenu) ; add this submenu to the array of menus
 	}
-	arrMenus[objFolder.MenuName].Insert(objFolder) ; add this menu item to parent menu
+	arrMenus[objFavorite.MenuName].Insert(objFavorite) ; add this menu item to parent menu
 }
 
 IfNotExist, %strIniFile%
@@ -862,6 +866,20 @@ loop, % arrIniKeyNames%0%
 	if (ErrorLevel)
 		Oops(lDialogInvalidHotkey, Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%), strAppName, arrOptionsTitles%A_Index%)
 }
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+LoadTheme:
+;------------------------------------------------------------
+
+IniRead, strGuiWindowColor, %strIniFile%, Gui-%strTheme%, WindowColor, E0E0E0
+IniRead, strTextColor, %strIniFile%, Gui-%strTheme%, TextColor, 000000
+IniRead, strGuiListviewBackgroundColor, %strIniFile%, Gui-%strTheme%, ListviewBackground, FFFFFF
+IniRead, strGuiListviewTextColor, %strIniFile%, Gui-%strTheme%, ListviewText, 000000
+IniRead, strMenuBackgroundColor, %strIniFile%, Gui-%strTheme%, MenuBackgroundColor, FFFFFF
 
 return
 ;------------------------------------------------------------
@@ -953,6 +971,72 @@ return
 ;------------------------------------------------------------
 
 
+;------------------------------------------------------------
+SplitHotkey(strHotkey, strMouseButtons, ByRef strModifiers, ByRef strKey, ByRef strMouseButton, ByRef strMouseButtonsWithDefault)
+;------------------------------------------------------------
+{
+	if (strHotkey = "None") ; do not compare with lOptionsMouseNone because it is translated
+	{
+		strMouseButton := "None" ; do not use lOptionsMouseNone because it is translated
+		strKey := ""
+		StringReplace, strMouseButtonsWithDefault, lOptionsMouseButtonsText, % lOptionsMouseNone . "|", % lOptionsMouseNone . "||" ; use lOptionsMouseNone because this is displayed
+	}
+	else 
+	{
+		SplitModifiersFromKey(strHotkey, strModifiers, strKey)
+		if InStr(strMouseButtons, "|" . strKey . "|") ;  we have a mouse button
+		{
+			strMouseButton := strKey
+			strKey := ""
+			StringReplace, strMouseButtonsWithDefault, lOptionsMouseButtonsText, % GetText4MouseButton(strMouseButton) . "|", % GetText4MouseButton(strMouseButton) . "||" ; with default value
+		}
+		else ; we have a key
+			strMouseButtonsWithDefault := lOptionsMouseButtonsText ; no default value
+	}
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------
+WM_MOUSEMOVE(wParam, lParam)
+; "hook" for image buttons cursor
+; see http://www.autohotkey.com/board/topic/70261-gui-buttons-hover-cant-change-cursor-to-hand/
+;------------------------------------------------
+{
+	Global objCursor
+	
+	MouseGetPos, , , , strControl ; Static1, StaticN, Button1, ButtonN
+	StringReplace, strControl, strControl, Static
+
+	If InStr(".3.4.6.7.9.10.11.12.14.15.16.17.18.19.20.21.25.26.27.28.29.30.Button1.Button2.", "." . strControl . ".")
+		DllCall("SetCursor", "UInt", objCursor)
+
+	return
+}
+;------------------------------------------------
+
+
+;------------------------------------------------------------
+AHK_NOTIFYICON(wParam, lParam) 
+; Adapted from Lexikos http://www.autohotkey.com/board/topic/11250-mouseover-trayicon-triggering-an-event/#entry153388
+; To popup menu when left click on the tray icon - See the OnMessage command in the init section
+;------------------------------------------------------------
+{ 
+	if (lParam = 0x202) ; WM_LBUTTONUP
+	{ 
+		SetTimer, PopupMenuNewWindowMouse, -1 
+		return 0 
+	} 
+} 
+;------------------------------------------------------------
+
+
+
+;========================================================================================================================
+; EXIT
+;========================================================================================================================
+
+
 ;-----------------------------------------------------------
 CleanUpBeforeExit:
 ;-----------------------------------------------------------
@@ -970,196 +1054,9 @@ ExitApp
 
 
 
-;============================================================
-; FRONT END FUNCTIONS AND COMMANDS
-;============================================================
-
-
-;------------------------------------------------------------
-PopupMenuMouse: ; default MButton
-PopupMenuKeyboard: ; default #k
-;------------------------------------------------------------
-
-if !(blnMenuReady)
-	return
-
-If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass, strTargetControl)
-{
-	StringReplace, strThisHotkey, A_ThisHotkey, $ ; remove $ from hotkey
-	if (A_ThisLabel = "PopupMenuMouse")
-	{
-		SplitModifiersFromKey(strThisHotkey, strThisHotkeyModifiers, strThisHotkeyKey)
-		SendInput, %strThisHotkeyModifiers%{%strThisHotkeyKey%} ; for example {MButton} or +{LButton}
-	}
-	else
-	{
-		StringLower, strThisHotkey, strThisHotkey
-		SendInput, %strThisHotkey% ; for example #k
-	}
-	return
-}
-
-blnMouse := InStr(A_ThisLabel, "Mouse")
-blnNewWindow := false ; used in SetMenuPosition and BuildSwitchMenu
-Gosub, SetMenuPosition ; sets strTargetWinId or activate the window strTargetWinId set by CanOpenFavorite
-
-if (A_ThisLabel = "PopupMenuMouse") and (WindowIsDirectoryOpus(strTargetClass) or WindowIsTotalCommander(strTargetClass))
-{
-	Click ; to make sure the DOpus lister or TC pane under the mouse become active
-	Sleep, 20
-}
-
-; Can't find how to navigate a dialog box to My Computer or Network Neighborhood... is this is feasible?
-if (blnDisplaySpecialFolders)
-{
-	Menu, menuSpecialFolders
-		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
-		or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
-		, %lMenuMyComputer%
-	Menu, menuSpecialFolders
-		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
-		or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
-		, %lMenuNetworkNeighborhood%
-
-	; There is no point to navigate a dialog box or console to Control Panel or Recycle Bin, unknown for FreeCommander
-	Menu, menuSpecialFolders
-		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
-		or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
-		, %lMenuControlPanel%
-	Menu, menuSpecialFolders
-		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
-		or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
-		, %lMenuRecycleBin%
-}
-
-if (blnDisplaySwitchMenu)
-{
-	Gosub, BuildSwitchMenu
-	Menu, menuSwitch
-		, % (!intExplorersExist ? "Disable" : "Enable") ; disable Save group menu if no Explorer
-		, %lMenuSwitchSave%
-}
-
-if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass)
-	or WindowIsFreeCommander(strTargetClass) or WindowIsTotalCommander(strTargetClass)
-	or WindowIsDirectoryOpus(strTargetClass) or WindowIsDialog(strTargetClass))
-{
-	; Enable Add This Folder only if the mouse is over an Explorer (tested on WIN_XP and WIN_7) or a dialog box (works on WIN_7, not on WIN_XP)
-	; Other tests shown that WIN_8 behaves like WIN_7. So, I assume WIN_8 to work. If someone could confirm (until I can test it myself)?
-	if (blnDiagMode)
-		Diag("ShowMenu", "Folders Menu " 
-			. (WindowIsAnExplorer(strTargetClass)  or WindowIsFreeCommander(strTargetClass)
-			or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
-			or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT")
-			. " Add this folder")
-	Menu, %lMainMenuName%
-		, % WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass)
-		or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
-		or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
-		, %lMenuAddThisFolder%...
-	Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; at mouse pointer if option 1, 20x20 offset of active window if option 2 and fix location if option 3
-}
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-PopupMenuNewWindowMouse: ; default +MButton::
-PopupMenuNewWindowKeyboard: ; default +#k
-;------------------------------------------------------------
-
-if !(blnMenuReady)
-	return
-
-blnMouse := InStr(A_ThisLabel, "Mouse")
-blnNewWindow := true ; used in SetMenuPosition and BuildSwitchMenu
-Gosub, SetMenuPosition ; sets strTargetWinId
-
-WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
-
-if (A_ThisLabel = "PopupMenuMouse") and WindowIsTotalCommander(strTargetClass)
-{
-	Click ; to make sure the TC pane under the mouse become active before creating a new tab
-	Sleep, 20
-}
-
-if (blnDiagMode)
-{
-	Diag("MouseOrKeyboard", A_ThisLabel)
-	WinGetTitle strDiag, % "ahk_id " . strTargetWinId
-	Diag("WinTitle", strDiag)
-	Diag("WinId", strTargetWinId)
-	Diag("Class", strTargetClass)
-	Diag("ShowMenu", "Folders Menu " . (WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass) 
-	or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
-		or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT") . " Add this folder")
-}
-
-if (blnDisplaySpecialFolders)
-{
-	; In case it was disabled while in a dialog box
-	Menu, menuSpecialFolders, Enable, %lMenuMyComputer%
-	Menu, menuSpecialFolders, Enable, %lMenuNetworkNeighborhood%
-	Menu, menuSpecialFolders, Enable, %lMenuControlPanel%
-	Menu, menuSpecialFolders, Enable, %lMenuRecycleBin%
-}
-
-if (blnDisplaySwitchMenu)
-{
-	Gosub, BuildSwitchMenu
-	Menu, menuSwitch
-		, % (!intExplorersExist ? "Disable" : "Enable") ; disable Save group menu if no Explorer
-		, %lMenuSwitchSave%
-}
-
-; Enable "Add This Folder" only if the target window is an Explorer (tested on WIN_XP and WIN_7)
-; or a dialog box under WIN_7 (does not work under WIN_XP).
-; Other tests shown that WIN_8 behaves like WIN_7.
-Menu, %lMainMenuName%
-	, % WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass)
-	or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
-	or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
-	, %lMenuAddThisFolder%...
-Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; at mouse pointer if option 1, 20x20 offset of active window if option 2 and fix location if option 3
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-SetMenuPosition:
-;------------------------------------------------------------
-
-; relative to active window if option intPopupMenuPosition = 2
-CoordMode, Mouse, % (intPopupMenuPosition = 2 ? "Window" : "Screen")
-CoordMode, Menu, % (intPopupMenuPosition = 2 ? "Window" : "Screen")
-
-if (intPopupMenuPosition = 1) ; display menu near mouse pointer location
-	MouseGetPos, intMenuPosX, intMenuPosY
-else if (intPopupMenuPosition = 2) ; display menu at an offset of 20x20 pixel from top-left of active window area
-{
-	intMenuPosX := 20
-	intMenuPosY := 20
-}
-else ; (intPopupMenuPosition =  3) - fix position - use the intMenuPosX and intMenuPosY values from the ini file
-{
-	intMenuPosX := arrPopupFixPosition1
-	intMenuPosY := arrPopupFixPosition2
-}
-
-; not related to set position but this is a good place to execute it ;-)
-if (blnMouse)
-	if (blnNewWindow)
-		MouseGetPos, , , strTargetWinId ; sets strTargetWinId for PopupMenuNewWindowMouse
-	else
-		WinActivate, % "ahk_id " . strTargetWinId ; activate for PopupMenuMouse
-else (keyboard)
-	if (blnNewWindow)
-		strTargetWinId := WinExist("A") ; sets strTargetWinId for PopupMenuNewWindowKeyboard
-
-return
-;------------------------------------------------------------
+;========================================================================================================================
+; BUILD
+;========================================================================================================================
 
 
 ;------------------------------------------------------------
@@ -1336,7 +1233,7 @@ return
 
 
 ;------------------------------------------------------------
-BuildSwitchMenu:
+BuildGroupMenu:
 ;------------------------------------------------------------
 
 if (blnUseDirectoryOpus)
@@ -1368,7 +1265,7 @@ if (blnUseTotalCommander)
 objExplorersWindows := Object()
 CollectExplorers(objExplorersWindows, ComObjCreate("Shell.Application").Windows)
 
-objSwitchMenuExplorers := Object()
+objGroupMenuExplorers := Object()
 
 intExplorersIndex := 0
 intExplorersExist := 0 ; used in PopupMenu... to check if we disable the menu when empty
@@ -1381,31 +1278,31 @@ if (blnUseDirectoryOpus)
 			and (!StrLen(objLister.Path) or InStr(objLister.Path, "coll://"))
 			continue
 		
-		if !NameIsInObject(objLister.Path, objSwitchMenuExplorers)
+		if !NameIsInObject(objLister.Path, objGroupMenuExplorers)
 		{
 			intExplorersIndex := intExplorersIndex + 1
 			
-			objSwitchMenuExplorer := Object()
-			objSwitchMenuExplorer.Path := objLister.Path
+			objGroupMenuExplorer := Object()
+			objGroupMenuExplorer.Path := objLister.Path
 			if InStr(objLister.Path, "Lister-Quick-Find-Results")
-				objSwitchMenuExplorer.Name := "Directory Opus Quick Find Results (" . intExplorersIndex . ")"
+				objGroupMenuExplorer.Name := "Directory Opus Quick Find Results (" . intExplorersIndex . ")"
 			else if InStr(objLister.Path, "coll://")
-				objSwitchMenuExplorer.Name := "Directory Opus Collection (" . intExplorersIndex . ")"
+				objGroupMenuExplorer.Name := "Directory Opus Collection (" . intExplorersIndex . ")"
 			else
-				objSwitchMenuExplorer.Name := objLister.Path
-			objSwitchMenuExplorer.WindowId := objLister.Lister
-			objSwitchMenuExplorer.TabId := objLister.Tab
-			objSwitchMenuExplorer.Position := objLister.Position
-			objSwitchMenuExplorer.MinMax := objLister.MinMax
-			objSwitchMenuExplorer.Pane := (objLister.Pane = 0 ? 1 : objLister.Pane) ; consider pane 0 as pane 1
-			objSwitchMenuExplorer.WindowType := "DO"
-			if FileExist(objSwitchMenuExplorer.Name)
+				objGroupMenuExplorer.Name := objLister.Path
+			objGroupMenuExplorer.WindowId := objLister.Lister
+			objGroupMenuExplorer.TabId := objLister.Tab
+			objGroupMenuExplorer.Position := objLister.Position
+			objGroupMenuExplorer.MinMax := objLister.MinMax
+			objGroupMenuExplorer.Pane := (objLister.Pane = 0 ? 1 : objLister.Pane) ; consider pane 0 as pane 1
+			objGroupMenuExplorer.WindowType := "DO"
+			if FileExist(objGroupMenuExplorer.Name)
 			{
-				objSwitchMenuExplorer.NameExist := 1
+				objGroupMenuExplorer.NameExist := 1
 				intExplorersExist := intExplorersExist + 1
 			}	
 			
-			objSwitchMenuExplorers.Insert(intExplorersIndex, objSwitchMenuExplorer)
+			objGroupMenuExplorers.Insert(intExplorersIndex, objGroupMenuExplorer)
 		}
 	}
 
@@ -1413,25 +1310,25 @@ if (blnUseDirectoryOpus)
 if (blnUseTotalCommander)
 	for intIndex, objTCList in objTCLists
 	{
-		if !NameIsInObject(objTCList.Path, objSwitchMenuExplorers)
+		if !NameIsInObject(objTCList.Path, objGroupMenuExplorers)
 		{
 			intExplorersIndex := intExplorersIndex + 1
 			
-			objSwitchMenuExplorer := Object()
-			objSwitchMenuExplorer.Path := objTCList.Path
-			objSwitchMenuExplorer.Name := objTCList.Path
-			objSwitchMenuExplorer.WindowId := objTCList.WindowId
-			objSwitchMenuExplorer.Position := objTCList.Position
-			objSwitchMenuExplorer.MinMax := objTCList.MinMax
-			objSwitchMenuExplorer.Pane := objTCList.Pane
-			objSwitchMenuExplorer.WindowType := "TC"
-			if FileExist(objSwitchMenuExplorer.Name)
+			objGroupMenuExplorer := Object()
+			objGroupMenuExplorer.Path := objTCList.Path
+			objGroupMenuExplorer.Name := objTCList.Path
+			objGroupMenuExplorer.WindowId := objTCList.WindowId
+			objGroupMenuExplorer.Position := objTCList.Position
+			objGroupMenuExplorer.MinMax := objTCList.MinMax
+			objGroupMenuExplorer.Pane := objTCList.Pane
+			objGroupMenuExplorer.WindowType := "TC"
+			if FileExist(objGroupMenuExplorer.Name)
 			{
-				objSwitchMenuExplorer.NameExist := 1
+				objGroupMenuExplorer.NameExist := 1
 				intExplorersExist := intExplorersExist + 1
 			}	
 			
-			objSwitchMenuExplorers.Insert(intExplorersIndex, objSwitchMenuExplorer)
+			objGroupMenuExplorers.Insert(intExplorersIndex, objGroupMenuExplorer)
 		}
 	}
 */
@@ -1443,56 +1340,56 @@ for intIndex, objExplorer in objExplorersWindows
 		and !StrLen(objExplorer.LocationURL)
 		continue
 		
-	if !NameIsInObject(objExplorer.LocationName, objSwitchMenuExplorers)
+	if !NameIsInObject(objExplorer.LocationName, objGroupMenuExplorers)
 	{
 		intExplorersIndex := intExplorersIndex + 1
 		
-		objSwitchMenuExplorer := Object()
-		objSwitchMenuExplorer.Path := objExplorer.LocationURL
-		objSwitchMenuExplorer.Name := objExplorer.LocationName
-		objSwitchMenuExplorer.WindowId := objExplorer.WindowId
-		objSwitchMenuExplorer.TabId := ""
-		objSwitchMenuExplorer.Position := objExplorer.Position
-		objSwitchMenuExplorer.MinMax := objExplorer.MinMax
-		objSwitchMenuExplorer.WindowType := "EX"
-		if FileExist(objSwitchMenuExplorer.Name)
+		objGroupMenuExplorer := Object()
+		objGroupMenuExplorer.Path := objExplorer.LocationURL
+		objGroupMenuExplorer.Name := objExplorer.LocationName
+		objGroupMenuExplorer.WindowId := objExplorer.WindowId
+		objGroupMenuExplorer.TabId := ""
+		objGroupMenuExplorer.Position := objExplorer.Position
+		objGroupMenuExplorer.MinMax := objExplorer.MinMax
+		objGroupMenuExplorer.WindowType := "EX"
+		if FileExist(objGroupMenuExplorer.Name)
 		{
-			objSwitchMenuExplorer.NameExist := 1
+			objGroupMenuExplorer.NameExist := 1
 			intExplorersExist := intExplorersExist + 1
 		}	
 	
-		objSwitchMenuExplorers.Insert(intExplorersIndex, objSwitchMenuExplorer)
+		objGroupMenuExplorers.Insert(intExplorersIndex, objGroupMenuExplorer)
 	}
 }
 
-Menu, menuSwitch, Add
-Menu, menuSwitch, DeleteAll
-Menu, menuSwitch, Color, %strMenuBackgroundColor%
+Menu, menuGroup, Add
+Menu, menuGroup, DeleteAll
+Menu, menuGroup, Color, %strMenuBackgroundColor%
 
-intShortcutSwitch := 0
+intShortcutGroup := 0
 
-for intIndex, objSwitchMenuExplorer in objSwitchMenuExplorers
+for intIndex, objGroupMenuExplorer in objGroupMenuExplorers
 {
-	strMenuName := (blnDisplayMenuShortcuts and (intShortcutSwitch <= 35) ? "&" . NextMenuShortcut(intShortcutSwitch, false) . " " : "") . objSwitchMenuExplorer.Name
+	strMenuName := (blnDisplayMenuShortcuts and (intShortcutGroup <= 35) ? "&" . NextMenuShortcut(intShortcutGroup, false) . " " : "") . objGroupMenuExplorer.Name
 	if !WindowIsDialog(strTargetClass) or (blnNewWindow)
-		AddMenuIcon("menuSwitch", strMenuName, "SwitchExplorer", (objSwitchMenuExplorer.WindowType = "DO" ? "DirectoryOpus" : (objSwitchMenuExplorer.WindowType = "TC" ? "TotalCommander" : "menuSwitchExplorer")))
+		AddMenuIcon("menuGroup", strMenuName, "SwitchExplorer", (objGroupMenuExplorer.WindowType = "DO" ? "DirectoryOpus" : (objGroupMenuExplorer.WindowType = "TC" ? "TotalCommander" : "menuGroupExplorer")))
 	else
-		AddMenuIcon("menuSwitch", strMenuName, "SwitchDialog", "menuSwitchDialog")
+		AddMenuIcon("menuGroup", strMenuName, "SwitchDialog", "menuGroupDialog")
 }
 
-Menu, menuSwitchGroups, Add
-Menu, menuSwitchGroups, DeleteAll
-Menu, menuSwitchGroups, Color, %strMenuBackgroundColor%
+Menu, menuGroupsList, Add
+Menu, menuGroupsList, DeleteAll
+Menu, menuGroupsList, Color, %strMenuBackgroundColor%
 
 Loop, Parse, strGroups, |
 {
 	IniRead, blnReplaceWhenRestoringThisGroup, %striniFile%, Group-%A_LoopField%, ReplaceWhenRestoringThisGroup, %A_Space% ; empty if not found
-	AddMenuIcon("menuSwitchGroups", A_LoopField . " (" . (blnReplaceWhenRestoringThisGroup ? lMenuSwitchReplace : lMenuSwitchAdd) . ")" , "SwitchLoadGroup", "lMenuSwitch")
+	AddMenuIcon("menuGroupsList", A_LoopField . " (" . (blnReplaceWhenRestoringThisGroup ? lMenuGroupReplace : lMenuGroupAdd) . ")" , "GroupLoad", "lMenuGroup")
 }
 if (intExplorersIndex)
-	Menu, menuSwitch, Add
-AddMenuIcon("menuSwitch", lMenuSwitchSave, "SwitchSaveGroup", "menuSwitchSave")
-AddMenuIcon("menuSwitch", lMenuSwitchLoad, ":menuSwitchGroups", "menuSwitchLoad")
+	Menu, menuGroup, Add
+AddMenuIcon("menuGroup", lMenuGroupSave, "GroupSave", "menuGroupSave")
+AddMenuIcon("menuGroup", lMenuGroupLoad, ":menuGroupsList", "menuGroupLoad")
 
 return
 ;------------------------------------------------------------
@@ -1535,7 +1432,7 @@ CollectExplorers(objExplorers, pExplorers)
 				if StrLen(pExplorer.LocationName)
 					objExplorer.LocationName := pExplorer.LocationName ; see http://msdn.microsoft.com/en-us/library/aa752084#properties
 				else
-					objExplorer.LocationName := lMenuSpecialExplorer . " (" . pExplorer.HWND . ")" ; will be used in menuSwitchExplorer
+					objExplorer.LocationName := lMenuSpecialExplorer . " (" . pExplorer.HWND . ")" ; will be used in menuGroupExplorer
 			objExplorer.WindowId := pExplorer.HWND
 			WinGet, intMinMax, MinMax, % "ahk_id " . pExplorer.HWND
 			objExplorer.MinMax := intMinMax
@@ -1546,6 +1443,22 @@ CollectExplorers(objExplorers, pExplorers)
 	}
 }
 ;------------------------------------------------------------
+
+
+;------------------------------------------------
+UriDecode(str)
+; by polyethene
+; http://www.autohotkey.com/board/topic/17367-url-encoding-and-decoding-of-special-characters/?p=112822
+;------------------------------------------------
+{
+	Loop
+		If RegExMatch(str, "i)(?<=%)[\da-f]{1,2}", hex)
+			StringReplace, str, str, `%%hex%, % Chr("0x" . hex), All
+		Else
+			Break
+	return str
+}
+;------------------------------------------------
 
 
 /* when TC tabs resolved
@@ -1673,11 +1586,11 @@ NameIsInObject(strName, obj)
 
 
 ;------------------------------------------------------------
-BuildFoldersMenus:
-BuildFoldersMenusWithStatus:
+BuildFavoritesMenus:
+BuildFavoritesMenusWithStatus:
 ;------------------------------------------------------------
 
-if (A_ThisLabel = "BuildFoldersMenusWithStatus")
+if (A_ThisLabel = "BuildFavoritesMenusWithStatus")
 	TrayTip, % L(lTrayTipWorkingTitle, strAppName, strAppVersion)
 		, %lTrayTipWorkingDetail%, , 1
 
@@ -1692,17 +1605,17 @@ Menu, %lMainMenuName%, Add
 if (blnDisplaySpecialFolders)
 	AddMenuIcon(lMainMenuName, lMenuSpecialFolders, ":menuSpecialFolders", "lMenuSpecialFolders")
 
-if (blnDisplaySwitchMenu)
+if (blnDisplayGroupMenu)
 {
-	strBuildMenuFullName := (blnUseDirectoryOpus ? lMenuSwitchDOpus . " + " : "") . (blnUseTotalCommander ? lMenuSwitchTC . " + " : "") . lMenuSwitch
-	AddMenuIcon(lMainMenuName, strBuildMenuFullName, ":menuSwitch", "lMenuSwitch")
-	Menu, menuSwitch, Color, %strMenuBackgroundColor%
+	strBuildMenuFullName := (blnUseDirectoryOpus ? lMenuGroupDOpus . " + " : "") . lMenuGroup
+	AddMenuIcon(lMainMenuName, strBuildMenuFullName, ":menuGroup", "lMenuGroup")
+	Menu, menuGroup, Color, %strMenuBackgroundColor%
 }
 
 if (blnDisplayRecentFolders)
 	AddMenuIcon(lMainMenuName, lMenuRecentFolders . "...", "RefreshRecentFolders", "lMenuRecentFolders")
 
-if (blnDisplaySpecialFolders or blnDisplayRecentFolders or blnDisplaySwitchMenu)
+if (blnDisplaySpecialFolders or blnDisplayRecentFolders or blnDisplayGroupMenu)
 	Menu, %lMainMenuName%, Add
 
 AddMenuIcon(lMainMenuName, L(lMenuSettings, strAppName) . "...", "GuiShow", "lMenuSettings")
@@ -1715,7 +1628,7 @@ if !(blnDonor)
 	AddMenuIcon(lMainMenuName, lDonateMenu . "...", "GuiDonate", "lDonateMenu")
 }
 
-if (A_ThisLabel = "BuildFoldersMenusWithStatus")
+if (A_ThisLabel = "BuildFavoritesMenusWithStatus")
 	TrayTip, % L(lTrayTipInstalledTitle, strAppName, strAppVersion)
 		, %lTrayTipWorkingDetailFinished%, , 1
 
@@ -1745,7 +1658,7 @@ BuildOneMenu(strMenu)
 		if (arrThisMenu[A_Index].FavoriteType = "S") ; this is a submenu
 		{
 			strSubMenuFullName := arrThisMenu[A_Index].SubmenuFullName
-			strSubMenuDisplayName := arrThisMenu[A_Index].FolderName
+			strSubMenuDisplayName := arrThisMenu[A_Index].FavoriteName
 			strSubMenuParent := arrThisMenu[A_Index].MenuName
 			
 			BuildOneMenu(strSubMenuFullName) ; recursive call
@@ -1763,14 +1676,14 @@ BuildOneMenu(strMenu)
 					, % objIconsFile["Submenu"], % objIconsIndex["Submenu"], %intIconSize%
 		}
 		
-		else if (arrThisMenu[A_Index].FolderName = lMenuSeparator) ; this is a separator
+		else if (arrThisMenu[A_Index].FavoriteName = lMenuSeparator) ; this is a separator
 
 			Menu, % arrThisMenu[A_Index].MenuName, Add
 			
 		else ; this is a favorite (folder, document or URL)
 		{
 			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = lMainMenuName)) . " " : "")
-				. arrThisMenu[A_Index].FolderName
+				. arrThisMenu[A_Index].FavoriteName
 			Menu, % arrThisMenu[A_Index].MenuName, Add, %strMenuName%, OpenFavorite
 
 
@@ -1787,7 +1700,7 @@ BuildOneMenu(strMenu)
 						GetIcon4Location(strTempDir . "\default_browser_icon.html", strDefaultIcon, intDefaultIcon)
 						; not sure it is required to have a physical file with .html extension - but keep it as is by safety
 					else ; this is a document
-						GetIcon4Location(arrThisMenu[A_Index].FolderLocation, strDefaultIcon, intDefaultIcon)
+						GetIcon4Location(arrThisMenu[A_Index].FavoriteLocation, strDefaultIcon, intDefaultIcon)
 					
 					if StrLen(strDefaultIcon) and !InStr(strDefaultIcon, "%")
 						Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %strDefaultIcon%, %intDefaultIcon%, %intIconSize%
@@ -1802,1945 +1715,415 @@ BuildOneMenu(strMenu)
 
 
 ;------------------------------------------------------------
-LoadTheme:
+NextMenuShortcut(ByRef intShortcut, blnMainMenu)
 ;------------------------------------------------------------
-
-IniRead, strGuiWindowColor, %strIniFile%, Gui-%strTheme%, WindowColor, E0E0E0
-IniRead, strTextColor, %strIniFile%, Gui-%strTheme%, TextColor, 000000
-IniRead, strGuiListviewBackgroundColor, %strIniFile%, Gui-%strTheme%, ListviewBackground, FFFFFF
-IniRead, strGuiListviewTextColor, %strIniFile%, Gui-%strTheme%, ListviewText, 000000
-IniRead, strMenuBackgroundColor, %strIniFile%, Gui-%strTheme%, MenuBackgroundColor, FFFFFF
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-BuildGui:
-;------------------------------------------------------------
-
-Gui, 1:New, , % L(lGuiTitle, strAppName, strAppVersion)
-Gui, Margin, 10, 10
-Gui, 1:Color, %strGuiWindowColor%
-
-intWidth := 460
-
-Gui, 1:Font, s12 w700 c%strTextColor%, Verdana
-Gui, 1:Add, Text, xm ym h25, %strAppName% %strAppVersion%
-Gui, 1:Font, s9 w400, Verdana
-Gui, 1:Add, Text, xm y+1 w517, %lAppTagline%
-
-
-Gui, 1:Add, Picture, x+10 ym Section gGuiOptions, %strTempDir%\settings-32.png ; Static3
-Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiOptions, %lGuiOptions% ; Static4
-
-Gui, 1:Font, s8 w400, Verdana
-Gui, 1:Add, Text, xm+30, %lGuiSubmenuDropdownLabel%
-Gui, 1:Add, Picture, xm y+5 gGuiGotoPreviousMenu vpicPreviousMenu hidden, %strTempDir%\left-12.png ; Static6
-Gui, 1:Add, Picture, xm+15 yp gGuiGotoUpMenu vpicUpMenu hidden, %strTempDir%\up-12.png ; Static7
-Gui, 1:Add, DropDownList, xm+30 yp w480 vdrpMenusList gGuiMenusListChanged
-
-Gui, 1:Font, s8 w400, Verdana
-Gui, 1:Add, ListView
-	, xm+30 w480 h240 Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFoldersList gGuiFoldersListEvent
-	, %lGuiLvFoldersHeader%|Hidden Menu|Hidden Submenu|Hidden FavoriteType
-Loop, 3
-	LV_ModifyCol(A_Index + 2, 0) ; hide 3rd-5th columns
-
-Gui, 1:Add, Text, Section x+0 yp
-
-Gui, 1:Add, Picture, xm ys+25 gGuiMoveFolderUp, %strTempDir%\up_circular-26.png ; 9
-Gui, 1:Add, Picture, xm ys+55 gGuiMoveFolderDown, %strTempDir%\down_circular-26.png ; Static10
-Gui, 1:Add, Picture, xm ys+85 gGuiAddSeparator, %strTempDir%\separator-26.png ; Static11
-Gui, 1:Add, Picture, xm+1 ys+205 gGuiSortFolders, %strTempDir%\generic_sorting2-26-grey.png ; Static12
-
-Gui, 1:Add, Text, Section xs ys
-
-Gui, 1:Font, s8 w400, Arial ; button legend
-
-Gui, 1:Add, Picture, xs+10 ys+7 gGuiAddFolder, %strTempDir%\add_property-48.png ; Static14
-Gui, 1:Add, Text, xs y+0 w68 center gGuiAddFolder, %lGuiAddFolder% ; Static15
-
-Gui, 1:Add, Picture, xs+10 gGuiEditFolder, %strTempDir%\edit_property-48.png ; Static16
-Gui, 1:Add, Text, xs y+0 w68 center gGuiEditFolder, %lGuiEditFolder% ; Static17
-
-Gui, 1:Add, Picture, xs+10 gGuiRemoveFolder, %strTempDir%\delete_property-48.png ; Static18
-Gui, 1:Add, Text, xs y+0 w68 center gGuiRemoveFolder, %lGuiRemoveFolder% ; Static19
-
-Gui, 1:Add, Picture, xs+10 y+35 gGuiManageGroups, %strTempDir%\channel_mosaic-48.png ; Static20
-Gui, 1:Add, Text, xs y+5 w68 center gGuiManageGroups, %lDialogSwitch% ; Static21
-
-Gui, 1:Add, Text, Section x185 ys+250
-
-Gui, 1:Font, s8 w600 italic, Verdana
-Gui, 1:Add, Text, xm yp w520 center, %lGuiDropFilesIncentive%
-
-Gui, 1:Add, Text, xm y+60
-Gui, 1:Font, s9 w600, Verdana
-Gui, 1:Add, Button, ys+70 Disabled Default vbtnGuiSave gGuiSave, %lGuiSave% ; Button1
-Gui, 1:Add, Button, yp vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur - Button2
-Gui, 1:Font, s6 w400, Verdana
-GuiCenterButtons(L(lGuiTitle, strAppName, strAppVersion), 50, 30, 40, -80, "btnGuiSave", "btnGuiCancel")
-
-Gui, 1:Add, Picture, x490 yp+13 gGuiAbout Section, %strTempDir%\about-32.png ; Static25
-Gui, 1:Add, Picture, x540 yp gGuiHelp, %strTempDir%\help-32.png ; Static26
-if !(blnDonor)
 {
-	strDonateButtons := "thumbs_up|solutions|handshake|conference|gift"
-	StringSplit, arrDonateButtons, strDonateButtons, |
-	Random, intDonateButton, 1, 5
-
-	Gui, 1:Add, Picture, xm+20 yp gGuiDonate, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png" ; Static27
-}
-
-Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs-20 ys+35 w68 center gGuiAbout, %lGuiAbout% ; Static28
-Gui, 1:Add, Text, xs+40 ys+35 w52 center gGuiHelp, %lGuiHelp% ; Static29
-if !(blnDonor)
-	Gui, 1:Add, Text, xm+10 ys+35 w52 center gGuiDonate, %lGuiDonate% ; Static30
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-BackupMenuObjects:
-; in case of Gui Cancel to restore objects to original state
-;------------------------------------------------------------
-
-arrMenusBK := Object()
-for strMenuName, arrMenu in arrMenus
-{
-	arrMenuBK := Object()
-	for intIndex, objFolder in arrMenu
+	if (intShortcut < 10)
+		strShortcut := intShortcut ; 0 .. 9
+	else
 	{
-		objFolderBK := Object()
-		objFolderBK.MenuName := objFolder.MenuName
-		objFolderBK.FolderName := objFolder.FolderName
-		objFolderBK.FolderLocation := objFolder.FolderLocation
-		objFolderBK.SubmenuFullName := objFolder.SubmenuFullName
-		objFolderBK.FavoriteType := objFolder.FavoriteType
-		arrMenuBK.Insert(objFolderBK)
+		while (blnMainMenu and InStr(lMenuReservedShortcuts, Chr(intShortcut + 55)))
+			intShortcut := intShortcut + 1
+		strShortcut := Chr(intShortcut + 55) ; Chr(10 + 55) = "A" .. Chr(35 + 55) = "Z"
 	}
-	arrMenusBK.Insert(strMenuName, arrMenuBK) ; add this submenu to the array of menus
-}
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-RestoreBackupMenuObjects:
-; when Gui Cancel to restore objects to original state
-;------------------------------------------------------------
-
-arrMenus := Object() ; reinit
-for strMenuName, arrMenuBK in arrMenusBK
-{
-	arrMenu := Object()
-	for intIndex, objFolderBK in arrMenuBK
-	{
-		objFolder := Object()
-		objFolder.MenuName := objFolderBK.MenuName
-		objFolder.FolderName := objFolderBK.FolderName
-		objFolder.FolderLocation := objFolderBK.FolderLocation
-		objFolder.SubmenuFullName := objFolderBK.SubmenuFullName
-		objFolder.FavoriteType := objFolderBK.FavoriteType
-		arrMenu.Insert(objFolder)
-	}
-	arrMenus.Insert(strMenuName, arrMenu) ; add this submenu to the array of menus
-}
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiFoldersListEvent:
-;------------------------------------------------------------
-Gui, 1:ListView, lvFoldersList
-
-if (A_GuiEvent = "DoubleClick")
-	gosub, GuiEditFolder
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiMenusListChanged:
-GuiGotoUpMenu:
-GuiGotoPreviousMenu:
-OpenMenuFromEditForm:
-;------------------------------------------------------------
-
-if (A_ThisLabel = "GuiMenusListChanged")
-{
-	GuiControlGet, strNewDropdownMenu, , drpMenusList
-	if (strNewDropdownMenu = strCurrentMenu) ; user selected the current menu in the dropdown
-		return
-}
-
-Gosub, SaveCurrentListviewToMenuObject ; save current LV before changing strCurrentMenu
-
-strSavedMenu := strCurrentMenu
-if (A_ThisLabel = "GuiMenusListChanged")
-{
-	arrSubmenuStack.Insert(1, strSavedMenu) ; push the current menu to the left arrow stack
-	strCurrentMenu := strNewDropdownMenu
-}
-else if (A_ThisLabel = "GuiGotoUpMenu")
-{
-	arrSubmenuStack.Insert(1, strSavedMenu) ; push the current menu to the left arrow stack
-	strCurrentMenu := SubStr(strCurrentMenu, 1, InStr(strCurrentMenu, lGuiSubmenuSeparator, , 0) - 1) 
-}
-else if (A_ThisLabel = "GuiGotoPreviousMenu")
-{
-	strCurrentMenu := arrSubmenuStack[1] ; pull the top menu from the left arrow stack
-	arrSubmenuStack.Remove(1) ; remove the top menu from the left arrow stack
-}
-else if (A_ThisLabel = "OpenMenuFromEditForm")
-{
-	arrSubmenuStack.Insert(1, strSavedMenu) ; push the current menu to the left arrow stack
-	strCurrentMenu := strCurrentSubmenuFullName
-}
-else
-	return ; should not occur
-
-strPreviousMenu := strSavedMenu
-
-GuiControl, % (arrSubmenuStack.MaxIndex() ? "Show" : "Hide"), picPreviousMenu
-GuiControl, % (strCurrentMenu <> lMainMenuName ? "Show" : "Hide"), picUpMenu
-
-Gosub, LoadOneMenuToGui
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiRemoveFolder:
-;------------------------------------------------------------
-
-GuiControl, Focus, lvFoldersList
-Gui, 1:ListView, lvFoldersList
-intItemToRemove := LV_GetNext()
-if !(intItemToRemove)
-{
-	Oops(lDialogSelectItemToRemove)
-	return
-}
-
-LV_GetText(strFavoriteType, intItemToRemove, 5)
-if (strFavoriteType = "S") ; this is a submneu
-{
-	LV_GetText(strSubmenuFullName, intItemToRemove, 4)
-	MsgBox, 52, % L(lDialogFolderRemoveTitle, strAppName), % L(lDialogFolderRemovePrompt, strSubmenuFullName)
-	IfMsgBox, No
-		return
-	RemoveAllSubMenus(strSubmenuFullName)
-}
-
-LV_Delete(intItemToRemove)
-LV_Modify(intItemToRemove, "Select Focus")
-LV_ModifyCol(1, "AutoHdr")
-LV_ModifyCol(2, "AutoHdr")
-
-if (strFavoriteType = "S")
-{
-	Gosub, SaveCurrentListviewToMenuObject ; save current LV before update the dropdown menu
-	GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
-}
-
-GuiControl, Enable, btnGuiSave
-GuiControl, , btnGuiCancel, %lGuiCancel%
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiManageGroups:
-;------------------------------------------------------------
-
-; MsgBox, Not finished...
-; return
-
-intGui1WinID := WinExist("A")
-Gui, 1:Submit, NoHide
-Gui, 2:New, , Title ; ### % L(lDialogAddEditFolderTitle, (A_ThisLabel = "GuiEditFolder" ? lDialogEdit : lDialogAdd), strAppName, strAppVersion)
-Gui, 2:+Owner1
-Gui, 2:+OwnDialogs
-Gui, 2:Color, %strGuiWindowColor%
-
-; Gui, 2:Add, Text, % x10 y10 vlblFolderParentMenu, % (blnRadioSubmenu ? lDialogSubmenuParentMenu : lDialogFolderParentMenu)
-; Gui, 2:Add, DropDownList, x10 w300 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
-
-; Gui, 2:Add, Button, y+20 vbtnAddFolderAdd gGuiAddFolderSave, %lDialogAdd%
-; Gui, 2:Add, Button, yp vbtnAddFolderCancel gGuiAddFolderCancel, %lGuiCancel%
-; GuiCenterButtons(L(lDialogAddEditFolderTitle, lDialogAdd, strAppName, strAppVersion), 10, 5, 20, , "btnAddFolderAdd", "btnAddFolderCancel")
-
-Gui, 2:Show, AutoSize Center
-Gui, 1:+Disabled
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-RemoveAllSubMenus(strSubmenuFullName)
-; recursive function
-;------------------------------------------------------------
-{
-	Loop, % arrMenus[strSubmenuFullName].MaxIndex()
-		if (arrMenus[strSubmenuFullName][A_Index].FavoriteType = "S") ; this is a submenu
-			RemoveAllSubMenus(arrMenus[strSubmenuFullName][A_Index].SubmenuFullName) ; recursive call
-	arrMenus.Remove(strSubmenuFullName)
+	intShortcut := intShortcut + 1
+	return strShortcut
 }
 ;------------------------------------------------------------
 
 
 ;------------------------------------------------------------
-GuiAddSeparator:
-;------------------------------------------------------------
-
-GuiControl, Focus, lvFoldersList
-Gui, 1:ListView, lvFoldersList
-LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", lMenuSeparator, lMenuSeparator . lMenuSeparator, strCurrentMenu)
-LV_Modify(LV_GetNext(), "Vis")
-LV_ModifyCol(1, "AutoHdr")
-LV_ModifyCol(2, "AutoHdr")
-
-GuiControl, Enable, btnGuiSave
-GuiControl, , btnGuiCancel, %lGuiCancel%
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiSortFolders:
-;------------------------------------------------------------
-
-Gui, 1:ListView, lvFoldersList
-LV_ModifyCol(1, "Sort")
-
-GuiControl, Enable, btnGuiSave
-GuiControl, , btnGuiCancel, %lGuiCancel%
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiMoveFolderUp:
-;------------------------------------------------------------
-
-GuiControl, Focus, lvFoldersList
-Gui, 1:ListView, lvFoldersList
-intSelectedRow := LV_GetNext()
-if (intSelectedRow = 1)
-	return
-
-LV_GetText(strThisName, intSelectedRow, 1)
-LV_GetText(strThisLocation, intSelectedRow, 2)
-LV_GetText(strThisMenu, intSelectedRow, 3)
-LV_GetText(strThisSubmenu, intSelectedRow, 4)
-LV_GetText(strThisFavoriteType, intSelectedRow, 5)
-
-LV_GetText(strPriorName, intSelectedRow - 1, 1)
-LV_GetText(strPriorLocation, intSelectedRow - 1, 2)
-LV_GetText(strPriorMenu, intSelectedRow - 1, 3)
-LV_GetText(strPriorSubmenu, intSelectedRow - 1, 4)
-LV_GetText(strPriorFavoriteType, intSelectedRow - 1, 5)
-
-LV_Modify(intSelectedRow, "", strPriorName, strPriorLocation, strPriorMenu, strPriorSubmenu, strPriorFavoriteType)
-LV_Modify(intSelectedRow - 1, "Select Focus Vis", strThisName, strThisLocation, strThisMenu, strThisSubmenu, strThisFavoriteType)
-
-GuiControl, Enable, btnGuiSave
-GuiControl, , btnGuiCancel, %lGuiCancel%
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiMoveFolderDown:
-;------------------------------------------------------------
-
-GuiControl, Focus, lvFoldersList
-Gui, 1:ListView, lvFoldersList
-intSelectedRow := LV_GetNext()
-if (intSelectedRow = LV_GetCount())
-	return
-
-LV_GetText(strThisName, intSelectedRow, 1)
-LV_GetText(strThisLocation, intSelectedRow, 2)
-LV_GetText(strThisMenu, intSelectedRow, 3)
-LV_GetText(strThisSubmenu, intSelectedRow, 4)
-LV_GetText(strThisFavoriteType, intSelectedRow, 5)
-
-LV_GetText(strNextName, intSelectedRow + 1, 1)
-LV_GetText(strNextLocation, intSelectedRow + 1, 2)
-LV_GetText(strNextMenu, intSelectedRow + 1, 3)
-LV_GetText(strNextSubmenu, intSelectedRow + 1, 4)
-LV_GetText(strNextFavoriteType, intSelectedRow + 1, 5)
-	
-LV_Modify(intSelectedRow, "", strNextName, strNextLocation, strNextMenu, strNextSubmenu, strNextFavoriteType)
-LV_Modify(intSelectedRow + 1, "Select Focus Vis", strThisName, strThisLocation, strThisMenu, strThisSubmenu, strThisFavoriteType)
-
-GuiControl, Enable, btnGuiSave
-GuiControl, , btnGuiCancel, %lGuiCancel%
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiSave:
-;------------------------------------------------------------
-
-blnMenuReady := false
-
-Gosub, SaveCurrentListviewToMenuObject ; save current LV before saving
-
-IniDelete, %strIniFile%, Folders
-Gui, 1:ListView, lvFoldersList
-
-intIndex := 0
-SaveOneMenu(lMainMenuName) ; recursive function
-
-Gosub, LoadIniFile
-Gosub, BuildFoldersMenusWithStatus
-GuiControl, Disable, %lGuiSave%
-GuiControl, , %lGuiCancel%, %lGuiClose%
-
-Gosub, GuiCancel
-blnMenuReady := true
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-SaveOneMenu(strMenu)
-; recursive function
+AddMenuIcon(strMenuName, ByRef strMenuItemName, strLabel, strIconValue)
 ;------------------------------------------------------------
 {
-	global strIniFile
-	global intIndex
-	
-	Loop, % arrMenus[strMenu].MaxIndex()
-	{
-		strValue := arrMenus[strMenu][A_Index].FolderName
-			. "|" . arrMenus[strMenu][A_Index].FolderLocation
-			. "|" . SubStr(arrMenus[strMenu][A_Index].MenuName, StrLen(lMainMenuName) + 1) ; remove main menu name for ini file
-			. "|" . SubStr(arrMenus[strMenu][A_Index].SubmenuFullName, StrLen(lMainMenuName) + 1) ; remove main menu name for ini file
-			. "|" . arrMenus[strMenu][A_Index].FavoriteType
-		intIndex := intIndex + 1
-		IniWrite, %strValue%, %strIniFile%, Folders, Folder%intIndex%
-		if (arrMenus[strMenu][A_Index].FavoriteType = "S")
-			SaveOneMenu(arrMenus[strMenu][A_Index].SubmenuFullName) ; recursive call
-	}
-}
-;------------------------------------------------------------
+	global intIconSize
+	global blnDisplayIcons
+	global objIconsFile
+	global objIconsIndex
 
-
-;------------------------------------------------------------
-GuiShow:
-;------------------------------------------------------------
-
-strCurrentMenu := lMainMenuName
-Gosub, BackupMenuObjects
-Gosub, LoadSettingsToGui
-Gui, 1:Show, AutoSize Center
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiCancel:
-;------------------------------------------------------------
-
-GuiControlGet, blnSaveEnabled, Enabled, btnGuiSave
-if (blnSaveEnabled)
-{
-	Gui, 1:+OwnDialogs
-	MsgBox, 36, % L(lDialogCancelTitle, strAppName, strAppVersion), %lDialogCancelPrompt%
-	IfMsgBox, Yes
-	{
-		blnMenuReady := false
-		Gosub, RestoreBackupMenuObjects
-		
-		; restore popup menu
-		Gosub, BuildSpecialFoldersMenu
-		Gosub, BuildSwitchMenu
-		Gosub, BuildFoldersMenus ; need to be initialized here - will be updated at each call to popup menu
-
-		GuiControl, Disable, btnGuiSave
-		GuiControl, , btnGuiCancel, %lGuiClose%
-		blnMenuReady := true
-	}
-	IfMsgBox, No
-		return
-}
-Gui, 1:Cancel
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiClose:
-GuiEscape:
-;------------------------------------------------------------
-
-GoSub, GuiCancel
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiDropFiles:
-;------------------------------------------------------------
-
-Loop, parse, A_GuiEvent, `n
-{
-    strCurrentLocation = %A_LoopField%
-    Break
-}
-
-Gosub, GuiAddFromDropFiles
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-AddThisFolder:
-;------------------------------------------------------------
-
-strCurrentLocation := ""
-
-if WindowIsDirectoryOpus(strTargetClass)
-{
-	objDOpusListers := Object()
-	CollectDOpusListersList(objDOpusListers, strListText) ; list all listers, excluding special folders like Recycle Bin
 	/*
-		From leo @ GPSoftware (http://resource.dopus.com/viewtopic.php?f=3&t=23013):
-		Lines will have active_lister="1" if they represent tabs from the active lister.
-		To get the active tab you want the line with active_lister="1" and tab_state="1".
-		tab_state="1" means it's the selected tab, on the active side of the lister.
-		tab_state="2" means it's the selected tab, on the inactive side of a dual-display lister.
-		Tabs which are not visible (because another tab is selected on top of them) don't get a tab_state attribute at all.
+	###_D(""
+		. "strMenuName: " . strMenuName . "`n"
+		. "strMenuItemName: " . strMenuItemName . "`n"
+		. "strLabel: " . strLabel . "`n"
+		. "strIconValue: " . strIconValue . "`n"
+		. "objIconsFile[strIconValue]: " . objIconsFile[strIconValue] . "`n"
+		. "objIconsIndex[strIconValue]: " . objIconsIndex[strIconValue] . "`n"
+		. "")
 	*/
-
-	for intIndex, objLister in objDOpusListers
-		if (objLister.active_lister = "1" and objLister.tab_state = "1")
-		{
-			strCurrentLocation := objLister.path
-			break
-		}
+	
+	if !StrLen(strMenuItemName)
+		return
+	
+	; The names of menus and menu items can be up to 260 characters long.
+	if StrLen(strMenuItemName) > 260
+		strMenuItemName := SubStr(strMenuItemName, 1, 256) . "..." ; minus one for the luck ;-)
+	
+	Menu, %strMenuName%, Add, %strMenuItemName%, %strLabel%
+	if (blnDisplayIcons)
+		Menu, %strMenuName%, Icon, %strMenuItemName%, % objIconsFile[strIconValue], % objIconsIndex[strIconValue], %intIconSize%
 }
-else
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GetIcon4Location(strLocation, ByRef strDefaultIcon, ByRef intDefaultIcon)
+; get icon, extract from kiu http://www.autohotkey.com/board/topic/8616-kiu-icons-manager-quickly-change-icon-files/
+;------------------------------------------------------------
 {
-	objPrevClipboard := ClipboardAll ; Save the entire clipboard
-	ClipBoard := ""
-
-	; Add This folder menu is active only if we are in Explorer (WIN_XP, WIN_7 or WIN_8) or in a Dialog box (WIN_7 or WIN_8).
-	; In all these OS, with Explorer, the key sequence {F4}{Esc} selects the current location of the window.
-	; With dialog boxes, the key sequence {F4}{Esc} generally selects the current location of the window. But, in some
-	; dialog boxes, the {Esc} key closes the dialog box. We will check window title to detect this behavior.
-
-	if (strTargetClass = "#32770")
-		intWaitTimeIncrement := 300 ; time allowed for dialog boxes
-	else
-		intWaitTimeIncrement := 150 ; time allowed for Explorer
-
+	global blnDiagMode
+	
+	SplitPath, strLocation, , , strExtension
+	RegRead, strHKeyClassRoot, HKEY_CLASSES_ROOT, .%strExtension%
+	RegRead, strDefaultIcon, HKEY_CLASSES_ROOT, %strHKeyClassRoot%\DefaultIcon
 	if (blnDiagMode)
-		intTries := 8
+	{
+		Diag("BuildOneMenuIcon", strLocation)
+		Diag("strHKeyClassRoot", strHKeyClassRoot)
+		Diag("strDefaultIcon-1", strDefaultIcon)
+	}
+	
+	if (strDefaultIcon = "%1") ; use the file itself (for executable)
+		strDefaultIcon := strLocation
+	
+	IfInString, strDefaultIcon, `, ; this is for icongroup files
+	{
+		StringSplit, arrDefaultIcon, strDefaultIcon, `,
+		strDefaultIcon := arrDefaultIcon1
+		intDefaultIcon := arrDefaultIcon2
+	}
 	else
-		intTries := 3
-
-	strWindowTitle := ""
-	Loop, %intTries%
-	{
-		Sleep, intWaitTimeIncrement * A_Index
-		WinGetTitle, strWindowTitle, A ; to check later if this window is closed unexpectedly
-	} Until (StrLen(strWindowTitle))
-
-	if WindowIsTotalCommander(strTargetClass)
-	{
-		cm_CopySrcPathToClip := 2029
-		SendMessage, 0x433, %cm_CopySrcPathToClip%, , , ahk_class TTOTAL_CMD ; 
-		WinGetTitle, strWindowThisTitle, A ; to check if the window was closed unexpectedly
-	}
-	else if WindowIsFreeCommander(strTargetClass)
-	{
-		if (WinExist("A") <> strTargetWinId) ; in case that some window just popped out, and initialy active window lost focus
-		{
-			WinActivate, ahk_id %strTargetWinId% ; we'll activate initialy active window
-			Sleep, intWaitTimeIncrement
-		}
-		if StrLen(strTargetControl)
-			ControlFocus, %strTargetControl%, ahk_id %strTargetWinId%
-		Loop, %intTries%
-		{
-			Sleep, intWaitTimeIncrement * A_Index
-			SendInput, !g ; goto shortcut for FreeCommander
-			Sleep, intWaitTimeIncrement * A_Index
-			SendInput, ^c
-			Sleep, intWaitTimeIncrement * A_Index
-			intTries := A_Index
-			WinGetTitle, strWindowThisTitle, A ; to check if the window was closed unexpectedly
-		} Until (StrLen(ClipBoard))
-	}
-	else ; Explorer
-		Loop, %intTries%
-		{
-			Sleep, intWaitTimeIncrement * A_Index
-			SendInput, {F4}{Esc} ; F4 move the caret the "Go To A Different Folder box" and {Esc} select it content ({Esc} could be replaced by ^a to Select All)
-			Sleep, intWaitTimeIncrement * A_Index
-			SendInput, ^c ; Copy
-			Sleep, intWaitTimeIncrement * A_Index
-			intTries := A_Index
-			WinGetTitle, strWindowThisTitle, A ; to check if the window was closed unexpectedly
-		} Until (StrLen(ClipBoard) or (strWindowTitle <> strWindowThisTitle))
-
-	strCurrentLocation := ClipBoard
-	Clipboard := objPrevClipboard ; Restore the original clipboard
-	objPrevClipboard := "" ; Free the memory in case the clipboard was very large
+		intDefaultIcon := 1
 
 	if (blnDiagMode)
 	{
-		Diag("Menu", A_ThisLabel)
-		Diag("Class", strTargetClass)
-		Diag("Tries", intTries)
-		Diag("AddedFolder", strCurrentLocation)
+		Diag("strDefaultIcon-2", strDefaultIcon)
+		Diag("intDefaultIcon", intDefaultIcon)
 	}
 }
-
-If !StrLen(strCurrentLocation) or !(InStr(strCurrentLocation, ":") or InStr(strCurrentLocation, "\\")) or (strWindowTitle <> strWindowThisTitle)
-{
-	Gui, 1:+OwnDialogs 
-	MsgBox, 52, % L(lDialogAddFolderManuallyTitle, strAppName, strAppVersion), %lDialogAddFolderManuallyPrompt%
-	IfMsgBox, Yes
-	{
-		Gosub, GuiShow
-		Gosub, GuiAddFolder
-	}
-}
-else
-{
-	Gosub, GuiShow
-	Gosub, GuiAddFromPopup
-}
-
-return
 ;------------------------------------------------------------
 
 
-;------------------------------------------------------------
-RunAtStartup:
-;------------------------------------------------------------
-; Startup code adapted from Avi Aryan Ryan in Clipjump
 
-Menu, Tray, Togglecheck, %lMenuRunAtStartup%
-IfExist, %A_Startup%\%strAppName%.lnk
-	FileDelete, %A_Startup%\%strAppName%.lnk
-else
-	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%strAppName%.lnk, %A_ScriptDir%
-
-return
-;------------------------------------------------------------
+;========================================================================================================================
+; POPUP MNEU
+;========================================================================================================================
 
 
 ;------------------------------------------------------------
-SuspendHotkeys:
+PopupMenuMouse: ; default MButton
+PopupMenuKeyboard: ; default #k
 ;------------------------------------------------------------
 
-if (A_IsSuspended)
-	Suspend, Off
-else
-	Suspend, On
-
-Menu, Tray, % (A_IsSuspended ? "check" : "uncheck"), %lMenuSuspendHotkeys%
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-ExitFoldersPopup:
-;------------------------------------------------------------
-
-ExitApp
-
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-Check4Update:
-;------------------------------------------------------------
-Gui, 1:+OwnDialogs
-
-if Time2Donate(intStartups, blnDonor)
-{
-	MsgBox, 36, % l(lDonateCheckTitle, intStartups, strAppName), % l(lDonateCheckPrompt, strAppName, intStartups)
-	IfMsgBox, Yes
-		Gosub, GuiDonate
-}
-IniWrite, % (intStartups + 1), %strIniFile%, Global, Startups
-
-strLatestVersion := Url2Var("http://code.jeanlalonde.ca/ahk/folderspopup/latest-version/latest-version-" . strCurrentBranch . ".php")
-
-if !StrLen(strLatestVersion)
-	if (A_ThisMenuItem = lMenuUpdate)
-	{
-		Oops(lUpdateError)
-		return ; an error occured during ComObjCreate
-	}
-strLatestVersion := SubStr(strLatestVersion, InStr(strLatestVersion, "[[") + 2) 
-strLatestVersion := SubStr(strLatestVersion, 1, InStr(strLatestVersion, "]]") - 1) 
-strLatestVersion := Trim(strLatestVersion, "`n`l") ; remove en-of-line if present
-
-Loop, Parse, strLatestVersion, , 0123456789. ; strLatestVersion should only contain digits and dots
-	; if we get here, the content returned by the URL above is wrong
-	if (A_ThisMenuItem <> lMenuUpdate)
-		return ; return silently
-	else
-	{
-		Oops(lUpdateError) ; return with an error message
-		return
-	}
-
-if (FirstVsSecondIs(strLatestSkipped, strLatestVersion) >= 0 and (A_ThisMenuItem <> lMenuUpdate))
+if !(blnMenuReady)
 	return
 
-if FirstVsSecondIs(strLatestVersion, strCurrentVersion) = 1
+If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass, strTargetControl)
 {
-	Gui, 1:+OwnDialogs
-	SetTimer, ChangeButtonNamesUpdate, 50
-
-	MsgBox, 3, % l(lUpdateTitle, strAppName)
-		, % l(lUpdatePrompt, strAppName
-			, strCurrentVersion . (strCurrentBranch = "beta" ? " BETA" : "")
-			, strLatestVersion . (strCurrentBranch = "beta" ? " BETA" : ""))
-		, 30
-	IfMsgBox, Yes
-		if (strCurrentBranch = "prod")
-			Run, http://code.jeanlalonde.ca/folderspopup/
-		else
-			Run, http://code.jeanlalonde.ca/beta-testers-wanted-for-folders-popup-v3-2/
-	IfMsgBox, No
-		IniWrite, %strLatestVersion%, %strIniFile%, Global, % "LatestVersionSkipped" . (strCurrentBranch = "beta" ? "Beta" : "")
-	IfMsgBox, Cancel ; Remind me
-		IniWrite, 0.0, %strIniFile%, Global, % "LatestVersionSkipped" . (strCurrentBranch = "beta" ? "Beta" : "")
-	IfMsgBox, TIMEOUT ; Remind me
-		IniWrite, 0.0, %strIniFile%, Global, % "LatestVersionSkipped" . (strCurrentBranch = "beta" ? "Beta" : "")
-}
-else if (A_ThisMenuItem = lMenuUpdate)
-{
-	MsgBox, 4, % l(lUpdateTitle, strAppName), % l(lUpdateYouHaveLatest, strAppVersion, strAppName), 30
-	IfMsgBox, Yes
-		if (strCurrentBranch = "prod")
-			Run, http://code.jeanlalonde.ca/folderspopup/
-		else
-			Run, http://code.jeanlalonde.ca/folders-popup-compatible-with-total-commander-beta-testers-wanted/
-}
-
-return 
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-FirstVsSecondIs(strFirstVersion, strSecondVersion)
-;------------------------------------------------------------
-{
-	StringSplit, arrFirstVersion, strFirstVersion, `.
-	StringSplit, arrSecondVersion, strSecondVersion, `.
-	if (arrFirstVersion0 > arrSecondVersion0)
-		intLoop := arrFirstVersion0
-	else
-		intLoop := arrSecondVersion0
-
-	Loop %intLoop%
-		if (arrFirstVersion%A_index% > arrSecondVersion%A_index%)
-			return 1 ; greater
-		else if (arrFirstVersion%A_index% < arrSecondVersion%A_index%)
-			return -1 ; smaller
-		
-	return 0 ; equal
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-ChangeButtonNamesUpdate:
-;------------------------------------------------------------
-
-IfWinNotExist, % l(lUpdateTitle, strAppName)
-    return  ; Keep waiting.
-SetTimer, ChangeButtonNamesUpdate, Off
-WinActivate 
-ControlSetText, Button3, %lUpdateButtonRemind%
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-Url2Var(strUrl)
-;------------------------------------------------------------
-{
-	objWebRequest := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-	/*
-	if (A_LastError)
-		; an error occurred during ComObjCreate (A_LastError probably is E_UNEXPECTED = -2147418113 #0x8000FFFFL)
-		BUT DO NOT ABORT because the following commands will be executed even if an error occurred in ComObjCreate (!)
-	*/
-	objWebRequest.Open("GET", strUrl)
-	objWebRequest.Send()
-
-	Return objWebRequest.ResponseText()
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-Time2Donate(intStartups, blnDonor)
-;------------------------------------------------------------
-{
-	if (intStartups > 100)
-		intDivisor := 25
-	else if (intStartups > 60)
-		intDivisor := 20
-	else if (intStartups > 30)
-		intDivisor := 15
-	else intDivisor := 10
-		
-	return !Mod(intStartups, intDivisor) and !(blnDonor)
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-; GUI2 About, Help and Options
-;------------------------------------------------------------
-
-;------------------------------------------------------------
-GuiAddFolder:
-GuiAddFromPopup:
-GuiAddFromDropFiles:
-GuiEditFolder:
-;------------------------------------------------------------
-
-if (A_ThisLabel = "GuiEditFolder")
-{
-	Gui, 1:ListView, lvFoldersList
-	intRowToEdit := LV_GetNext()
-	LV_GetText(strCurrentName, intRowToEdit, 1)
-	
-	if (strCurrentName = lMenuSeparator)
-		return
-
-	if !StrLen(strCurrentName) or (intRowToEdit = 0)
+	StringReplace, strThisHotkey, A_ThisHotkey, $ ; remove $ from hotkey
+	if (A_ThisLabel = "PopupMenuMouse")
 	{
-		Oops(lDialogSelectItemToEdit)
-		return
-	}
-	LV_GetText(strCurrentLocation, intRowToEdit, 2)
-	LV_GetText(strCurrentSubmenuFullName, intRowToEdit, 4)
-	LV_GetText(strFavoriteType, intRowToEdit, 5)
-	
-	blnRadioSubmenu := (strFavoriteType = "S")
-	blnRadioFolder := (strFavoriteType = "F")
-	blnRadioFile := (strFavoriteType = "D")
-	blnRadioURL := (strFavoriteType = "U")
-}
-else
-{
-	intRowToEdit := 0 ;  used when saving to flag to insert a new row
-	strCurrentName := "" ; make sure it is empty
-	strCurrentSubmenuFullName := "" ;  make sure it is empty
-	strFavoriteType := "" ;  make sure it is empty
-	
-	if (A_ThisLabel = "GuiAddFromPopup" or A_ThisLabel = "GuiAddFromDropFiles")
-		; strCurrentLocation is received from AddThisFolder or GuiDropFiles
-		strFolderShortName := GetDeepestFolderName(strCurrentLocation)
-	else
-	{
-		;  make sure these variables are empty
-		strCurrentLocation := ""
-		strFolderShortName := ""
-	}
-
-	blnRadioSubmenu := false
-	blnRadioFolder := false
-	blnRadioFile := false
-	blnRadioURL := false
-	
-	if (A_ThisLabel = "GuiAddFromPopup")
-		blnRadioFolder := true
-	else if (A_ThisLabel = "GuiAddFromDropFiles")
-	{
-		blnRadioFile := LocationIsDocument(strCurrentLocation)
-		blnRadioFolder := not blnRadioFile
-	}
-}
-
-intGui1WinID := WinExist("A")
-Gui, 1:Submit, NoHide
-Gui, 2:New, , % L(lDialogAddEditFolderTitle, (A_ThisLabel = "GuiEditFolder" ? lDialogEdit : lDialogAdd), strAppName, strAppVersion)
-Gui, 2:+Owner1
-Gui, 2:+OwnDialogs
-Gui, 2:Color, %strGuiWindowColor%
-
-Gui, 2:Add, Text, % x10 y10 vlblFolderParentMenu, % (blnRadioSubmenu ? lDialogSubmenuParentMenu : lDialogFolderParentMenu)
-Gui, 2:Add, DropDownList, x10 w300 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
-
-if (A_ThisLabel = "GuiAddFolder")
-{
-	Gui, 2:Add, Text, x10, %lDialogAdd%:
-	Gui, 2:Add, Radio, x+10 yp vblnRadioFolder checked gRadioButtonsChanged, %lDialogFolderLabel%
-	Gui, 2:Add, Radio, x+10 yp vblnRadioFile gRadioButtonsChanged, %lDialogFileLabel%
-	Gui, 2:Add, Radio, x+10 yp vblnRadioURL gRadioButtonsChanged, %lDialogURLLabel%
-	Gui, 2:Add, Radio, x+10 yp vblnRadioSubmenu gRadioButtonsChanged, %lDialogSubmenuLabel%
-}
-
-Gui, 2:Add, Text, x10 y+10 w300 vlblShortName, % (blnRadioSubmenu ? lDialogSubmenuShortName : (blnRadioFile ? lDialogFileShortName : (blnRadioURL ? lDialogURLShortName : lDialogFolderShortName)))
-Gui, 2:Add, Edit, x10 w300 Limit250 vstrFolderShortName, % (A_ThisLabel = "GuiEditFolder" ? strCurrentName : strFolderShortName)
-
-if (blnRadioSubmenu)
-	Gui, 2:Add, Button, x+10 yp vbnlEditFolderOpenMenu gGuiOpenThisMenu, %lDialogOpenThisMenu%
-else
-{
-	Gui, 2:Add, Text, x10 w300 vlblFolder, % (blnRadioFile ? lDialogFileLabel : (blnRadioURL ? lDialogURLLabel : lDialogFolderLabel))
-	Gui, 2:Add, Edit, x10 w300 h20 vstrFolderLocation, %strCurrentLocation%
-	if !(blnRadioURL)
-		Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation default, %lDialogBrowseButton%
-}
-
-if (A_ThisLabel = "GuiEditFolder")
-{
-	Gui, 2:Add, Button, y+20 vbtnEditFolderSave gGuiEditFolderSave, %lDialogSave%
-	Gui, 2:Add, Button, yp vbtnEditFolderCancel gGuiEditFolderCancel, %lGuiCancel%
-	GuiCenterButtons(L(lDialogAddEditFolderTitle, lDialogEdit, strAppName, strAppVersion), 10, 5, 20, , "btnEditFolderSave", "btnEditFolderCancel")
-}
-else
-{
-	Gui, 2:Add, Button, y+20 vbtnAddFolderAdd gGuiAddFolderSave, %lDialogAdd%
-	Gui, 2:Add, Button, yp vbtnAddFolderCancel gGuiAddFolderCancel, %lGuiCancel%
-	GuiCenterButtons(L(lDialogAddEditFolderTitle, lDialogAdd, strAppName, strAppVersion), 10, 5, 20, , "btnAddFolderAdd", "btnAddFolderCancel")
-}
-
-GuiControl, 2:Focus, strFolderShortName
-if (A_ThisLabel = "GuiEditFolder")
-	SendInput, ^a
-Gui, 2:Show, AutoSize Center
-Gui, 1:+Disabled
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiOpenThisMenu:
-;------------------------------------------------------------
-Gosub, 2GuiClose
-
-Gui, 1:Default
-GuiControl, 1:Focus, lvFoldersList
-Gui, 1:ListView, lvFoldersList
-
-Gosub, OpenMenuFromEditForm
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiAddFolderSave:
-GuiEditFolderSave:
-;------------------------------------------------------------
-Gui, 2:Submit, NoHide
-Gui, 2:+OwnDialogs
-
-GuiControlGet, strParentMenu, , drpParentMenu
-
-if !StrLen(strFolderShortName)
-{
-	Oops(blnRadioSubmenu ? lDialogSubmenuNameEmpty : lDialogFolderNameEmpty)
-	return
-}
-
-if  ((blnRadioFolder or blnRadioFile or blnRadioURL) and !StrLen(strFolderLocation))
-{
-	Oops(lDialogFolderLocationEmpty)
-	return
-}
-
-if !FolderNameIsNew(strFolderShortName, (strParentMenu = strCurrentMenu ? "" : strParentMenu))
-	if ((strParentMenu <> strCurrentMenu) or (strFolderShortName <> strCurrentName)) ; same name is OK in current menu
-	{
-		Oops(lDialogFolderNameNotNew, strFolderShortName)
-		return
-	}
-
-if (blnRadioSubmenu)
-{
-	if InStr(strFolderShortName, lGuiSubmenuSeparator)
-	{
-		Oops(L(lDialogFolderNameNoSeparator, lGuiSubmenuSeparator))
-		return
-	}
-	
-	strNewSubmenuFullName := strParentMenu . lGuiSubmenuSeparator . strFolderShortName
-	
-	if (A_ThisLabel = "GuiAddFolderSave")
-	{
-		strFolderLocation := lGuiSubmenuLocation
-		
-		arrNewMenu := Object() ; array of folders of the new menu
-		arrMenus.Insert(strNewSubmenuFullName, arrNewMenu)
-	}
-	else ; GuiEditFolderSave
-		UpdateMenuNameInSubmenus(strCurrentSubmenuFullName, strNewSubmenuFullName) ; change names in arrMenus and arrMenu objects
-}
-else
-	strNewSubmenuFullName := ""
-
-strFavoriteType := (blnRadioSubmenu ? "S" : (blnRadioURL ? "U" : (blnRadioFile ? "D" : (blnRadioURL ? "U" : "F")))) ; submenu, document, URL or folder
-
-Gosub, 2GuiClose
-
-Gui, 1:Default
-GuiControl, 1:Focus, lvFoldersList
-Gui, 1:ListView, lvFoldersList
-
-if (strParentMenu = strCurrentMenu) ; add as top row to current menu
-{
-	if (A_ThisLabel = "GuiAddFolderSave")
-	{
-		LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus"
-			, strFolderShortName, strFolderLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType)
-		LV_Modify(LV_GetNext(), "Vis")
-	
-		Gosub, SaveCurrentListviewToMenuObject ; save current LV tbefore update the dropdown menu
-		GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
-	}
-	else ; GuiEditFolderSave
-	{
-		LV_Modify(intRowToEdit, "Select Focus"
-			, strFolderShortName, strFolderLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType)
-	}
-}
-else ; add menu item to selected menu object
-{
-	objFolder := Object() ; new menu item
-	objFolder.MenuName := strParentMenu ; parent menu of this menu item
-	objFolder.FolderName := strFolderShortName ; display name of this menu item
-	objFolder.FolderLocation := strFolderLocation ; path for this menu item
-	objFolder.SubmenuFullName := strNewSubmenuFullName ; full name of the submenu
-	objFolder.FavoriteType := strFavoriteType ; "F" folder, "D" document, "U" for URL or "S" submenu
-	arrMenus[objFolder.MenuName].Insert(1, objFolder) ; add this menu item to the new menu
-
-	if (A_ThisLabel = "GuiEditFolderSave")
-	{
-		LV_Delete(intRowToEdit)
-		LV_Modify(intRowToEdit, "Select Focus")
-	}
-}
-
-GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
-
-LV_ModifyCol(1, "AutoHdr")
-LV_ModifyCol(2, "AutoHdr")
-
-if (A_ThisLabel = "GuiEditFolderSave")
-{
-	Gosub, SaveCurrentListviewToMenuObject ; save current LV tbefore update the dropdown menu
-	GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
-}
-
-Gosub, BuildFoldersMenusWithStatus ; update menus
-
-GuiControl, Enable, btnGuiSave
-GuiControl, , btnGuiCancel, %lDialogCancelButton%
-
-blnMenuReady := true
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-UpdateMenuNameInSubmenus(strOldMenu, strNewMenu)
-; recursive function
-;------------------------------------------------------------
-{
-	arrMenus.Insert(strNewMenu, arrMenus[strOldMenu])
-	Loop, % arrMenus[strNewMenu].MaxIndex()
-	{
-		arrMenus[strNewMenu][A_Index].MenuName := strNewMenu
-		if (arrMenus[strNewMenu][A_Index].FavoriteType = "S")
-		{
-			arrMenus[strNewMenu][A_Index].SubmenuFullName := strNewMenu . lGuiSubmenuSeparator . arrMenus[strNewMenu][A_Index].FolderName
-			UpdateMenuNameInSubmenus(strOldMenu . lGuiSubmenuSeparator . arrMenus[strOldMenu][A_Index].FolderName
-				, arrMenus[strNewMenu][A_Index].SubmenuFullName) ; recursive call
-		}
-	}
-	arrMenus.Remove(strOldMenu)
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-RadioButtonsChanged:
-;------------------------------------------------------------
-Gui, 2:Submit, NoHide
-
-if (blnRadioFolder)
-{
-	GuiControl, , lblShortName, %lDialogFolderShortName%
-	GuiControl, , lblFolder, %lDialogFolderLabel%
-}
-else if (blnRadioFile)
-{
-	GuiControl, , lblShortName, %lDialogFileShortName%
-	GuiControl, , lblFolder, %lDialogFileLabel%
-}
-else if (blnRadioURL)
-{
-	GuiControl, , lblShortName, %lDialogURLShortName%
-	GuiControl, , lblFolder, %lDialogURLLabel%
-}
-else ; blnRadioSubmenu
-{
-	GuiControl, , lblShortName, %lDialogSubmenuShortName%
-	GuiControl, , strFolderLocation ; empty control
-}
-
-GuiControl, % (blnRadioSubmenu ? "Hide" : "Show"), lblFolder
-GuiControl, % (blnRadioSubmenu ? "Hide" : "Show"), strFolderLocation
-GuiControl, % (blnRadioSubmenu or blnRadioURL ? "Hide" : "Show"), btnSelectFolderLocation
-
-if (blnRadioSubmenu or blnRadioURL)
-	GuiControl, +Default, btnAddFolderAdd
-else
-	GuiControl, +Default, btnSelectFolderLocation
-
-GuiControl, Focus, strFolderShortName
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-ButtonSelectFolderLocation:
-;------------------------------------------------------------
-Gui, 2:Submit, NoHide
-Gui, 2:+OwnDialogs
-
-if (blnRadioFolder)
-	FileSelectFolder, strNewLocation, *%strCurrentLocation%, 3, %lDialogAddFolderSelect%
-else
-	FileSelectFile, strNewLocation, S3, %strCurrentLocation%, %lDialogAddFileSelect%
-
-if !(StrLen(strNewLocation))
-	return
-
-GuiControl, 2:, strFolderLocation, %strNewLocation%
-
-if !StrLen(strFolderShortName)
-	GuiControl, 2:, strFolderShortName, % GetDeepestFolderName(strNewLocation)
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiAddFolderCancel:
-GuiEditFolderCancel:
-;------------------------------------------------------------
-Gosub, 2GuiClose
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-FolderNameIsNew(strCandidateName, strMenu := "")
-;------------------------------------------------------------
-{
-	if !StrLen(strMenu)
-	{
-		Gui, 1:Default
-		Gui, 1:ListView, lvFoldersList
-		Loop, % LV_GetCount()
-		{
-			LV_GetText(strThisName, A_Index, 1)
-			if (strCandidateName = strThisName)
-				return False
-		}
-	}
-	else
-		Loop, % arrMenus[strMenu].MaxIndex()
-			if (strCandidateName = arrMenus[strMenu][A_Index].FolderName)
-				return False
-
-	return True
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiAbout:
-;------------------------------------------------------------
-
-intGui1WinID := WinExist("A")
-Gui, 1:Submit, NoHide
-Gui, 2:New, , % L(lAboutTitle, strAppName, strAppVersion)
-Gui, 2:Color, %strGuiWindowColor%
-Gui, 2:+Owner1
-Gui, 2:Font, s12 w700, Verdana
-Gui, 2:Add, Link, y10 w350 vlblAboutText1, % L(lAboutText1, strAppName, strAppVersion, str32or64)
-Gui, 2:Font, s8 w400, Verdana
-Gui, 2:Add, Link, , % L(lAboutText2, strAppName)
-Gui, 2:Add, Link, , % L(lAboutText3, chr(169))
-Gui, 2:Font, s10 w400, Verdana
-Gui, 2:Add, Link, , % L(lAboutText4)
-Gui, 2:Font, s8 w400, Verdana
-
-Gui, 2:Add, Button, y+20 vbtnAboutDonate gGuiDonate, %lDonateButton%
-Gui, 2:Add, Button, yp vbtnAboutClose g2GuiClose vbtnAboutClose, %lGui2Close%
-GuiCenterButtons(L(lAboutTitle, strAppName, strAppVersion), 10, 5, 20, , "btnAboutDonate", "btnAboutClose")
-
-GuiControl, Focus, btnAboutClose
-Gui, 2:Show, AutoSize Center
-Gui, 1:+Disabled
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiDonate:
-;------------------------------------------------------------
-
-intGui1WinID := WinExist("A")
-Gui, 1:Submit, NoHide
-Gui, 2:New, , % L(lDonateTitle, strAppName, strAppVersion)
-Gui, 2:Color, %strGuiWindowColor%
-Gui, 2:+Owner1
-Gui, 2:Font, s12 w700, Verdana
-Gui, 2:Add, Link, y10 w420, % L(lDonateText1, strAppName)
-Gui, 2:Font, s8 w400, Verdana
-Gui, 2:Add, Link, x175 w185 y+10, % L(lDonateText2, "http://code.jeanlalonde.ca/support-freeware/")
-loop, 2
-{
-	Gui, 2:Add, Button, % (A_Index = 1 ? "y+10 Default vbtnDonateDefault " : "") . " xm w150 gButtonDonate" . A_Index, % lDonatePlatformName%A_Index%
-	Gui, 2:Add, Link, x+10 w235 yp, % lDonatePlatformComment%A_Index%
-}
-
-Gui, 2:Font, s10 w700, Verdana
-Gui, 2:Add, Link, xm y+20 w420, %lDonateText3%
-Gui, 2:Font, s8 w400, Verdana
-Gui, 2:Add, Link, xm y+10 w420 Section, % L(lDonateText4, strAppName)
-
-strDonateReviewUrlLeft1 := "http://download.cnet.com/FoldersPopup/3000-2344_4-76062382.html"
-strDonateReviewUrlLeft2 := "http://www.portablefreeware.com/index.php?id=2557"
-strDonateReviewUrlLeft3 := "http://www.softpedia.com/get/System/OS-Enhancements/FoldersPopup.shtml"
-strDonateReviewUrlRight1 := "http://fileforum.betanews.com/detail/Folders-Popup/1385175626/1"
-strDonateReviewUrlRight2 := "http://www.filecluster.com/System-Utilities/Other-Utilities/Download-FoldersPopup.html"
-strDonateReviewUrlRight3 := "http://freewares-tutos.blogspot.fr/2013/12/folders-popup-un-logiciel-portable-pour.html"
-
-loop, 3
-	Gui, 2:Add, Link, % (A_Index = 1 ? "ys+20" : "y+5") . " x25 w150", % "<a href=""" . strDonateReviewUrlLeft%A_Index% . """>" . lDonateReviewNameLeft%A_Index% . "</a>"
-
-loop, 3
-	Gui, 2:Add, Link, % (A_Index = 1 ? "ys+20" : "y+5") . " x175 w150", % "<a href=""" . strDonateReviewUrlRight%A_Index% . """>" . lDonateReviewNameRight%A_Index% . "</a>"
-
-Gui, 2:Add, Link, y+10 x130, <a href="http://code.jeanlalonde.ca/support-freeware/">%lDonateText5%</a>
-
-Gui, 2:Font, s8 w400, Verdana
-Gui, 2:Add, Button, x175 y+20 g2GuiClose vbtnDonateClose, %lGui2Close%
-GuiCenterButtons(L(lDonateTitle, strAppName, strAppVersion), 10, 5, 20, , "btnDonateClose")
-
-GuiControl, Focus, btnDonateDefault
-Gui, 2:Show, AutoSize Center
-Gui, 1:+Disabled
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-ButtonDonate1:
-ButtonDonate2:
-ButtonDonate3:
-;------------------------------------------------------------
-
-strDonatePlatformUrl1 := "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AJNCXKWKYAXLCV"
-strDonatePlatformUrl2 := "http://www.shareit.com/product.html?productid=300628012"
-strDonatePlatformUrl3 := "http://code.jeanlalonde.ca/?flattrss_redirect&id=19&md5=e1767c143c9bde02b4e7f8d9eb362b71"
-
-StringReplace, strButton, A_ThisLabel, ButtonDonate
-Run, % strDonatePlatformUrl%strButton%
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiHelp:
-;------------------------------------------------------------
-
-intGui1WinID := WinExist("A")
-Gui, 1:Submit, NoHide
-Gui, 2:New, , % L(lHelpTitle, strAppName, strAppVersion)
-Gui, 2:Color, %strGuiWindowColor%
-Gui, 2:+Owner1
-intWidth := 600
-Gui, 2:Font, s12 w700, Verdana
-Gui, 2:Add, Text, x10 y10, %strAppName%
-Gui, 2:Font, s10 w400, Verdana
-Gui, 2:Add, Link, x10 w%intWidth%, %lHelpTextLead%
-Gui, 2:Font, s8 w400, Verdana
-loop, 6
-	Gui, 2:Add, Link, w%intWidth%, % lHelpText%A_Index%
-Gui, 2:Add, Link, w%intWidth%, % L(lHelpText7, chr(169))
-
-Gui, 2:Add, Button, x180 y+20 vbtnHelpDonate gGuiDonate, %lDonateButton%
-Gui, 2:Add, Button, x+80 yp g2GuiClose vbtnHelpClose, %lGui2Close%
-GuiCenterButtons(L(lHelpTitle, strAppName, strAppVersion), 10, 5, 20, , "btnHelpDonate", "btnHelpClose")
-
-GuiControl, Focus, btnHelpClose
-Gui, 2:Show, AutoSize Center
-Gui, 1:+Disabled
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GuiOptions:
-;------------------------------------------------------------
-
-intGui1WinID := WinExist("A")
-
-;---------------------------------------
-; Build Gui header
-Gui, 1:Submit, NoHide
-Gui, 2:New, , % L(lOptionsGuiTitle, strAppName, strAppVersion)
-Gui, 2:Color, %strGuiWindowColor%
-Gui, 2:+Owner1
-Gui, 2:Font, s10 w700, Verdana
-Gui, 2:Add, Text, x10 y10 w595 center, % L(lOptionsGuiTitle, strAppName)
-Gui, 2:Font
-Gui, 2:Add, Text, x10 y+10 w595 center, % L(lOptionsGuiIntro, strAppName)
-
-; Build Hotkey Gui lines
-loop, % arrIniKeyNames%0%
-{
-	Gui, 2:Font, s8 w700
-	Gui, 2:Add, Text, Section x15 y+10, % arrOptionsTitles%A_Index%
-	Gui, 2:Font, s9 w500, Courier New
-	Gui, 2:Add, Text, x260 ys+5 w280 h23 center 0x1000 vlblHotkeyText%A_Index% gButtonOptionsChangeHotkey%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
-	Gui, 2:Font
-	Gui, 2:Add, Button, yp x555 vbtnChangeHotkey%A_Index% gButtonOptionsChangeHotkey%A_Index%, %lOptionsChangeHotkey%
-	Gui, 2:Font, s8 w500
-	Gui, 2:Add, Text, x15 ys+15, % arrOptionsTitlesSub%A_Index%
-}
-
-Gui, 2:Add, Text, x15 y+15 h2 w595 0x10 ; Horizontal Line > Etched Gray
-
-Gui, 2:Font, s8 w700
-Gui, 2:Add, Text, x10 y+5 w595 center, %lOptionsOtherOptions%
-Gui, 2:Font
-
-; column 1
-Gui, 2:Add, Text, y+10 x15 Section, %lOptionsLanguage%
-Gui, 2:Add, DropDownList, ys x+10 w120 vdrpLanguage Sort, %lOptionsLanguageLabels%
-GuiControl, ChooseString, drpLanguage, %strLanguageLabel%
-
-Gui, 2:Add, CheckBox, y+10 xs vblnOptionsRunAtStartup, %lOptionsRunAtStartup%
-GuiControl, , blnOptionsRunAtStartup, % FileExist(A_Startup . "\" . strAppName . ".lnk") ? 1 : 0
-
-Gui, 2:Add, CheckBox, y+10 xs vblnDisplayMenuShortcuts, %lOptionsDisplayMenuShortcuts%
-GuiControl, , blnDisplayMenuShortcuts, %blnDisplayMenuShortcuts%
-
-Gui, 2:Add, CheckBox, y+10 xs vblnDisplayTrayTip, %lOptionsTrayTip%
-GuiControl, , blnDisplayTrayTip, %blnDisplayTrayTip%
-
-Gui, 2:Add, CheckBox, y+10 xs vblnDisplayIcons, %lOptionsDisplayIcons%
-GuiControl, , blnDisplayIcons, %blnDisplayIcons%
-if !OSVersionIsWorkstation()
-	GuiControl, Disable, blnDisplayIcons
-
-; Build Gui footer
-
-Gui, 2:Add, Text, x15 y+15 h2 w595 0x10 ; Horizontal Line > Etched Gray
-
-Gui, 2:Font, s8 w700
-Gui, 2:Add, Text, y+5 xs, % L(lOptionsThirdPartyTitle, "Directory Opus")
-Gui, 2:Font
-Gui, 2:Add, Text, y+5 xs, % L(lOptionsThirdPartyDetail, "Directory Opus")
-Gui, 2:Add, Text, y+10 xs, %lOptionsThirdPartyPrompt%
-Gui, 2:Add, Edit, x+10 yp w300 h20 vstrDirectoryOpusPath, %strDirectoryOpusPath%
-Gui, 2:Add, Button, x+10 yp vbtnSelectDOpusPath gButtonSelectDOpusPath, %lDialogBrowseButton%
-
-Gui, 2:Font, s8 w700
-Gui, 2:Add, Text, y+5 xs, % L(lOptionsThirdPartyTitle, "Total Commander")
-Gui, 2:Font
-Gui, 2:Add, Text, y+5 xs,  % L(lOptionsThirdPartyDetail, "Total Commander")
-Gui, 2:Add, Text, y+10 xs, %lOptionsThirdPartyPrompt%
-Gui, 2:Add, Edit, x+10 yp w300 h20 vstrTotalCommanderPath, %strTotalCommanderPath%
-Gui, 2:Add, Button, x+10 yp vbtnSelectTCPath gButtonSelectTCPath, %lDialogBrowseButton%
-Gui, 2:Add, Checkbox, x+10 yp vblnTotalCommanderUseTabs, %lOptionsTotalCommanderUseTabs%
-GuiControl, , blnTotalCommanderUseTabs, %blnTotalCommanderUseTabs%
-
-Gui, 2:Add, Button, y+20 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
-Gui, 2:Add, Button, yp vbtnOptionsCancel gButtonOptionsCancel, %lGuiCancel%
-Gui, 2:Add, Button, yp vbtnOptionsDonate gGuiDonate, %lDonateButton%
-GuiCenterButtons(L(lOptionsGuiTitle, strAppName, strAppVersion), 10, 5, 20, , "btnOptionsSave", "btnOptionsCancel", "btnOptionsDonate")
-
-Gui, 2:Add, Text
-GuiControl, Focus, btnOptionsSave
-
-; column 2
-Gui, 2:Add, Text, ys x240 Section, %lOptionsIconSize%
-Gui, 2:Add, DropDownList, ys x+10 w40 vdrpIconSize Sort, 16|24|32|64
-GuiControl, ChooseString, drpIconSize, %intIconSize%
-
-Gui, 2:Add, CheckBox, y+10 xs vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
-GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
-
-Gui, 2:Add, CheckBox, y+10 xs vblnDisplaySwitchMenu, %lOptionsDisplaySwitchMenu%
-GuiControl, , blnDisplaySwitchMenu, %blnDisplaySwitchMenu%
-
-Gui, 2:Add, CheckBox, y+10 xs vblnDisplayRecentFolders gDisplayRecentFoldersClicked, %lOptionsDisplayRecentFolders%
-GuiControl, , blnDisplayRecentFolders, %blnDisplayRecentFolders%
-
-Gui, 2:Add, Edit, % "y+10 xs w36 h17 vintRecentFolders center " . (blnDisplayRecentFolders ? "" : "hidden"), %intRecentFolders%
-Gui, 2:Add, Text, % "yp x+10 vlblRecentFolders " . (blnDisplayRecentFolders ? "" : "hidden"), %lOptionsRecentFolders%
-
-; column 3
-
-Gui, 2:Add, Text, ys x430 Section, %lOptionsTheme%
-Gui, 2:Add, DropDownList, ys x+10 w120 vdrpTheme Sort, %strAvailableThemes%
-GuiControl, ChooseString, drpTheme, %strTheme%
-
-Gui, 2:Add, Text, y+7 xs Section, %lOptionsMenuPositionPrompt%
-
-Gui, 2:Add, Radio, % "y+5 xs vradPopupMenuPosition1 gPopupMenuPositionClicked Group " . (intPopupMenuPosition = 1 ? "Checked" : ""), %lOptionsMenuNearMouse%
-Gui, 2:Add, Radio, % "y+5 xs vradPopupMenuPosition2 gPopupMenuPositionClicked " . (intPopupMenuPosition = 2 ? "Checked" : ""), %lOptionsMenuActiveWindow%
-Gui, 2:Add, Radio, % "y+5 xs vradPopupMenuPosition3 gPopupMenuPositionClicked " . (intPopupMenuPosition = 3 ? "Checked" : ""), %lOptionsMenuFixPosition%
-
-Gui, 2:Add, Text, % "y+5 xs+18 vlblPopupFixPositionX " . (intPopupMenuPosition = 3 ? "" : "hidden"), %lOptionsPopupFixPositionX%
-Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionX center " . (intPopupMenuPosition = 3 ? "" : "hidden"), %arrPopupFixPosition1%
-Gui, 2:Add, Text, % "yp x+5 vlblPopupFixPositionY " . (intPopupMenuPosition = 3 ? "" : "hidden"), %lOptionsPopupFixPositionY%
-Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionY center " . (intPopupMenuPosition = 3 ? "" : "hidden"), %arrPopupFixPosition2%
-
-
-Gui, 2:Show, AutoSize Center
-Gui, 1:+Disabled
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-PopupMenuPositionClicked:
-;------------------------------------------------------------
-Gui, 2:Submit, NoHide
-
-GuiControl, % (radPopupMenuPosition3 ? "Show" : "Hide"), lblPopupFixPositionX
-GuiControl, % (radPopupMenuPosition3 ? "Show" : "Hide"), strPopupFixPositionX
-GuiControl, % (radPopupMenuPosition3 ? "Show" : "Hide"), lblPopupFixPositionY
-GuiControl, % (radPopupMenuPosition3 ? "Show" : "Hide"), strPopupFixPositionY
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-ButtonSelectDOpusPath:
-;------------------------------------------------------------
-
-if StrLen(strDirectoryOpusPath) and (strDirectoryOpusPath <> "NO")
-	strCurrentDOpusLocation := strDirectoryOpusPath
-else
-	strCurrentDOpusLocation := A_ProgramFiles . "\GPSoftware\Directory Opus\dopus.exe"
-
-FileSelectFile, strNewDOpusLocation, 3, %strCurrentDOpusLocation%, %lDialogAddFolderSelect%
-
-if !(StrLen(strNewDOpusLocation))
-	return
-
-GuiControl, 2:, strDirectoryOpusPath, %strNewDOpusLocation%
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-ButtonSelectTCPath:
-;------------------------------------------------------------
-
-if StrLen(strTotalCommanderPath) and (strTotalCommanderPath <> "NO")
-	strCurrentTCLocation := strTotalCommanderPath
-else
-	strCurrentTCLocation := GetTotalCommanderPath()
-
-FileSelectFile, strNewTCLocation, 3, %strCurrentTCLocation%, %lDialogAddFolderSelect%
-
-if !(StrLen(strNewTCLocation))
-	return
-
-GuiControl, 2:, strTotalCommanderPath, %strNewTCLocation%
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-ButtonOptionsChangeHotkey1:
-ButtonOptionsChangeHotkey2:
-ButtonOptionsChangeHotkey3:
-ButtonOptionsChangeHotkey4:
-ButtonOptionsChangeHotkey5:
-ButtonOptionsChangeHotkey6:
-;------------------------------------------------------------
-
-StringReplace, intIndex, A_ThisLabel, ButtonOptionsChangeHotkey
-intGui2WinID := WinExist("A")
-
-Gui, 2:Submit, NoHide
-Gui, 3:New, , % L(lOptionsChangeHotkeyTitle, strAppName, strAppVersion)
-Gui, 3:Color, %strGuiWindowColor%
-Gui, 3:+Owner2
-Gui, 3:Font, s10 w700, Verdana
-Gui, 3:Add, Text, x10 y10 w350 center, % L(lOptionsChangeHotkeyTitle, strAppName)
-Gui, 3:Font
-
-intHotkeyType := 3 ; Settings and Recent folders
-if InStr(arrIniKeyNames%intIndex%, "Mouse")
-	intHotkeyType := 1
-if InStr(arrIniKeyNames%intIndex%, "Keyboard")
-	intHotkeyType := 2
-
-Gui, 3:Add, Text, y+15 x10 , %lOptionsTriggerFor%
-Gui, 3:Font, s8 w700
-Gui, 3:Add, Text, x+5 yp , % arrOptionsTitles%intIndex%
-Gui, 3:Font
-
-Gui, 3:Add, Text, x10 y+5 w350, % lOptionsArrDescriptions%intIndex%
-
-Gui, 3:Add, CheckBox, y+20 x50 vblnOptionsShift, %lOptionsShift%
-GuiControl, , blnOptionsShift, % InStr(strModifiers%intIndex%, "+") ? 1 : 0
-GuiControlGet, posTop, Pos, blnOptionsShift
-Gui, 3:Add, CheckBox, y+10 x50 vblnOptionsCtrl, %lOptionsCtrl%
-GuiControl, , blnOptionsCtrl, % InStr(strModifiers%intIndex%, "^") ? 1 : 0
-Gui, 3:Add, CheckBox, y+10 x50 vblnOptionsAlt, %lOptionsAlt%
-GuiControl, , blnOptionsAlt, % InStr(strModifiers%intIndex%, "!") ? 1 : 0
-Gui, 3:Add, CheckBox, y+10 x50 vblnOptionsWin, %lOptionsWin%
-GuiControl, , blnOptionsWin, % InStr(strModifiers%intIndex%, "#") ? 1 : 0
-
-; initialize or we may have an error if another hotkey was changed before
-strOptionsMouse := ""
-strOptionsKey := ""
-
-if (intHotkeyType = 1)
-	Gui, 3:Add, DropDownList, % "y" . posTopY . " x150 w200 vstrOptionsMouse gOptionsMouseChanged", % strMouseButtonsWithDefault%intIndex%
-if (intHotkeyType <> 1)
-{
-	Gui, 3:Add, Text, % "y" . posTopY . " x150 w60", %lOptionsKeyboard%
-	Gui, 3:Add, Hotkey, yp x+10 w130 vstrOptionsKey gOptionsHotkeyChanged
-	GuiControl, , strOptionsKey, % strOptionsKey%intIndex%
-}
-if (intHotkeyType = 3)
-	Gui, 3:Add, DropDownList, % "y" . posTopY + 50 . " x150 w200 vstrOptionsMouse gOptionsMouseChanged", % strMouseButtonsWithDefault%intIndex%
-
-Gui, 3:Add, Button, y240 x140 vbtnChangeHotkeySave gButtonChangeHotkeySave%intIndex%, %lGuiSave%
-Gui, 3:Add, Button, yp x+20 vbtnChangeHotkeyCancel gButtonChangeHotkeyCancel, %lGuiCancel%
-GuiCenterButtons(L(lOptionsChangeHotkeyTitle, strAppName, strAppVersion), 10, 5, 20, , "btnChangeHotkeySave", "btnChangeHotkeyCancel")
-
-Gui, 3:Add, Text
-GuiControl, Focus, btnChangeHotkeySave
-Gui, 3:Show, AutoSize Center
-Gui, 2:+Disabled
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-DisplayRecentFoldersClicked:
-;------------------------------------------------------------
-Gui, 2:Submit, NoHide
-
-GuiControl, % (blnDisplayRecentFolders ? "Show" : "Hide"), intRecentFolders
-GuiControl, % (blnDisplayRecentFolders ? "Show" : "Hide"), lblRecentFolders
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-ButtonOptionsSave:
-;------------------------------------------------------------
-Gui, 2:Submit
-
-blnMenuReady := false
-
-IfExist, %A_Startup%\%strAppName%.lnk
-	FileDelete, %A_Startup%\%strAppName%.lnk
-if (blnOptionsRunAtStartup)
-	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%strAppName%.lnk, %A_ScriptDir%
-Menu, Tray, % blnOptionsRunAtStartup ? "Check" : "Uncheck", %lMenuRunAtStartup%
-
-IniWrite, %blnDisplayTrayTip%, %strIniFile%, Global, DisplayTrayTip
-IniWrite, %blnDisplayIcons%, %strIniFile%, Global, DisplayIcons
-IniWrite, %blnDisplaySpecialFolders%, %strIniFile%, Global, DisplaySpecialFolders
-IniWrite, %blnDisplayRecentFolders%, %strIniFile%, Global, DisplayRecentFolders
-IniWrite, %intRecentFolders%, %strIniFile%, Global, RecentFolders
-IniWrite, %blnDisplaySwitchMenu%, %strIniFile%, Global, DisplaySwitchMenu
-IniWrite, %blnDisplayMenuShortcuts%, %strIniFile%, Global, DisplayMenuShortcuts
-
-if (radPopupMenuPosition1)
-	intPopupMenuPosition := 1
-else if (radPopupMenuPosition2)
-	intPopupMenuPosition := 2
-else
-	intPopupMenuPosition := 3
-IniWrite, %intPopupMenuPosition%, %strIniFile%, Global, PopupMenuPosition
-	
-IniWrite, %strPopupFixPositionX%`,%strPopupFixPositionY%, %strIniFile%, Global, PopupFixPosition
-arrPopupFixPosition1 := strPopupFixPositionX
-arrPopupFixPosition2 := strPopupFixPositionY
-
-strLanguageCodePrev := strLanguageCode
-strLanguageLabel := drpLanguage
-loop, %arrOptionsLanguageLabels0%
-	if (arrOptionsLanguageLabels%A_Index% = strLanguageLabel)
-		{
-			strLanguageCode := arrOptionsLanguageCodes%A_Index%
-			break
-		}
-IniWrite, %strLanguageCode%, %strIniFile%, Global, LanguageCode
-
-strThemePrev := strTheme
-strTheme := drpTheme
-IniWrite, %strTheme%, %strIniFile%, Global, Theme
-
-intIconSize := drpIconSize
-IniWrite, %intIconSize%, %strIniFile%, Global, IconSize
-
-IniWrite, %strDirectoryOpusPath%, %strIniFile%, Global, DirectoryOpusPath
-blnUseDirectoryOpus := StrLen(strDirectoryOpusPath)
-if (blnUseDirectoryOpus)
-{
-	blnUseDirectoryOpus := FileExist(strDirectoryOpusPath)
-	if (blnUseDirectoryOpus)
-		Gosub, SetDOpusRt
-}
-
-IniWrite, %strTotalCommanderPath%, %strIniFile%, Global, TotalCommanderPath
-IniWrite, %blnTotalCommanderUseTabs%, %strIniFile%, Global, TotalCommanderUseTabs
-blnUseTotalCommander := StrLen(strTotalCommanderPath)
-if (blnUseTotalCommander)
-{
-	blnUseTotalCommander := FileExist(strTotalCommanderPath)
-	if (blnUseTotalCommander)
-		Gosub, SetTCCommand
-}
-if (blnTotalCommanderUseTabs)
-	strTotalCommanderNewTabOrWindow := "/O /T" ; open new folder in a new tab
-else
-	strTotalCommanderNewTabOrWindow := "/N" ; open new folder in a new window (TC instance)
-
-; if language or theme changed, offer to restart the app
-if (strLanguageCodePrev <> strLanguageCode) or (strThemePrev <> strTheme)
-{
-	MsgBox, 52, %strAppName%, % L(lReloadPrompt, (strLanguageCodePrev <> strLanguageCode ? lOptionsLanguage : lOptionsTheme), (strLanguageCodePrev <> strLanguageCode ? strLanguageLabel : strTheme), strAppName)
-	IfMsgBox, Yes
-	{
-		Gosub, RestoreBackupMenuObjects
-		Reload
-	}
-}	
-
-; else rebuild special and switch menus
-Gosub, BuildSpecialFoldersMenu
-Gosub, BuildSwitchMenu
-
-; and rebuild Folders menus w/ or w/o optional folders and shortcuts
-for strMenuName, arrMenu in arrMenus
-{
-	Menu, %strMenuName%, Add
-	Menu, %strMenuName%, DeleteAll
-	arrMenu := ; free object's memory
-}
-Gosub, BuildFoldersMenusWithStatus
-
-Gosub, 2GuiClose
-
-blnMenuReady := true
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-ButtonOptionsCancel:
-;------------------------------------------------------------
-Gosub, 2GuiClose
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-2GuiClose:
-2GuiEscape:
-;------------------------------------------------------------
-
-Gui, 1:-Disabled
-Gui, 2:Destroy
-WinActivate, ahk_id %intGui1WinID%
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-OptionsHotkeyChanged:
-;------------------------------------------------------------
-strOptionsHotkeyControl := A_GuiControl ; hotkey var name
-strOptionsHotkeyChanged := %strOptionsHotkeyControl% ; hotkey content
-
-if !StrLen(strOptionsHotkeyChanged)
-	return
-
-SplitModifiersFromKey(strOptionsHotkeyChanged, strOptionsHotkeyChangedModifiers, strOptionsHotkeyChangedKey)
-
-if StrLen(strOptionsHotkeyChangedModifiers) ; we have a modifier and we don't want it, reset keyboard to none and return
-	GuiControl, , %A_GuiControl%, None
-else ; we have a valid key, empty the mouse dropdown and return
-{
-	StringReplace, strOptionsMouseControl, strOptionsHotkeyControl, Key, Mouse ; get the matching mouse dropdown var
-	GuiControl, Choose, %strOptionsMouseControl%, 0
-}
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-OptionsMouseChanged:
-;------------------------------------------------------------
-
-strOptionsMouseControl := A_GuiControl ; hotkey var name
-GuiControlGet, strOptionsMouseValue, , %strOptionsMouseControl%
-
-if (strOptionsMouseValue = lOptionsMouseNone) ; this is the translated "None"
-{
-	GuiControl, , blnOptionsShift, 0
-	GuiControl, , blnOptionsCtrl, 0
-	GuiControl, , blnOptionsAlt, 0
-	GuiControl, , blnOptionsWin, 0
-}
-
-if (intHotkeyType = 3) ; both keyboard and mouse options are available
-{
-	StringReplace, strOptionsHotkeyControl, strOptionsMouseControl, Mouse, Key ; get the hotkey var
-
-	; we have a mouse button, empty the hotkey control
-	GuiControl, , %strOptionsHotkeyControl%, None
-}
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-ButtonChangeHotkeySave1:
-ButtonChangeHotkeySave2:
-ButtonChangeHotkeySave3:
-ButtonChangeHotkeySave4:
-ButtonChangeHotkeySave5:
-ButtonChangeHotkeySave6:
-;------------------------------------------------------------
-Gui, 3:Submit
-
-StringReplace, intIndex, A_ThisLabel, ButtonChangeHotkeySave
-
-StringSplit, arrIniVarNames, strIniKeyNames, |
-
-if StrLen(strOptionsMouse)
-	strOptionsMouse := GetMouseButton4Text(strOptionsMouse) ; get mouse button system name from dropdown localized text
-else
-	strMouseButton%intIndex% := "" ;  empty mouse button text
-
-strHotkey := Trim(strOptionsKey . strOptionsMouse)
-
-if StrLen(strHotkey)
-	if (strHotkey = "None") ; do not compare with lOptionsMouseNone because it is translated
-	{
-		Hotkey, % "$" . arrHotkeyVarNames%intIndex%, Off, UseErrorLevel ; UseErrorLevel in case we had an invalid key name in the ini file
-		IniWrite, None, %strIniFile%, Global, % arrIniVarNames%intIndex% ; do not write lOptionsMouseNone because it is translated
+		SplitModifiersFromKey(strThisHotkey, strThisHotkeyModifiers, strThisHotkeyKey)
+		SendInput, %strThisHotkeyModifiers%{%strThisHotkeyKey%} ; for example {MButton} or +{LButton}
 	}
 	else
 	{
-		if (blnOptionsWin)
-			strHotkey := "#" . strHotkey
-		if (blnOptionsAlt)
-			strHotkey := "!" . strHotkey
-		if (blnOptionsShift)
-			strHotkey := "+" . strHotkey
-		if (blnOptionsCtrl)
-			strHotkey := "^" . strHotkey
-
-		if (strHotkey = "LButton")
-		{
-			Oops(lOptionsMouseCheckLButton)
-			Gosub, 3GuiClose
-			return
-		}
-
-		Hotkey, % "$" . arrHotkeyVarNames%intIndex%, Off, UseErrorLevel ; UseErrorLevel in case we had an invalid key name in the ini file
-		IniWrite, %strHotkey%, %strIniFile%, Global, % arrIniVarNames%intIndex%
-		
+		StringLower, strThisHotkey, strThisHotkey
+		SendInput, %strThisHotkey% ; for example #k
 	}
-else
-	Oops(L(lOptionsNoKeyOrMouseSpecified, arrIniVarNames%intIndex%))
+	return
+}
 
-Gosub, LoadIniHotkeys ; reload ini variables and reset hotkeys
+blnMouse := InStr(A_ThisLabel, "Mouse")
+blnNewWindow := false ; used in SetMenuPosition and BuildGroupMenu
+Gosub, SetMenuPosition ; sets strTargetWinId or activate the window strTargetWinId set by CanOpenFavorite
 
-GuiControl, 2:, lblHotkeyText%intIndex%, % Hotkey2Text(strModifiers%intIndex%, strMouseButton%intIndex%, strOptionsKey%intIndex%)
+if (A_ThisLabel = "PopupMenuMouse") and (WindowIsDirectoryOpus(strTargetClass) or WindowIsTotalCommander(strTargetClass))
+{
+	Click ; to make sure the DOpus lister or TC pane under the mouse become active
+	Sleep, 20
+}
 
-Gosub, 3GuiClose
+; Can't find how to navigate a dialog box to My Computer or Network Neighborhood... is this is feasible?
+if (blnDisplaySpecialFolders)
+{
+	Menu, menuSpecialFolders
+		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+		or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
+		, %lMenuMyComputer%
+	Menu, menuSpecialFolders
+		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+		or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
+		, %lMenuNetworkNeighborhood%
+
+	; There is no point to navigate a dialog box or console to Control Panel or Recycle Bin, unknown for FreeCommander
+	Menu, menuSpecialFolders
+		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+		or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
+		, %lMenuControlPanel%
+	Menu, menuSpecialFolders
+		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+		or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
+		, %lMenuRecycleBin%
+}
+
+if (blnDisplayGroupMenu)
+{
+	Gosub, BuildGroupMenu
+	Menu, menuGroup
+		, % (!intExplorersExist ? "Disable" : "Enable") ; disable Save group menu if no Explorer
+		, %lMenuGroupSave%
+}
+
+if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass)
+	or WindowIsFreeCommander(strTargetClass) or WindowIsTotalCommander(strTargetClass)
+	or WindowIsDirectoryOpus(strTargetClass) or WindowIsDialog(strTargetClass))
+{
+	; Enable Add This Folder only if the mouse is over an Explorer (tested on WIN_XP and WIN_7) or a dialog box (works on WIN_7, not on WIN_XP)
+	; Other tests shown that WIN_8 behaves like WIN_7. So, I assume WIN_8 to work. If someone could confirm (until I can test it myself)?
+	if (blnDiagMode)
+		Diag("ShowMenu", "Favorites Menu " 
+			. (WindowIsAnExplorer(strTargetClass)  or WindowIsFreeCommander(strTargetClass)
+			or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
+			or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT")
+			. " Add this folder")
+	Menu, %lMainMenuName%
+		, % WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+		or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
+		or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
+		, %lMenuAddThisFolder%...
+	Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; at mouse pointer if option 1, 20x20 offset of active window if option 2 and fix location if option 3
+}
 
 return
 ;------------------------------------------------------------
 
 
 ;------------------------------------------------------------
-ButtonChangeHotkeyCancel:
-;------------------------------------------------------------
-Gosub, 3GuiClose
-
-return
+PopupMenuNewWindowMouse: ; default +MButton::
+PopupMenuNewWindowKeyboard: ; default +#k
 ;------------------------------------------------------------
 
-
-;------------------------------------------------------------
-3GuiClose:
-3GuiEscape:
-;------------------------------------------------------------
-
-Gui, 2:-Disabled
-Gui, 3:Destroy
-WinActivate, ahk_id %intGui2WinID%
-
-return
-;------------------------------------------------------------
-
-
-
-;============================================================
-; MIDDLESTUFF
-;============================================================
-
-
-;------------------------------------------------------------
-LoadSettingsToGui:
-;------------------------------------------------------------
-
-GuiControlGet, blnSaveEnabled, Enabled, %lGuiSave%
-if (blnSaveEnabled)
+if !(blnMenuReady)
 	return
 
-Gosub, LoadOneMenuToGui
+blnMouse := InStr(A_ThisLabel, "Mouse")
+blnNewWindow := true ; used in SetMenuPosition and BuildGroupMenu
+Gosub, SetMenuPosition ; sets strTargetWinId
 
-GuiControl, Focus, lvFoldersList
+WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
 
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-LoadOneMenuToGui:
-;------------------------------------------------------------
-
-Gui, 1:ListView, lvFoldersList
-LV_Delete()
-
-Loop, % arrMenus[strCurrentMenu].MaxIndex()
-	if (arrMenus[strCurrentMenu][A_Index].FavoriteType = "S") ; this is a submenu
-		LV_Add(, arrMenus[strCurrentMenu][A_Index].FolderName, lGuiSubmenuLocation, arrMenus[strCurrentMenu][A_Index].MenuName
-			, arrMenus[strCurrentMenu][A_Index].SubmenuFullName, arrMenus[strCurrentMenu][A_Index].FavoriteType)
-	else ; this is a folder or document
-		LV_Add(, arrMenus[strCurrentMenu][A_Index].FolderName, arrMenus[strCurrentMenu][A_Index].FolderLocation, arrMenus[strCurrentMenu][A_Index].MenuName
-			, "", arrMenus[strCurrentMenu][A_Index].FavoriteType)
-LV_Modify(1, "Select Focus")
-LV_ModifyCol(1, "AutoHdr")
-LV_ModifyCol(2, "AutoHdr")
-
-GuiControl, , drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-SaveCurrentListviewToMenuObject:
-;------------------------------------------------------------
-
-arrMenus[strCurrentMenu] := Object() ; re-init current menu array
-Gui, 1:ListView, lvFoldersList
-
-Loop % LV_GetCount()
+if (A_ThisLabel = "PopupMenuMouse") and WindowIsTotalCommander(strTargetClass)
 {
-	LV_GetText(strName, A_Index, 1)
-	LV_GetText(strLocation, A_Index, 2)
-	LV_GetText(strMenu, A_Index, 3)
-	LV_GetText(strSubmenu, A_Index, 4)
-	LV_GetText(strFavoriteType, A_Index, 5)
-
-	objFolder := Object() ; new menu item
-	objFolder.FolderName := strName ; display name of this menu item
-	objFolder.FolderLocation := strLocation ; path for this menu item
-	objFolder.MenuName := strCurrentMenu ; parent menu of this menu item - do not use strMenu because lack of lMainMenuName
-	objFolder.SubmenuFullName := strSubmenu ; if menu, full name of the submenu
-	objFolder.FavoriteType := strFavoriteType ; "F" folder, "D" document or "S" submenu
-	arrMenus[strCurrentMenu].Insert(objFolder) ; add this menu item to parent menu - do not use strMenu because lack of lMainMenuName
+	Click ; to make sure the TC pane under the mouse become active before creating a new tab
+	Sleep, 20
 }
 
+if (blnDiagMode)
+{
+	Diag("MouseOrKeyboard", A_ThisLabel)
+	WinGetTitle strDiag, % "ahk_id " . strTargetWinId
+	Diag("WinTitle", strDiag)
+	Diag("WinId", strTargetWinId)
+	Diag("Class", strTargetClass)
+	Diag("ShowMenu", "Favorites Menu " . (WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass) 
+	or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
+		or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT") . " Add this folder")
+}
+
+if (blnDisplaySpecialFolders)
+{
+	; In case it was disabled while in a dialog box
+	Menu, menuSpecialFolders, Enable, %lMenuMyComputer%
+	Menu, menuSpecialFolders, Enable, %lMenuNetworkNeighborhood%
+	Menu, menuSpecialFolders, Enable, %lMenuControlPanel%
+	Menu, menuSpecialFolders, Enable, %lMenuRecycleBin%
+}
+
+if (blnDisplayGroupMenu)
+{
+	Gosub, BuildGroupMenu
+	Menu, menuGroup
+		, % (!intExplorersExist ? "Disable" : "Enable") ; disable Save group menu if no Explorer
+		, %lMenuGroupSave%
+}
+
+; Enable "Add This Folder" only if the target window is an Explorer (tested on WIN_XP and WIN_7)
+; or a dialog box under WIN_7 (does not work under WIN_XP).
+; Other tests shown that WIN_8 behaves like WIN_7.
+Menu, %lMainMenuName%
+	, % WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+	or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
+	or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
+	, %lMenuAddThisFolder%...
+Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; at mouse pointer if option 1, 20x20 offset of active window if option 2 and fix location if option 3
+
 return
 ;------------------------------------------------------------
 
 
 ;------------------------------------------------------------
-BuildMenuTreeDropDown(strMenu, strDefaultMenu, strSkipSubmenu := "")
-; recursive function
+SetMenuPosition:
 ;------------------------------------------------------------
-{
-	strList := strMenu
-	if (strMenu = strDefaultMenu)
-		strList := strList . "|" ; default value
 
-	Loop, % arrMenus[strMenu].MaxIndex()
-		if (arrMenus[strMenu][A_Index].FavoriteType = "S") ; this is a submenu
-			if (arrMenus[strMenu][A_Index].SubmenuFullName <> strSkipSubmenu) ; skip if under edited submenu
-				strList := strList . "|" . BuildMenuTreeDropDown(arrMenus[strMenu][A_Index].SubmenuFullName, strDefaultMenu, strSkipSubmenu) ; recursive call
-	return strList
+; relative to active window if option intPopupMenuPosition = 2
+CoordMode, Mouse, % (intPopupMenuPosition = 2 ? "Window" : "Screen")
+CoordMode, Menu, % (intPopupMenuPosition = 2 ? "Window" : "Screen")
+
+if (intPopupMenuPosition = 1) ; display menu near mouse pointer location
+	MouseGetPos, intMenuPosX, intMenuPosY
+else if (intPopupMenuPosition = 2) ; display menu at an offset of 20x20 pixel from top-left of active window area
+{
+	intMenuPosX := 20
+	intMenuPosY := 20
+}
+else ; (intPopupMenuPosition =  3) - fix position - use the intMenuPosX and intMenuPosY values from the ini file
+{
+	intMenuPosX := arrPopupFixPosition1
+	intMenuPosY := arrPopupFixPosition2
+}
+
+; not related to set position but this is a good place to execute it ;-)
+if (blnMouse)
+	if (blnNewWindow)
+		MouseGetPos, , , strTargetWinId ; sets strTargetWinId for PopupMenuNewWindowMouse
+	else
+		WinActivate, % "ahk_id " . strTargetWinId ; activate for PopupMenuMouse
+else (keyboard)
+	if (blnNewWindow)
+		strTargetWinId := WinExist("A") ; sets strTargetWinId for PopupMenuNewWindowKeyboard
+
+return
+;------------------------------------------------------------
+
+
+
+;========================================================================================================================
+; CLASS
+;========================================================================================================================
+
+
+;------------------------------------------------------------
+CanOpenFavorite(strMouseOrKeyboard, ByRef strWinId, ByRef strClass, ByRef strControlID)
+;------------------------------------------------------------
+; "CabinetWClass" and "ExploreWClass" -> Explorer
+; "ProgMan" -> Desktop
+; "WorkerW" -> Desktop
+; "ConsoleWindowClass" -> Console (CMD)
+; "#32770" -> Dialog
+; "bosa_sdm_" (...) -> Dialog MS Office under WinXP
+{
+	
+	global blnUseDirectoryOpus
+	global blnUseTotalCommander
+	
+	if (strMouseOrKeyboard = "PopupMenuMouse")
+		MouseGetPos, , , strWinId, strControlID
+	else
+	{
+		strWinId := WinExist("A")
+		strControlID := ""
+	}
+	WinGetClass strClass, % "ahk_id " . strWinId
+
+	blnCanOpenFavorite := WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or WindowIsConsole(strClass)
+		or WindowIsDialog(strClass) or WindowIsFreeCommander(strClass)
+		or (WindowIsTotalCommander(strClass) and blnUseTotalCommander)
+		or (WindowIsDirectoryOpus(strClass) and blnUseDirectoryOpus)
+
+	if (blnDiagMode)
+	{
+		Diag("MouseOrKeyboard", strMouseOrKeyboard)
+		WinGetTitle strDiag, % "ahk_id " . strWinId
+		Diag("WinTitle", strDiag)
+		Diag("WinId", strWinId)
+		Diag("ControlID", strControlID)
+		Diag("Class", strClass)
+		Diag("CanOpenFavorite", blnCanOpenFavorite)
+	}
+	return blnCanOpenFavorite
 }
 ;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+WindowIsAnExplorer(strClass)
+;------------------------------------------------------------
+{
+	return (strClass = "CabinetWClass") or (strClass = "ExploreWClass")
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+WindowIsDesktop(strClass)
+;------------------------------------------------------------
+{
+	return (strClass = "ProgMan") or (strClass = "WorkerW") or (strClass = "Shell_TrayWnd")
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+WindowIsTray(strClass)
+;------------------------------------------------------------
+{
+	return (strClass = "Shell_TrayWnd") or (strClass = "NotifyIconOverflowWindow")
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+WindowIsConsole(strClass)
+;------------------------------------------------------------
+{
+	return (strClass = "ConsoleWindowClass")
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+WindowIsDialog(strClass)
+;------------------------------------------------------------
+{
+	return (strClass = "#32770")
+	; or InStr(strClass, "bosa_sdm_")
+	; Removed 2014-09-27  (see http://code.jeanlalonde.ca/folderspopup/#comment-7912)
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+WindowIsFreeCommander(strClass)
+;------------------------------------------------------------
+{
+	return InStr(strClass, "FreeCommanderXE")
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+WindowIsTotalCommander(strClass)
+;------------------------------------------------------------
+{
+	return InStr(strClass, "TTOTAL_CMD")
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+WindowIsDirectoryOpus(strClass)
+;------------------------------------------------------------
+{
+	return InStr(strClass, "dopus")
+}
+;------------------------------------------------------------
+
+
+
+;========================================================================================================================
+; MENU ACTIONS
+;========================================================================================================================
 
 
 ;------------------------------------------------------------
@@ -3850,6 +2233,32 @@ if (blnDiagMode)
 	Diag("NavigateResult", ErrorLevel)
 
 return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GetLocationFor(strMenu, strName)
+;------------------------------------------------------------
+{
+	global
+	
+	Loop, % arrMenus[strMenu].MaxIndex()
+		if (strName = arrMenus[strMenu][A_Index].FavoriteName)
+			return arrMenus[strMenu][A_Index].FavoriteLocation
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GetFavoriteTypeFor(strMenu, strName)
+;------------------------------------------------------------
+{
+	global
+	
+	Loop, % arrMenus[strMenu].MaxIndex()
+		if (strName = arrMenus[strMenu][A_Index].FavoriteName)
+			return arrMenus[strMenu][A_Index].FavoriteType
+}
 ;------------------------------------------------------------
 
 
@@ -4053,19 +2462,19 @@ return
 SwitchExplorer:
 ;------------------------------------------------------------
 
-if (objSwitchMenuExplorers[A_ThisMenuItemPos].WindowType = "DO") ; this is a DOpus lister
+if (objGroupMenuExplorers[A_ThisMenuItemPos].WindowType = "DO") ; this is a DOpus lister
 {
-	if InStr(objSwitchMenuExplorers[A_ThisMenuItemPos].Path, "%")
+	if InStr(objGroupMenuExplorers[A_ThisMenuItemPos].Path, "%")
 	{
 		; double % for DOpusRT (http://resource.dopus.com/viewtopic.php?f=3&t=23013#p124395)
-		strDOpusPathOK := objSwitchMenuExplorers[A_ThisMenuItemPos].Path
+		strDOpusPathOK := objGroupMenuExplorers[A_ThisMenuItemPos].Path
 		StringReplace, strDOpusPathOK, strDOpusPathOK, % "%", % "%%", A
-		objSwitchMenuExplorers[A_ThisMenuItemPos].Path := strDOpusPathOK
+		objGroupMenuExplorers[A_ThisMenuItemPos].Path := strDOpusPathOK
 	}
-	RunDOpusRt("/acmd Go ", objSwitchMenuExplorers[A_ThisMenuItemPos].Path, " EXISTINGLISTER") ; activate an existing lister listing this path
+	RunDOpusRt("/acmd Go ", objGroupMenuExplorers[A_ThisMenuItemPos].Path, " EXISTINGLISTER") ; activate an existing lister listing this path
 }
 else ; Explorer
-	WinActivate, % "ahk_id " . objSwitchMenuExplorers[A_ThisMenuItemPos].WindowId
+	WinActivate, % "ahk_id " . objGroupMenuExplorers[A_ThisMenuItemPos].WindowId
 
 return
 ;------------------------------------------------------------
@@ -4075,51 +2484,51 @@ return
 SwitchDialog:
 ;------------------------------------------------------------
 
-NavigateDialog(objSwitchMenuExplorers[A_ThisMenuItemPos].Path, strTargetWinId, strTargetClass)
+NavigateDialog(objGroupMenuExplorers[A_ThisMenuItemPos].Path, strTargetWinId, strTargetClass)
 
 return
 ;------------------------------------------------------------
 
 
 ;------------------------------------------------------------
-SwitchSaveGroup:
+GroupSave:
 ;------------------------------------------------------------
 
 ; MsgBox, Not finished...
 ; return
 
-Gui, 2:New, , % L(lGuiSwitchSaveTitle, lMenuSwitchSave, strAppName, strAppVersion)
+Gui, 2:New, , % L(lGuiGroupSaveTitle, lMenuGroupSave, strAppName, strAppVersion)
 Gui, 2:Margin, 10, 10
 Gui, 2:Color, %strGuiWindowColor%
 Gui, 2:+OwnDialogs
 
 Gui, 2:Font, s10 w700, Verdana
-Gui, 2:Add, Text, x10 y10 w670 center, %lMenuSwitchSave%
+Gui, 2:Add, Text, x10 y10 w670 center, %lMenuGroupSave%
 Gui, 2:Font
 
-Gui, 2:Add, Text, x10 y+15 w670 center, %lGuiSwitchSaveSelect%
+Gui, 2:Add, Text, x10 y+15 w670 center, %lGuiGroupSaveSelect%
 
 Gui, 2:Add, ListView
 	, xm w680 h200 Checked Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvGroupList
-	, %lGuiSwitchSaveLvHeader%|Hidden: Path|WindowId|Position|TabId
+	, %lGuiGroupSaveLvHeader%|Hidden: Path|WindowId|Position|TabId
 Loop, 4
 	LV_ModifyCol(A_Index + 3, "Right")
 
-for intIndex, objSwitchMenuExplorer in objSwitchMenuExplorers
+for intIndex, objGroupMenuExplorer in objGroupMenuExplorers
 {
-	if !(objSwitchMenuExplorer.NameExist)
+	if !(objGroupMenuExplorer.NameExist)
 		Continue
-	arrExplorerPosition := objSwitchMenuExplorer.Position
+	arrExplorerPosition := objGroupMenuExplorer.Position
 	StringSplit, arrExplorerPosition, arrExplorerPosition, "|"
-	LV_Add("Check", objSwitchMenuExplorer.Name
-		, (objSwitchMenuExplorer.WindowType = "DO" ? "Directory Opus" : (objSwitchMenuExplorer.WindowType = "TC" ? "Total Commander" : "Windows Explorer"))
-		, (objSwitchMenuExplorer.MinMax = -1 ? "Minimized" : (objSwitchMenuExplorer.MinMax = "1" ? "Maximized" : "Normal"))
-		, (objSwitchMenuExplorer.MinMax = 0 ? arrExplorerPosition1 : "-")
-		, (objSwitchMenuExplorer.MinMax = 0 ? arrExplorerPosition2 : "-")
-		, (objSwitchMenuExplorer.MinMax = 0 ? arrExplorerPosition3 : "-")
-		, (objSwitchMenuExplorer.MinMax = 0 ? arrExplorerPosition4 : "-")
-		, (objSwitchMenuExplorer.Pane ? objSwitchMenuExplorer.Pane : "-")
-		, objSwitchMenuExplorer.Path, objSwitchMenuExplorer.WindowId, objSwitchMenuExplorer.Position, objSwitchMenuExplorer.TabId)
+	LV_Add("Check", objGroupMenuExplorer.Name
+		, (objGroupMenuExplorer.WindowType = "DO" ? "Directory Opus" : (objGroupMenuExplorer.WindowType = "TC" ? "Total Commander" : "Windows Explorer"))
+		, (objGroupMenuExplorer.MinMax = -1 ? "Minimized" : (objGroupMenuExplorer.MinMax = "1" ? "Maximized" : "Normal"))
+		, (objGroupMenuExplorer.MinMax = 0 ? arrExplorerPosition1 : "-")
+		, (objGroupMenuExplorer.MinMax = 0 ? arrExplorerPosition2 : "-")
+		, (objGroupMenuExplorer.MinMax = 0 ? arrExplorerPosition3 : "-")
+		, (objGroupMenuExplorer.MinMax = 0 ? arrExplorerPosition4 : "-")
+		, (objGroupMenuExplorer.Pane ? objGroupMenuExplorer.Pane : "-")
+		, objGroupMenuExplorer.Path, objGroupMenuExplorer.WindowId, objGroupMenuExplorer.Position, objGroupMenuExplorer.TabId)
 }
 
 LV_Modify(1, "Select Focus")
@@ -4128,19 +2537,19 @@ Loop, 12
 Loop, % (blnUseDirectoryOpus ? 4 : 5)
 	LV_ModifyCol(A_Index + (blnUseDirectoryOpus ? 8 : 7), 0) ; hide 8th-12th columns
 
-Gui, 2:Add, Text, x10 y+10 w250 section, %lGuiSwitchSaveName%
-Gui, 2:Add, Edit, x10 y+5 w250 Limit248 vstrSwitchSaveName, %strSwitchSaveName% ; maximum length of ini section name is 255 ("Group-" is prepended)
+Gui, 2:Add, Text, x10 y+10 w250 section, %lGuiGroupSaveName%
+Gui, 2:Add, Edit, x10 y+5 w250 Limit248 vstrGroupSaveName, %strGroupSaveName% ; maximum length of ini section name is 255 ("Group-" is prepended)
 
-Gui, 2:Add, Text, ys x300, %lGuiSwitchSaveRestoreOption%:
-Gui, 2:Add, Radio, x+10 yp section vblnRadioReplaceWindows checked, %lGuiSwitchSaveReplaceWindowsLabel%
-Gui, 2:Add, Radio, xs y+5 vblnRadioAddWindows, %lGuiSwitchSaveAddWindowsLabel%
+Gui, 2:Add, Text, ys x300, %lGuiGroupSaveRestoreOption%:
+Gui, 2:Add, Radio, x+10 yp section vblnRadioReplaceWindows checked, %lGuiGroupSaveReplaceWindowsLabel%
+Gui, 2:Add, Radio, xs y+5 vblnRadioAddWindows, %lGuiGroupSaveAddWindowsLabel%
 
-Gui, 2:Add, Button, y+20 vbtnSwitchSaveSave gButtonSwitchSaveSave, %lGuiSave%
-Gui, 2:Add, Button, yp vbtnSwitchSaveCancel gButtonSwitchSaveCancel, %lGuiCancel%
-GuiCenterButtons(L(lGuiSwitchSaveTitle, lMenuSwitchSave, strAppName, strAppVersion), 10, 5, 20, , "btnSwitchSaveSave", "btnSwitchSaveCancel")
+Gui, 2:Add, Button, y+20 vbtnGroupSave gButtonGroupSave, %lGuiSave%
+Gui, 2:Add, Button, yp vbtnGroupSaveCancel gButtonGroupSaveCancel, %lGuiCancel%
+GuiCenterButtons(L(lGuiGroupSaveTitle, lMenuGroupSave, strAppName, strAppVersion), 10, 5, 20, , "btnGroupSave", "btnGroupSaveCancel")
 
-GuiControl, Focus, strSwitchSaveName
-GuiControl, +Default, btnSwitchSaveSave
+GuiControl, Focus, strGroupSaveName
+GuiControl, +Default, btnGroupSave
 Gui, 2:Show, AutoSize Center
 
 return
@@ -4148,60 +2557,60 @@ return
 
 
 ;------------------------------------------------------------
-ButtonSwitchSaveSave:
+ButtonGroupSave:
 ;------------------------------------------------------------
 Gui, 2:Submit, NoHide
 
-if !StrLen(strSwitchSaveName)
+if !StrLen(strGroupSaveName)
 {
-	Oops(lGuiSwitchSaveNameEmpty)
+	Oops(lGuiGroupSaveNameEmpty)
 	return
 }
 
-if GroupExists(strSwitchSaveName)
+if GroupExists(strGroupSaveName)
 {
-	MsgBox, 52, %strAppName%, % L(lGuiSwitchSaveReplaceGroup, strSwitchSaveName)
+	MsgBox, 52, %strAppName%, % L(lGuiGroupSaveReplaceGroup, strGroupSaveName)
 	IfMsgBox, No
 		return
 }
 
-if GroupExists(strSwitchSaveName)
-	IniDelete, %strIniFile%, Group-%strSwitchSaveName%
+if GroupExists(strGroupSaveName)
+	IniDelete, %strIniFile%, Group-%strGroupSaveName%
 else
 {
-	strGroups := strGroups . (StrLen(strGroups) ? "|" : "") . strSwitchSaveName
+	strGroups := strGroups . (StrLen(strGroups) ? "|" : "") . strGroupSaveName
 	IniWrite, %strGroups%, %strIniFile%, Global, Groups
 }
 
-IniWrite, %blnRadioReplaceWindows%, %strIniFile%, Group-%strSwitchSaveName%, ReplaceWhenRestoringThisGroup
+IniWrite, %blnRadioReplaceWindows%, %strIniFile%, Group-%strGroupSaveName%, ReplaceWhenRestoringThisGroup
 intRow := 0
 Loop
 {
 	intRow := LV_GetNext(intRow, "Checked")
     if !(intRow)
         break
-	IniWrite, % objSwitchMenuExplorers[intRow].Name
-		. "|" . objSwitchMenuExplorers[intRow].WindowType
-		. "|" . objSwitchMenuExplorers[intRow].MinMax
-		. "|" . objSwitchMenuExplorers[intRow].Position
-		. "|" . objSwitchMenuExplorers[intRow].Pane
-		. "|" . objSwitchMenuExplorers[intRow].WindowId
-		, %strIniFile%, Group-%strSwitchSaveName%, Explorer%A_Index%
+	IniWrite, % objGroupMenuExplorers[intRow].Name
+		. "|" . objGroupMenuExplorers[intRow].WindowType
+		. "|" . objGroupMenuExplorers[intRow].MinMax
+		. "|" . objGroupMenuExplorers[intRow].Position
+		. "|" . objGroupMenuExplorers[intRow].Pane
+		. "|" . objGroupMenuExplorers[intRow].WindowId
+		, %strIniFile%, Group-%strGroupSaveName%, Explorer%A_Index%
 }
 
-strUseMenuLoad := strBuildMenuFullName . "... " . lMenuSwitchLoad
+strUseMenuLoad := strBuildMenuFullName . "... " . lMenuGroupLoad
 StringReplace, strUseMenuLoad, strUseMenuLoad, &, , All
-Oops(lGuiSwitchSaveGroupSaved, strSwitchSaveName, strUseMenuLoad)
+Oops(lGuiGroupSaved, strGroupSaveName, strUseMenuLoad)
 
-Gosub, ButtonSwitchSaveCancel
-strSwitchSaveName := ""
+Gosub, ButtonGroupSaveCancel
+strGroupSaveName := ""
 
 return
 ;------------------------------------------------------------
 
 
 ;------------------------------------------------------------
-ButtonSwitchSaveCancel:
+ButtonGroupSaveCancel:
 ;------------------------------------------------------------
 
 Gui, 2:Destroy
@@ -4226,13 +2635,13 @@ GroupExists(strGroup)
 
 
 ;------------------------------------------------------------
-SwitchLoadGroup:
+GroupLoad:
 ;------------------------------------------------------------
 
 ; MsgBox, Not finished...
 ; return
 
-; ####
+; ###
 
 intSleepAfterWindowCommand := 500
 
@@ -4396,15 +2805,15 @@ Loop
 
 	StringSplit, arrThisExplorer, strExplorer, |
 
-	; 1	objSwitchMenuExplorers[intRow].Name
-	; 2	objSwitchMenuExplorers[intRow].WindowType
-	; 3	objSwitchMenuExplorers[intRow].MinMax
-	; 4	objSwitchMenuExplorers[intRow].Left
-	; 5	objSwitchMenuExplorers[intRow].Top
-	; 6	objSwitchMenuExplorers[intRow].Width
-	; 7	objSwitchMenuExplorers[intRow].Height
-	; 8	objSwitchMenuExplorers[intRow].Pane
-	; 9	objSwitchMenuExplorers[intRow].WindowId
+	; 1	objGroupMenuExplorers[intRow].Name
+	; 2	objGroupMenuExplorers[intRow].WindowType
+	; 3	objGroupMenuExplorers[intRow].MinMax
+	; 4	objGroupMenuExplorers[intRow].Left
+	; 5	objGroupMenuExplorers[intRow].Top
+	; 6	objGroupMenuExplorers[intRow].Width
+	; 7	objGroupMenuExplorers[intRow].Height
+	; 8	objGroupMenuExplorers[intRow].Pane
+	; 9	objGroupMenuExplorers[intRow].WindowId
 	
 	objIniEntry := Object()
 	objIniEntry.Name := arrThisExplorer1
@@ -4494,177 +2903,10 @@ DOpusWindowOfPane(intPane, strId)
 ;------------------------------------------------------------
 
 
-;------------------------------------------------------------
-WinGetClassA()
-;------------------------------------------------------------
-{
-	WinGetClass strClass, A
-	return strClass
-}
-;------------------------------------------------------------
 
-
-;------------------------------------------------------------
-WinUnderMouseClass()
-;------------------------------------------------------------
-{
-	WinGetClass strClass, % "ahk_id " . WinUnderMouseID()
-	return strClass
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-WinUnderMouseID()
-;------------------------------------------------------------
-{
-	MouseGetPos, , , strWinId
-	return strWinId
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GetLocationFor(strMenu, strName)
-;------------------------------------------------------------
-{
-	global
-	
-	Loop, % arrMenus[strMenu].MaxIndex()
-		if (strName = arrMenus[strMenu][A_Index].FolderName)
-			return arrMenus[strMenu][A_Index].FolderLocation
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GetFavoriteTypeFor(strMenu, strName)
-;------------------------------------------------------------
-{
-	global
-	
-	Loop, % arrMenus[strMenu].MaxIndex()
-		if (strName = arrMenus[strMenu][A_Index].FolderName)
-			return arrMenus[strMenu][A_Index].FavoriteType
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-CanOpenFavorite(strMouseOrKeyboard, ByRef strWinId, ByRef strClass, ByRef strControlID)
-;------------------------------------------------------------
-; "CabinetWClass" and "ExploreWClass" -> Explorer
-; "ProgMan" -> Desktop
-; "WorkerW" -> Desktop
-; "ConsoleWindowClass" -> Console (CMD)
-; "#32770" -> Dialog
-; "bosa_sdm_" (...) -> Dialog MS Office under WinXP
-{
-	
-	global blnUseDirectoryOpus
-	global blnUseTotalCommander
-	
-	if (strMouseOrKeyboard = "PopupMenuMouse")
-		MouseGetPos, , , strWinId, strControlID
-	else
-	{
-		strWinId := WinExist("A")
-		strControlID := ""
-	}
-	WinGetClass strClass, % "ahk_id " . strWinId
-
-	blnCanOpenFavorite := WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or WindowIsConsole(strClass)
-		or WindowIsDialog(strClass) or WindowIsFreeCommander(strClass)
-		or (WindowIsTotalCommander(strClass) and blnUseTotalCommander)
-		or (WindowIsDirectoryOpus(strClass) and blnUseDirectoryOpus)
-
-	if (blnDiagMode)
-	{
-		Diag("MouseOrKeyboard", strMouseOrKeyboard)
-		WinGetTitle strDiag, % "ahk_id " . strWinId
-		Diag("WinTitle", strDiag)
-		Diag("WinId", strWinId)
-		Diag("ControlID", strControlID)
-		Diag("Class", strClass)
-		Diag("CanOpenFavorite", blnCanOpenFavorite)
-	}
-	return blnCanOpenFavorite
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-WindowIsAnExplorer(strClass)
-;------------------------------------------------------------
-{
-	return (strClass = "CabinetWClass") or (strClass = "ExploreWClass")
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-WindowIsDesktop(strClass)
-;------------------------------------------------------------
-{
-	return (strClass = "ProgMan") or (strClass = "WorkerW") or (strClass = "Shell_TrayWnd")
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-WindowIsConsole(strClass)
-;------------------------------------------------------------
-{
-	return (strClass = "ConsoleWindowClass")
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-WindowIsDialog(strClass)
-;------------------------------------------------------------
-{
-	return (strClass = "#32770")
-	; or InStr(strClass, "bosa_sdm_")
-	; Removed 2014-09-27  (see http://code.jeanlalonde.ca/folderspopup/#comment-7912)
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-WindowIsFreeCommander(strClass)
-;------------------------------------------------------------
-{
-	return InStr(strClass, "FreeCommanderXE")
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-WindowIsTotalCommander(strClass)
-;------------------------------------------------------------
-{
-	return InStr(strClass, "TTOTAL_CMD")
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-WindowIsDirectoryOpus(strClass)
-;------------------------------------------------------------
-{
-	return InStr(strClass, "dopus")
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-WindowIsTray(strClass)
-;------------------------------------------------------------
-{
-	return (strClass = "Shell_TrayWnd") or (strClass = "NotifyIconOverflowWindow")
-}
-;------------------------------------------------------------
+;========================================================================================================================
+; NAVIGATE
+;========================================================================================================================
 
 
 ;------------------------------------------------------------
@@ -4977,29 +3219,2067 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 ;------------------------------------------------------------
 
 
+
+;========================================================================================================================
+; TRAY MENU ACTIONS
+;========================================================================================================================
+
+
 ;------------------------------------------------------------
-SplitHotkey(strHotkey, strMouseButtons, ByRef strModifiers, ByRef strKey, ByRef strMouseButton, ByRef strMouseButtonsWithDefault)
+RunAtStartup:
+;------------------------------------------------------------
+; Startup code adapted from Avi Aryan Ryan in Clipjump
+
+Menu, Tray, Togglecheck, %lMenuRunAtStartup%
+IfExist, %A_Startup%\%strAppName%.lnk
+	FileDelete, %A_Startup%\%strAppName%.lnk
+else
+	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%strAppName%.lnk, %A_ScriptDir%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+SuspendHotkeys:
+;------------------------------------------------------------
+
+if (A_IsSuspended)
+	Suspend, Off
+else
+	Suspend, On
+
+Menu, Tray, % (A_IsSuspended ? "check" : "uncheck"), %lMenuSuspendHotkeys%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ExitFoldersPopup:
+;------------------------------------------------------------
+
+ExitApp
+
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+Check4Update:
+;------------------------------------------------------------
+Gui, 1:+OwnDialogs
+
+if Time2Donate(intStartups, blnDonor)
+{
+	MsgBox, 36, % l(lDonateCheckTitle, intStartups, strAppName), % l(lDonateCheckPrompt, strAppName, intStartups)
+	IfMsgBox, Yes
+		Gosub, GuiDonate
+}
+IniWrite, % (intStartups + 1), %strIniFile%, Global, Startups
+
+strLatestVersion := Url2Var("http://code.jeanlalonde.ca/ahk/folderspopup/latest-version/latest-version-" . strCurrentBranch . ".php")
+
+if !StrLen(strLatestVersion)
+	if (A_ThisMenuItem = lMenuUpdate)
+	{
+		Oops(lUpdateError)
+		return ; an error occured during ComObjCreate
+	}
+strLatestVersion := SubStr(strLatestVersion, InStr(strLatestVersion, "[[") + 2) 
+strLatestVersion := SubStr(strLatestVersion, 1, InStr(strLatestVersion, "]]") - 1) 
+strLatestVersion := Trim(strLatestVersion, "`n`l") ; remove en-of-line if present
+
+Loop, Parse, strLatestVersion, , 0123456789. ; strLatestVersion should only contain digits and dots
+	; if we get here, the content returned by the URL above is wrong
+	if (A_ThisMenuItem <> lMenuUpdate)
+		return ; return silently
+	else
+	{
+		Oops(lUpdateError) ; return with an error message
+		return
+	}
+
+if (FirstVsSecondIs(strLatestSkipped, strLatestVersion) >= 0 and (A_ThisMenuItem <> lMenuUpdate))
+	return
+
+if FirstVsSecondIs(strLatestVersion, strCurrentVersion) = 1
+{
+	Gui, 1:+OwnDialogs
+	SetTimer, ChangeButtonNamesUpdate, 50
+
+	MsgBox, 3, % l(lUpdateTitle, strAppName)
+		, % l(lUpdatePrompt, strAppName
+			, strCurrentVersion . (strCurrentBranch = "beta" ? " BETA" : "")
+			, strLatestVersion . (strCurrentBranch = "beta" ? " BETA" : ""))
+		, 30
+	IfMsgBox, Yes
+		if (strCurrentBranch = "prod")
+			Run, http://code.jeanlalonde.ca/folderspopup/
+		else
+			Run, http://code.jeanlalonde.ca/beta-testers-wanted-for-folders-popup-v3-2/
+	IfMsgBox, No
+		IniWrite, %strLatestVersion%, %strIniFile%, Global, % "LatestVersionSkipped" . (strCurrentBranch = "beta" ? "Beta" : "")
+	IfMsgBox, Cancel ; Remind me
+		IniWrite, 0.0, %strIniFile%, Global, % "LatestVersionSkipped" . (strCurrentBranch = "beta" ? "Beta" : "")
+	IfMsgBox, TIMEOUT ; Remind me
+		IniWrite, 0.0, %strIniFile%, Global, % "LatestVersionSkipped" . (strCurrentBranch = "beta" ? "Beta" : "")
+}
+else if (A_ThisMenuItem = lMenuUpdate)
+{
+	MsgBox, 4, % l(lUpdateTitle, strAppName), % l(lUpdateYouHaveLatest, strAppVersion, strAppName), 30
+	IfMsgBox, Yes
+		if (strCurrentBranch = "prod")
+			Run, http://code.jeanlalonde.ca/folderspopup/
+		else
+			Run, http://code.jeanlalonde.ca/folders-popup-compatible-with-total-commander-beta-testers-wanted/
+}
+
+return 
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+FirstVsSecondIs(strFirstVersion, strSecondVersion)
 ;------------------------------------------------------------
 {
-	if (strHotkey = "None") ; do not compare with lOptionsMouseNone because it is translated
+	StringSplit, arrFirstVersion, strFirstVersion, `.
+	StringSplit, arrSecondVersion, strSecondVersion, `.
+	if (arrFirstVersion0 > arrSecondVersion0)
+		intLoop := arrFirstVersion0
+	else
+		intLoop := arrSecondVersion0
+
+	Loop %intLoop%
+		if (arrFirstVersion%A_index% > arrSecondVersion%A_index%)
+			return 1 ; greater
+		else if (arrFirstVersion%A_index% < arrSecondVersion%A_index%)
+			return -1 ; smaller
+		
+	return 0 ; equal
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ChangeButtonNamesUpdate:
+;------------------------------------------------------------
+
+IfWinNotExist, % l(lUpdateTitle, strAppName)
+    return  ; Keep waiting.
+SetTimer, ChangeButtonNamesUpdate, Off
+WinActivate 
+ControlSetText, Button3, %lUpdateButtonRemind%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+Time2Donate(intStartups, blnDonor)
+;------------------------------------------------------------
+{
+	if (intStartups > 100)
+		intDivisor := 25
+	else if (intStartups > 60)
+		intDivisor := 20
+	else if (intStartups > 30)
+		intDivisor := 15
+	else intDivisor := 10
+		
+	return !Mod(intStartups, intDivisor) and !(blnDonor)
+}
+;------------------------------------------------------------
+
+
+
+;========================================================================================================================
+; MAIN GUI
+;========================================================================================================================
+
+
+;------------------------------------------------------------
+BuildGui:
+;------------------------------------------------------------
+
+Gui, 1:New, , % L(lGuiTitle, strAppName, strAppVersion)
+Gui, Margin, 10, 10
+Gui, 1:Color, %strGuiWindowColor%
+
+intWidth := 460
+
+Gui, 1:Font, s12 w700 c%strTextColor%, Verdana
+Gui, 1:Add, Text, xm ym h25, %strAppName% %strAppVersion%
+Gui, 1:Font, s9 w400, Verdana
+Gui, 1:Add, Text, xm y+1 w517, %lAppTagline%
+
+
+Gui, 1:Add, Picture, x+10 ym Section gGuiOptions, %strTempDir%\settings-32.png ; Static3
+Gui, 1:Font, s8 w400, Arial ; button legend
+Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiOptions, %lGuiOptions% ; Static4
+
+Gui, 1:Font, s8 w400, Verdana
+Gui, 1:Add, Text, xm+30, %lGuiSubmenuDropdownLabel%
+Gui, 1:Add, Picture, xm y+5 gGuiGotoPreviousMenu vpicPreviousMenu hidden, %strTempDir%\left-12.png ; Static6
+Gui, 1:Add, Picture, xm+15 yp gGuiGotoUpMenu vpicUpMenu hidden, %strTempDir%\up-12.png ; Static7
+Gui, 1:Add, DropDownList, xm+30 yp w480 vdrpMenusList gGuiMenusListChanged
+
+Gui, 1:Font, s8 w400, Verdana
+Gui, 1:Add, ListView
+	, xm+30 w480 h240 Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFavoritesList gGuiFavoritesListEvent
+	, %lGuiLvFavoritesHeader%|Hidden Menu|Hidden Submenu|Hidden FavoriteType
+Loop, 3
+	LV_ModifyCol(A_Index + 2, 0) ; hide 3rd-5th columns
+
+Gui, 1:Add, Text, Section x+0 yp
+
+Gui, 1:Add, Picture, xm ys+25 gGuiMoveFavoriteUp, %strTempDir%\up_circular-26.png ; 9
+Gui, 1:Add, Picture, xm ys+55 gGuiMoveFavoriteDown, %strTempDir%\down_circular-26.png ; Static10
+Gui, 1:Add, Picture, xm ys+85 gGuiAddSeparator, %strTempDir%\separator-26.png ; Static11
+Gui, 1:Add, Picture, xm+1 ys+205 gGuiSortFavorites, %strTempDir%\generic_sorting2-26-grey.png ; Static12
+
+Gui, 1:Add, Text, Section xs ys
+
+Gui, 1:Font, s8 w400, Arial ; button legend
+
+Gui, 1:Add, Picture, xs+10 ys+7 gGuiAddFavorite, %strTempDir%\add_property-48.png ; Static14
+Gui, 1:Add, Text, xs y+0 w68 center gGuiAddFavorite, %lGuiAddFavorite% ; Static15
+
+Gui, 1:Add, Picture, xs+10 gGuiEditFavorite, %strTempDir%\edit_property-48.png ; Static16
+Gui, 1:Add, Text, xs y+0 w68 center gGuiEditFavorite, %lGuiEditFavorite% ; Static17
+
+Gui, 1:Add, Picture, xs+10 gGuiRemoveFavorite, %strTempDir%\delete_property-48.png ; Static18
+Gui, 1:Add, Text, xs y+0 w68 center gGuiRemoveFavorite, %lGuiRemoveFavorite% ; Static19
+
+Gui, 1:Add, Picture, xs+10 y+35 gGuiManageGroups, %strTempDir%\channel_mosaic-48.png ; Static20
+Gui, 1:Add, Text, xs y+5 w68 center gGuiManageGroups, %lDialogGroups% ; Static21
+
+Gui, 1:Add, Text, Section x185 ys+250
+
+Gui, 1:Font, s8 w600 italic, Verdana
+Gui, 1:Add, Text, xm yp w520 center, %lGuiDropFilesIncentive%
+
+Gui, 1:Add, Text, xm y+60
+Gui, 1:Font, s9 w600, Verdana
+Gui, 1:Add, Button, ys+70 Disabled Default vbtnGuiSave gGuiSave, %lGuiSave% ; Button1
+Gui, 1:Add, Button, yp vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur - Button2
+Gui, 1:Font, s6 w400, Verdana
+GuiCenterButtons(L(lGuiTitle, strAppName, strAppVersion), 50, 30, 40, -80, "btnGuiSave", "btnGuiCancel")
+
+Gui, 1:Add, Picture, x490 yp+13 gGuiAbout Section, %strTempDir%\about-32.png ; Static25
+Gui, 1:Add, Picture, x540 yp gGuiHelp, %strTempDir%\help-32.png ; Static26
+if !(blnDonor)
+{
+	strDonateButtons := "thumbs_up|solutions|handshake|conference|gift"
+	StringSplit, arrDonateButtons, strDonateButtons, |
+	Random, intDonateButton, 1, 5
+
+	Gui, 1:Add, Picture, xm+20 yp gGuiDonate, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png" ; Static27
+}
+
+Gui, 1:Font, s8 w400, Arial ; button legend
+Gui, 1:Add, Text, xs-20 ys+35 w68 center gGuiAbout, %lGuiAbout% ; Static28
+Gui, 1:Add, Text, xs+40 ys+35 w52 center gGuiHelp, %lGuiHelp% ; Static29
+if !(blnDonor)
+	Gui, 1:Add, Text, xm+10 ys+35 w52 center gGuiDonate, %lGuiDonate% ; Static30
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+LoadSettingsToGui:
+;------------------------------------------------------------
+
+GuiControlGet, blnSaveEnabled, Enabled, %lGuiSave%
+if (blnSaveEnabled)
+	return
+
+Gosub, LoadOneMenuToGui
+
+GuiControl, Focus, lvFavoritesList
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+LoadOneMenuToGui:
+;------------------------------------------------------------
+
+Gui, 1:ListView, lvFavoritesList
+LV_Delete()
+
+Loop, % arrMenus[strCurrentMenu].MaxIndex()
+	if (arrMenus[strCurrentMenu][A_Index].FavoriteType = "S") ; this is a submenu
+		LV_Add(, arrMenus[strCurrentMenu][A_Index].FavoriteName, lGuiSubmenuLocation, arrMenus[strCurrentMenu][A_Index].MenuName
+			, arrMenus[strCurrentMenu][A_Index].SubmenuFullName, arrMenus[strCurrentMenu][A_Index].FavoriteType)
+	else ; this is a folder or document
+		LV_Add(, arrMenus[strCurrentMenu][A_Index].FavoriteName, arrMenus[strCurrentMenu][A_Index].FavoriteLocation, arrMenus[strCurrentMenu][A_Index].MenuName
+			, "", arrMenus[strCurrentMenu][A_Index].FavoriteType)
+LV_Modify(1, "Select Focus")
+LV_ModifyCol(1, "AutoHdr")
+LV_ModifyCol(2, "AutoHdr")
+
+GuiControl, , drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+SaveCurrentListviewToMenuObject:
+;------------------------------------------------------------
+
+arrMenus[strCurrentMenu] := Object() ; re-init current menu array
+Gui, 1:ListView, lvFavoritesList
+
+Loop % LV_GetCount()
+{
+	LV_GetText(strName, A_Index, 1)
+	LV_GetText(strLocation, A_Index, 2)
+	LV_GetText(strMenu, A_Index, 3)
+	LV_GetText(strSubmenu, A_Index, 4)
+	LV_GetText(strFavoriteType, A_Index, 5)
+
+	objFavorite := Object() ; new menu item
+	objFavorite.FavoriteName := strName ; display name of this menu item
+	objFavorite.FavoriteLocation := strLocation ; path for this menu item
+	objFavorite.MenuName := strCurrentMenu ; parent menu of this menu item - do not use strMenu because lack of lMainMenuName
+	objFavorite.SubmenuFullName := strSubmenu ; if menu, full name of the submenu
+	objFavorite.FavoriteType := strFavoriteType ; "F" folder, "D" document or "S" submenu
+	arrMenus[strCurrentMenu].Insert(objFavorite) ; add this menu item to parent menu - do not use strMenu because lack of lMainMenuName
+}
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+BuildMenuTreeDropDown(strMenu, strDefaultMenu, strSkipSubmenu := "")
+; recursive function
+;------------------------------------------------------------
+{
+	strList := strMenu
+	if (strMenu = strDefaultMenu)
+		strList := strList . "|" ; default value
+
+	Loop, % arrMenus[strMenu].MaxIndex()
+		if (arrMenus[strMenu][A_Index].FavoriteType = "S") ; this is a submenu
+			if (arrMenus[strMenu][A_Index].SubmenuFullName <> strSkipSubmenu) ; skip if under edited submenu
+				strList := strList . "|" . BuildMenuTreeDropDown(arrMenus[strMenu][A_Index].SubmenuFullName, strDefaultMenu, strSkipSubmenu) ; recursive call
+	return strList
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiFavoritesListEvent:
+;------------------------------------------------------------
+Gui, 1:ListView, lvFavoritesList
+
+if (A_GuiEvent = "DoubleClick")
+	gosub, GuiEditFavorite
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiMenusListChanged:
+GuiGotoUpMenu:
+GuiGotoPreviousMenu:
+OpenMenuFromEditForm:
+;------------------------------------------------------------
+
+if (A_ThisLabel = "GuiMenusListChanged")
+{
+	GuiControlGet, strNewDropdownMenu, , drpMenusList
+	if (strNewDropdownMenu = strCurrentMenu) ; user selected the current menu in the dropdown
+		return
+}
+
+Gosub, SaveCurrentListviewToMenuObject ; save current LV before changing strCurrentMenu
+
+strSavedMenu := strCurrentMenu
+if (A_ThisLabel = "GuiMenusListChanged")
+{
+	arrSubmenuStack.Insert(1, strSavedMenu) ; push the current menu to the left arrow stack
+	strCurrentMenu := strNewDropdownMenu
+}
+else if (A_ThisLabel = "GuiGotoUpMenu")
+{
+	arrSubmenuStack.Insert(1, strSavedMenu) ; push the current menu to the left arrow stack
+	strCurrentMenu := SubStr(strCurrentMenu, 1, InStr(strCurrentMenu, lGuiSubmenuSeparator, , 0) - 1) 
+}
+else if (A_ThisLabel = "GuiGotoPreviousMenu")
+{
+	strCurrentMenu := arrSubmenuStack[1] ; pull the top menu from the left arrow stack
+	arrSubmenuStack.Remove(1) ; remove the top menu from the left arrow stack
+}
+else if (A_ThisLabel = "OpenMenuFromEditForm")
+{
+	arrSubmenuStack.Insert(1, strSavedMenu) ; push the current menu to the left arrow stack
+	strCurrentMenu := strCurrentSubmenuFullName
+}
+else
+	return ; should not occur
+
+strPreviousMenu := strSavedMenu
+
+GuiControl, % (arrSubmenuStack.MaxIndex() ? "Show" : "Hide"), picPreviousMenu
+GuiControl, % (strCurrentMenu <> lMainMenuName ? "Show" : "Hide"), picUpMenu
+
+Gosub, LoadOneMenuToGui
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiManageGroups:
+;------------------------------------------------------------
+
+; MsgBox, Not finished...
+; return
+
+intGui1WinID := WinExist("A")
+Gui, 1:Submit, NoHide
+Gui, 2:New, , Title ; ### % L(lDialogAddEditFavoriteTitle, (A_ThisLabel = "GuiEditFavorite" ? lDialogEdit : lDialogAdd), strAppName, strAppVersion)
+Gui, 2:+Owner1
+Gui, 2:+OwnDialogs
+Gui, 2:Color, %strGuiWindowColor%
+
+; Gui, 2:Add, Text, % x10 y10 vlblFavoriteParentMenu, % (blnRadioSubmenu ? lDialogSubmenuParentMenu : lDialogFavoriteParentMenu)
+; Gui, 2:Add, DropDownList, x10 w300 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
+
+; Gui, 2:Add, Button, y+20 vbtnAddFolderAdd gGuiAddFavoriteSave, %lDialogAdd%
+; Gui, 2:Add, Button, yp vbtnAddFolderCancel gGuiAddFavoriteCancel, %lGuiCancel%
+; GuiCenterButtons(L(lDialogAddEditFavoriteTitle, lDialogAdd, strAppName, strAppVersion), 10, 5, 20, , "btnAddFolderAdd", "btnAddFolderCancel")
+
+Gui, 2:Show, AutoSize Center
+Gui, 1:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiAddSeparator:
+;------------------------------------------------------------
+
+GuiControl, Focus, lvFavoritesList
+Gui, 1:ListView, lvFavoritesList
+LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", lMenuSeparator, lMenuSeparator . lMenuSeparator, strCurrentMenu)
+LV_Modify(LV_GetNext(), "Vis")
+LV_ModifyCol(1, "AutoHdr")
+LV_ModifyCol(2, "AutoHdr")
+
+GuiControl, Enable, btnGuiSave
+GuiControl, , btnGuiCancel, %lGuiCancel%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiSortFavorites:
+;------------------------------------------------------------
+
+Gui, 1:ListView, lvFavoritesList
+LV_ModifyCol(1, "Sort")
+
+GuiControl, Enable, btnGuiSave
+GuiControl, , btnGuiCancel, %lGuiCancel%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiMoveFavoriteUp:
+;------------------------------------------------------------
+
+GuiControl, Focus, lvFavoritesList
+Gui, 1:ListView, lvFavoritesList
+intSelectedRow := LV_GetNext()
+if (intSelectedRow = 1)
+	return
+
+LV_GetText(strThisName, intSelectedRow, 1)
+LV_GetText(strThisLocation, intSelectedRow, 2)
+LV_GetText(strThisMenu, intSelectedRow, 3)
+LV_GetText(strThisSubmenu, intSelectedRow, 4)
+LV_GetText(strThisFavoriteType, intSelectedRow, 5)
+
+LV_GetText(strPriorName, intSelectedRow - 1, 1)
+LV_GetText(strPriorLocation, intSelectedRow - 1, 2)
+LV_GetText(strPriorMenu, intSelectedRow - 1, 3)
+LV_GetText(strPriorSubmenu, intSelectedRow - 1, 4)
+LV_GetText(strPriorFavoriteType, intSelectedRow - 1, 5)
+
+LV_Modify(intSelectedRow, "", strPriorName, strPriorLocation, strPriorMenu, strPriorSubmenu, strPriorFavoriteType)
+LV_Modify(intSelectedRow - 1, "Select Focus Vis", strThisName, strThisLocation, strThisMenu, strThisSubmenu, strThisFavoriteType)
+
+GuiControl, Enable, btnGuiSave
+GuiControl, , btnGuiCancel, %lGuiCancel%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiMoveFavoriteDown:
+;------------------------------------------------------------
+
+GuiControl, Focus, lvFavoritesList
+Gui, 1:ListView, lvFavoritesList
+intSelectedRow := LV_GetNext()
+if (intSelectedRow = LV_GetCount())
+	return
+
+LV_GetText(strThisName, intSelectedRow, 1)
+LV_GetText(strThisLocation, intSelectedRow, 2)
+LV_GetText(strThisMenu, intSelectedRow, 3)
+LV_GetText(strThisSubmenu, intSelectedRow, 4)
+LV_GetText(strThisFavoriteType, intSelectedRow, 5)
+
+LV_GetText(strNextName, intSelectedRow + 1, 1)
+LV_GetText(strNextLocation, intSelectedRow + 1, 2)
+LV_GetText(strNextMenu, intSelectedRow + 1, 3)
+LV_GetText(strNextSubmenu, intSelectedRow + 1, 4)
+LV_GetText(strNextFavoriteType, intSelectedRow + 1, 5)
+	
+LV_Modify(intSelectedRow, "", strNextName, strNextLocation, strNextMenu, strNextSubmenu, strNextFavoriteType)
+LV_Modify(intSelectedRow + 1, "Select Focus Vis", strThisName, strThisLocation, strThisMenu, strThisSubmenu, strThisFavoriteType)
+
+GuiControl, Enable, btnGuiSave
+GuiControl, , btnGuiCancel, %lGuiCancel%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiSave:
+;------------------------------------------------------------
+
+blnMenuReady := false
+
+Gosub, SaveCurrentListviewToMenuObject ; save current LV before saving
+
+IniDelete, %strIniFile%, Folders ; keep "Folders" label instead of "Favorite" for backward compatibility
+Gui, 1:ListView, lvFavoritesList
+
+intIndex := 0
+SaveOneMenu(lMainMenuName) ; recursive function
+
+Gosub, LoadIniFile
+Gosub, BuildFavoritesMenusWithStatus
+GuiControl, Disable, %lGuiSave%
+GuiControl, , %lGuiCancel%, %lGuiClose%
+
+Gosub, GuiCancel
+blnMenuReady := true
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+SaveOneMenu(strMenu)
+; recursive function
+;------------------------------------------------------------
+{
+	global strIniFile
+	global intIndex
+	
+	Loop, % arrMenus[strMenu].MaxIndex()
 	{
-		strMouseButton := "None" ; do not use lOptionsMouseNone because it is translated
-		strKey := ""
-		StringReplace, strMouseButtonsWithDefault, lOptionsMouseButtonsText, % lOptionsMouseNone . "|", % lOptionsMouseNone . "||" ; use lOptionsMouseNone because this is displayed
-	}
-	else 
-	{
-		SplitModifiersFromKey(strHotkey, strModifiers, strKey)
-		if InStr(strMouseButtons, "|" . strKey . "|") ;  we have a mouse button
-		{
-			strMouseButton := strKey
-			strKey := ""
-			StringReplace, strMouseButtonsWithDefault, lOptionsMouseButtonsText, % GetText4MouseButton(strMouseButton) . "|", % GetText4MouseButton(strMouseButton) . "||" ; with default value
-		}
-		else ; we have a key
-			strMouseButtonsWithDefault := lOptionsMouseButtonsText ; no default value
+		strValue := arrMenus[strMenu][A_Index].FavoriteName
+			. "|" . arrMenus[strMenu][A_Index].FavoriteLocation
+			. "|" . SubStr(arrMenus[strMenu][A_Index].MenuName, StrLen(lMainMenuName) + 1) ; remove main menu name for ini file
+			. "|" . SubStr(arrMenus[strMenu][A_Index].SubmenuFullName, StrLen(lMainMenuName) + 1) ; remove main menu name for ini file
+			. "|" . arrMenus[strMenu][A_Index].FavoriteType
+		intIndex := intIndex + 1
+		IniWrite, %strValue%, %strIniFile%, Folders, Folder%intIndex% ; keep "Folders" label instead of "Favorite" for backward compatibility
+		if (arrMenus[strMenu][A_Index].FavoriteType = "S")
+			SaveOneMenu(arrMenus[strMenu][A_Index].SubmenuFullName) ; recursive call
 	}
 }
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiShow:
+;------------------------------------------------------------
+
+strCurrentMenu := lMainMenuName
+Gosub, BackupMenuObjects
+Gosub, LoadSettingsToGui
+Gui, 1:Show, AutoSize Center
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiCancel:
+;------------------------------------------------------------
+
+GuiControlGet, blnSaveEnabled, Enabled, btnGuiSave
+if (blnSaveEnabled)
+{
+	Gui, 1:+OwnDialogs
+	MsgBox, 36, % L(lDialogCancelTitle, strAppName, strAppVersion), %lDialogCancelPrompt%
+	IfMsgBox, Yes
+	{
+		blnMenuReady := false
+		Gosub, RestoreBackupMenuObjects
+		
+		; restore popup menu
+		Gosub, BuildSpecialFoldersMenu
+		Gosub, BuildGroupMenu
+		Gosub, BuildFavoritesMenus ; need to be initialized here - will be updated at each call to popup menu
+
+		GuiControl, Disable, btnGuiSave
+		GuiControl, , btnGuiCancel, %lGuiClose%
+		blnMenuReady := true
+	}
+	IfMsgBox, No
+		return
+}
+Gui, 1:Cancel
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiClose:
+GuiEscape:
+;------------------------------------------------------------
+
+GoSub, GuiCancel
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiDropFiles:
+;------------------------------------------------------------
+
+Loop, parse, A_GuiEvent, `n
+{
+    strCurrentLocation = %A_LoopField%
+    Break
+}
+
+Gosub, GuiAddFromDropFiles
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+BackupMenuObjects:
+; in case of Gui Cancel to restore objects to original state
+;------------------------------------------------------------
+
+arrMenusBK := Object()
+for strMenuName, arrMenu in arrMenus
+{
+	arrMenuBK := Object()
+	for intIndex, objFavorite in arrMenu
+	{
+		objFavoriteBK := Object()
+		objFavoriteBK.MenuName := objFavorite.MenuName
+		objFavoriteBK.FavoriteName := objFavorite.FavoriteName
+		objFavoriteBK.FavoriteLocation := objFavorite.FavoriteLocation
+		objFavoriteBK.SubmenuFullName := objFavorite.SubmenuFullName
+		objFavoriteBK.FavoriteType := objFavorite.FavoriteType
+		arrMenuBK.Insert(objFavoriteBK)
+	}
+	arrMenusBK.Insert(strMenuName, arrMenuBK) ; add this submenu to the array of menus
+}
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+RestoreBackupMenuObjects:
+; when Gui Cancel to restore objects to original state
+;------------------------------------------------------------
+
+arrMenus := Object() ; reinit
+for strMenuName, arrMenuBK in arrMenusBK
+{
+	arrMenu := Object()
+	for intIndex, objFavoriteBK in arrMenuBK
+	{
+		objFavorite := Object()
+		objFavorite.MenuName := objFavoriteBK.MenuName
+		objFavorite.FavoriteName := objFavoriteBK.FavoriteName
+		objFavorite.FavoriteLocation := objFavoriteBK.FavoriteLocation
+		objFavorite.SubmenuFullName := objFavoriteBK.SubmenuFullName
+		objFavorite.FavoriteType := objFavoriteBK.FavoriteType
+		arrMenu.Insert(objFavorite)
+	}
+	arrMenus.Insert(strMenuName, arrMenu) ; add this submenu to the array of menus
+}
+
+return
+;------------------------------------------------------------
+
+
+
+;========================================================================================================================
+; ADD, EDIT, REMOVE FAVORITES
+;========================================================================================================================
+
+
+;------------------------------------------------------------
+AddThisFolder:
+;------------------------------------------------------------
+
+strCurrentLocation := ""
+
+if WindowIsDirectoryOpus(strTargetClass)
+{
+	objDOpusListers := Object()
+	CollectDOpusListersList(objDOpusListers, strListText) ; list all listers, excluding special folders like Recycle Bin
+	/*
+		From leo @ GPSoftware (http://resource.dopus.com/viewtopic.php?f=3&t=23013):
+		Lines will have active_lister="1" if they represent tabs from the active lister.
+		To get the active tab you want the line with active_lister="1" and tab_state="1".
+		tab_state="1" means it's the selected tab, on the active side of the lister.
+		tab_state="2" means it's the selected tab, on the inactive side of a dual-display lister.
+		Tabs which are not visible (because another tab is selected on top of them) don't get a tab_state attribute at all.
+	*/
+
+	for intIndex, objLister in objDOpusListers
+		if (objLister.active_lister = "1" and objLister.tab_state = "1")
+		{
+			strCurrentLocation := objLister.path
+			break
+		}
+}
+else
+{
+	objPrevClipboard := ClipboardAll ; Save the entire clipboard
+	ClipBoard := ""
+
+	; Add This folder menu is active only if we are in Explorer (WIN_XP, WIN_7 or WIN_8) or in a Dialog box (WIN_7 or WIN_8).
+	; In all these OS, with Explorer, the key sequence {F4}{Esc} selects the current location of the window.
+	; With dialog boxes, the key sequence {F4}{Esc} generally selects the current location of the window. But, in some
+	; dialog boxes, the {Esc} key closes the dialog box. We will check window title to detect this behavior.
+
+	if (strTargetClass = "#32770")
+		intWaitTimeIncrement := 300 ; time allowed for dialog boxes
+	else
+		intWaitTimeIncrement := 150 ; time allowed for Explorer
+
+	if (blnDiagMode)
+		intTries := 8
+	else
+		intTries := 3
+
+	strWindowTitle := ""
+	Loop, %intTries%
+	{
+		Sleep, intWaitTimeIncrement * A_Index
+		WinGetTitle, strWindowTitle, A ; to check later if this window is closed unexpectedly
+	} Until (StrLen(strWindowTitle))
+
+	if WindowIsTotalCommander(strTargetClass)
+	{
+		cm_CopySrcPathToClip := 2029
+		SendMessage, 0x433, %cm_CopySrcPathToClip%, , , ahk_class TTOTAL_CMD ; 
+		WinGetTitle, strWindowThisTitle, A ; to check if the window was closed unexpectedly
+	}
+	else if WindowIsFreeCommander(strTargetClass)
+	{
+		if (WinExist("A") <> strTargetWinId) ; in case that some window just popped out, and initialy active window lost focus
+		{
+			WinActivate, ahk_id %strTargetWinId% ; we'll activate initialy active window
+			Sleep, intWaitTimeIncrement
+		}
+		if StrLen(strTargetControl)
+			ControlFocus, %strTargetControl%, ahk_id %strTargetWinId%
+		Loop, %intTries%
+		{
+			Sleep, intWaitTimeIncrement * A_Index
+			SendInput, !g ; goto shortcut for FreeCommander
+			Sleep, intWaitTimeIncrement * A_Index
+			SendInput, ^c
+			Sleep, intWaitTimeIncrement * A_Index
+			intTries := A_Index
+			WinGetTitle, strWindowThisTitle, A ; to check if the window was closed unexpectedly
+		} Until (StrLen(ClipBoard))
+	}
+	else ; Explorer
+		Loop, %intTries%
+		{
+			Sleep, intWaitTimeIncrement * A_Index
+			SendInput, {F4}{Esc} ; F4 move the caret the "Go To A Different Folder box" and {Esc} select it content ({Esc} could be replaced by ^a to Select All)
+			Sleep, intWaitTimeIncrement * A_Index
+			SendInput, ^c ; Copy
+			Sleep, intWaitTimeIncrement * A_Index
+			intTries := A_Index
+			WinGetTitle, strWindowThisTitle, A ; to check if the window was closed unexpectedly
+		} Until (StrLen(ClipBoard) or (strWindowTitle <> strWindowThisTitle))
+
+	strCurrentLocation := ClipBoard
+	Clipboard := objPrevClipboard ; Restore the original clipboard
+	objPrevClipboard := "" ; Free the memory in case the clipboard was very large
+
+	if (blnDiagMode)
+	{
+		Diag("Menu", A_ThisLabel)
+		Diag("Class", strTargetClass)
+		Diag("Tries", intTries)
+		Diag("AddedFolder", strCurrentLocation)
+	}
+}
+
+If !StrLen(strCurrentLocation) or !(InStr(strCurrentLocation, ":") or InStr(strCurrentLocation, "\\")) or (strWindowTitle <> strWindowThisTitle)
+{
+	Gui, 1:+OwnDialogs 
+	MsgBox, 52, % L(lDialogAddFolderManuallyTitle, strAppName, strAppVersion), %lDialogAddFolderManuallyPrompt%
+	IfMsgBox, Yes
+	{
+		Gosub, GuiShow
+		Gosub, GuiAddFavorite
+	}
+}
+else
+{
+	Gosub, GuiShow
+	Gosub, GuiAddFromPopup
+}
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiAddFavorite:
+GuiAddFromPopup:
+GuiAddFromDropFiles:
+GuiEditFavorite:
+;------------------------------------------------------------
+
+if (A_ThisLabel = "GuiEditFavorite")
+{
+	Gui, 1:ListView, lvFavoritesList
+	intRowToEdit := LV_GetNext()
+	LV_GetText(strCurrentName, intRowToEdit, 1)
+	
+	if (strCurrentName = lMenuSeparator)
+		return
+
+	if !StrLen(strCurrentName) or (intRowToEdit = 0)
+	{
+		Oops(lDialogSelectItemToEdit)
+		return
+	}
+	LV_GetText(strCurrentLocation, intRowToEdit, 2)
+	LV_GetText(strCurrentSubmenuFullName, intRowToEdit, 4)
+	LV_GetText(strFavoriteType, intRowToEdit, 5)
+	
+	blnRadioSubmenu := (strFavoriteType = "S")
+	blnRadioFolder := (strFavoriteType = "F")
+	blnRadioFile := (strFavoriteType = "D")
+	blnRadioURL := (strFavoriteType = "U")
+}
+else
+{
+	intRowToEdit := 0 ;  used when saving to flag to insert a new row
+	strCurrentName := "" ; make sure it is empty
+	strCurrentSubmenuFullName := "" ;  make sure it is empty
+	strFavoriteType := "" ;  make sure it is empty
+	
+	if (A_ThisLabel = "GuiAddFromPopup" or A_ThisLabel = "GuiAddFromDropFiles")
+		; strCurrentLocation is received from AddThisFolder or GuiDropFiles
+		strFavoriteShortName := GetDeepestFolderName(strCurrentLocation)
+	else
+	{
+		;  make sure these variables are empty
+		strCurrentLocation := ""
+		strFavoriteShortName := ""
+	}
+
+	blnRadioSubmenu := false
+	blnRadioFolder := false
+	blnRadioFile := false
+	blnRadioURL := false
+	
+	if (A_ThisLabel = "GuiAddFromPopup")
+		blnRadioFolder := true
+	else if (A_ThisLabel = "GuiAddFromDropFiles")
+	{
+		blnRadioFile := LocationIsDocument(strCurrentLocation)
+		blnRadioFolder := not blnRadioFile
+	}
+}
+
+intGui1WinID := WinExist("A")
+Gui, 1:Submit, NoHide
+Gui, 2:New, , % L(lDialogAddEditFavoriteTitle, (A_ThisLabel = "GuiEditFavorite" ? lDialogEdit : lDialogAdd), strAppName, strAppVersion)
+Gui, 2:+Owner1
+Gui, 2:+OwnDialogs
+Gui, 2:Color, %strGuiWindowColor%
+
+Gui, 2:Add, Text, % x10 y10 vlblFavoriteParentMenu, % (blnRadioSubmenu ? lDialogSubmenuParentMenu : lDialogFavoriteParentMenu)
+Gui, 2:Add, DropDownList, x10 w300 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
+
+if (A_ThisLabel = "GuiAddFavorite")
+{
+	Gui, 2:Add, Text, x10, %lDialogAdd%:
+	Gui, 2:Add, Radio, x+10 yp vblnRadioFolder checked gRadioButtonsChanged, %lDialogFolderLabel%
+	Gui, 2:Add, Radio, x+10 yp vblnRadioFile gRadioButtonsChanged, %lDialogFileLabel%
+	Gui, 2:Add, Radio, x+10 yp vblnRadioURL gRadioButtonsChanged, %lDialogURLLabel%
+	Gui, 2:Add, Radio, x+10 yp vblnRadioSubmenu gRadioButtonsChanged, %lDialogSubmenuLabel%
+}
+
+Gui, 2:Add, Text, x10 y+10 w300 vlblShortName, % (blnRadioSubmenu ? lDialogSubmenuShortName : (blnRadioFile ? lDialogFileShortName : (blnRadioURL ? lDialogURLShortName : lDialogFolderShortName)))
+Gui, 2:Add, Edit, x10 w300 Limit250 vstrFolderShortName, % (A_ThisLabel = "GuiEditFavorite" ? strCurrentName : strFavoriteShortName)
+
+if (blnRadioSubmenu)
+	Gui, 2:Add, Button, x+10 yp vbnlEditFolderOpenMenu gGuiOpenThisMenu, %lDialogOpenThisMenu%
+else
+{
+	Gui, 2:Add, Text, x10 w300 vlblFolder, % (blnRadioFile ? lDialogFileLabel : (blnRadioURL ? lDialogURLLabel : lDialogFolderLabel))
+	Gui, 2:Add, Edit, x10 w300 h20 vstrFolderLocation, %strCurrentLocation%
+	if !(blnRadioURL)
+		Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation default, %lDialogBrowseButton%
+}
+
+if (A_ThisLabel = "GuiEditFavorite")
+{
+	Gui, 2:Add, Button, y+20 vbtnEditFolderSave gGuiEditFavoriteSave, %lDialogSave%
+	Gui, 2:Add, Button, yp vbtnEditFolderCancel gGuiEditFavoriteCancel, %lGuiCancel%
+	GuiCenterButtons(L(lDialogAddEditFavoriteTitle, lDialogEdit, strAppName, strAppVersion), 10, 5, 20, , "btnEditFolderSave", "btnEditFolderCancel")
+}
+else
+{
+	Gui, 2:Add, Button, y+20 vbtnAddFolderAdd gGuiAddFavoriteSave, %lDialogAdd%
+	Gui, 2:Add, Button, yp vbtnAddFolderCancel gGuiAddFavoriteCancel, %lGuiCancel%
+	GuiCenterButtons(L(lDialogAddEditFavoriteTitle, lDialogAdd, strAppName, strAppVersion), 10, 5, 20, , "btnAddFolderAdd", "btnAddFolderCancel")
+}
+
+GuiControl, 2:Focus, strFavoriteShortName
+if (A_ThisLabel = "GuiEditFavorite")
+	SendInput, ^a
+Gui, 2:Show, AutoSize Center
+Gui, 1:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiOpenThisMenu:
+;------------------------------------------------------------
+Gosub, 2GuiClose
+
+Gui, 1:Default
+GuiControl, 1:Focus, lvFavoritesList
+Gui, 1:ListView, lvFavoritesList
+
+Gosub, OpenMenuFromEditForm
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiAddFavoriteSave:
+GuiEditFavoriteSave:
+;------------------------------------------------------------
+Gui, 2:Submit, NoHide
+Gui, 2:+OwnDialogs
+
+GuiControlGet, strParentMenu, , drpParentMenu
+
+if !StrLen(strFavoriteShortName)
+{
+	Oops(blnRadioSubmenu ? lDialogSubmenuNameEmpty : lDialogFavoriteNameEmpty)
+	return
+}
+
+if  ((blnRadioFolder or blnRadioFile or blnRadioURL) and !StrLen(strFolderLocation))
+{
+	Oops(lDialogFavoriteLocationEmpty)
+	return
+}
+
+if !FolderNameIsNew(strFavoriteShortName, (strParentMenu = strCurrentMenu ? "" : strParentMenu))
+	if ((strParentMenu <> strCurrentMenu) or (strFavoriteShortName <> strCurrentName)) ; same name is OK in current menu
+	{
+		Oops(lDialogFavoriteNameNotNew, strFavoriteShortName)
+		return
+	}
+
+if (blnRadioSubmenu)
+{
+	if InStr(strFavoriteShortName, lGuiSubmenuSeparator)
+	{
+		Oops(L(lDialogFavoriteNameNoSeparator, lGuiSubmenuSeparator))
+		return
+	}
+	
+	strNewSubmenuFullName := strParentMenu . lGuiSubmenuSeparator . strFavoriteShortName
+	
+	if (A_ThisLabel = "GuiAddFavoriteSave")
+	{
+		strFolderLocation := lGuiSubmenuLocation
+		
+		arrNewMenu := Object() ; array of folders of the new menu
+		arrMenus.Insert(strNewSubmenuFullName, arrNewMenu)
+	}
+	else ; GuiEditFavoriteSave
+		UpdateMenuNameInSubmenus(strCurrentSubmenuFullName, strNewSubmenuFullName) ; change names in arrMenus and arrMenu objects
+}
+else
+	strNewSubmenuFullName := ""
+
+strFavoriteType := (blnRadioSubmenu ? "S" : (blnRadioURL ? "U" : (blnRadioFile ? "D" : (blnRadioURL ? "U" : "F")))) ; submenu, document, URL or folder
+
+Gosub, 2GuiClose
+
+Gui, 1:Default
+GuiControl, 1:Focus, lvFavoritesList
+Gui, 1:ListView, lvFavoritesList
+
+if (strParentMenu = strCurrentMenu) ; add as top row to current menu
+{
+	if (A_ThisLabel = "GuiAddFavoriteSave")
+	{
+		LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus"
+			, strFavoriteShortName, strFolderLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType)
+		LV_Modify(LV_GetNext(), "Vis")
+	
+		Gosub, SaveCurrentListviewToMenuObject ; save current LV tbefore update the dropdown menu
+		GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
+	}
+	else ; GuiEditFavoriteSave
+	{
+		LV_Modify(intRowToEdit, "Select Focus"
+			, strFavoriteShortName, strFolderLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType)
+	}
+}
+else ; add menu item to selected menu object
+{
+	objFavorite := Object() ; new menu item
+	objFavorite.MenuName := strParentMenu ; parent menu of this menu item
+	objFavorite.FavoriteName := strFavoriteShortName ; display name of this menu item
+	objFavorite.FavoriteLocation := strFolderLocation ; path for this menu item
+	objFavorite.SubmenuFullName := strNewSubmenuFullName ; full name of the submenu
+	objFavorite.FavoriteType := strFavoriteType ; "F" folder, "D" document, "U" for URL or "S" submenu
+	arrMenus[objFavorite.MenuName].Insert(1, objFavorite) ; add this menu item to the new menu
+
+	if (A_ThisLabel = "GuiEditFavoriteSave")
+	{
+		LV_Delete(intRowToEdit)
+		LV_Modify(intRowToEdit, "Select Focus")
+	}
+}
+
+GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
+
+LV_ModifyCol(1, "AutoHdr")
+LV_ModifyCol(2, "AutoHdr")
+
+if (A_ThisLabel = "GuiEditFavoriteSave")
+{
+	Gosub, SaveCurrentListviewToMenuObject ; save current LV tbefore update the dropdown menu
+	GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
+}
+
+Gosub, BuildFavoritesMenusWithStatus ; update menus
+
+GuiControl, Enable, btnGuiSave
+GuiControl, , btnGuiCancel, %lDialogCancelButton%
+
+blnMenuReady := true
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+UpdateMenuNameInSubmenus(strOldMenu, strNewMenu)
+; recursive function
+;------------------------------------------------------------
+{
+	arrMenus.Insert(strNewMenu, arrMenus[strOldMenu])
+	Loop, % arrMenus[strNewMenu].MaxIndex()
+	{
+		arrMenus[strNewMenu][A_Index].MenuName := strNewMenu
+		if (arrMenus[strNewMenu][A_Index].FavoriteType = "S")
+		{
+			arrMenus[strNewMenu][A_Index].SubmenuFullName := strNewMenu . lGuiSubmenuSeparator . arrMenus[strNewMenu][A_Index].FavoriteName
+			UpdateMenuNameInSubmenus(strOldMenu . lGuiSubmenuSeparator . arrMenus[strOldMenu][A_Index].FavoriteName
+				, arrMenus[strNewMenu][A_Index].SubmenuFullName) ; recursive call
+		}
+	}
+	arrMenus.Remove(strOldMenu)
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+FolderNameIsNew(strCandidateName, strMenu := "")
+;------------------------------------------------------------
+{
+	if !StrLen(strMenu)
+	{
+		Gui, 1:Default
+		Gui, 1:ListView, lvFavoritesList
+		Loop, % LV_GetCount()
+		{
+			LV_GetText(strThisName, A_Index, 1)
+			if (strCandidateName = strThisName)
+				return False
+		}
+	}
+	else
+		Loop, % arrMenus[strMenu].MaxIndex()
+			if (strCandidateName = arrMenus[strMenu][A_Index].FavoriteName)
+				return False
+
+	return True
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+RadioButtonsChanged:
+;------------------------------------------------------------
+Gui, 2:Submit, NoHide
+
+if (blnRadioFolder)
+{
+	GuiControl, , lblShortName, %lDialogFolderShortName%
+	GuiControl, , lblFolder, %lDialogFolderLabel%
+}
+else if (blnRadioFile)
+{
+	GuiControl, , lblShortName, %lDialogFileShortName%
+	GuiControl, , lblFolder, %lDialogFileLabel%
+}
+else if (blnRadioURL)
+{
+	GuiControl, , lblShortName, %lDialogURLShortName%
+	GuiControl, , lblFolder, %lDialogURLLabel%
+}
+else ; blnRadioSubmenu
+{
+	GuiControl, , lblShortName, %lDialogSubmenuShortName%
+	GuiControl, , strFolderLocation ; empty control
+}
+
+GuiControl, % (blnRadioSubmenu ? "Hide" : "Show"), lblFolder
+GuiControl, % (blnRadioSubmenu ? "Hide" : "Show"), strFolderLocation
+GuiControl, % (blnRadioSubmenu or blnRadioURL ? "Hide" : "Show"), btnSelectFolderLocation
+
+if (blnRadioSubmenu or blnRadioURL)
+	GuiControl, +Default, btnAddFolderAdd
+else
+	GuiControl, +Default, btnSelectFolderLocation
+
+GuiControl, Focus, strFavoriteShortName
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ButtonSelectFolderLocation:
+;------------------------------------------------------------
+Gui, 2:Submit, NoHide
+Gui, 2:+OwnDialogs
+
+if (blnRadioFolder)
+	FileSelectFolder, strNewLocation, *%strCurrentLocation%, 3, %lDialogAddFolderSelect%
+else
+	FileSelectFile, strNewLocation, S3, %strCurrentLocation%, %lDialogAddFileSelect%
+
+if !(StrLen(strNewLocation))
+	return
+
+GuiControl, 2:, strFolderLocation, %strNewLocation%
+
+if !StrLen(strFavoriteShortName)
+	GuiControl, 2:, strFavoriteShortName, % GetDeepestFolderName(strNewLocation)
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiAddFavoriteCancel:
+GuiEditFavoriteCancel:
+;------------------------------------------------------------
+Gosub, 2GuiClose
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiRemoveFavorite:
+;------------------------------------------------------------
+
+GuiControl, Focus, lvFavoritesList
+Gui, 1:ListView, lvFavoritesList
+intItemToRemove := LV_GetNext()
+if !(intItemToRemove)
+{
+	Oops(lDialogSelectItemToRemove)
+	return
+}
+
+LV_GetText(strFavoriteType, intItemToRemove, 5)
+if (strFavoriteType = "S") ; this is a submneu
+{
+	LV_GetText(strSubmenuFullName, intItemToRemove, 4)
+	MsgBox, 52, % L(lDialogFavoriteRemoveTitle, strAppName), % L(lDialogFavoriteRemovePrompt, strSubmenuFullName)
+	IfMsgBox, No
+		return
+	RemoveAllSubMenus(strSubmenuFullName)
+}
+
+LV_Delete(intItemToRemove)
+LV_Modify(intItemToRemove, "Select Focus")
+LV_ModifyCol(1, "AutoHdr")
+LV_ModifyCol(2, "AutoHdr")
+
+if (strFavoriteType = "S")
+{
+	Gosub, SaveCurrentListviewToMenuObject ; save current LV before update the dropdown menu
+	GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
+}
+
+GuiControl, Enable, btnGuiSave
+GuiControl, , btnGuiCancel, %lGuiCancel%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+RemoveAllSubMenus(strSubmenuFullName)
+; recursive function
+;------------------------------------------------------------
+{
+	Loop, % arrMenus[strSubmenuFullName].MaxIndex()
+		if (arrMenus[strSubmenuFullName][A_Index].FavoriteType = "S") ; this is a submenu
+			RemoveAllSubMenus(arrMenus[strSubmenuFullName][A_Index].SubmenuFullName) ; recursive call
+	arrMenus.Remove(strSubmenuFullName)
+}
+;------------------------------------------------------------
+
+
+
+;========================================================================================================================
+; OPTIONS
+;========================================================================================================================
+
+
+;------------------------------------------------------------
+GuiOptions:
+;------------------------------------------------------------
+
+intGui1WinID := WinExist("A")
+
+;---------------------------------------
+; Build Gui header
+Gui, 1:Submit, NoHide
+Gui, 2:New, , % L(lOptionsGuiTitle, strAppName, strAppVersion)
+Gui, 2:Color, %strGuiWindowColor%
+Gui, 2:+Owner1
+Gui, 2:Font, s10 w700, Verdana
+Gui, 2:Add, Text, x10 y10 w595 center, % L(lOptionsGuiTitle, strAppName)
+Gui, 2:Font
+Gui, 2:Add, Text, x10 y+10 w595 center, % L(lOptionsGuiIntro, strAppName)
+
+; Build Hotkey Gui lines
+loop, % arrIniKeyNames%0%
+{
+	Gui, 2:Font, s8 w700
+	Gui, 2:Add, Text, Section x15 y+10, % arrOptionsTitles%A_Index%
+	Gui, 2:Font, s9 w500, Courier New
+	Gui, 2:Add, Text, x260 ys+5 w280 h23 center 0x1000 vlblHotkeyText%A_Index% gButtonOptionsChangeHotkey%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
+	Gui, 2:Font
+	Gui, 2:Add, Button, yp x555 vbtnChangeHotkey%A_Index% gButtonOptionsChangeHotkey%A_Index%, %lOptionsChangeHotkey%
+	Gui, 2:Font, s8 w500
+	Gui, 2:Add, Text, x15 ys+15, % arrOptionsTitlesSub%A_Index%
+}
+
+Gui, 2:Add, Text, x15 y+15 h2 w595 0x10 ; Horizontal Line > Etched Gray
+
+Gui, 2:Font, s8 w700
+Gui, 2:Add, Text, x10 y+5 w595 center, %lOptionsOtherOptions%
+Gui, 2:Font
+
+; column 1
+Gui, 2:Add, Text, y+10 x15 Section, %lOptionsLanguage%
+Gui, 2:Add, DropDownList, ys x+10 w120 vdrpLanguage Sort, %lOptionsLanguageLabels%
+GuiControl, ChooseString, drpLanguage, %strLanguageLabel%
+
+Gui, 2:Add, CheckBox, y+10 xs vblnOptionsRunAtStartup, %lOptionsRunAtStartup%
+GuiControl, , blnOptionsRunAtStartup, % FileExist(A_Startup . "\" . strAppName . ".lnk") ? 1 : 0
+
+Gui, 2:Add, CheckBox, y+10 xs vblnDisplayMenuShortcuts, %lOptionsDisplayMenuShortcuts%
+GuiControl, , blnDisplayMenuShortcuts, %blnDisplayMenuShortcuts%
+
+Gui, 2:Add, CheckBox, y+10 xs vblnDisplayTrayTip, %lOptionsTrayTip%
+GuiControl, , blnDisplayTrayTip, %blnDisplayTrayTip%
+
+Gui, 2:Add, CheckBox, y+10 xs vblnDisplayIcons, %lOptionsDisplayIcons%
+GuiControl, , blnDisplayIcons, %blnDisplayIcons%
+if !OSVersionIsWorkstation()
+	GuiControl, Disable, blnDisplayIcons
+
+; Build Gui footer
+
+Gui, 2:Add, Text, x15 y+15 h2 w595 0x10 ; Horizontal Line > Etched Gray
+
+Gui, 2:Font, s8 w700
+Gui, 2:Add, Text, y+5 xs, % L(lOptionsThirdPartyTitle, "Directory Opus")
+Gui, 2:Font
+Gui, 2:Add, Text, y+5 xs, % L(lOptionsThirdPartyDetail, "Directory Opus")
+Gui, 2:Add, Text, y+10 xs, %lOptionsThirdPartyPrompt%
+Gui, 2:Add, Edit, x+10 yp w300 h20 vstrDirectoryOpusPath, %strDirectoryOpusPath%
+Gui, 2:Add, Button, x+10 yp vbtnSelectDOpusPath gButtonSelectDOpusPath, %lDialogBrowseButton%
+
+Gui, 2:Font, s8 w700
+Gui, 2:Add, Text, y+5 xs, % L(lOptionsThirdPartyTitle, "Total Commander")
+Gui, 2:Font
+Gui, 2:Add, Text, y+5 xs,  % L(lOptionsThirdPartyDetail, "Total Commander")
+Gui, 2:Add, Text, y+10 xs, %lOptionsThirdPartyPrompt%
+Gui, 2:Add, Edit, x+10 yp w300 h20 vstrTotalCommanderPath, %strTotalCommanderPath%
+Gui, 2:Add, Button, x+10 yp vbtnSelectTCPath gButtonSelectTCPath, %lDialogBrowseButton%
+Gui, 2:Add, Checkbox, x+10 yp vblnTotalCommanderUseTabs, %lOptionsTotalCommanderUseTabs%
+GuiControl, , blnTotalCommanderUseTabs, %blnTotalCommanderUseTabs%
+
+Gui, 2:Add, Button, y+20 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
+Gui, 2:Add, Button, yp vbtnOptionsCancel gButtonOptionsCancel, %lGuiCancel%
+Gui, 2:Add, Button, yp vbtnOptionsDonate gGuiDonate, %lDonateButton%
+GuiCenterButtons(L(lOptionsGuiTitle, strAppName, strAppVersion), 10, 5, 20, , "btnOptionsSave", "btnOptionsCancel", "btnOptionsDonate")
+
+Gui, 2:Add, Text
+GuiControl, Focus, btnOptionsSave
+
+; column 2
+Gui, 2:Add, Text, ys x240 Section, %lOptionsIconSize%
+Gui, 2:Add, DropDownList, ys x+10 w40 vdrpIconSize Sort, 16|24|32|64
+GuiControl, ChooseString, drpIconSize, %intIconSize%
+
+Gui, 2:Add, CheckBox, y+10 xs vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
+GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
+
+Gui, 2:Add, CheckBox, y+10 xs vblnDisplayGroupMenu, %lOptionsDisplayGroupMenu%
+GuiControl, , blnDisplayGroupMenu, %blnDisplayGroupMenu%
+
+Gui, 2:Add, CheckBox, y+10 xs vblnDisplayRecentFolders gDisplayRecentFoldersClicked, %lOptionsDisplayRecentFolders%
+GuiControl, , blnDisplayRecentFolders, %blnDisplayRecentFolders%
+
+Gui, 2:Add, Edit, % "y+10 xs w36 h17 vintRecentFolders center " . (blnDisplayRecentFolders ? "" : "hidden"), %intRecentFolders%
+Gui, 2:Add, Text, % "yp x+10 vlblRecentFolders " . (blnDisplayRecentFolders ? "" : "hidden"), %lOptionsRecentFolders%
+
+; column 3
+
+Gui, 2:Add, Text, ys x430 Section, %lOptionsTheme%
+Gui, 2:Add, DropDownList, ys x+10 w120 vdrpTheme Sort, %strAvailableThemes%
+GuiControl, ChooseString, drpTheme, %strTheme%
+
+Gui, 2:Add, Text, y+7 xs Section, %lOptionsMenuPositionPrompt%
+
+Gui, 2:Add, Radio, % "y+5 xs vradPopupMenuPosition1 gPopupMenuPositionClicked Group " . (intPopupMenuPosition = 1 ? "Checked" : ""), %lOptionsMenuNearMouse%
+Gui, 2:Add, Radio, % "y+5 xs vradPopupMenuPosition2 gPopupMenuPositionClicked " . (intPopupMenuPosition = 2 ? "Checked" : ""), %lOptionsMenuActiveWindow%
+Gui, 2:Add, Radio, % "y+5 xs vradPopupMenuPosition3 gPopupMenuPositionClicked " . (intPopupMenuPosition = 3 ? "Checked" : ""), %lOptionsMenuFixPosition%
+
+Gui, 2:Add, Text, % "y+5 xs+18 vlblPopupFixPositionX " . (intPopupMenuPosition = 3 ? "" : "hidden"), %lOptionsPopupFixPositionX%
+Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionX center " . (intPopupMenuPosition = 3 ? "" : "hidden"), %arrPopupFixPosition1%
+Gui, 2:Add, Text, % "yp x+5 vlblPopupFixPositionY " . (intPopupMenuPosition = 3 ? "" : "hidden"), %lOptionsPopupFixPositionY%
+Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionY center " . (intPopupMenuPosition = 3 ? "" : "hidden"), %arrPopupFixPosition2%
+
+
+Gui, 2:Show, AutoSize Center
+Gui, 1:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+DisplayRecentFoldersClicked:
+;------------------------------------------------------------
+Gui, 2:Submit, NoHide
+
+GuiControl, % (blnDisplayRecentFolders ? "Show" : "Hide"), intRecentFolders
+GuiControl, % (blnDisplayRecentFolders ? "Show" : "Hide"), lblRecentFolders
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+PopupMenuPositionClicked:
+;------------------------------------------------------------
+Gui, 2:Submit, NoHide
+
+GuiControl, % (radPopupMenuPosition3 ? "Show" : "Hide"), lblPopupFixPositionX
+GuiControl, % (radPopupMenuPosition3 ? "Show" : "Hide"), strPopupFixPositionX
+GuiControl, % (radPopupMenuPosition3 ? "Show" : "Hide"), lblPopupFixPositionY
+GuiControl, % (radPopupMenuPosition3 ? "Show" : "Hide"), strPopupFixPositionY
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ButtonSelectDOpusPath:
+;------------------------------------------------------------
+
+if StrLen(strDirectoryOpusPath) and (strDirectoryOpusPath <> "NO")
+	strCurrentDOpusLocation := strDirectoryOpusPath
+else
+	strCurrentDOpusLocation := A_ProgramFiles . "\GPSoftware\Directory Opus\dopus.exe"
+
+FileSelectFile, strNewDOpusLocation, 3, %strCurrentDOpusLocation%, %lDialogAddFolderSelect%
+
+if !(StrLen(strNewDOpusLocation))
+	return
+
+GuiControl, 2:, strDirectoryOpusPath, %strNewDOpusLocation%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ButtonSelectTCPath:
+;------------------------------------------------------------
+
+if StrLen(strTotalCommanderPath) and (strTotalCommanderPath <> "NO")
+	strCurrentTCLocation := strTotalCommanderPath
+else
+	strCurrentTCLocation := GetTotalCommanderPath()
+
+FileSelectFile, strNewTCLocation, 3, %strCurrentTCLocation%, %lDialogAddFolderSelect%
+
+if !(StrLen(strNewTCLocation))
+	return
+
+GuiControl, 2:, strTotalCommanderPath, %strNewTCLocation%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ButtonOptionsSave:
+;------------------------------------------------------------
+Gui, 2:Submit
+
+blnMenuReady := false
+
+IfExist, %A_Startup%\%strAppName%.lnk
+	FileDelete, %A_Startup%\%strAppName%.lnk
+if (blnOptionsRunAtStartup)
+	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%strAppName%.lnk, %A_ScriptDir%
+Menu, Tray, % blnOptionsRunAtStartup ? "Check" : "Uncheck", %lMenuRunAtStartup%
+
+IniWrite, %blnDisplayTrayTip%, %strIniFile%, Global, DisplayTrayTip
+IniWrite, %blnDisplayIcons%, %strIniFile%, Global, DisplayIcons
+IniWrite, %blnDisplaySpecialFolders%, %strIniFile%, Global, DisplaySpecialFolders
+IniWrite, %blnDisplayRecentFolders%, %strIniFile%, Global, DisplayRecentFolders
+IniWrite, %intRecentFolders%, %strIniFile%, Global, RecentFolders
+IniWrite, %blnDisplayGroupMenu%, %strIniFile%, Global, DisplaySwitchMenu ; keep "Switch" for backward compatibility
+IniWrite, %blnDisplayMenuShortcuts%, %strIniFile%, Global, DisplayMenuShortcuts
+
+if (radPopupMenuPosition1)
+	intPopupMenuPosition := 1
+else if (radPopupMenuPosition2)
+	intPopupMenuPosition := 2
+else
+	intPopupMenuPosition := 3
+IniWrite, %intPopupMenuPosition%, %strIniFile%, Global, PopupMenuPosition
+	
+IniWrite, %strPopupFixPositionX%`,%strPopupFixPositionY%, %strIniFile%, Global, PopupFixPosition
+arrPopupFixPosition1 := strPopupFixPositionX
+arrPopupFixPosition2 := strPopupFixPositionY
+
+strLanguageCodePrev := strLanguageCode
+strLanguageLabel := drpLanguage
+loop, %arrOptionsLanguageLabels0%
+	if (arrOptionsLanguageLabels%A_Index% = strLanguageLabel)
+		{
+			strLanguageCode := arrOptionsLanguageCodes%A_Index%
+			break
+		}
+IniWrite, %strLanguageCode%, %strIniFile%, Global, LanguageCode
+
+strThemePrev := strTheme
+strTheme := drpTheme
+IniWrite, %strTheme%, %strIniFile%, Global, Theme
+
+intIconSize := drpIconSize
+IniWrite, %intIconSize%, %strIniFile%, Global, IconSize
+
+IniWrite, %strDirectoryOpusPath%, %strIniFile%, Global, DirectoryOpusPath
+blnUseDirectoryOpus := StrLen(strDirectoryOpusPath)
+if (blnUseDirectoryOpus)
+{
+	blnUseDirectoryOpus := FileExist(strDirectoryOpusPath)
+	if (blnUseDirectoryOpus)
+		Gosub, SetDOpusRt
+}
+
+IniWrite, %strTotalCommanderPath%, %strIniFile%, Global, TotalCommanderPath
+IniWrite, %blnTotalCommanderUseTabs%, %strIniFile%, Global, TotalCommanderUseTabs
+blnUseTotalCommander := StrLen(strTotalCommanderPath)
+if (blnUseTotalCommander)
+{
+	blnUseTotalCommander := FileExist(strTotalCommanderPath)
+	if (blnUseTotalCommander)
+		Gosub, SetTCCommand
+}
+if (blnTotalCommanderUseTabs)
+	strTotalCommanderNewTabOrWindow := "/O /T" ; open new folder in a new tab
+else
+	strTotalCommanderNewTabOrWindow := "/N" ; open new folder in a new window (TC instance)
+
+; if language or theme changed, offer to restart the app
+if (strLanguageCodePrev <> strLanguageCode) or (strThemePrev <> strTheme)
+{
+	MsgBox, 52, %strAppName%, % L(lReloadPrompt, (strLanguageCodePrev <> strLanguageCode ? lOptionsLanguage : lOptionsTheme), (strLanguageCodePrev <> strLanguageCode ? strLanguageLabel : strTheme), strAppName)
+	IfMsgBox, Yes
+	{
+		Gosub, RestoreBackupMenuObjects
+		Reload
+	}
+}	
+
+; else rebuild special and Group menus
+Gosub, BuildSpecialFoldersMenu
+Gosub, BuildGroupMenu
+
+; and rebuild Folders menus w/ or w/o optional folders and shortcuts
+for strMenuName, arrMenu in arrMenus
+{
+	Menu, %strMenuName%, Add
+	Menu, %strMenuName%, DeleteAll
+	arrMenu := ; free object's memory
+}
+Gosub, BuildFavoritesMenusWithStatus
+
+Gosub, 2GuiClose
+
+blnMenuReady := true
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ButtonOptionsCancel:
+;------------------------------------------------------------
+Gosub, 2GuiClose
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ButtonOptionsChangeHotkey1:
+ButtonOptionsChangeHotkey2:
+ButtonOptionsChangeHotkey3:
+ButtonOptionsChangeHotkey4:
+ButtonOptionsChangeHotkey5:
+ButtonOptionsChangeHotkey6:
+;------------------------------------------------------------
+
+StringReplace, intIndex, A_ThisLabel, ButtonOptionsChangeHotkey
+intGui2WinID := WinExist("A")
+
+Gui, 2:Submit, NoHide
+Gui, 3:New, , % L(lOptionsChangeHotkeyTitle, strAppName, strAppVersion)
+Gui, 3:Color, %strGuiWindowColor%
+Gui, 3:+Owner2
+Gui, 3:Font, s10 w700, Verdana
+Gui, 3:Add, Text, x10 y10 w350 center, % L(lOptionsChangeHotkeyTitle, strAppName)
+Gui, 3:Font
+
+intHotkeyType := 3 ; Settings and Recent folders
+if InStr(arrIniKeyNames%intIndex%, "Mouse")
+	intHotkeyType := 1
+if InStr(arrIniKeyNames%intIndex%, "Keyboard")
+	intHotkeyType := 2
+
+Gui, 3:Add, Text, y+15 x10 , %lOptionsTriggerFor%
+Gui, 3:Font, s8 w700
+Gui, 3:Add, Text, x+5 yp , % arrOptionsTitles%intIndex%
+Gui, 3:Font
+
+Gui, 3:Add, Text, x10 y+5 w350, % lOptionsArrDescriptions%intIndex%
+
+Gui, 3:Add, CheckBox, y+20 x50 vblnOptionsShift, %lOptionsShift%
+GuiControl, , blnOptionsShift, % InStr(strModifiers%intIndex%, "+") ? 1 : 0
+GuiControlGet, posTop, Pos, blnOptionsShift
+Gui, 3:Add, CheckBox, y+10 x50 vblnOptionsCtrl, %lOptionsCtrl%
+GuiControl, , blnOptionsCtrl, % InStr(strModifiers%intIndex%, "^") ? 1 : 0
+Gui, 3:Add, CheckBox, y+10 x50 vblnOptionsAlt, %lOptionsAlt%
+GuiControl, , blnOptionsAlt, % InStr(strModifiers%intIndex%, "!") ? 1 : 0
+Gui, 3:Add, CheckBox, y+10 x50 vblnOptionsWin, %lOptionsWin%
+GuiControl, , blnOptionsWin, % InStr(strModifiers%intIndex%, "#") ? 1 : 0
+
+; initialize or we may have an error if another hotkey was changed before
+strOptionsMouse := ""
+strOptionsKey := ""
+
+if (intHotkeyType = 1)
+	Gui, 3:Add, DropDownList, % "y" . posTopY . " x150 w200 vstrOptionsMouse gOptionsMouseChanged", % strMouseButtonsWithDefault%intIndex%
+if (intHotkeyType <> 1)
+{
+	Gui, 3:Add, Text, % "y" . posTopY . " x150 w60", %lOptionsKeyboard%
+	Gui, 3:Add, Hotkey, yp x+10 w130 vstrOptionsKey gOptionsHotkeyChanged
+	GuiControl, , strOptionsKey, % strOptionsKey%intIndex%
+}
+if (intHotkeyType = 3)
+	Gui, 3:Add, DropDownList, % "y" . posTopY + 50 . " x150 w200 vstrOptionsMouse gOptionsMouseChanged", % strMouseButtonsWithDefault%intIndex%
+
+Gui, 3:Add, Button, y240 x140 vbtnChangeHotkeySave gButtonChangeHotkeySave%intIndex%, %lGuiSave%
+Gui, 3:Add, Button, yp x+20 vbtnChangeHotkeyCancel gButtonChangeHotkeyCancel, %lGuiCancel%
+GuiCenterButtons(L(lOptionsChangeHotkeyTitle, strAppName, strAppVersion), 10, 5, 20, , "btnChangeHotkeySave", "btnChangeHotkeyCancel")
+
+Gui, 3:Add, Text
+GuiControl, Focus, btnChangeHotkeySave
+Gui, 3:Show, AutoSize Center
+Gui, 2:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+OptionsHotkeyChanged:
+;------------------------------------------------------------
+strOptionsHotkeyControl := A_GuiControl ; hotkey var name
+strOptionsHotkeyChanged := %strOptionsHotkeyControl% ; hotkey content
+
+if !StrLen(strOptionsHotkeyChanged)
+	return
+
+SplitModifiersFromKey(strOptionsHotkeyChanged, strOptionsHotkeyChangedModifiers, strOptionsHotkeyChangedKey)
+
+if StrLen(strOptionsHotkeyChangedModifiers) ; we have a modifier and we don't want it, reset keyboard to none and return
+	GuiControl, , %A_GuiControl%, None
+else ; we have a valid key, empty the mouse dropdown and return
+{
+	StringReplace, strOptionsMouseControl, strOptionsHotkeyControl, Key, Mouse ; get the matching mouse dropdown var
+	GuiControl, Choose, %strOptionsMouseControl%, 0
+}
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+OptionsMouseChanged:
+;------------------------------------------------------------
+
+strOptionsMouseControl := A_GuiControl ; hotkey var name
+GuiControlGet, strOptionsMouseValue, , %strOptionsMouseControl%
+
+if (strOptionsMouseValue = lOptionsMouseNone) ; this is the translated "None"
+{
+	GuiControl, , blnOptionsShift, 0
+	GuiControl, , blnOptionsCtrl, 0
+	GuiControl, , blnOptionsAlt, 0
+	GuiControl, , blnOptionsWin, 0
+}
+
+if (intHotkeyType = 3) ; both keyboard and mouse options are available
+{
+	StringReplace, strOptionsHotkeyControl, strOptionsMouseControl, Mouse, Key ; get the hotkey var
+
+	; we have a mouse button, empty the hotkey control
+	GuiControl, , %strOptionsHotkeyControl%, None
+}
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ButtonChangeHotkeySave1:
+ButtonChangeHotkeySave2:
+ButtonChangeHotkeySave3:
+ButtonChangeHotkeySave4:
+ButtonChangeHotkeySave5:
+ButtonChangeHotkeySave6:
+;------------------------------------------------------------
+Gui, 3:Submit
+
+StringReplace, intIndex, A_ThisLabel, ButtonChangeHotkeySave
+
+StringSplit, arrIniVarNames, strIniKeyNames, |
+
+if StrLen(strOptionsMouse)
+	strOptionsMouse := GetMouseButton4Text(strOptionsMouse) ; get mouse button system name from dropdown localized text
+else
+	strMouseButton%intIndex% := "" ;  empty mouse button text
+
+strHotkey := Trim(strOptionsKey . strOptionsMouse)
+
+if StrLen(strHotkey)
+	if (strHotkey = "None") ; do not compare with lOptionsMouseNone because it is translated
+	{
+		Hotkey, % "$" . arrHotkeyVarNames%intIndex%, Off, UseErrorLevel ; UseErrorLevel in case we had an invalid key name in the ini file
+		IniWrite, None, %strIniFile%, Global, % arrIniVarNames%intIndex% ; do not write lOptionsMouseNone because it is translated
+	}
+	else
+	{
+		if (blnOptionsWin)
+			strHotkey := "#" . strHotkey
+		if (blnOptionsAlt)
+			strHotkey := "!" . strHotkey
+		if (blnOptionsShift)
+			strHotkey := "+" . strHotkey
+		if (blnOptionsCtrl)
+			strHotkey := "^" . strHotkey
+
+		if (strHotkey = "LButton")
+		{
+			Oops(lOptionsMouseCheckLButton)
+			Gosub, 3GuiClose
+			return
+		}
+
+		Hotkey, % "$" . arrHotkeyVarNames%intIndex%, Off, UseErrorLevel ; UseErrorLevel in case we had an invalid key name in the ini file
+		IniWrite, %strHotkey%, %strIniFile%, Global, % arrIniVarNames%intIndex%
+		
+	}
+else
+	Oops(L(lOptionsNoKeyOrMouseSpecified, arrIniVarNames%intIndex%))
+
+Gosub, LoadIniHotkeys ; reload ini variables and reset hotkeys
+
+GuiControl, 2:, lblHotkeyText%intIndex%, % Hotkey2Text(strModifiers%intIndex%, strMouseButton%intIndex%, strOptionsKey%intIndex%)
+
+Gosub, 3GuiClose
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ButtonChangeHotkeyCancel:
+;------------------------------------------------------------
+Gosub, 3GuiClose
+
+return
+;------------------------------------------------------------
+
+
+
+;========================================================================================================================
+; ABOUT-DONATE-HELP
+;========================================================================================================================
+
+
+;------------------------------------------------------------
+GuiAbout:
+;------------------------------------------------------------
+
+intGui1WinID := WinExist("A")
+Gui, 1:Submit, NoHide
+Gui, 2:New, , % L(lAboutTitle, strAppName, strAppVersion)
+Gui, 2:Color, %strGuiWindowColor%
+Gui, 2:+Owner1
+Gui, 2:Font, s12 w700, Verdana
+Gui, 2:Add, Link, y10 w350 vlblAboutText1, % L(lAboutText1, strAppName, strAppVersion, str32or64)
+Gui, 2:Font, s8 w400, Verdana
+Gui, 2:Add, Link, , % L(lAboutText2, strAppName)
+Gui, 2:Add, Link, , % L(lAboutText3, chr(169))
+Gui, 2:Font, s10 w400, Verdana
+Gui, 2:Add, Link, , % L(lAboutText4)
+Gui, 2:Font, s8 w400, Verdana
+
+Gui, 2:Add, Button, y+20 vbtnAboutDonate gGuiDonate, %lDonateButton%
+Gui, 2:Add, Button, yp vbtnAboutClose g2GuiClose vbtnAboutClose, %lGui2Close%
+GuiCenterButtons(L(lAboutTitle, strAppName, strAppVersion), 10, 5, 20, , "btnAboutDonate", "btnAboutClose")
+
+GuiControl, Focus, btnAboutClose
+Gui, 2:Show, AutoSize Center
+Gui, 1:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiDonate:
+;------------------------------------------------------------
+
+intGui1WinID := WinExist("A")
+Gui, 1:Submit, NoHide
+Gui, 2:New, , % L(lDonateTitle, strAppName, strAppVersion)
+Gui, 2:Color, %strGuiWindowColor%
+Gui, 2:+Owner1
+Gui, 2:Font, s12 w700, Verdana
+Gui, 2:Add, Link, y10 w420, % L(lDonateText1, strAppName)
+Gui, 2:Font, s8 w400, Verdana
+Gui, 2:Add, Link, x175 w185 y+10, % L(lDonateText2, "http://code.jeanlalonde.ca/support-freeware/")
+loop, 2
+{
+	Gui, 2:Add, Button, % (A_Index = 1 ? "y+10 Default vbtnDonateDefault " : "") . " xm w150 gButtonDonate" . A_Index, % lDonatePlatformName%A_Index%
+	Gui, 2:Add, Link, x+10 w235 yp, % lDonatePlatformComment%A_Index%
+}
+
+Gui, 2:Font, s10 w700, Verdana
+Gui, 2:Add, Link, xm y+20 w420, %lDonateText3%
+Gui, 2:Font, s8 w400, Verdana
+Gui, 2:Add, Link, xm y+10 w420 Section, % L(lDonateText4, strAppName)
+
+strDonateReviewUrlLeft1 := "http://download.cnet.com/FoldersPopup/3000-2344_4-76062382.html"
+strDonateReviewUrlLeft2 := "http://www.portablefreeware.com/index.php?id=2557"
+strDonateReviewUrlLeft3 := "http://www.softpedia.com/get/System/OS-Enhancements/FoldersPopup.shtml"
+strDonateReviewUrlRight1 := "http://fileforum.betanews.com/detail/Folders-Popup/1385175626/1"
+strDonateReviewUrlRight2 := "http://www.filecluster.com/System-Utilities/Other-Utilities/Download-FoldersPopup.html"
+strDonateReviewUrlRight3 := "http://freewares-tutos.blogspot.fr/2013/12/folders-popup-un-logiciel-portable-pour.html"
+
+loop, 3
+	Gui, 2:Add, Link, % (A_Index = 1 ? "ys+20" : "y+5") . " x25 w150", % "<a href=""" . strDonateReviewUrlLeft%A_Index% . """>" . lDonateReviewNameLeft%A_Index% . "</a>"
+
+loop, 3
+	Gui, 2:Add, Link, % (A_Index = 1 ? "ys+20" : "y+5") . " x175 w150", % "<a href=""" . strDonateReviewUrlRight%A_Index% . """>" . lDonateReviewNameRight%A_Index% . "</a>"
+
+Gui, 2:Add, Link, y+10 x130, <a href="http://code.jeanlalonde.ca/support-freeware/">%lDonateText5%</a>
+
+Gui, 2:Font, s8 w400, Verdana
+Gui, 2:Add, Button, x175 y+20 g2GuiClose vbtnDonateClose, %lGui2Close%
+GuiCenterButtons(L(lDonateTitle, strAppName, strAppVersion), 10, 5, 20, , "btnDonateClose")
+
+GuiControl, Focus, btnDonateDefault
+Gui, 2:Show, AutoSize Center
+Gui, 1:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ButtonDonate1:
+ButtonDonate2:
+ButtonDonate3:
+;------------------------------------------------------------
+
+strDonatePlatformUrl1 := "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AJNCXKWKYAXLCV"
+strDonatePlatformUrl2 := "http://www.shareit.com/product.html?productid=300628012"
+strDonatePlatformUrl3 := "http://code.jeanlalonde.ca/?flattrss_redirect&id=19&md5=e1767c143c9bde02b4e7f8d9eb362b71"
+
+StringReplace, strButton, A_ThisLabel, ButtonDonate
+Run, % strDonatePlatformUrl%strButton%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiHelp:
+;------------------------------------------------------------
+
+intGui1WinID := WinExist("A")
+Gui, 1:Submit, NoHide
+Gui, 2:New, , % L(lHelpTitle, strAppName, strAppVersion)
+Gui, 2:Color, %strGuiWindowColor%
+Gui, 2:+Owner1
+intWidth := 600
+Gui, 2:Font, s12 w700, Verdana
+Gui, 2:Add, Text, x10 y10, %strAppName%
+Gui, 2:Font, s10 w400, Verdana
+Gui, 2:Add, Link, x10 w%intWidth%, %lHelpTextLead%
+Gui, 2:Font, s8 w400, Verdana
+loop, 6
+	Gui, 2:Add, Link, w%intWidth%, % lHelpText%A_Index%
+Gui, 2:Add, Link, w%intWidth%, % L(lHelpText7, chr(169))
+
+Gui, 2:Add, Button, x180 y+20 vbtnHelpDonate gGuiDonate, %lDonateButton%
+Gui, 2:Add, Button, x+80 yp g2GuiClose vbtnHelpClose, %lGui2Close%
+GuiCenterButtons(L(lHelpTitle, strAppName, strAppVersion), 10, 5, 20, , "btnHelpDonate", "btnHelpClose")
+
+GuiControl, Focus, btnHelpClose
+Gui, 2:Show, AutoSize Center
+Gui, 1:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+
+;========================================================================================================================
+; GUI CLOSE-CANCEL
+;========================================================================================================================
+
+
+;------------------------------------------------------------
+2GuiClose:
+2GuiEscape:
+;------------------------------------------------------------
+
+Gui, 1:-Disabled
+Gui, 2:Destroy
+WinActivate, ahk_id %intGui1WinID%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+3GuiClose:
+3GuiEscape:
+;------------------------------------------------------------
+
+Gui, 2:-Disabled
+Gui, 3:Destroy
+WinActivate, ahk_id %intGui2WinID%
+
+return
+;------------------------------------------------------------
+
+
+
+;========================================================================================================================
+; THIRD-PARTY
+;========================================================================================================================
+
+
+;------------------------------------------------------------
+RunDOpusRt(strCommand, strLocation := "", strParam := "")
+; put A_Space at the beginning of strParam if required - some param (like ",paths") must have no space 
+;------------------------------------------------------------
+{
+	global strDirectoryOpusRtPath
+	global strDirectoryOpusPath
+
+	if FileExist(strDirectoryOpusRtPath)
+		Run, % """" . strDirectoryOpusRtPath . """ " . strCommand . " """ . strLocation . """" . strParam
+	else
+		Oops(lOopsWrongThirdPartyPath, strAppName, "Directory Opus", "DirectoryOpus", strDirectoryOpusPath)
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+CheckDirectoryOpus:
+;------------------------------------------------------------
+
+strCheckDirectoryOpusPath := A_ProgramFiles . "\GPSoftware\Directory Opus\dopus.exe"
+
+if FileExist(strCheckDirectoryOpusPath)
+{
+	MsgBox, 52, %strAppName%, % L(lDialogThirdPartyDetected, strAppName, "Directory Opus")
+	IfMsgBox, No
+		strDirectoryOpusPath := "NO"
+	else
+	{
+		strDirectoryOpusPath := strCheckDirectoryOpusPath
+		Gosub, SetDOpusRt
+	}
+	blnUseDirectoryOpus := (strDirectoryOpusPath <> "NO")
+	IniWrite, %strDirectoryOpusPath%, %strIniFile%, Global, DirectoryOpusPath
+}
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+SetDOpusRt:
+;------------------------------------------------------------
+
+strDOpusTempFilePath := strTempDir . "\dopus-list.txt"
+StringReplace, strDirectoryOpusRtPath, strDirectoryOpusPath, \dopus.exe, \dopusrt.exe
+
+; additional icon for Directory Opus
+objIconsFile["DirectoryOpus"] := strDirectoryOpusPath
+objIconsIndex["DirectoryOpus"] := 1
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+CheckTotalCommander:
+;------------------------------------------------------------
+
+strCheckTotalCommanderPath := GetTotalCommanderPath()
+
+if FileExist(strCheckTotalCommanderPath)
+{
+	MsgBox, 52, %strAppName%, % L(lDialogThirdPartyDetected, strAppName, "Total Commander")
+	IfMsgBox, No
+		strTotalCommanderPath := "NO"
+	else
+	{
+		strTotalCommanderPath := strCheckTotalCommanderPath
+		Gosub, SetTCCommand
+		
+		; disable Group menu for TC users until the tabs issue is resolved
+		blnDisplayGroupMenu := 0
+		IniWrite, %blnDisplayGroupMenu%, %strIniFile%, Global, DisplaySwitchMenu
+	}
+	blnUseTotalCommander := (strTotalCommanderPath <> "NO")
+	IniWrite, %strTotalCommanderPath%, %strIniFile%, Global, TotalCommanderPath
+	blnTotalCommanderUseTabs := 1
+	IniWrite, %blnTotalCommanderUseTabs%, %strIniFile%, Global, TotalCommanderUseTabs
+	; strTotalCommanderNewTabOrWindow will contain "/O /T" to open in a new tab if TotalCommanderUseTabs is 1 (default) or "/N" to open in a new file list
+	strTotalCommanderNewTabOrWindow := "/O /T"
+}
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GetTotalCommanderPath()
+;------------------------------------------------------------
+{
+	RegRead, strPath, HKEY_CURRENT_USER, Software\Ghisler\Total Commander\, InstallDir
+	If !StrLen(strPath)
+		RegRead, strPath, HKEY_LOCAL_MACHINE, Software\Ghisler\Total Commander\, InstallDir
+
+	if FileExist(strPath . "\TOTALCMD64.EXE")
+		strPath := strPath . "\TOTALCMD64.EXE"
+	else
+		strPath := strPath . "\TOTALCMD.EXE"
+	return strPath
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+SetTCCommand:
+;------------------------------------------------------------
+
+IniRead, blnTotalCommanderUseTabs, %strIniFile%, Global, TotalCommanderUseTabs, 1 ; should be intialized here but true by default for safety
+if (blnTotalCommanderUseTabs)
+	strTotalCommanderNewTabOrWindow := "/O /T" ; open new folder in a new tab
+else
+	strTotalCommanderNewTabOrWindow := "/N" ; open new folder in a new window (TC instance)
+
+; additional icon for TotalCommander
+objIconsFile["TotalCommander"] := strTotalCommanderPath
+objIconsIndex["TotalCommander"] := 1
+
+return
 ;------------------------------------------------------------
 
 
@@ -5025,6 +5305,89 @@ GetFirstNotModifier(strHotkey)
 		else
 			return intPos
 	return intPos
+}
+;------------------------------------------------------------
+
+
+
+;========================================================================================================================
+; GENERAL
+;========================================================================================================================
+
+
+;------------------------------------------------
+Oops(strMessage, objVariables*)
+;------------------------------------------------
+{
+	Gui, 1:+OwnDialogs
+	MsgBox, 48, % L(lOopsTitle, strAppName, strAppVersion), % L(strMessage, objVariables*)
+}
+; ------------------------------------------------
+
+
+;------------------------------------------------
+L(strMessage, objVariables*)
+;------------------------------------------------
+{
+	Loop
+	{
+		if InStr(strMessage, "~" . A_Index . "~")
+			StringReplace, strMessage, strMessage, ~%A_Index%~, % objVariables[A_Index], A
+ 		else
+			break
+	}
+	
+	return strMessage
+}
+;------------------------------------------------
+
+
+;------------------------------------------------
+Diag(strName, strData)
+;------------------------------------------------
+{
+	FormatTime, strNow, %A_Now%, yyyyMMdd@HH:mm:ss
+	loop
+	{
+		FileAppend, %strNow%.%A_MSec%`t%strName%`t%strData%`n, %strDiagFile%
+		if ErrorLevel
+			Sleep, 20
+	}
+	until !ErrorLevel or (A_Index > 50) ; after 1 second (20ms x 50), we have a problem
+}
+;------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiCenterButtons(strWindow, intInsideHorizontalMargin := 10, intInsideVerticalMargin := 0, intDistanceBetweenButtons := 20, intLeftRightOffset := 0, arrControls*)
+; This is a variadic function. See: http://ahkscript.org/docs/Functions.htm#Variadic
+;------------------------------------------------------------
+{
+	DetectHiddenWindows, On
+	Gui, Show, Hide
+	WinGetPos, , , intWidth, , %strWindow%
+
+	intWidth := intWidth + intLeftRightOffset
+	intMaxControlWidth := 0
+	intMaxControlHeight := 0
+	for intIndex, strControl in arrControls
+	{
+		GuiControlGet, arrControlPos, Pos, %strControl%
+		if (arrControlPosW > intMaxControlWidth)
+			intMaxControlWidth := arrControlPosW
+		if (arrControlPosH > intMaxControlHeight)
+			intMaxControlHeight := arrControlPosH
+	}
+	
+	intMaxControlWidth := intMaxControlWidth + intInsideHorizontalMargin
+	intButtonsWidth := (arrControls.MaxIndex() * intMaxControlWidth) + ((arrControls.MaxIndex()  - 1) * intDistanceBetweenButtons)
+	intLeftMargin := (intWidth - intButtonsWidth) // 2
+
+	for intIndex, strControl in arrControls
+		GuiControl, Move, %strControl%
+			, % "x" . intLeftMargin + ((intIndex - 1) * intMaxControlWidth) + ((intIndex - 1) * intDistanceBetweenButtons)
+			. " w" . intMaxControlWidth
+			. " h" . intMaxControlHeight + intInsideVerticalMargin
 }
 ;------------------------------------------------------------
 
@@ -5105,38 +5468,6 @@ GetIniName4Hotkey(strSource)
 ;------------------------------------------------------------
 
 
-
-;============================================================
-; TOOLS
-;============================================================
-
-;------------------------------------------------
-Oops(strMessage, objVariables*)
-;------------------------------------------------
-{
-	Gui, 1:+OwnDialogs
-	MsgBox, 48, % L(lOopsTitle, strAppName, strAppVersion), % L(strMessage, objVariables*)
-}
-; ------------------------------------------------
-
-
-;------------------------------------------------
-L(strMessage, objVariables*)
-;------------------------------------------------
-{
-	Loop
-	{
-		if InStr(strMessage, "~" . A_Index . "~")
-			StringReplace, strMessage, strMessage, ~%A_Index%~, % objVariables[A_Index], A
- 		else
-			break
-	}
-	
-	return strMessage
-}
-;------------------------------------------------
-
-
 ;------------------------------------------------------------
 GetDeepestFolderName(strLocation)
 ;------------------------------------------------------------
@@ -5150,75 +5481,6 @@ GetDeepestFolderName(strLocation)
 ;------------------------------------------------------------
 
 
-;------------------------------------------------
-Diag(strName, strData)
-;------------------------------------------------
-{
-	FormatTime, strNow, %A_Now%, yyyyMMdd@HH:mm:ss
-	loop
-	{
-		FileAppend, %strNow%.%A_MSec%`t%strName%`t%strData%`n, %strDiagFile%
-		if ErrorLevel
-			Sleep, 20
-	}
-	until !ErrorLevel or (A_Index > 50) ; after 1 second (20ms x 50), we have a problem
-}
-;------------------------------------------------
-
-
-;------------------------------------------------------------
-NextMenuShortcut(ByRef intShortcut, blnMainMenu)
-;------------------------------------------------------------
-{
-	if (intShortcut < 10)
-		strShortcut := intShortcut ; 0 .. 9
-	else
-	{
-		while (blnMainMenu and InStr(lMenuReservedShortcuts, Chr(intShortcut + 55)))
-			intShortcut := intShortcut + 1
-		strShortcut := Chr(intShortcut + 55) ; Chr(10 + 55) = "A" .. Chr(35 + 55) = "Z"
-	}
-	intShortcut := intShortcut + 1
-	return strShortcut
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------
-UriDecode(str)
-; by polyethene
-; http://www.autohotkey.com/board/topic/17367-url-encoding-and-decoding-of-special-characters/?p=112822
-;------------------------------------------------
-{
-	Loop
-		If RegExMatch(str, "i)(?<=%)[\da-f]{1,2}", hex)
-			StringReplace, str, str, `%%hex%, % Chr("0x" . hex), All
-		Else
-			Break
-	return str
-}
-;------------------------------------------------
-
-
-;------------------------------------------------
-WM_MOUSEMOVE(wParam, lParam)
-; "hook" for image buttons cursor
-; see http://www.autohotkey.com/board/topic/70261-gui-buttons-hover-cant-change-cursor-to-hand/
-;------------------------------------------------
-{
-	Global objCursor
-	
-	MouseGetPos, , , , strControl ; Static1, StaticN, Button1, ButtonN
-	StringReplace, strControl, strControl, Static
-
-	If InStr(".3.4.6.7.9.10.11.12.14.15.16.17.18.19.20.21.25.26.27.28.29.30.Button1.Button2.", "." . strControl . ".")
-		DllCall("SetCursor", "UInt", objCursor)
-
-	return
-}
-;------------------------------------------------
-
-
 ;------------------------------------------------------------
 LocationIsDocument(strLocation)
 ;------------------------------------------------------------
@@ -5230,245 +5492,20 @@ LocationIsDocument(strLocation)
 
 
 ;------------------------------------------------------------
-GuiCenterButtons(strWindow, intInsideHorizontalMargin := 10, intInsideVerticalMargin := 0, intDistanceBetweenButtons := 20, intLeftRightOffset := 0, arrControls*)
-; This is a variadic function. See: http://ahkscript.org/docs/Functions.htm#Variadic
+Url2Var(strUrl)
 ;------------------------------------------------------------
 {
-	DetectHiddenWindows, On
-	Gui, Show, Hide
-	WinGetPos, , , intWidth, , %strWindow%
-
-	intWidth := intWidth + intLeftRightOffset
-	intMaxControlWidth := 0
-	intMaxControlHeight := 0
-	for intIndex, strControl in arrControls
-	{
-		GuiControlGet, arrControlPos, Pos, %strControl%
-		if (arrControlPosW > intMaxControlWidth)
-			intMaxControlWidth := arrControlPosW
-		if (arrControlPosH > intMaxControlHeight)
-			intMaxControlHeight := arrControlPosH
-	}
-	
-	intMaxControlWidth := intMaxControlWidth + intInsideHorizontalMargin
-	intButtonsWidth := (arrControls.MaxIndex() * intMaxControlWidth) + ((arrControls.MaxIndex()  - 1) * intDistanceBetweenButtons)
-	intLeftMargin := (intWidth - intButtonsWidth) // 2
-
-	for intIndex, strControl in arrControls
-		GuiControl, Move, %strControl%
-			, % "x" . intLeftMargin + ((intIndex - 1) * intMaxControlWidth) + ((intIndex - 1) * intDistanceBetweenButtons)
-			. " w" . intMaxControlWidth
-			. " h" . intMaxControlHeight + intInsideVerticalMargin
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-AddMenuIcon(strMenuName, ByRef strMenuItemName, strLabel, strIconValue)
-;------------------------------------------------------------
-{
-	global intIconSize
-	global blnDisplayIcons
-	global objIconsFile
-	global objIconsIndex
-
+	objWebRequest := ComObjCreate("WinHttp.WinHttpRequest.5.1")
 	/*
-	###_D(""
-		. "strMenuName: " . strMenuName . "`n"
-		. "strMenuItemName: " . strMenuItemName . "`n"
-		. "strLabel: " . strLabel . "`n"
-		. "strIconValue: " . strIconValue . "`n"
-		. "objIconsFile[strIconValue]: " . objIconsFile[strIconValue] . "`n"
-		. "objIconsIndex[strIconValue]: " . objIconsIndex[strIconValue] . "`n"
-		. "")
+	if (A_LastError)
+		; an error occurred during ComObjCreate (A_LastError probably is E_UNEXPECTED = -2147418113 #0x8000FFFFL)
+		BUT DO NOT ABORT because the following commands will be executed even if an error occurred in ComObjCreate (!)
 	*/
-	
-	if !StrLen(strMenuItemName)
-		return
-	
-	; The names of menus and menu items can be up to 260 characters long.
-	if StrLen(strMenuItemName) > 260
-		strMenuItemName := SubStr(strMenuItemName, 1, 256) . "..." ; minus one for the luck ;-)
-	
-	Menu, %strMenuName%, Add, %strMenuItemName%, %strLabel%
-	if (blnDisplayIcons)
-		Menu, %strMenuName%, Icon, %strMenuItemName%, % objIconsFile[strIconValue], % objIconsIndex[strIconValue], %intIconSize%
+	objWebRequest.Open("GET", strUrl)
+	objWebRequest.Send()
+
+	Return objWebRequest.ResponseText()
 }
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GetIcon4Location(strLocation, ByRef strDefaultIcon, ByRef intDefaultIcon)
-; get icon, extract from kiu http://www.autohotkey.com/board/topic/8616-kiu-icons-manager-quickly-change-icon-files/
-;------------------------------------------------------------
-{
-	global blnDiagMode
-	
-	SplitPath, strLocation, , , strExtension
-	RegRead, strHKeyClassRoot, HKEY_CLASSES_ROOT, .%strExtension%
-	RegRead, strDefaultIcon, HKEY_CLASSES_ROOT, %strHKeyClassRoot%\DefaultIcon
-	if (blnDiagMode)
-	{
-		Diag("BuildOneMenuIcon", strLocation)
-		Diag("strHKeyClassRoot", strHKeyClassRoot)
-		Diag("strDefaultIcon-1", strDefaultIcon)
-	}
-	
-	if (strDefaultIcon = "%1") ; use the file itself (for executable)
-		strDefaultIcon := strLocation
-	
-	IfInString, strDefaultIcon, `, ; this is for icongroup files
-	{
-		StringSplit, arrDefaultIcon, strDefaultIcon, `,
-		strDefaultIcon := arrDefaultIcon1
-		intDefaultIcon := arrDefaultIcon2
-	}
-	else
-		intDefaultIcon := 1
-
-	if (blnDiagMode)
-	{
-		Diag("strDefaultIcon-2", strDefaultIcon)
-		Diag("intDefaultIcon", intDefaultIcon)
-	}
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-AHK_NOTIFYICON(wParam, lParam) 
-; Adapted from Lexikos http://www.autohotkey.com/board/topic/11250-mouseover-trayicon-triggering-an-event/#entry153388
-; To popup menu when left click on the tray icon - See the OnMessage command in the init section
-;------------------------------------------------------------
-{ 
-	if (lParam = 0x202) ; WM_LBUTTONUP
-	{ 
-		SetTimer, PopupMenuNewWindowMouse, -1 
-		return 0 
-	} 
-} 
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-RunDOpusRt(strCommand, strLocation := "", strParam := "")
-; put A_Space at the beginning of strParam if required - some param (like ",paths") must have no space 
-;------------------------------------------------------------
-{
-	global strDirectoryOpusRtPath
-	global strDirectoryOpusPath
-
-	if FileExist(strDirectoryOpusRtPath)
-		Run, % """" . strDirectoryOpusRtPath . """ " . strCommand . " """ . strLocation . """" . strParam
-	else
-		Oops(lOopsWrongThirdPartyPath, strAppName, "Directory Opus", "DirectoryOpus", strDirectoryOpusPath)
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-CheckDirectoryOpus:
-;------------------------------------------------------------
-
-strCheckDirectoryOpusPath := A_ProgramFiles . "\GPSoftware\Directory Opus\dopus.exe"
-
-if FileExist(strCheckDirectoryOpusPath)
-{
-	MsgBox, 52, %strAppName%, % L(lDialogThirdPartyDetected, strAppName, "Directory Opus")
-	IfMsgBox, No
-		strDirectoryOpusPath := "NO"
-	else
-	{
-		strDirectoryOpusPath := strCheckDirectoryOpusPath
-		Gosub, SetDOpusRt
-	}
-	blnUseDirectoryOpus := (strDirectoryOpusPath <> "NO")
-	IniWrite, %strDirectoryOpusPath%, %strIniFile%, Global, DirectoryOpusPath
-}
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-SetDOpusRt:
-;------------------------------------------------------------
-
-strDOpusTempFilePath := strTempDir . "\dopus-list.txt"
-StringReplace, strDirectoryOpusRtPath, strDirectoryOpusPath, \dopus.exe, \dopusrt.exe
-
-; additional icon for Directory Opus
-objIconsFile["DirectoryOpus"] := strDirectoryOpusPath
-objIconsIndex["DirectoryOpus"] := 1
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-CheckTotalCommander:
-;------------------------------------------------------------
-
-strCheckTotalCommanderPath := GetTotalCommanderPath()
-
-if FileExist(strCheckTotalCommanderPath)
-{
-	MsgBox, 52, %strAppName%, % L(lDialogThirdPartyDetected, strAppName, "Total Commander")
-	IfMsgBox, No
-		strTotalCommanderPath := "NO"
-	else
-	{
-		strTotalCommanderPath := strCheckTotalCommanderPath
-		Gosub, SetTCCommand
-		
-		; disable Switch menu for TC users until the tabs issue is resolved
-		blnDisplaySwitchMenu := 0
-		IniWrite, %blnDisplaySwitchMenu%, %strIniFile%, Global, DisplaySwitchMenu
-	}
-	blnUseTotalCommander := (strTotalCommanderPath <> "NO")
-	IniWrite, %strTotalCommanderPath%, %strIniFile%, Global, TotalCommanderPath
-	blnTotalCommanderUseTabs := 1
-	IniWrite, %blnTotalCommanderUseTabs%, %strIniFile%, Global, TotalCommanderUseTabs
-	; strTotalCommanderNewTabOrWindow will contain "/O /T" to open in a new tab if TotalCommanderUseTabs is 1 (default) or "/N" to open in a new file list
-	strTotalCommanderNewTabOrWindow := "/O /T"
-}
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GetTotalCommanderPath()
-;------------------------------------------------------------
-{
-	RegRead, strPath, HKEY_CURRENT_USER, Software\Ghisler\Total Commander\, InstallDir
-	If !StrLen(strPath)
-		RegRead, strPath, HKEY_LOCAL_MACHINE, Software\Ghisler\Total Commander\, InstallDir
-
-	if FileExist(strPath . "\TOTALCMD64.EXE")
-		strPath := strPath . "\TOTALCMD64.EXE"
-	else
-		strPath := strPath . "\TOTALCMD.EXE"
-	return strPath
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-SetTCCommand:
-;------------------------------------------------------------
-
-IniRead, blnTotalCommanderUseTabs, %strIniFile%, Global, TotalCommanderUseTabs, 1 ; should be intialized here but true by default for safety
-if (blnTotalCommanderUseTabs)
-	strTotalCommanderNewTabOrWindow := "/O /T" ; open new folder in a new tab
-else
-	strTotalCommanderNewTabOrWindow := "/N" ; open new folder in a new window (TC instance)
-
-; additional icon for TotalCommander
-objIconsFile["TotalCommander"] := strTotalCommanderPath
-objIconsIndex["TotalCommander"] := 1
-
-return
 ;------------------------------------------------------------
 
 
