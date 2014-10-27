@@ -4,12 +4,18 @@ Bugs:
 To-do for v4:
 - manage group gui
 - Win-K shortcut not available in Win 8.1 (available: Win-A, Win-J, Win-N used by OneNote, Win-Y)
+- look at http://www.jrsoftware.org/isinfo.php
 */
 ;===============================================
 /*
 	FoldersPopup
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
+
+	Version: 3.9.1 (2014-10-XX)
+	* Add the option "Use tabs" for DirectoryOpus users to choose to pen new folders in new tab (new default) or new lister (window)
+	* Change Group menu label to "Group of folders"
+
 
 	Version: 3.3 (2014-10-24)
 	
@@ -738,6 +744,7 @@ if !(blnDonor)
 	lMenuReservedShortcuts := lMenuReservedShortcuts . lMenuReservedShortcutsDonate
 
 IniRead, strDirectoryOpusPath, %strIniFile%, Global, DirectoryOpusPath, %A_Space% ; empty string if not found
+IniRead, blnDirectoryOpusUseTabs, %strIniFile%, Global, DirectoryOpusUseTabs, 1 ; use tabs by default
 if StrLen(strDirectoryOpusPath)
 	blnUseDirectoryOpus := FileExist(strDirectoryOpusPath)
 if (blnUseDirectoryOpus)
@@ -1278,32 +1285,30 @@ if (blnUseDirectoryOpus)
 			and (!StrLen(objLister.Path) or InStr(objLister.Path, "coll://"))
 			continue
 		
-		if !NameIsInObject(objLister.Path, objGroupMenuExplorers)
-		{
+		if !NameAndTypeIsInObject(objLister.Path, "DO", objGroupMenuExplorers)
 			intExplorersIndex := intExplorersIndex + 1
 			
-			objGroupMenuExplorer := Object()
-			objGroupMenuExplorer.Path := objLister.Path
-			if InStr(objLister.Path, "Lister-Quick-Find-Results")
-				objGroupMenuExplorer.Name := "Directory Opus Quick Find Results (" . intExplorersIndex . ")"
-			else if InStr(objLister.Path, "coll://")
-				objGroupMenuExplorer.Name := "Directory Opus Collection (" . intExplorersIndex . ")"
-			else
-				objGroupMenuExplorer.Name := objLister.Path
-			objGroupMenuExplorer.WindowId := objLister.Lister
-			objGroupMenuExplorer.TabId := objLister.Tab
-			objGroupMenuExplorer.Position := objLister.Position
-			objGroupMenuExplorer.MinMax := objLister.MinMax
-			objGroupMenuExplorer.Pane := (objLister.Pane = 0 ? 1 : objLister.Pane) ; consider pane 0 as pane 1
-			objGroupMenuExplorer.WindowType := "DO"
-			if FileExist(objGroupMenuExplorer.Name)
-			{
-				objGroupMenuExplorer.NameExist := 1
-				intExplorersExist := intExplorersExist + 1
-			}	
-			
-			objGroupMenuExplorers.Insert(intExplorersIndex, objGroupMenuExplorer)
-		}
+		objGroupMenuExplorer := Object()
+		objGroupMenuExplorer.Path := objLister.Path
+		if InStr(objLister.Path, "Lister-Quick-Find-Results")
+			objGroupMenuExplorer.Name := "Directory Opus Quick Find Results (" . intExplorersIndex . ")"
+		else if InStr(objLister.Path, "coll://")
+			objGroupMenuExplorer.Name := "Directory Opus Collection (" . intExplorersIndex . ")"
+		else
+			objGroupMenuExplorer.Name := objLister.Path
+		objGroupMenuExplorer.WindowId := objLister.Lister
+		objGroupMenuExplorer.TabId := objLister.Tab
+		objGroupMenuExplorer.Position := objLister.Position
+		objGroupMenuExplorer.MinMax := objLister.MinMax
+		objGroupMenuExplorer.Pane := (objLister.Pane = 0 ? 1 : objLister.Pane) ; consider pane 0 as pane 1
+		objGroupMenuExplorer.WindowType := "DO"
+		if FileExist(objGroupMenuExplorer.Name)
+		{
+			objGroupMenuExplorer.NameExist := 1
+			intExplorersExist := intExplorersExist + 1
+		}	
+		
+		objGroupMenuExplorers.Insert(intExplorersIndex, objGroupMenuExplorer)
 	}
 
 /* when TC tabs resolved
@@ -1340,26 +1345,24 @@ for intIndex, objExplorer in objExplorersWindows
 		and !StrLen(objExplorer.LocationURL)
 		continue
 		
-	if !NameIsInObject(objExplorer.LocationName, objGroupMenuExplorers)
-	{
+	if !NameAndTypeIsInObject(objExplorer.LocationName, "EX", objGroupMenuExplorers)
 		intExplorersIndex := intExplorersIndex + 1
 		
-		objGroupMenuExplorer := Object()
-		objGroupMenuExplorer.Path := objExplorer.LocationURL
-		objGroupMenuExplorer.Name := objExplorer.LocationName
-		objGroupMenuExplorer.WindowId := objExplorer.WindowId
-		objGroupMenuExplorer.TabId := ""
-		objGroupMenuExplorer.Position := objExplorer.Position
-		objGroupMenuExplorer.MinMax := objExplorer.MinMax
-		objGroupMenuExplorer.WindowType := "EX"
-		if FileExist(objGroupMenuExplorer.Name)
-		{
-			objGroupMenuExplorer.NameExist := 1
-			intExplorersExist := intExplorersExist + 1
-		}	
-	
-		objGroupMenuExplorers.Insert(intExplorersIndex, objGroupMenuExplorer)
-	}
+	objGroupMenuExplorer := Object()
+	objGroupMenuExplorer.Path := objExplorer.LocationURL
+	objGroupMenuExplorer.Name := objExplorer.LocationName
+	objGroupMenuExplorer.WindowId := objExplorer.WindowId
+	objGroupMenuExplorer.TabId := ""
+	objGroupMenuExplorer.Position := objExplorer.Position
+	objGroupMenuExplorer.MinMax := objExplorer.MinMax
+	objGroupMenuExplorer.WindowType := "EX"
+	if FileExist(objGroupMenuExplorer.Name)
+	{
+		objGroupMenuExplorer.NameExist := 1
+		intExplorersExist := intExplorersExist + 1
+	}	
+
+	objGroupMenuExplorers.Insert(intExplorersIndex, objGroupMenuExplorer)
 }
 
 Menu, menuGroup, Add
@@ -1372,7 +1375,10 @@ for intIndex, objGroupMenuExplorer in objGroupMenuExplorers
 {
 	strMenuName := (blnDisplayMenuShortcuts and (intShortcutGroup <= 35) ? "&" . NextMenuShortcut(intShortcutGroup, false) . " " : "") . objGroupMenuExplorer.Name
 	if !WindowIsDialog(strTargetClass) or (blnNewWindow)
-		AddMenuIcon("menuGroup", strMenuName, "SwitchExplorer", (objGroupMenuExplorer.WindowType = "DO" ? "DirectoryOpus" : (objGroupMenuExplorer.WindowType = "TC" ? "TotalCommander" : "menuGroupExplorer")))
+		AddMenuIcon("menuGroup"
+			, strMenuName . (objGroupMenuExplorer.WindowType = "DO" ? " (DOpus)" : (objGroupMenuExplorer.WindowType = "TC" ? " (TC)" : ""))
+			, "SwitchExplorer"
+			, (objGroupMenuExplorer.WindowType = "DO" ? "DirectoryOpus" : (objGroupMenuExplorer.WindowType = "TC" ? "TotalCommander" : "menuGroupExplorer")))
 	else
 		AddMenuIcon("menuGroup", strMenuName, "SwitchDialog", "menuGroupDialog")
 }
@@ -1573,11 +1579,11 @@ ParseDOpusListerProperty(strSource, strProperty)
 
 
 ;------------------------------------------------------------
-NameIsInObject(strName, obj)
+NameAndTypeIsInObject(strName, strType, obj)
 ;------------------------------------------------------------
 {
 	loop, % obj.MaxIndex()
-		if (strName = obj[A_Index].Name)
+		if (strName = obj[A_Index].Name) and (strType = obj[A_Index].WindowType)
 			return true
 		
 	return false
@@ -1607,8 +1613,7 @@ if (blnDisplaySpecialFolders)
 
 if (blnDisplayGroupMenu)
 {
-	strBuildMenuFullName := (blnUseDirectoryOpus ? lMenuGroupDOpus . " + " : "") . lMenuGroup
-	AddMenuIcon(lMainMenuName, strBuildMenuFullName, ":menuGroup", "lMenuGroup")
+	AddMenuIcon(lMainMenuName, lMenuGroup, ":menuGroup", "lMenuGroup")
 	Menu, menuGroup, Color, %strMenuBackgroundColor%
 }
 
@@ -2169,7 +2174,7 @@ if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetCla
 		Diag("Navigate", "RunNewWindow")
 	
 	if (blnUseDirectoryOpus)
-		RunDOpusRt("/acmd Go ", strLocation, " NEW") ; open in a new lister
+		RunDOpusRt("/acmd Go ", strLocation, " " . strDirectoryOpusNewTabOrWindow) ; open in a new lister or tab
 	else if (blnUseTotalCommander)
 		NewTotalCommander(strLocation, strTargetWinId, strTargetControl)
 	else
@@ -2293,7 +2298,7 @@ if (blnNewSpecialWindow and blnUseDirectoryOpus) or WindowIsDirectoryOpus(strTar
 		strDOpusAlias := "mypictures"
 	
 	if (blnNewSpecialWindow)
-		RunDOpusRt("/acmd Go ", "/" . strDOpusAlias, " NEW") ; open special folder in a new lister
+		RunDOpusRt("/acmd Go ", "/" . strDOpusAlias, " " . strDirectoryOpusNewTabOrWindow) ; open special folder in a new lister or tab
 	else
 		NavigateDirectoryOpus("/" . strDOpusAlias, strTargetWinId)
 }
@@ -2428,7 +2433,7 @@ OpenRecentFolder:
 
 if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
 	if (blnUseDirectoryOpus)
-		RunDOpusRt("/acmd Go ", objRecentFolders[A_ThisMenuItemPos], " NEW") ; open in a new lister
+		RunDOpusRt("/acmd Go ", objRecentFolders[A_ThisMenuItemPos], " " . strDirectoryOpusNewTabOrWindow) ; open in a new lister or tab
 	else if (blnUseTotalCommander)
 		NewTotalCommander(objRecentFolders[A_ThisMenuItemPos], strTargetWinId, strTargetControl)
 	else
@@ -2516,8 +2521,6 @@ Loop, 4
 
 for intIndex, objGroupMenuExplorer in objGroupMenuExplorers
 {
-	if !(objGroupMenuExplorer.NameExist)
-		Continue
 	arrExplorerPosition := objGroupMenuExplorer.Position
 	StringSplit, arrExplorerPosition, arrExplorerPosition, "|"
 	LV_Add("Check", objGroupMenuExplorer.Name
@@ -2560,6 +2563,7 @@ return
 ButtonGroupSave:
 ;------------------------------------------------------------
 Gui, 2:Submit, NoHide
+Gui, 2:+OwnDialogs
 
 if !StrLen(strGroupSaveName)
 {
@@ -2569,7 +2573,7 @@ if !StrLen(strGroupSaveName)
 
 if GroupExists(strGroupSaveName)
 {
-	MsgBox, 52, %strAppName%, % L(lGuiGroupSaveReplaceGroup, strGroupSaveName)
+	MsgBox, 52, % L(lGuiGroupSaveTitle, lMenuGroupSave, strAppName), % L(lGuiGroupSaveReplaceGroup, strGroupSaveName)
 	IfMsgBox, No
 		return
 }
@@ -2598,9 +2602,11 @@ Loop
 		, %strIniFile%, Group-%strGroupSaveName%, Explorer%A_Index%
 }
 
-strUseMenuLoad := strBuildMenuFullName . "... " . lMenuGroupLoad
+strUseMenuLoad := lMenuGroup . " > " . lMenuGroupLoad
 StringReplace, strUseMenuLoad, strUseMenuLoad, &, , All
-Oops(lGuiGroupSaved, strGroupSaveName, strUseMenuLoad)
+MsgBox, 0, % L(lGuiGroupSaveTitle, lMenuGroupSave, strAppName)
+	, % L(lGuiGroupSaved, strGroupSaveName, strUseMenuLoad)
+	, 30
 
 Gosub, ButtonGroupSaveCancel
 strGroupSaveName := ""
@@ -4555,6 +4561,8 @@ Gui, 2:Add, Text, y+5 xs, % L(lOptionsThirdPartyDetail, "Directory Opus")
 Gui, 2:Add, Text, y+10 xs, %lOptionsThirdPartyPrompt%
 Gui, 2:Add, Edit, x+10 yp w300 h20 vstrDirectoryOpusPath, %strDirectoryOpusPath%
 Gui, 2:Add, Button, x+10 yp vbtnSelectDOpusPath gButtonSelectDOpusPath, %lDialogBrowseButton%
+Gui, 2:Add, Checkbox, x+10 yp vblnDirectoryOpusUseTabs, %lOptionsDirectoryOpusUseTabs%
+GuiControl, , blnDirectoryOpusUseTabs, %blnDirectoryOpusUseTabs%
 
 Gui, 2:Font, s8 w700
 Gui, 2:Add, Text, y+5 xs, % L(lOptionsThirdPartyTitle, "Total Commander")
@@ -4733,6 +4741,7 @@ intIconSize := drpIconSize
 IniWrite, %intIconSize%, %strIniFile%, Global, IconSize
 
 IniWrite, %strDirectoryOpusPath%, %strIniFile%, Global, DirectoryOpusPath
+IniWrite, %blnDirectoryOpusUseTabs%, %strIniFile%, Global, DirectoryOpusUseTabs
 blnUseDirectoryOpus := StrLen(strDirectoryOpusPath)
 if (blnUseDirectoryOpus)
 {
@@ -4740,6 +4749,10 @@ if (blnUseDirectoryOpus)
 	if (blnUseDirectoryOpus)
 		Gosub, SetDOpusRt
 }
+if (blnDirectoryOpusUseTabs)
+	strDirectoryOpusNewTabOrWindow := "NEWTAB" ; open new folder in a new lister tab
+else
+	strDirectoryOpusNewTabOrWindow := "NEW" ; open new folder in a new DOpus lister (instance)
 
 IniWrite, %strTotalCommanderPath%, %strIniFile%, Global, TotalCommanderPath
 IniWrite, %blnTotalCommanderUseTabs%, %strIniFile%, Global, TotalCommanderUseTabs
@@ -5195,6 +5208,10 @@ if FileExist(strCheckDirectoryOpusPath)
 	}
 	blnUseDirectoryOpus := (strDirectoryOpusPath <> "NO")
 	IniWrite, %strDirectoryOpusPath%, %strIniFile%, Global, DirectoryOpusPath
+	blnDirectoryOpusUseTabs := 1
+	IniWrite, %blnDirectoryOpusUseTabs%, %strIniFile%, Global, DirectoryOpusUseTabs
+	; strDirectoryOpusNewTabOrWindow will contain "NEWTAB" to open in a new tab if DirectoryOpusUseTabs is 1 (default) or "NEW" to open in a new lister
+	strDirectoryOpusNewTabOrWindow := "NEWTAB"
 }
 
 return
@@ -5204,6 +5221,12 @@ return
 ;------------------------------------------------------------
 SetDOpusRt:
 ;------------------------------------------------------------
+
+IniRead, blnDirectoryOpusUseTabs, %strIniFile%, Global, DirectoryOpusUseTabs, 1 ; should be intialized here but true by default for safety
+if (blnDirectoryOpusUseTabs)
+	strDirectoryOpusNewTabOrWindow := "NEWTAB" ; open new folder in a new tab
+else
+	strDirectoryOpusNewTabOrWindow := "NEW" ; open new folder in a new lister
 
 strDOpusTempFilePath := strTempDir . "\dopus-list.txt"
 StringReplace, strDirectoryOpusRtPath, strDirectoryOpusPath, \dopus.exe, \dopusrt.exe

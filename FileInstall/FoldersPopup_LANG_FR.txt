@@ -112,7 +112,7 @@ lMenuDialogNotSupported	Ce type de boîte de dialogue n'est pas encore pris en ch
 lMenuDocuments	Documents
 lMenuExitFoldersPopup	Quitter ~1~
 lMenuFPMenu	~2~ ~1~
-lMenuGroup	Explorateurs
+lMenuGroup	Groupes de dossiers
 lMenuGroupDOpus	Listes Directory Opus et
 lMenuGroupLoad	Ouvrir un groupe
 lMenuGroupSave	Enregistrer ce groupe
