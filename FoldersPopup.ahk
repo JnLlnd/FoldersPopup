@@ -10,11 +10,18 @@ To-do for v4:
 /*
 	FoldersPopup
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
-	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
+	By Jean Lalonde (JnLlnd on AHKScript.org forum)
+	
+	Based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum) who was maybe inspired by Savage's script
+	FavoriteFolders (http://www.autohotkey.com/docs/scripts/FavoriteFolders.htm) or Rexx version Folder Menu
+	(http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/)
 
 	Version: 3.9.1 (2014-10-XX)
 	* Add the option "Use tabs" for DirectoryOpus users to choose to pen new folders in new tab (new default) or new lister (window)
 	* Change Group menu label to "Group of folders"
+	* Support in the Group menu Explorer and DOpus windows containing the same folder
+	* Support saving multiple windows (Explorers or DOpus) containing the same folder
+	*  
 
 
 	Version: 3.3 (2014-10-24)
