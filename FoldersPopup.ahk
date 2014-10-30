@@ -2,19 +2,22 @@
 Bugs:
 
 To-do for v4:
-- manage group gui
 - Win-K shortcut not available in Win 8.1 (available: Win-A, Win-J, Win-N used by OneNote, Win-Y)
 - look at http://www.jrsoftware.org/isinfo.php
 */
 ;===============================================
 /*
 	FoldersPopup
-	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
+	Written using AutoHotkey_L v1.1.09.03+ (http://ahkscript.org/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum)
 	
-	Based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum) who was maybe inspired by Savage's script
-	FavoriteFolders (http://www.autohotkey.com/docs/scripts/FavoriteFolders.htm) or Rexx version Folder Menu
-	(http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/)
+	Based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
+	http://www.autohotkey.com/board/topic/91109-favorite-folders-popup-menu-with-gui/
+	who was maybe inspired by Savage's script FavoriteFolders
+	http://www.autohotkey.com/docs/scripts/FavoriteFolders.htm
+	or Rexx version Folder Menu
+	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
+
 
 	Version: 3.9.1 (2014-10-XX)
 	* Add the option "Use tabs" for DirectoryOpus users to choose to pen new folders in new tab (new default) or new lister (window)
@@ -546,7 +549,8 @@ OnMessage(0x404, "AHK_NOTIFYICON")
 ; Gosub, GuiEditFavorite
 ; Gosub, PopupMenuNewWindowKeyboard
 ; Gosub, BuildGroupMenu
-; Gosub, GroupSave
+; Gosub, GuiGroupSave
+; Gosub, GuiManageGroups
 
 return
 
@@ -1401,7 +1405,7 @@ Loop, Parse, strGroups, |
 }
 if (intExplorersIndex)
 	Menu, menuGroup, Add
-AddMenuIcon("menuGroup", lMenuGroupSave, "GroupSave", "menuGroupSave")
+AddMenuIcon("menuGroup", lMenuGroupSave, "GuiGroupSave", "menuGroupSave")
 AddMenuIcon("menuGroup", lMenuGroupLoad, ":menuGroupsList", "menuGroupLoad")
 
 return
@@ -2503,7 +2507,7 @@ return
 
 
 ;------------------------------------------------------------
-GroupSave:
+GuiGroupSave:
 ;------------------------------------------------------------
 
 ; MsgBox, Not finished...
@@ -2649,17 +2653,18 @@ GroupExists(strGroup)
 
 ;------------------------------------------------------------
 GroupLoad:
+GroupLoadFromManage:
 ;------------------------------------------------------------
 
-; MsgBox, Not finished...
-; return
+intSleepAfterWindowCommand := 400
 
-; ###
-
-intSleepAfterWindowCommand := 500
-
-strGroup := "Group-" . A_ThisMenuItem
-StringLeft, strGroup, strGroup, % InStr(strGroup, "(") - 2
+if (A_ThisLabel = "GroupLoad")
+{
+	strGroup := "Group-" . A_ThisMenuItem
+	StringLeft, strGroup, strGroup, % InStr(strGroup, "(") - 2 ; remove " (add)" or " (replace)"
+}
+else
+	strGroup := "Group-" . strSelectedGroup
 
 IniRead, blnReplaceWhenRestoringThisGroup, %strIniFile%, %strGroup%, ReplaceWhenRestoringThisGroup, 0 ; false if not found
 
@@ -2668,14 +2673,17 @@ if (blnReplaceWhenRestoringThisGroup)
 
 objIniExplorersInGroup := Object()
 Gosub, Group2Object
+intTotalWindowsInIni := objIniExplorersInGroup.MaxIndex()
+intActualWindowInIni := 1
 
 while, intExplorer := WindowOfType("EX") ; returns the index of the first Explorer saved window in the group
 {
+	Tooltip, %intActualWindowInIni% %lGuiGroupOf% %intTotalWindowsInIni%
 	Run, % "explorer.exe " . objIniExplorersInGroup[intExplorer].Name,
 		, % (objIniExplorersInGroup[intExplorer].MinMax = -1 ? "Min" : (objIniExplorersInGroup[intExplorer].MinMax = 1 ? "Max" : ""))
 	Sleep, %intSleepAfterWindowCommand%
-	WinWait, A, , 5
-	Sleep, 20
+	WinWaitActive, A, , 5
+	Sleep, 200
 	if !(objIniExplorersInGroup[intExplorer].MinMax) ; window normal, not min nor max
 		WinMove, A, 
 			, % objIniExplorersInGroup[intExplorer].Left
@@ -2684,28 +2692,23 @@ while, intExplorer := WindowOfType("EX") ; returns the index of the first Explor
 			, % objIniExplorersInGroup[intExplorer].Height
 	
 	objIniExplorersInGroup.Remove(intExplorer) ; remove the first Explorer saved window from the group
+	intActualWindowInIni := intActualWindowInIni + 1
 }
 
 while, intDOWindow := WindowOfType("DO") ; returns the index of the first DOpus saved window in the group
 {
 	strFirstWindowId := objIniExplorersInGroup[intDOWindow].WindowId
 	strNewWindowId := ""
-	; ###_D("new window")
 	
 	while, intDOIndex := DOpusWindowOfId(strFirstWindowId) ; returns the paths of the first group of DOpus windows (grouped by WindowsId)
 	{
-		; ###_D("top: " . objIniExplorersInGroup.MaxIndex() . " " . strFirstWindowId)
-		; ###_D(intDOIndex . " / " . objIniExplorersInGroup[intDOIndex].Name . " / " . objIniExplorersInGroup[intDOWindow].WindowId)
-
 		if !StrLen(strNewWindowId) ; the window does not exist, create it with the first path in the pane 1
 		{
-			; ###_D(objIniExplorersInGroup[intDOWindow].Name . " / " . objIniExplorersInGroup[intDOWindow].MinMax)
-			; ###_D(objIniExplorersInGroup[intDOWindow].WindowId . " Not exist")
-			; ###_D("Y a t-t-il un pane 2? " . (DOpusWindowOfPane(2, strFirstWindowId) ? "oui" : "non"))
+			Tooltip, %intActualWindowInIni% %lGuiGroupOf% %intTotalWindowsInIni%
 			RunDOpusRt("/acmd Go ", objIniExplorersInGroup[intDOWindow].Name, " NEW=nodual") ; open in a new lister
 			Sleep, %intSleepAfterWindowCommand%
-			WinWait, A, , 5
-			Sleep, 100
+			WinWaitActive, A, , 5
+			Sleep, 200
 			
 			strNewWindowId := WinExist("A")
 			if !(objIniExplorersInGroup[intDOWindow].MinMax) ; window normal, not min nor max
@@ -2720,46 +2723,41 @@ while, intDOWindow := WindowOfType("DO") ; returns the index of the first DOpus 
 				else
 					WinMaximize, A
 
-			; ###_D("new lister: " . WinExist("A") . " / " . objIniExplorersInGroup[intDOWindow].MinMax)
 			objIniExplorersInGroup.Remove(intDOWindow) ; remove the first DOpus saved window from the group
-			; ###_D("new: " . objIniExplorersInGroup.MaxIndex() . " " . strNewWindowId)
+			intActualWindowInIni := intActualWindowInIni + 1
 		}
 		else ; the window exist, add other path of pane tabs or pane 2
 		{
 			while, intDOIndexPane := DOpusWindowOfPane(1, strFirstWindowId) ; returns the paths of the windows of the left pane for this group of windows
 			{
-				; ###_D(objIniExplorersInGroup[intDOIndexPane].WindowId . " Exist NewId is: " . strNewWindowId . "`n"
-				;	. "pane 1 path : " . objIniExplorersInGroup[intDOIndexPane].Name
-				;	. "")
+				Tooltip, %intActualWindowInIni% %lGuiGroupOf% %intTotalWindowsInIni%
 				RunDOpusRt("/acmd Go ", objIniExplorersInGroup[intDOIndexPane].Name, " NEWTAB") ; open in a new tab of pane 1
-				; ###_D("other tabs in 1")
 				Sleep, %intSleepAfterWindowCommand%
 				objIniExplorersInGroup.Remove(intDOIndexPane) ; remove the first DOpus saved window from the group
+				intActualWindowInIni := intActualWindowInIni + 1
 			}
 			blnNewPane2 := true
 			while, intDOIndexPane := DOpusWindowOfPane(2, strFirstWindowId) ; returns the paths of the windows of the right pane for this group of windows
 			{
-				; ###_D(objIniExplorersInGroup[intDOIndexPane].WindowId . " Exist NewId is: " . strNewWindowId . "`n"
-				;	. "pane 2 path : " . objIniExplorersInGroup[intDOIndexPane].Name
-				;	. "")
+				Tooltip, %intActualWindowInIni% %lGuiGroupOf% %intTotalWindowsInIni%
 				if (blnNewPane2)
 				{
 					RunDOpusRt("/acmd Go ", objIniExplorersInGroup[intDOIndexPane].Name, " OPENINRIGHT") ; open in a first tab of pane 2
-					; ###_D("first tab in 2")
 					Sleep, %intSleepAfterWindowCommand%
 					blnNewPane2 := false
 				}
 				else
 				{
 					RunDOpusRt("/acmd Go ", objIniExplorersInGroup[intDOIndexPane].Name, " OPENINRIGHT NEWTAB") ; open in a new tab of pane 2
-					; ###_D("other tabs in 2")
 					Sleep, %intSleepAfterWindowCommand%
 				}
 				objIniExplorersInGroup.Remove(intDOIndexPane) ; remove the first DOpus saved window from the group
+				intActualWindowInIni := intActualWindowInIni + 1
 			}
 		}
 	}
 }
+Tooltip ; clear tooltip
 
 return
 ;------------------------------------------------------------
@@ -2770,6 +2768,7 @@ CloseBeforeRestoringGroup:
 ;------------------------------------------------------------
 
 intSleepTime := 67 ; for visual effect only...
+Tooltip, %lGuiGroupClosing%
 
 strWindowsId := ""
 for objExplorer in ComObjCreate("Shell.Application").Windows
@@ -2801,6 +2800,7 @@ if (blnUseDirectoryOpus)
 		Sleep, %intSleepTime%
 	}
 }
+Tooltip ; clear tooltip
 	
 return
 ;------------------------------------------------------------
@@ -2856,12 +2856,9 @@ WindowOfType(strType)
 	for intIndex, intEntry in objIniExplorersInGroup
 		if (objIniExplorersInGroup[intIndex].WindowType = strType)
 		{
-			; ###_D("WindowOfType " . strType . " in " . intIndex . " Yes: " . objIniExplorersInGroup[intIndex].Name)
 			intFound := intIndex
 			break
 		}
-		; else
-			; ###_D("WindowOfType " . strType . " in " . intIndex . " No: " . objIniExplorersInGroup[intIndex].Name)
 			
 	return intFound
 }
@@ -2879,12 +2876,9 @@ DOpusWindowOfId(strId)
 	for intIndex, intEntry in objIniExplorersInGroup
 		if (objIniExplorersInGroup[intIndex].WindowId = strId)
 		{
-			; ###_D("WindowOfId " . strId . " in " . intIndex . " Yes: " . objIniExplorersInGroup[intIndex].Name)
 			intFound := intIndex
 			break
 		}
-		; else
-			; ###_D("WindowOfId " . strId . " in " . intIndex . " No: " . objIniExplorersInGroup[intIndex].Name)
 			
 	return intFound
 }
@@ -2903,12 +2897,9 @@ DOpusWindowOfPane(intPane, strId)
 	for intIndex, intEntry in objIniExplorersInGroup
 		if (objIniExplorersInGroup[intIndex].Pane = intPane and objIniExplorersInGroup[intIndex].WindowId = strId)
 			{
-				; ###_D("Pane " . objIniExplorersInGroup[intIndex].Pane . " vs " . intPane . " WindowOfId " . strId . " vs " . objIniExplorersInGroup[intIndex].WindowId . " in " . intIndex . " Yes: " . objIniExplorersInGroup[intIndex].Name)
 				intFound := intIndex
 				break
 			}
-		; else
-			; ###_D("Pane " . objIniExplorersInGroup[intIndex].Pane . " vs " . intPane . "WindowOfId " . strId . " vs " . objIniExplorersInGroup[intIndex].WindowId . " in " . intIndex . " No: " . objIniExplorersInGroup[intIndex].Name)
 			
 	return intFound
 }
@@ -3652,25 +3643,113 @@ return
 GuiManageGroups:
 ;------------------------------------------------------------
 
-; MsgBox, Not finished...
-; return
+intWidth := 350
+
+Gosub, BuildGroupMenu ; refresh explorers object and intExplorersExist counter
 
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
-Gui, 2:New, , Title ; ### % L(lDialogAddEditFavoriteTitle, (A_ThisLabel = "GuiEditFavorite" ? lDialogEdit : lDialogAdd), strAppName, strAppVersion)
+Gui, 2:New, , % L(lDialogGroupManageGroupsTitle, strAppName, strAppVersion)
 Gui, 2:+Owner1
 Gui, 2:+OwnDialogs
 Gui, 2:Color, %strGuiWindowColor%
 
-; Gui, 2:Add, Text, % x10 y10 vlblFavoriteParentMenu, % (blnRadioSubmenu ? lDialogSubmenuParentMenu : lDialogFavoriteParentMenu)
-; Gui, 2:Add, DropDownList, x10 w300 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
+Gui, 2:Font, w600 
+Gui, 2:Add, Text, x10 y10, About Groups
+Gui, 2:Font
 
-; Gui, 2:Add, Button, y+20 vbtnAddFolderAdd gGuiAddFavoriteSave, %lDialogAdd%
-; Gui, 2:Add, Button, yp vbtnAddFolderCancel gGuiAddFavoriteCancel, %lGuiCancel%
-; GuiCenterButtons(L(lDialogAddEditFavoriteTitle, lDialogAdd, strAppName, strAppVersion), 10, 5, 20, , "btnAddFolderAdd", "btnAddFolderCancel")
+Gui, 2:Add, Text, x10 y+10 w%intWidth%, %lDialogGroupManageIntro%
+
+Gui, 2:Font, w600 
+Gui, 2:Add, Text, x10 y+20, %lDialogGroupManageCreatingTitle%
+Gui, 2:Font 
+
+strUseMenuSave := lMenuGroup . " > " . lMenuGroupSave
+Gui, 2:Add, Text, x10 y+10 w%intWidth%, % L(lDialogGroupManageCreatingPrompt, lDialogGroupNew, strUseMenuSave)
+Gui, 2:Add, Button, x10 y+10 vbtnGroupManageNew gGuiGroupManageNew, %lDialogGroupNew%
+GuiControl, % (!intExplorersExist ? "Disable" : "Enable") ; disable Save group menu if no Explorer
+	, btnGroupManageNew
+GuiCenterButtons(L(lDialogGroupManageGroupsTitle, strAppName, strAppVersion), , , , , "btnGroupManageNew")
+if !(intExplorersExist)
+	Gui, 2:Add, Text, x10 y+10 w%intWidth%, %lDialogGroupManageCannotSave%
+
+Gui, 2:Font, w600 
+Gui, 2:Add, Text, x10 y+20, %lDialogGroupManageManagingTitle%
+Gui, 2:Font
+
+Gui, 2:Add, DropDownList, x10 y+10 w%intWidth% vdrpGroupsList, %lDialogGroupSelect%||%strGroups%
+
+Gui, 2:Add, Button, x10 y+10 vbtnGroupManageLoad  gGuiGroupManageLoad, %lDialogGroupLoad%
+Gui, 2:Add, Button, x10 yp vbtnGroupManageDelete gGuiGroupManageDelete, %lDialogGroupDelete%
+GuiCenterButtons(L(lDialogGroupManageGroupsTitle, strAppName, strAppVersion), , , , , "btnGroupManageLoad", "btnGroupManageDelete")
+
+Gui, 2:Add, Button, x+10 y+30 vbtnGroupManageClose g2GuiClose, %lGui2Close%
+GuiCenterButtons(L(lDialogGroupManageGroupsTitle, strAppName, strAppVersion), , , , , "btnGroupManageClose")
+Gui, 2:Add, Text, x10, %A_Space%
 
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiGroupManageDelete:
+;------------------------------------------------------------
+Gui, 2:Submit, NoHide
+Gui, 2:+OwnDialogs
+
+if !StrLen(drpGroupsList) or (drpGroupsList = lDialogGroupSelect)
+{
+	Oops(lDialogGroupSelectError, "delete")
+	return
+}
+
+MsgBox, 52, % L(lDialogGroupDeleteTitle, strAppName), % L(lDialogGroupDeletePrompt, drpGroupsList)
+IfMsgBox, No
+	return
+
+strGroups := strGroups . "|"
+StringReplace, strGroups, strGroups, %drpGroupsList%|
+StringTrimRight, strGroups, strGroups, 1
+GuiControl, 2:, drpGroupsList, |%strGroups%
+
+IniDelete, %strIniFile%, Group-%drpGroupsList%
+IniWrite, %strGroups%, %strIniFile%, Global, Groups
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiGroupManageLoad:
+;------------------------------------------------------------
+Gui, 2:Submit, NoHide
+
+if !StrLen(drpGroupsList) or (drpGroupsList = lDialogGroupSelect)
+{
+	Oops(lDialogGroupSelectError, "load")
+	return
+}
+
+strSelectedGroup := drpGroupsList
+
+Gosub, 2GuiClose
+Gosub, GuiClose
+Gosub, GroupLoadFromManage
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiGroupManageNew:
+;------------------------------------------------------------
+
+Gosub, 2GuiClose
+Gosub, GuiClose
+Gosub, GuiGroupSave
 
 return
 ;------------------------------------------------------------
