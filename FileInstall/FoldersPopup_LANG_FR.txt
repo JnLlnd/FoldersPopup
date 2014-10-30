@@ -104,7 +104,6 @@ lHelpTextLead	Avec FoldersPopup, navigez en un clin d'oeil parmi vos dossiers, p
 lHelpTitle	Aide - ~1~ ~2~
 lMainMenuName	Principal
 lMenuAbout	À propos
-lMenuAddThisDialog	Prendre en charge ce type de boîte de dialogue
 lMenuAddThisFolder	&Ajouter ce dossier au menu
 lMenuControlPanel	Panneau de configuration
 lMenuDesktop	Bureau

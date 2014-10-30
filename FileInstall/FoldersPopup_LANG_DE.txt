@@ -103,7 +103,6 @@ lHelpTextLead	FoldersPopup ermöglicht es Ihnen, schnell zwischen häufig benutzte
 lHelpTitle	Hilfe - ~1~ ~2~
 lMainMenuName	Haupt
 lMenuAbout	Ü&ber
-lMenuAddThisDialog	Diese Di&alogbox zur Liste unterstützter Dialogboxen hinzufügen
 lMenuAddThisFolder	&Diesen Ordner hinzufügen
 lMenuControlPanel	&Systemsteuerung
 lMenuDesktop	&Desktop

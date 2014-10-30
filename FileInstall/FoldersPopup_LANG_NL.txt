@@ -103,7 +103,6 @@ lHelpTextLead	FoldersPopup laat je snel wisselen tussen de mappen, documenten en
 lHelpTitle	Hulp - ~1~ ~2~
 lMainMenuName	Hoofdmenu
 lMenuAbout	Over
-lMenuAddThisDialog	Voeg dit dialoogvenster toe aan de ondersteunde lijst
 lMenuAddThisFolder	Deze m&ap toevoegen
 lMenuControlPanel	&Configuratiescherm
 lMenuDesktop	Bureaublad
