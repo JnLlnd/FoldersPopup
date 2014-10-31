@@ -2,6 +2,8 @@
 Bugs:
 
 To-do for v4:
+- Save groups with special folders in DOpus to ini file
+- Load groups with special folders in DOpus from ini file
 - Win-K shortcut not available in Win 8.1 (available: Win-A, Win-J, Win-N used by OneNote, Win-Y)
 - look at http://www.jrsoftware.org/isinfo.php
 */
@@ -19,12 +21,15 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 3.9.1 (2014-10-XX)
+	Version: 3.9.1 BETA (2014-10-XX)
 	* Add the option "Use tabs" for DirectoryOpus users to choose to pen new folders in new tab (new default) or new lister (window)
 	* Change Group menu label to "Group of folders"
 	* Support in the Group menu Explorer and DOpus windows containing the same folder
 	* Support saving multiple windows (Explorers or DOpus) containing the same folder
-	*  
+	* After DOpusRt open a folder in a new tab, activate that window
+	* Create objects to get special folders class id by name and name by class id
+	* Save groups with special folders to ini file
+	* Load groups with special folders from ini file
 
 
 	Version: 3.3 (2014-10-24)
@@ -499,6 +504,7 @@ else if InStr(A_ComputerName, "STIC") ; for my work hotkeys
 Gosub, InitSystemArrays
 Gosub, InitLanguage
 Gosub, InitLanguageArrays
+Gosub, InitSpecialFolders
 Gosub, LoadIniFile
 if (blnDiagMode)
 	Gosub, InitDiagMode
@@ -953,6 +959,101 @@ return
 
 
 ;------------------------------------------------------------
+InitSpecialFolders:
+;------------------------------------------------------------
+
+global objClassIdByLocalizedName := Object()
+global objLocalizedNameByClassId := Object()
+
+; do not process special folders where pExplorer has a folder in .LocationURL
+; InitClassId("{450d8fba-ad25-11d0-98a8-0800361b1103}") ;	My Documents / Mes documents
+; InitClassId("{4336a54d-038b-4685-ab02-99bb52d3fb8b}") ; Public Folder / Public
+; InitClassId("{59031a47-3f72-44a7-89c5-5595fe6b30ee}") ; (User files) <User name> / <User name>
+
+; special folders with only localized name in .LocationName used in actual popup menu
+InitClassId("{20d04fe0-3aea-1069-a2d8-08002b30309d}") ; My Computer / Ordinateur
+InitClassId("{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}") ;	Computer and devices / Réseau
+InitClassId("{645ff040-5081-101b-9f08-00aa002f954e}") ;	Recycle Bin / Corbeille
+InitClassId("{26EE0668-A00A-44D7-9371-BEB064C98683}") ;	Control Panel / Panneau de configuration
+
+; other special folders with only localized name in .LocationName
+InitClassId("{208d2c60-3aea-1069-a2d7-08002b30309d}") ;	My Network Places / Réseau (WORKGROUP)
+InitClassId("{031E4825-7B94-4dc3-B131-E946B44C8DD5}") ; Libraries / Bibliothèques
+InitClassId("{22877a6d-37a1-461a-91b0-dbda5aaebc99}") ;	Recent Places / Emplacements récents -> cannot be open by Run, needs "explorer.exe shell:::{CLSID}"
+InitClassId("{21EC2020-3AEA-1069-A2DD-08002B30309D}") ;	All Control Panel items / Tous les Panneaux de configuration
+InitClassId("{992CFFA0-F557-101A-88EC-00DD010CCC48}") ;	Network Connections / Connexions réseau ### XL + ME
+InitClassId("{7007acc7-3202-11d1-aad2-00805fc1270e}") ;	Network Connections / Connexions réseau ### XP
+InitClassId("{E7DE9B1A-7533-4556-9484-B26FB486475E}") ;	Network Map / Mappage réseau
+InitClassId("{2227a280-3aea-1069-a2de-08002b30309d}") ;	Printers / Imprimantes
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+InitClassId(strClassId)
+;------------------------------------------------------------
+{
+    strLocalizedName := GetLocalizedNameForClassId(strClassId)
+    objClassIdByLocalizedName.Insert(strLocalizedName, strClassId)
+    objLocalizedNameByClassId.Insert(strClassId, strLocalizedName)
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GetLocalizedNameForClassId(strClassId)
+;------------------------------------------------------------
+{
+    /*
+        Question 1: What's the best Registry key should I use for this to work on Win XP, 7, 8+ ?
+    
+        HKEY_CLASSES_ROOT\CLSID\{20D04FE0-3AEA-1069-A2D8-08002B30309D}
+        HKEY_CLASSES_ROOT\Wow6432Node\CLSID\{20D04FE0-3AEA-1069-A2D8-08002B30309D}
+        HKEY_LOCAL_MACHINE\SOFTWARE\Classes\CLSID\{20D04FE0-3AEA-1069-A2D8-08002B30309D}
+        HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Wow6432Node\CLSID\{20D04FE0-3AEA-1069-A2D8-08002B30309D}
+        HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Classes\CLSID\{20D04FE0-3AEA-1069-A2D8-08002B30309D}
+		
+		Seems to be HKEY_CLASSES_ROOT for XP compatibility accorging to
+		http://msdn.microsoft.com/en-us/library/windows/desktop/ms724475(v=vs.85).aspx
+    */
+    RegRead, strLocalizedString, HKEY_CLASSES_ROOT, CLSID\%strClassId%, LocalizedString
+    ; strLocalizedString example: "@%SystemRoot%\system32\shell32.dll,-9216"
+
+    StringSplit, arrLocalizedString, strLocalizedString, `,
+    intDllNameStart := InStr(arrLocalizedString1, "\", , 0)
+    StringRight, strDllFile, arrLocalizedString1, % StrLen(arrLocalizedString1) - intDllNameStart
+    strDllIndex := arrLocalizedString2
+    strTranslatedName := TranslateMUI(strDllFile, Abs(strDllIndex))
+    
+    /*
+    MsgBox, % ""
+        . "strClassId: " . strClassId . "`n"
+        . "strLocalizedString: " . strLocalizedString . "`n"
+        . "strDllFile: " . strDllFile . "`n"
+        . "strDllIndex: " . strDllIndex . "`n"
+        . "strTranslatedName: " . strTranslatedName . "`n"
+    */
+    
+    return strTranslatedName
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+TranslateMUI(resDll, resID)
+; source: 7plus (https://github.com/7plus/7plus/blob/master/MiscFunctions.ahk)
+;------------------------------------------------------------
+{
+	VarSetCapacity(buf, 256) 
+	hDll := DllCall("LoadLibrary", "str", resDll, "Ptr") 
+	Result := DllCall("LoadString", "Ptr", hDll, "uint", resID, "str", buf, "int", 128)
+	return buf
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 InitDiagMode:
 ;------------------------------------------------------------
 
@@ -1286,7 +1387,7 @@ CollectExplorers(objExplorersWindows, ComObjCreate("Shell.Application").Windows)
 objGroupMenuExplorers := Object()
 
 intExplorersIndex := 0
-intExplorersExist := 0 ; used in PopupMenu... to check if we disable the menu when empty
+intExplorersExist := 0 ; used in PopupMenu and SaveGroup to check if we disable menu or button when empty
 
 if (blnUseDirectoryOpus)
 	for intIndex, objLister in objDOpusListers
@@ -1315,9 +1416,9 @@ if (blnUseDirectoryOpus)
 		objGroupMenuExplorer.WindowType := "DO"
 		if FileExist(objGroupMenuExplorer.Name)
 		{
-			objGroupMenuExplorer.NameExist := 1
+			objGroupMenuExplorer.FileExist := True ; ### not used?
 			intExplorersExist := intExplorersExist + 1
-		}	
+		}
 		
 		objGroupMenuExplorers.Insert(intExplorersIndex, objGroupMenuExplorer)
 	}
@@ -1340,7 +1441,7 @@ if (blnUseTotalCommander)
 			objGroupMenuExplorer.WindowType := "TC"
 			if FileExist(objGroupMenuExplorer.Name)
 			{
-				objGroupMenuExplorer.NameExist := 1
+				objGroupMenuExplorer.FileExist := True
 				intExplorersExist := intExplorersExist + 1
 			}	
 			
@@ -1362,14 +1463,14 @@ for intIndex, objExplorer in objExplorersWindows
 	objGroupMenuExplorer := Object()
 	objGroupMenuExplorer.Path := objExplorer.LocationURL
 	objGroupMenuExplorer.Name := objExplorer.LocationName
+	objGroupMenuExplorer.IsSpecialFolder := objExplorer.IsSpecialFolder
 	objGroupMenuExplorer.WindowId := objExplorer.WindowId
-	objGroupMenuExplorer.TabId := ""
 	objGroupMenuExplorer.Position := objExplorer.Position
 	objGroupMenuExplorer.MinMax := objExplorer.MinMax
 	objGroupMenuExplorer.WindowType := "EX"
-	if FileExist(objGroupMenuExplorer.Name)
+	if FileExist(objGroupMenuExplorer.Name) or (objGroupMenuExplorer.IsSpecialFolder)
 	{
-		objGroupMenuExplorer.NameExist := 1
+		objGroupMenuExplorer.FileExist := True ; ### not used?
 		intExplorersExist := intExplorersExist + 1
 	}	
 
@@ -1439,17 +1540,19 @@ CollectExplorers(objExplorers, pExplorers)
 			*/
 			objExplorer := Object()
 			objExplorer.Position := pExplorer.Left . "|" . pExplorer.Top . "|" . pExplorer.Width . "|" . pExplorer.Height
-			objExplorer.LocationURL := pExplorer.LocationURL ; empty for some special folders like Recycle bin - do not show in dialog box
-			strLocationName :=  UriDecode(pExplorer.LocationURL)
-			StringReplace, strLocationName, strLocationName, file:///
-			StringReplace, strLocationName, strLocationName, /, \, A
-			if StrLen(strLocationName)
-				objExplorer.LocationName := strLocationName
+			
+			objExplorer.IsSpecialFolder := !StrLen(pExplorer.LocationURL) ; empty for special folders like Recycle bin
+			if  (objExplorer.IsSpecialFolder)
+				objExplorer.LocationName := pExplorer.LocationName ; see http://msdn.microsoft.com/en-us/library/aa752084#properties
 			else
-				if StrLen(pExplorer.LocationName)
-					objExplorer.LocationName := pExplorer.LocationName ; see http://msdn.microsoft.com/en-us/library/aa752084#properties
-				else
-					objExplorer.LocationName := lMenuSpecialExplorer . " (" . pExplorer.HWND . ")" ; will be used in menuGroupExplorer
+			{
+				objExplorer.LocationURL := pExplorer.LocationURL
+				strLocationName :=  UriDecode(pExplorer.LocationURL)
+				StringReplace, strLocationName, strLocationName, file:///
+				StringReplace, strLocationName, strLocationName, /, \, A
+				objExplorer.LocationName := strLocationName
+			}
+			
 			objExplorer.WindowId := pExplorer.HWND
 			WinGet, intMinMax, MinMax, % "ahk_id " . pExplorer.HWND
 			objExplorer.MinMax := intMinMax
@@ -2185,7 +2288,10 @@ if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetCla
 		Diag("Navigate", "RunNewWindow")
 	
 	if (blnUseDirectoryOpus)
+	{
 		RunDOpusRt("/acmd Go ", strLocation, " " . strDirectoryOpusNewTabOrWindow) ; open in a new lister or tab
+		WinActivate, ahk_class dopus.lister
+	}
 	else if (blnUseTotalCommander)
 		NewTotalCommander(strLocation, strTargetWinId, strTargetControl)
 	else
@@ -2309,7 +2415,10 @@ if (blnNewSpecialWindow and blnUseDirectoryOpus) or WindowIsDirectoryOpus(strTar
 		strDOpusAlias := "mypictures"
 	
 	if (blnNewSpecialWindow)
+	{
 		RunDOpusRt("/acmd Go ", "/" . strDOpusAlias, " " . strDirectoryOpusNewTabOrWindow) ; open special folder in a new lister or tab
+		WinActivate, ahk_class dopus.lister
+	}
 	else
 		NavigateDirectoryOpus("/" . strDOpusAlias, strTargetWinId)
 }
@@ -2444,7 +2553,10 @@ OpenRecentFolder:
 
 if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
 	if (blnUseDirectoryOpus)
+	{
 		RunDOpusRt("/acmd Go ", objRecentFolders[A_ThisMenuItemPos], " " . strDirectoryOpusNewTabOrWindow) ; open in a new lister or tab
+		WinActivate, ahk_class dopus.lister
+	}
 	else if (blnUseTotalCommander)
 		NewTotalCommander(objRecentFolders[A_ThisMenuItemPos], strTargetWinId, strTargetControl)
 	else
@@ -2510,9 +2622,6 @@ return
 GuiGroupSave:
 ;------------------------------------------------------------
 
-; MsgBox, Not finished...
-; return
-
 Gui, 2:New, , % L(lGuiGroupSaveTitle, lMenuGroupSave, strAppName, strAppVersion)
 Gui, 2:Margin, 10, 10
 Gui, 2:Color, %strGuiWindowColor%
@@ -2526,7 +2635,7 @@ Gui, 2:Add, Text, x10 y+15 w670 center, %lGuiGroupSaveSelect%
 
 Gui, 2:Add, ListView
 	, xm w680 h200 Checked Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvGroupList
-	, %lGuiGroupSaveLvHeader%|Hidden: Path|WindowId|Position|TabId
+	, %lGuiGroupSaveLvHeader%|Hidden: Path|IsSpecialFolder|WindowId|Position|TabId
 Loop, 4
 	LV_ModifyCol(A_Index + 3, "Right")
 
@@ -2542,14 +2651,14 @@ for intIndex, objGroupMenuExplorer in objGroupMenuExplorers
 		, (objGroupMenuExplorer.MinMax = 0 ? arrExplorerPosition3 : "-")
 		, (objGroupMenuExplorer.MinMax = 0 ? arrExplorerPosition4 : "-")
 		, (objGroupMenuExplorer.Pane ? objGroupMenuExplorer.Pane : "-")
-		, objGroupMenuExplorer.Path, objGroupMenuExplorer.WindowId, objGroupMenuExplorer.Position, objGroupMenuExplorer.TabId)
+		, objGroupMenuExplorer.Path, objGroupMenuExplorer.IsSpecialFolder, objGroupMenuExplorer.WindowId, objGroupMenuExplorer.Position, objGroupMenuExplorer.TabId)
 }
 
 LV_Modify(1, "Select Focus")
 Loop, 12
 	LV_ModifyCol(A_Index, "AutoHdr")
-Loop, % (blnUseDirectoryOpus ? 4 : 5)
-	LV_ModifyCol(A_Index + (blnUseDirectoryOpus ? 8 : 7), 0) ; hide 8th-12th columns
+; Loop, % (blnUseDirectoryOpus ? 5 : 6)
+;	LV_ModifyCol(A_Index + (blnUseDirectoryOpus ? 8 : 7), 0) ; hide 8th-12th columns
 
 Gui, 2:Add, Text, x10 y+10 w250 section, %lGuiGroupSaveName%
 Gui, 2:Add, Edit, x10 y+5 w250 Limit248 vstrGroupSaveName, %strGroupSaveName% ; maximum length of ini section name is 255 ("Group-" is prepended)
@@ -2610,6 +2719,7 @@ Loop
 		. "|" . objGroupMenuExplorers[intRow].Position
 		. "|" . objGroupMenuExplorers[intRow].Pane
 		. "|" . objGroupMenuExplorers[intRow].WindowId
+		. "|" . objGroupMenuExplorers[intRow].IsSpecialFolder
 		, %strIniFile%, Group-%strGroupSaveName%, Explorer%A_Index%
 }
 
@@ -2679,11 +2789,17 @@ intActualWindowInIni := 1
 while, intExplorer := WindowOfType("EX") ; returns the index of the first Explorer saved window in the group
 {
 	Tooltip, %intActualWindowInIni% %lGuiGroupOf% %intTotalWindowsInIni%
-	Run, % "explorer.exe " . objIniExplorersInGroup[intExplorer].Name,
+	if (objIniExplorersInGroup[intExplorer].IsSpecialFolder)
+		strExplorerLocationOrClassId := "shell:::" . objClassIdByLocalizedName[objIniExplorersInGroup[intExplorer].Name]
+	else
+		strExplorerLocationOrClassId := objIniExplorersInGroup[intExplorer].Name
+	Run, % "explorer.exe " . strExplorerLocationOrClassId,
 		, % (objIniExplorersInGroup[intExplorer].MinMax = -1 ? "Min" : (objIniExplorersInGroup[intExplorer].MinMax = 1 ? "Max" : ""))
+		
 	Sleep, %intSleepAfterWindowCommand%
 	WinWaitActive, A, , 5
 	Sleep, 200
+	
 	if !(objIniExplorersInGroup[intExplorer].MinMax) ; window normal, not min nor max
 		WinMove, A, 
 			, % objIniExplorersInGroup[intExplorer].Left
@@ -2818,15 +2934,16 @@ Loop
 
 	StringSplit, arrThisExplorer, strExplorer, |
 
-	; 1	objGroupMenuExplorers[intRow].Name
-	; 2	objGroupMenuExplorers[intRow].WindowType
-	; 3	objGroupMenuExplorers[intRow].MinMax
-	; 4	objGroupMenuExplorers[intRow].Left
-	; 5	objGroupMenuExplorers[intRow].Top
-	; 6	objGroupMenuExplorers[intRow].Width
-	; 7	objGroupMenuExplorers[intRow].Height
-	; 8	objGroupMenuExplorers[intRow].Pane
-	; 9	objGroupMenuExplorers[intRow].WindowId
+	;  1	objGroupMenuExplorers[intRow].Name
+	;  2	objGroupMenuExplorers[intRow].WindowType
+	;  3	objGroupMenuExplorers[intRow].MinMax
+	;  4	objGroupMenuExplorers[intRow].Left
+	;  5	objGroupMenuExplorers[intRow].Top
+	;  6	objGroupMenuExplorers[intRow].Width
+	;  7	objGroupMenuExplorers[intRow].Height
+	;  8	objGroupMenuExplorers[intRow].Pane
+	;  9	objGroupMenuExplorers[intRow].WindowId
+	; 10	objGroupMenuExplorers[intRow].IsSpecialFolder
 	
 	objIniEntry := Object()
 	objIniEntry.Name := arrThisExplorer1
@@ -2838,6 +2955,7 @@ Loop
 	objIniEntry.Height := arrThisExplorer7
 	objIniEntry.Pane := arrThisExplorer8
 	objIniEntry.WindowId := arrThisExplorer9
+	objIniEntry.IsSpecialFolder := arrThisExplorer10
 	
 	objIniExplorersInGroup.Insert(A_Index, objIniEntry)
 }
@@ -3713,7 +3831,7 @@ IfMsgBox, No
 strGroups := strGroups . "|"
 StringReplace, strGroups, strGroups, %drpGroupsList%|
 StringTrimRight, strGroups, strGroups, 1
-GuiControl, 2:, drpGroupsList, |%strGroups%
+GuiControl, 2:, drpGroupsList, |%lDialogGroupSelect%||%strGroups%
 
 IniDelete, %strIniFile%, Group-%drpGroupsList%
 IniWrite, %strGroups%, %strIniFile%, Global, Groups
