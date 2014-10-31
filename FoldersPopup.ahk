@@ -2,9 +2,10 @@
 Bugs:
 
 To-do for v4:
+- Win-K shortcut not available in Win 8.1 (available: Win-A, Win-J, Win-N used by OneNote, Win-Y)
+- Write DOpus add-in to list folders including special folders
 - Save groups with special folders in DOpus to ini file
 - Load groups with special folders in DOpus from ini file
-- Win-K shortcut not available in Win 8.1 (available: Win-A, Win-J, Win-N used by OneNote, Win-Y)
 - look at http://www.jrsoftware.org/isinfo.php
 */
 ;===============================================
@@ -610,7 +611,7 @@ strIniKeyNames := "PopupHotkeyMouse|PopupHotkeyNewMouse|PopupHotkeyKeyboard|Popu
 StringSplit, arrIniKeyNames, strIniKeyNames, |
 strHotkeyVarNames := "strPopupHotkeyMouse|strPopupHotkeyMouseNew|strPopupHotkeyKeyboard|strPopupHotkeyKeyboardNew|strRecentsHotkey|strSettingsHotkey"
 StringSplit, arrHotkeyVarNames, strHotkeyVarNames, |
-strHotkeyDefaults := "MButton|+MButton|#k|+#k|+#r|+#f"
+strHotkeyDefaults := "MButton|+MButton|#a|+#a|+#r|+#f"
 StringSplit, arrHotkeyDefaults, strHotkeyDefaults, |
 strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|RefreshRecentFolders|GuiShow"
 StringSplit, arrHotkeyLabels, strHotkeyLabels, |
@@ -683,8 +684,8 @@ arrMenus.Insert(lMainMenuName, arrMainMenu) ; lMainMenuName is used in the objec
 
 strPopupHotkeyMouseDefault := arrHotkeyDefaults1 ; "MButton"
 strPopupHotkeyMouseNewDefault := arrHotkeyDefaults2 ; "+MButton"
-strPopupHotkeyKeyboardDefault := arrHotkeyDefaults3 ; "#k"
-strPopupHotkeyKeyboardNewDefault := arrHotkeyDefaults4 ; "+#k"
+strPopupHotkeyKeyboardDefault := arrHotkeyDefaults3 ; "#a"
+strPopupHotkeyKeyboardNewDefault := arrHotkeyDefaults4 ; "+#a"
 strRecentsHotkeyDefault := arrHotkeyDefaults5 ; "+#r"
 strSettingsHotkeyDefault := arrHotkeyDefaults6 ; "+#f"
 
@@ -1931,7 +1932,7 @@ GetIcon4Location(strLocation, ByRef strDefaultIcon, ByRef intDefaultIcon)
 
 ;------------------------------------------------------------
 PopupMenuMouse: ; default MButton
-PopupMenuKeyboard: ; default #k
+PopupMenuKeyboard: ; default #a
 ;------------------------------------------------------------
 
 if !(blnMenuReady)
@@ -1948,7 +1949,7 @@ If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass, strTargetContro
 	else
 	{
 		StringLower, strThisHotkey, strThisHotkey
-		SendInput, %strThisHotkey% ; for example #k
+		SendInput, %strThisHotkey% ; for example #a
 	}
 	return
 }
@@ -2020,7 +2021,7 @@ return
 
 ;------------------------------------------------------------
 PopupMenuNewWindowMouse: ; default +MButton::
-PopupMenuNewWindowKeyboard: ; default +#k
+PopupMenuNewWindowKeyboard: ; default +#a
 ;------------------------------------------------------------
 
 if !(blnMenuReady)
