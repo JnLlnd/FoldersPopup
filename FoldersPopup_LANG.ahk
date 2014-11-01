@@ -147,7 +147,8 @@ global lOptionsArrDescriptions1 := "Choose the MOUSE button and modifiers combin
 global lOptionsArrDescriptions2 := "Choose the MOUSE button and modifiers combination that will open the popup menu in ANY window and navigate to the selected folder in a NEW Windows Explorer window. By default, this is the middle mouse button while the Shift key is pressed."
 global lOptionsArrDescriptions3 := "Choose the KEYBOARD hotkey combination that will open the popup menu in the active Windows Explorer or file dialog box. By default, this is Win+K (the ""K"" letter while the Windows key is pressed)."
 global lOptionsArrDescriptions4 := "Choose the KEYBOARD hotkey combination that will open the popup menu in ANY window and navigate to the selected folder in a NEW Windows Explorer window. By default, this is Shift+Win+K (the ""K"" letter while the Shift and Windows keys are pressed)."
-global lOptionsArrDescriptions5 := "Choose the hotkey or mouse button combination that will open the FoldersPopup ""Settings"" dialog box. By default, this is Shift+Windows+F."
+global lOptionsArrDescriptions5 := "Choose the hotkey or mouse button combination that will open the FoldersPopup ""Recent folders"" menu. By default, this is Shift+Windows+R."
+global lOptionsArrDescriptions6 := "Choose the hotkey or mouse button combination that will open the FoldersPopup ""Settings"" dialog box. By default, this is Shift+Windows+F."
 global lOptionsChangeHotkey := "Change"
 global lOptionsChangeHotkeyTitle := "Change hotkey - ~1~ ~2~"
 global lOptionsCtrl := "Ctrl"
@@ -230,5 +231,7 @@ global lGuiGroupSaveSelect := "Select the folders to save in this group"
 global lGuiGroupSaveTitle := "~1~ - ~2~ ~3~"
 global lMenuGroupAdd := "add"
 global lMenuGroupReplace := "replace"
+global lGuiResetDefault := "Reset default hotkey"
+global lReloadPromptDefaultHotkey := "Hotkey changed to default value. This change will be effective only after you reload ~1~.`n`nDo you want to reload ~1~ now? Unsaved changes to the folders menu will be lost."
 
 return

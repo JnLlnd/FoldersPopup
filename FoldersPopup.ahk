@@ -2,11 +2,11 @@
 Bugs:
 
 To-do for v4:
-- Win-K shortcut not available in Win 8.1 (available: Win-A, Win-J, Win-N used by OneNote, Win-Y)
 - Write DOpus add-in to list folders including special folders
 - Save groups with special folders in DOpus to ini file
 - Load groups with special folders in DOpus from ini file
 - look at http://www.jrsoftware.org/isinfo.php
+- adapt website to new default hotkey Win-A and Shift-Win-A
 */
 ;===============================================
 /*
@@ -23,6 +23,7 @@ To-do for v4:
 
 
 	Version: 3.9.1 BETA (2014-10-XX)
+	* Changed default FP hotkeys Windows-K and Shift-Windows-K to Windows-A and Shift-Windows-A (Windows-K is a reserved shortcut in Win 8.1) - configs of actual users are not changed
 	* Add the option "Use tabs" for DirectoryOpus users to choose to pen new folders in new tab (new default) or new lister (window)
 	* Change Group menu label to "Group of folders"
 	* Support in the Group menu Explorer and DOpus windows containing the same folder
@@ -31,6 +32,7 @@ To-do for v4:
 	* Create objects to get special folders class id by name and name by class id
 	* Save groups with special folders to ini file
 	* Load groups with special folders from ini file
+	* Fix a bug with labels when changing the hotkey for Recent folders menu and Settings windows
 
 
 	Version: 3.3 (2014-10-24)
@@ -615,7 +617,6 @@ strHotkeyDefaults := "MButton|+MButton|#a|+#a|+#r|+#f"
 StringSplit, arrHotkeyDefaults, strHotkeyDefaults, |
 strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|RefreshRecentFolders|GuiShow"
 StringSplit, arrHotkeyLabels, strHotkeyLabels, |
-
 strMouseButtons := "None|LButton|MButton|RButton|XButton1|XButton2|WheelUp|WheelDown|WheelLeft|WheelRight|"
 ; leave last | to enable default value on the last item
 StringSplit, arrMouseButtons, strMouseButtons, |
@@ -5072,7 +5073,9 @@ if (intHotkeyType <> 1)
 if (intHotkeyType = 3)
 	Gui, 3:Add, DropDownList, % "y" . posTopY + 50 . " x150 w200 vstrOptionsMouse gOptionsMouseChanged", % strMouseButtonsWithDefault%intIndex%
 
-Gui, 3:Add, Button, y240 x140 vbtnChangeHotkeySave gButtonChangeHotkeySave%intIndex%, %lGuiSave%
+Gui, 3:Add, Button, x10 y220 vbtnResetHotkey gButtonResetHotkey%intIndex%, %lGuiResetDefault%
+GuiCenterButtons(L(lOptionsChangeHotkeyTitle, strAppName, strAppVersion), 10, 5, 20, , "btnResetHotkey")
+Gui, 3:Add, Button, y+20 x10 vbtnChangeHotkeySave gButtonChangeHotkeySave%intIndex%, %lGuiSave%
 Gui, 3:Add, Button, yp x+20 vbtnChangeHotkeyCancel gButtonChangeHotkeyCancel, %lGuiCancel%
 GuiCenterButtons(L(lOptionsChangeHotkeyTitle, strAppName, strAppVersion), 10, 5, 20, , "btnChangeHotkeySave", "btnChangeHotkeyCancel")
 
@@ -5190,6 +5193,33 @@ else
 Gosub, LoadIniHotkeys ; reload ini variables and reset hotkeys
 
 GuiControl, 2:, lblHotkeyText%intIndex%, % Hotkey2Text(strModifiers%intIndex%, strMouseButton%intIndex%, strOptionsKey%intIndex%)
+
+Gosub, 3GuiClose
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ButtonResetHotkey1:
+ButtonResetHotkey2:
+ButtonResetHotkey3:
+ButtonResetHotkey4:
+ButtonResetHotkey5:
+ButtonResetHotkey6:
+;------------------------------------------------------------
+
+StringReplace, intIndex, A_ThisLabel, ButtonResetHotkey
+
+StringSplit, arrIniVarNames, strIniKeyNames, |
+IniWrite, % arrHotkeyDefaults%intIndex%, %strIniFile%, Global, % arrIniVarNames%intIndex%
+
+MsgBox, 52, %strAppName%, % L(lReloadPromptDefaultHotkey, strAppName)
+IfMsgBox, Yes
+{
+	Gosub, RestoreBackupMenuObjects
+	Reload
+}
 
 Gosub, 3GuiClose
 
