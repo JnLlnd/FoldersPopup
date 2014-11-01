@@ -36,8 +36,19 @@ lDialogFavoriteRemoveTitle	Supprimer un favori - ~1~
 lDialogFileLabel	Document
 lDialogFileShortName	Nom du document (pour les menus)
 lDialogFolderLabel	Dossier
-lDialogFolderShortName	Nom court du dossier pour les menus
+lDialogFolderShortName	Nom court du dossier (pour les menus)
+lDialogGroupDelete	Supprimer ce groupe
+lDialogGroupDeleteError	supprimer
+lDialogGroupDeletePrompt	Supprimer le groupe "~1~"?
+lDialogGroupManageCannotSave	Attention: Il n'y a aucune fenêtre à enregistrer dans un groupe. Ouvrez au moins une fenêtre de lo'Explorateur de fichiers ou de Directory Opus et essayez à nouveau d'enregistrer un groupe.
+lDialogGroupManageCreatingPrompt	Pour créer un groupe, cliquez le bouton "~1~" ou sélectionnez le menu "~2~" à tout moment.
+lDialogGroupManageCreatingTitle	Créer un groupe
+lDialogGroupManageGroupsTitle	Gérer les groupes - ~1~ ~2~
+lDialogGroupManageIntro	Avec les "Groupes", vous pouvez enregistrer et rétablir votre environnement de travail en basculant efficacement d'une session de travail à l'autre. Les "Groupes" mémorisent le dossier, la taille, la position et l'état (normal, minimisé ou maximisé) des fenêtres de l'Explorateur de fichiers et de Directory Opus (soutien de Total Commander à venir).
+lDialogGroupManageManagingTitle	Gestion des groupes
 lDialogGroups	Groupes
+lDialogGroupSelect	Sélectionnez un groupe
+lDialogGroupSelectError	Veuillez sélectionner le groupe a ~1~.
 lDialogInvalidHotkey	Avec votre configuration actuelle de clavier, la touche de raccourci "~1~" ne peut être utilisée comme un déclencheur pour le menu popup.`n`nVeuillez ouvrir la fenêtre "Paramètres de ~2~" dans la zone de notification et cliquez sur "Options". Dans cette boîte de dialogue, choisissez une autre touche de raccourci pour "~3~".
 lDialogOpenThisMenu	Ouvrir ce menu
 lDialogSave	Enregistrer
@@ -46,10 +57,10 @@ lDialogSelectItemToRemove	Veuillez sélectionner l'item à supprimer.
 lDialogSubmenuLabel	Sous-menu
 lDialogSubmenuNameEmpty	Le nom du sous-menu est vide. Veuillez indiquer un nom court pour ce dossier.
 lDialogSubmenuParentMenu	Menu contenant ce sous-menu
-lDialogSubmenuShortName	Nom court du sous-menu
+lDialogSubmenuShortName	Nom du sous-menu (pour les menus)
 lDialogThirdPartyDetected	~1~ a détecté que ~2~ est installé sur votre ordinateur.`n`nVoulez-vous activer l'intégration avec ~2~?
 lDialogURLLabel	Lien (URL)
-lDialogURLShortName	Nom court de ce lien
+lDialogURLShortName	Nom de ce lien (pour les menus)
 lDonateButton	Soutenez ce gratuiciel!
 lDonateCheckPrompt	Vous aimez ~1~?`n`n~1~ n'est pas seulement GRATUIT mais aussi distribué SANS ces attrapes publicitaires dont on ne sait jamais si elles transportent des virus ou encore des logiciels espions ou malveillants.`n`nCela fait maintenant ~2~ fois que ~1~ est appelé pour faciliter votre travail quotidien. Que diriez-vous de soutenir ce gratuiciel à votre tour?
 lDonateCheckTitle	~1~ fois! - ~2~
@@ -80,6 +91,18 @@ lGuiClose	Fermer
 lGuiDonate	Soutien
 lGuiDropFilesIncentive	Vous pouvez glisser-déposer vos favoris sur cette fenêtre!
 lGuiEditFavorite	Modifier
+lGuiGroupClosing	Fermeture des fenêtres
+lGuiGroupOf	de
+lGuiGroupSaveAddWindowsLabel	Ajouter aux fenêtres existantes
+lGuiGroupSaved	Le groupe "~1~" a été enregistré.`n`nCliquez le menu "~2~" pour restaurer ce groupe.
+lGuiGroupSaveLvHeader	Dossier|Application|État|Gauche|Haut|Largeur|Hauteur|Côté
+lGuiGroupSaveNameEmpty	Le nom du groupe est vide. Veuillez indiquer le nom deu groupe.
+lGuiGroupSaveReplaceGroup	Le groupe "~1~" existe. Voulez-vous le remplacer?
+lGuiGroupSaveReplaceWindowsLabel	Remplacer les fenêtres existantes
+lGuiGroupSaveRestoreOption	Lors de la restauration du groupe
+lGuiGroupSaveSelect	Sélectionnez les dossiers à enregistrer dans ce groupe
+lGuiGroupSaveShortName	Nom du groupe (pour les menus)
+lGuiGroupSaveTitle	Enregistrer ce groupe - ~1~ ~2~
 lGuiHelp	Aide
 lGuiLvDialogsHeader	Boîtes de dialogue prises en charge`n(une partie du nom suffit)
 lGuiLvFavoritesHeader	Nom|Emplacement
@@ -87,6 +110,7 @@ lGuiMoveFavoriteDown	En bas
 lGuiMoveFavoriteUp	En haut
 lGuiOptions	Options
 lGuiRemoveFavorite	Supprimer
+lGuiResetDefault	Restaurer le déclencheur par défaut
 lGuiSave	Enregistrer
 lGuiSeparator	Séparation
 lGuiSubmenuDropdownLabel	Menu à modifier:
@@ -112,8 +136,10 @@ lMenuDocuments	Documents
 lMenuExitFoldersPopup	Quitter ~1~
 lMenuFPMenu	~2~ ~1~
 lMenuGroup	Groupes de dossiers
+lMenuGroupAdd	ajouter
 lMenuGroupDOpus	Listes Directory Opus et
 lMenuGroupLoad	Ouvrir un groupe
+lMenuGroupReplace	remplacer
 lMenuGroupSave	Enregistrer ce groupe
 lMenuHelp	Aide
 lMenuMenu	Menu
@@ -148,6 +174,7 @@ lOptionsArrDescriptions6	Choisissez la combinaison de touches du clavier ou le b
 lOptionsChangeHotkey	Modifier
 lOptionsChangeHotkeyTitle	Modification de déclencheur - ~1~ ~2~
 lOptionsCtrl	Ctrl
+lOptionsDirectoryOpusUseTabs	Utiliser les onglets
 lOptionsDisplayGroupMenu	Afficher le menu Explorateurs
 lOptionsDisplayIcons	Afficher les icônes des menus
 lOptionsDisplayMenuShortcuts	Afficher les raccourcis numériques

@@ -5,8 +5,8 @@ To-do for v4:
 - Write DOpus add-in to list folders including special folders
 - Save groups with special folders in DOpus to ini file
 - Load groups with special folders in DOpus from ini file
-- look at http://www.jrsoftware.org/isinfo.php
 - adapt website to new default hotkey Win-A and Shift-Win-A
+- adapt website to new standard setup procedure
 */
 ;===============================================
 /*
@@ -23,12 +23,13 @@ To-do for v4:
 
 
 	Version: 3.9.1 BETA (2014-10-XX)
+	* New setup procedure with standard Install / Uninstall procedures (using Inno Setup) - keeping a separate zip file for portable version
 	* Changed default FP hotkeys Windows-K and Shift-Windows-K to Windows-A and Shift-Windows-A (Windows-K is a reserved shortcut in Win 8.1) - configs of actual users are not changed
-	* Add the option "Use tabs" for DirectoryOpus users to choose to pen new folders in new tab (new default) or new lister (window)
+	* Add the option "Use tabs" for DirectoryOpus users to choose to open new folders in new tab (new default) or in a new lister
+	* After DOpusRt opens a folder in a new tab, activate that window
 	* Change Group menu label to "Group of folders"
-	* Support in the Group menu Explorer and DOpus windows containing the same folder
+	* Support Group menu of Explorer and DOpus windows containing the same folder
 	* Support saving multiple windows (Explorers or DOpus) containing the same folder
-	* After DOpusRt open a folder in a new tab, activate that window
 	* Create objects to get special folders class id by name and name by class id
 	* Save groups with special folders to ini file
 	* Load groups with special folders from ini file
@@ -441,7 +442,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 3.9 BETA
+;@Ahk2Exe-SetVersion 3.9.1 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -454,7 +455,10 @@ To-do for v4:
 #KeyHistory 0
 ListLines, Off
 ComObjError(False) ; we will do our own error handling
-DllCall("SetErrorMode", "uint", SEM_FAILCRITICALERRORS := 1) ; see http://ahkscript.org/boards/viewtopic.php?f=5&t=4477&p=25239#p25236
+
+; avoid error message when shortcut destination is missing
+; see http://ahkscript.org/boards/viewtopic.php?f=5&t=4477&p=25239#p25236
+DllCall("SetErrorMode", "uint", SEM_FAILCRITICALERRORS := 1)
 
 ; Removed SetWorkingDir to allow user set the working directory in his own Windows shortcut.
 ; By default, the A_WorkingDir is A_ScriptDir.
@@ -972,21 +976,26 @@ global objLocalizedNameByClassId := Object()
 ; InitClassId("{4336a54d-038b-4685-ab02-99bb52d3fb8b}") ; Public Folder / Public
 ; InitClassId("{59031a47-3f72-44a7-89c5-5595fe6b30ee}") ; (User files) <User name> / <User name>
 
-; special folders with only localized name in .LocationName used in actual popup menu
+; special folders with only localized name in .LocationName actually used in popup menu
+; these can be open with "explorer ::{CLSID}", but also with "explorer.exe shell:::{CLSID}"
 InitClassId("{20d04fe0-3aea-1069-a2d8-08002b30309d}") ; My Computer / Ordinateur
 InitClassId("{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}") ;	Computer and devices / Réseau
 InitClassId("{645ff040-5081-101b-9f08-00aa002f954e}") ;	Recycle Bin / Corbeille
 InitClassId("{26EE0668-A00A-44D7-9371-BEB064C98683}") ;	Control Panel / Panneau de configuration
 
 ; other special folders with only localized name in .LocationName
-InitClassId("{208d2c60-3aea-1069-a2d7-08002b30309d}") ;	My Network Places / Réseau (WORKGROUP)
+; these can be open with "explorer ::{CLSID}", but also with "explorer.exe shell:::{CLSID}"
 InitClassId("{031E4825-7B94-4dc3-B131-E946B44C8DD5}") ; Libraries / Bibliothèques
-InitClassId("{22877a6d-37a1-461a-91b0-dbda5aaebc99}") ;	Recent Places / Emplacements récents -> cannot be open by Run, needs "explorer.exe shell:::{CLSID}"
+InitClassId("{208d2c60-3aea-1069-a2d7-08002b30309d}") ;	My Network Places / Réseau (WORKGROUP)
 InitClassId("{21EC2020-3AEA-1069-A2DD-08002B30309D}") ;	All Control Panel items / Tous les Panneaux de configuration
-InitClassId("{992CFFA0-F557-101A-88EC-00DD010CCC48}") ;	Network Connections / Connexions réseau ### XL + ME
-InitClassId("{7007acc7-3202-11d1-aad2-00805fc1270e}") ;	Network Connections / Connexions réseau ### XP
+InitClassId("{7007acc7-3202-11d1-aad2-00805fc1270e}") ;	Network Connections / Connexions réseau
 InitClassId("{E7DE9B1A-7533-4556-9484-B26FB486475E}") ;	Network Map / Mappage réseau
 InitClassId("{2227a280-3aea-1069-a2de-08002b30309d}") ;	Printers / Imprimantes
+
+; other special folders with only localized name in .LocationName
+; these can only be open with "explorer.exe shell:::{CLSID}"
+InitClassId("{22877a6d-37a1-461a-91b0-dbda5aaebc99}") ;	Recent Places / Emplacements récents
+InitClassId("{992CFFA0-F557-101A-88EC-00DD010CCC48}") ;	Network Connections / Connexions réseau
 
 return
 ;------------------------------------------------------------
@@ -1417,10 +1426,7 @@ if (blnUseDirectoryOpus)
 		objGroupMenuExplorer.Pane := (objLister.Pane = 0 ? 1 : objLister.Pane) ; consider pane 0 as pane 1
 		objGroupMenuExplorer.WindowType := "DO"
 		if FileExist(objGroupMenuExplorer.Name)
-		{
-			objGroupMenuExplorer.FileExist := True ; ### not used?
 			intExplorersExist := intExplorersExist + 1
-		}
 		
 		objGroupMenuExplorers.Insert(intExplorersIndex, objGroupMenuExplorer)
 	}
@@ -1442,10 +1448,7 @@ if (blnUseTotalCommander)
 			objGroupMenuExplorer.Pane := objTCList.Pane
 			objGroupMenuExplorer.WindowType := "TC"
 			if FileExist(objGroupMenuExplorer.Name)
-			{
-				objGroupMenuExplorer.FileExist := True
 				intExplorersExist := intExplorersExist + 1
-			}	
 			
 			objGroupMenuExplorers.Insert(intExplorersIndex, objGroupMenuExplorer)
 		}
@@ -1471,10 +1474,7 @@ for intIndex, objExplorer in objExplorersWindows
 	objGroupMenuExplorer.MinMax := objExplorer.MinMax
 	objGroupMenuExplorer.WindowType := "EX"
 	if FileExist(objGroupMenuExplorer.Name) or (objGroupMenuExplorer.IsSpecialFolder)
-	{
-		objGroupMenuExplorer.FileExist := True ; ### not used?
 		intExplorersExist := intExplorersExist + 1
-	}	
 
 	objGroupMenuExplorers.Insert(intExplorersIndex, objGroupMenuExplorer)
 }
@@ -2624,7 +2624,7 @@ return
 GuiGroupSave:
 ;------------------------------------------------------------
 
-Gui, 2:New, , % L(lGuiGroupSaveTitle, lMenuGroupSave, strAppName, strAppVersion)
+Gui, 2:New, , % L(lGuiGroupSaveTitle, strAppName, strAppVersion)
 Gui, 2:Margin, 10, 10
 Gui, 2:Color, %strGuiWindowColor%
 Gui, 2:+OwnDialogs
@@ -2659,10 +2659,10 @@ for intIndex, objGroupMenuExplorer in objGroupMenuExplorers
 LV_Modify(1, "Select Focus")
 Loop, 12
 	LV_ModifyCol(A_Index, "AutoHdr")
-; Loop, % (blnUseDirectoryOpus ? 5 : 6)
-;	LV_ModifyCol(A_Index + (blnUseDirectoryOpus ? 8 : 7), 0) ; hide 8th-12th columns
+Loop, % (blnUseDirectoryOpus ? 5 : 6)
+	LV_ModifyCol(A_Index + (blnUseDirectoryOpus ? 8 : 7), 0) ; hide 8th-12th columns
 
-Gui, 2:Add, Text, x10 y+10 w250 section, %lGuiGroupSaveName%
+Gui, 2:Add, Text, x10 y+10 w250 section, %lGuiGroupSaveShortName%
 Gui, 2:Add, Edit, x10 y+5 w250 Limit248 vstrGroupSaveName, %strGroupSaveName% ; maximum length of ini section name is 255 ("Group-" is prepended)
 
 Gui, 2:Add, Text, ys x300, %lGuiGroupSaveRestoreOption%:
@@ -3822,7 +3822,7 @@ Gui, 2:+OwnDialogs
 
 if !StrLen(drpGroupsList) or (drpGroupsList = lDialogGroupSelect)
 {
-	Oops(lDialogGroupSelectError, "delete")
+	Oops(lDialogGroupSelectError, lDialogGroupDeleteError)
 	return
 }
 
@@ -3849,7 +3849,7 @@ Gui, 2:Submit, NoHide
 
 if !StrLen(drpGroupsList) or (drpGroupsList = lDialogGroupSelect)
 {
-	Oops(lDialogGroupSelectError, "load")
+	Oops(lDialogGroupSelectError, lDialogGroupLoadError)
 	return
 }
 
