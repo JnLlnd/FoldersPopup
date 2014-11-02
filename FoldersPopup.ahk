@@ -2,6 +2,7 @@
 Bugs:
 
 To-do for v4:
+- Set language when installed by Inno Setup
 - Write DOpus add-in to list folders including special folders
 - Save groups with special folders in DOpus to ini file
 - Load groups with special folders in DOpus from ini file
@@ -2677,7 +2678,7 @@ Gui, 2:Add, Radio, xs y+5 vblnRadioAddWindows, %lGuiGroupSaveAddWindowsLabel%
 
 Gui, 2:Add, Button, y+20 vbtnGroupSave gButtonGroupSave, %lGuiSave%
 Gui, 2:Add, Button, yp vbtnGroupSaveCancel gButtonGroupSaveCancel, %lGuiCancel%
-GuiCenterButtons(L(lGuiGroupSaveTitle, lMenuGroupSave, strAppName, strAppVersion), 10, 5, 20, , "btnGroupSave", "btnGroupSaveCancel")
+GuiCenterButtons(L(lGuiGroupSaveTitle, strAppName, strAppVersion), 10, 5, 20, , "btnGroupSave", "btnGroupSaveCancel")
 
 GuiControl, Focus, strGroupSaveName
 GuiControl, +Default, btnGroupSave
@@ -4362,7 +4363,7 @@ if (A_ThisLabel = "GuiAddFavorite")
 }
 
 Gui, 2:Add, Text, x10 y+10 w300 vlblShortName, % (blnRadioSubmenu ? lDialogSubmenuShortName : (blnRadioFile ? lDialogFileShortName : (blnRadioURL ? lDialogURLShortName : lDialogFolderShortName)))
-Gui, 2:Add, Edit, x10 w300 Limit250 vstrFolderShortName, % (A_ThisLabel = "GuiEditFavorite" ? strCurrentName : strFavoriteShortName)
+Gui, 2:Add, Edit, x10 w300 Limit250 vstrFavoriteShortName, % (A_ThisLabel = "GuiEditFavorite" ? strCurrentName : strFavoriteShortName)
 
 if (blnRadioSubmenu)
 	Gui, 2:Add, Button, x+10 yp vbnlEditFolderOpenMenu gGuiOpenThisMenu, %lDialogOpenThisMenu%
