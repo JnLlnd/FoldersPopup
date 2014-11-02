@@ -2,7 +2,9 @@
 Bugs:
 
 To-do for v4:
+- Ability to edit a group
 - Set language when installed by Inno Setup
+- When installed by Inno Setup, offer a way to retrieve ini settings from a protable installation
 - Write DOpus add-in to list folders including special folders
 - Save groups with special folders in DOpus to ini file
 - Load groups with special folders in DOpus from ini file
