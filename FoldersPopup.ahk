@@ -24,6 +24,8 @@ To-do for v4:
 
 	Version: 3.9.1 BETA (2014-10-XX)
 	* New setup procedure with standard Install / Uninstall procedures (using Inno Setup) - keeping a separate zip file for portable version
+	* Adapt Run at startup shortcut for Inno Setup by using the working directory instead of the script directory
+	* Create a unique environment code (mutex) to allow Inno Setup to detect if FP is running before uninstall or update
 	* Changed default FP hotkeys Windows-K and Shift-Windows-K to Windows-A and Shift-Windows-A (Windows-K is a reserved shortcut in Win 8.1) - configs of actual users are not changed
 	* Add the option "Use tabs" for DirectoryOpus users to choose to open new folders in new tab (new default) or in a new lister
 	* After DOpusRt opens a folder in a new tab, activate that window
@@ -460,9 +462,10 @@ ComObjError(False) ; we will do our own error handling
 ; see http://ahkscript.org/boards/viewtopic.php?f=5&t=4477&p=25239#p25236
 DllCall("SetErrorMode", "uint", SEM_FAILCRITICALERRORS := 1)
 
-; Removed SetWorkingDir to allow user set the working directory in his own Windows shortcut.
 ; By default, the A_WorkingDir is A_ScriptDir.
-; If user enable "Run at startup", the "Start in:" shortcut option will set the A_WorkingDir to A_ScriptDir
+; When the shortcut is created by Inno Setup, the working is set to the folder under {userappdata}.
+; In portable mode, the user can set the working directory in his own Windows shortcut.
+; If user enable "Run at startup", the "Start in:" shortcut option is set to the current A_WorkingDir.
 
 ; Force A_WorkingDir to A_ScriptDir if uncomplied (development phase)
 ;@Ahk2Exe-IgnoreBegin
@@ -529,7 +532,7 @@ Gosub, BuildTrayMenu
 IfExist, %A_Startup%\%strAppName%.lnk ; update the shortcut in case the exe filename changed
 {
 	FileDelete, %A_Startup%\%strAppName%.lnk
-	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%strAppName%.lnk, %A_ScriptDir%
+	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%strAppName%.lnk, %A_WorkingDir%
 	Menu, Tray, Check, %lMenuRunAtStartup%
 }
 
@@ -552,6 +555,9 @@ OnMessage(0x200, "WM_MOUSEMOVE")
 
 ; To popup menu when left click on the tray icon - See AHK_NOTIFYICON function below
 OnMessage(0x404, "AHK_NOTIFYICON")
+
+; Create a mutex to allow Inno Setup to detect if FP is running before uninstall or update
+DllCall("CreateMutex", "uint", 0, "int", false, "str", strAppName . "Mutex")
 
 ; ### only when debugging Gui
 ; Gosub, GuiShow
@@ -3358,7 +3364,7 @@ Menu, Tray, Togglecheck, %lMenuRunAtStartup%
 IfExist, %A_Startup%\%strAppName%.lnk
 	FileDelete, %A_Startup%\%strAppName%.lnk
 else
-	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%strAppName%.lnk, %A_ScriptDir%
+	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%strAppName%.lnk, %A_WorkingDir%
 
 return
 ;------------------------------------------------------------
@@ -4906,7 +4912,7 @@ blnMenuReady := false
 IfExist, %A_Startup%\%strAppName%.lnk
 	FileDelete, %A_Startup%\%strAppName%.lnk
 if (blnOptionsRunAtStartup)
-	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%strAppName%.lnk, %A_ScriptDir%
+	FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%strAppName%.lnk, %A_WorkingDir%
 Menu, Tray, % blnOptionsRunAtStartup ? "Check" : "Uncheck", %lMenuRunAtStartup%
 
 IniWrite, %blnDisplayTrayTip%, %strIniFile%, Global, DisplayTrayTip
