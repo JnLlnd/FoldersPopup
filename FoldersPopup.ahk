@@ -3464,7 +3464,7 @@ else if (A_ThisMenuItem = lMenuUpdate)
 		if (strCurrentBranch = "prod")
 			Run, http://code.jeanlalonde.ca/folderspopup/
 		else
-			Run, http://code.jeanlalonde.ca/folders-popup-compatible-with-total-commander-beta-testers-wanted/
+			Run, http://code.jeanlalonde.ca/folderspopup-v4-ready-for-beta-test-testers-wanted/
 }
 
 return 
