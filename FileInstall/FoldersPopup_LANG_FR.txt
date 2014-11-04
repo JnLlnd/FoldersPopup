@@ -40,6 +40,8 @@ lDialogFolderShortName	Nom court du dossier (pour les menus)
 lDialogGroupDelete	Supprimer ce groupe
 lDialogGroupDeleteError	supprimer
 lDialogGroupDeletePrompt	Supprimer le groupe "~1~"?
+lDialogGroupEdit	Modifier ce groupe
+lDialogGroupEditError	modifier
 lDialogGroupManageCannotSave	Attention: Il n'y a aucune fenêtre à enregistrer dans un groupe. Ouvrez au moins une fenêtre de lo'Explorateur de fichiers ou de Directory Opus et essayez à nouveau d'enregistrer un groupe.
 lDialogGroupManageCreatingPrompt	Pour créer un groupe, cliquez le bouton "~1~" ou sélectionnez le menu "~2~" à tout moment.
 lDialogGroupManageCreatingTitle	Créer un groupe
@@ -48,7 +50,7 @@ lDialogGroupManageIntro	Avec les "Groupes", vous pouvez enregistrer et rétablir 
 lDialogGroupManageManagingTitle	Gestion des groupes
 lDialogGroups	Groupes
 lDialogGroupSelect	Sélectionnez un groupe
-lDialogGroupSelectError	Veuillez sélectionner le groupe a ~1~.
+lDialogGroupSelectError	Veuillez sélectionner le groupe à ~1~.
 lDialogInvalidHotkey	Avec votre configuration actuelle de clavier, la touche de raccourci "~1~" ne peut être utilisée comme un déclencheur pour le menu popup.`n`nVeuillez ouvrir la fenêtre "Paramètres de ~2~" dans la zone de notification et cliquez sur "Options". Dans cette boîte de dialogue, choisissez une autre touche de raccourci pour "~3~".
 lDialogOpenThisMenu	Ouvrir ce menu
 lDialogSave	Enregistrer
@@ -95,14 +97,16 @@ lGuiGroupClosing	Fermeture des fenêtres
 lGuiGroupOf	de
 lGuiGroupSaveAddWindowsLabel	Ajouter aux fenêtres existantes
 lGuiGroupSaved	Le groupe "~1~" a été enregistré.`n`nCliquez le menu "~2~" pour restaurer ce groupe.
+lGuiGroupSaveEditTitle	~1~ ce groupe - ~2~ ~3~
 lGuiGroupSaveLvHeader	Dossier|Application|État|Gauche|Haut|Largeur|Hauteur|Côté
 lGuiGroupSaveNameEmpty	Le nom du groupe est vide. Veuillez indiquer le nom deu groupe.
+lGuiGroupSaveNewGroup	Nouveau groupe
 lGuiGroupSaveReplaceGroup	Le groupe "~1~" existe. Voulez-vous le remplacer?
 lGuiGroupSaveReplaceWindowsLabel	Remplacer les fenêtres existantes
-lGuiGroupSaveRestoreOption	Lors de la restauration du groupe
+lGuiGroupSaveRestoreOption	Lors de la restauration du groupe:
 lGuiGroupSaveSelect	Sélectionnez les dossiers à enregistrer dans ce groupe
+lGuiGroupSaveSelectExisting	ou choisissez un groupe à remplacer:
 lGuiGroupSaveShortName	Nom du groupe (pour les menus)
-lGuiGroupSaveTitle	Enregistrer ce groupe - ~1~ ~2~
 lGuiHelp	Aide
 lGuiLvDialogsHeader	Boîtes de dialogue prises en charge`n(une partie du nom suffit)
 lGuiLvFavoritesHeader	Nom|Emplacement
