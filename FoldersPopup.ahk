@@ -2,8 +2,8 @@
 Bugs:
 
 To-do for v4:
-- Ability to edit a group
 - Set language when installed by Inno Setup
+- Delete the startup shortcut when uninstall with Inno Setup
 - When installed by Inno Setup, offer a way to retrieve ini settings from a protable installation
 - Write DOpus add-in to list folders including special folders
 - Save groups with special folders in DOpus to ini file
@@ -25,7 +25,10 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 3.9.1 BETA (2014-10-XX)
+	Version: 3.9.2 BETA (2014-11-??)
+	* Add the possibility to overwrite an existing group of folders
+	
+	Version: 3.9.1 BETA (2014-11-02)
 	* New setup procedure with standard Install / Uninstall procedures (using Inno Setup) - keeping a separate zip file for portable version
 	* Adapt Run at startup shortcut for Inno Setup by using the working directory instead of the script directory
 	* Create a unique environment code (mutex) to allow Inno Setup to detect if FP is running before uninstall or update
@@ -447,7 +450,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 3.9.1 BETA
+;@Ahk2Exe-SetVersion 3.9.2 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -483,7 +486,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.9.1" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "3.9.2" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -571,7 +574,7 @@ DllCall("CreateMutex", "uint", 0, "int", false, "str", strAppName . "Mutex")
 ; Gosub, GuiEditFavorite
 ; Gosub, PopupMenuNewWindowKeyboard
 ; Gosub, BuildGroupMenu
-; Gosub, GuiGroupSave
+; Gosub, GuiGroupSaveFromMenu
 ; Gosub, GuiManageGroups
 
 return
@@ -1517,7 +1520,7 @@ Loop, Parse, strGroups, |
 }
 if (intExplorersIndex)
 	Menu, menuGroup, Add
-AddMenuIcon("menuGroup", lMenuGroupSave, "GuiGroupSave", "menuGroupSave")
+AddMenuIcon("menuGroup", lMenuGroupSave, "GuiGroupSaveFromMenu", "menuGroupSave")
 AddMenuIcon("menuGroup", lMenuGroupLoad, ":menuGroupsList", "menuGroupLoad")
 
 return
@@ -2630,39 +2633,71 @@ return
 
 
 ;------------------------------------------------------------
-GuiGroupSave:
+GuiGroupSaveFromMenu:
+GuiGroupSaveFromManage:
+GuiGroupEditFromManage:
 ;------------------------------------------------------------
 
-Gui, 2:New, , % L(lGuiGroupSaveTitle, strAppName, strAppVersion)
-Gui, 2:Margin, 10, 10
-Gui, 2:Color, %strGuiWindowColor%
-Gui, 2:+OwnDialogs
+intGui2WinID := WinExist("A")
+	
+strGuiGroupSaveEditTitle := L(lGuiGroupSaveEditTitle, (A_ThisLabel = "GuiGroupSaveFromMenu" ? lDialogSave : lDialogEdit), strAppName, strAppVersion)
+Gui, 3:New, , %strGuiGroupSaveEditTitle%
+Gui, 3:Margin, 10, 10
+Gui, 3:Color, %strGuiWindowColor%
+Gui, 3:+OwnDialogs
 
-Gui, 2:Font, s10 w700, Verdana
-Gui, 2:Add, Text, x10 y10 w670 center, %lMenuGroupSave%
-Gui, 2:Font
+Gui, 3:Font, s10 w700, Verdana
+Gui, 3:Add, Text, x10 y10 w670 center, %lMenuGroupSave%
+Gui, 3:Font
 
-Gui, 2:Add, Text, x10 y+15 w670 center, %lGuiGroupSaveSelect%
+Gui, 3:Add, Text, x10 y+15 w670 center, %lGuiGroupSaveSelect%
 
-Gui, 2:Add, ListView
+Gui, 3:Add, ListView
 	, xm w680 h200 Checked Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvGroupList
 	, %lGuiGroupSaveLvHeader%|Hidden: Path|IsSpecialFolder|WindowId|Position|TabId
 Loop, 4
 	LV_ModifyCol(A_Index + 3, "Right")
 
-for intIndex, objGroupMenuExplorer in objGroupMenuExplorers
+if (A_ThisLabel = "GuiGroupEditFromManage")
 {
-	arrExplorerPosition := objGroupMenuExplorer.Position
-	StringSplit, arrExplorerPosition, arrExplorerPosition, "|"
-	LV_Add("Check", objGroupMenuExplorer.Name
-		, (objGroupMenuExplorer.WindowType = "DO" ? "Directory Opus" : (objGroupMenuExplorer.WindowType = "TC" ? "Total Commander" : "Windows Explorer"))
-		, (objGroupMenuExplorer.MinMax = -1 ? "Minimized" : (objGroupMenuExplorer.MinMax = "1" ? "Maximized" : "Normal"))
-		, (objGroupMenuExplorer.MinMax = 0 ? arrExplorerPosition1 : "-")
-		, (objGroupMenuExplorer.MinMax = 0 ? arrExplorerPosition2 : "-")
-		, (objGroupMenuExplorer.MinMax = 0 ? arrExplorerPosition3 : "-")
-		, (objGroupMenuExplorer.MinMax = 0 ? arrExplorerPosition4 : "-")
-		, (objGroupMenuExplorer.Pane ? objGroupMenuExplorer.Pane : "-")
-		, objGroupMenuExplorer.Path, objGroupMenuExplorer.IsSpecialFolder, objGroupMenuExplorer.WindowId, objGroupMenuExplorer.Position, objGroupMenuExplorer.TabId)
+	strGroup := "Group-" . strGroupToEdit
+	
+	objIniExplorersInGroup := Object()
+	Gosub, Group2Object
+
+	for intIndex, objIniExplorerInGroup in objIniExplorersInGroup
+	{
+		arrExplorerPosition := objGroupMenuExplorer.Position
+		StringSplit, arrExplorerPosition, arrExplorerPosition, "|"
+		LV_Add("Check", objIniExplorerInGroup.Name
+			, (objIniExplorerInGroup.WindowType = "DO" ? "Directory Opus" : (objIniExplorerInGroup.WindowType = "TC" ? "Total Commander" : "Windows Explorer"))
+			, (objIniExplorerInGroup.MinMax = -1 ? "Minimized" : (objIniExplorerInGroup.MinMax = "1" ? "Maximized" : "Normal"))
+			, (objIniExplorerInGroup.MinMax = 0 ? arrExplorerPosition1 : "-")
+			, (objIniExplorerInGroup.MinMax = 0 ? arrExplorerPosition2 : "-")
+			, (objIniExplorerInGroup.MinMax = 0 ? arrExplorerPosition3 : "-")
+			, (objIniExplorerInGroup.MinMax = 0 ? arrExplorerPosition4 : "-")
+			, (objIniExplorerInGroup.Pane ? objIniExplorerInGroup.Pane : "-")
+			, objIniExplorerInGroup.Path, objIniExplorerInGroup.IsSpecialFolder, objIniExplorerInGroup.WindowId, objIniExplorerInGroup.Position, objIniExplorerInGroup.TabId)
+	}		
+	IniRead, blnReplaceWhenRestoringThisGroup, %strIniFile%, %strGroup%, ReplaceWhenRestoringThisGroup, 0 ; false if not found
+}
+else
+{
+	for intIndex, objGroupMenuExplorer in objGroupMenuExplorers
+	{
+		arrExplorerPosition := objGroupMenuExplorer.Position
+		StringSplit, arrExplorerPosition, arrExplorerPosition, "|"
+		LV_Add("Check", objGroupMenuExplorer.Name
+			, (objGroupMenuExplorer.WindowType = "DO" ? "Directory Opus" : (objGroupMenuExplorer.WindowType = "TC" ? "Total Commander" : "Windows Explorer"))
+			, (objGroupMenuExplorer.MinMax = -1 ? "Minimized" : (objGroupMenuExplorer.MinMax = "1" ? "Maximized" : "Normal"))
+			, (objGroupMenuExplorer.MinMax = 0 ? arrExplorerPosition1 : "-")
+			, (objGroupMenuExplorer.MinMax = 0 ? arrExplorerPosition2 : "-")
+			, (objGroupMenuExplorer.MinMax = 0 ? arrExplorerPosition3 : "-")
+			, (objGroupMenuExplorer.MinMax = 0 ? arrExplorerPosition4 : "-")
+			, (objGroupMenuExplorer.Pane ? objGroupMenuExplorer.Pane : "-")
+			, objGroupMenuExplorer.Path, objGroupMenuExplorer.IsSpecialFolder, objGroupMenuExplorer.WindowId, objGroupMenuExplorer.Position, objGroupMenuExplorer.TabId)
+	}
+	blnReplaceWhenRestoringThisGroup := True ; default for new group
 }
 
 LV_Modify(1, "Select Focus")
@@ -2671,20 +2706,54 @@ Loop, 12
 Loop, % (blnUseDirectoryOpus ? 5 : 6)
 	LV_ModifyCol(A_Index + (blnUseDirectoryOpus ? 8 : 7), 0) ; hide 8th-12th columns
 
-Gui, 2:Add, Text, x10 y+10 w250 section, %lGuiGroupSaveShortName%
-Gui, 2:Add, Edit, x10 y+5 w250 Limit248 vstrGroupSaveName, %strGroupSaveName% ; maximum length of ini section name is 255 ("Group-" is prepended)
+Gui, 3:Add, Text, x10 y+10 w250, %lGuiGroupSaveShortName%
+Gui, 3:Add, Edit, x10 y+5 w250 Limit248 vstrGroupSaveName gGuiGroupSaveNameChanged section, % (A_ThisLabel = "GuiGroupEditFromManage" ? strGroupToEdit : "") ; maximum length of ini section name is 255 ("Group-" is prepended)
 
-Gui, 2:Add, Text, ys x300, %lGuiGroupSaveRestoreOption%:
-Gui, 2:Add, Radio, x+10 yp section vblnRadioReplaceWindows checked, %lGuiGroupSaveReplaceWindowsLabel%
-Gui, 2:Add, Radio, xs y+5 vblnRadioAddWindows, %lGuiGroupSaveAddWindowsLabel%
+Gui, 3:Add, Text, x10 y+5 w250, %lGuiGroupSaveSelectExisting%
+Gui, 3:Add, DropDownList, x10 y+5 w250 vdrpGroupsOverwriteList gGuiGroupSaveOverwriteListChanged, %lGuiGroupSaveNewGroup%|%strGroups%
+GuiControl, ChooseString, drpGroupsOverwriteList, %lGuiGroupSaveNewGroup%
 
-Gui, 2:Add, Button, y+20 vbtnGroupSave gButtonGroupSave, %lGuiSave%
-Gui, 2:Add, Button, yp vbtnGroupSaveCancel gButtonGroupSaveCancel, %lGuiCancel%
-GuiCenterButtons(L(lGuiGroupSaveTitle, strAppName, strAppVersion), 10, 5, 20, , "btnGroupSave", "btnGroupSaveCancel")
+Gui, 3:Add, Button, y+20 vbtnGroupSave gButtonGroupSave, %lGuiSave%
+Gui, 3:Add, Button, yp vbtnGroupSaveCancel gButtonGroupSaveCancel, %lGuiCancel%
+
+Gui, 3:Add, Text, ys x300, %lGuiGroupSaveRestoreOption%
+Gui, 3:Add, Radio, % "x+10 yp section vblnRadioReplaceWindows " . (blnReplaceWhenRestoringThisGroup ? "checked" : ""), %lGuiGroupSaveReplaceWindowsLabel%
+Gui, 3:Add, Radio, % "xs y+5 vblnRadioAddWindows " . (blnReplaceWhenRestoringThisGroup ? "" : "checked"), %lGuiGroupSaveAddWindowsLabel%
+
+GuiCenterButtons(strGuiGroupSaveEditTitle, 10, 5, 20, , "btnGroupSave", "btnGroupSaveCancel")
 
 GuiControl, Focus, strGroupSaveName
+if (A_ThisLabel = "GuiGroupEditFromManage")
+	SendInput, ^a
 GuiControl, +Default, btnGroupSave
-Gui, 2:Show, AutoSize Center
+Gui, 3:Show, AutoSize Center
+
+if InStr(A_ThisLabel, "FromManage")
+	Gui, 2:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiGroupSaveOverwriteListChanged:
+;------------------------------------------------------------
+Gui, 3:Submit, NoHide
+
+if (drpGroupsOverwriteList <> lGuiGroupSaveNewGroup) and StrLen(strGroupSaveName)
+	GuiControl, , strGroupSaveName
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiGroupSaveNameChanged:
+;------------------------------------------------------------
+Gui, 3:Submit, NoHide
+
+if (drpGroupsOverwriteList <> lGuiGroupSaveNewGroup) and StrLen(strGroupSaveName)
+	GuiControl, ChooseString, drpGroupsOverwriteList, %lGuiGroupSaveNewGroup%
 
 return
 ;------------------------------------------------------------
@@ -2693,8 +2762,11 @@ return
 ;------------------------------------------------------------
 ButtonGroupSave:
 ;------------------------------------------------------------
-Gui, 2:Submit, NoHide
-Gui, 2:+OwnDialogs
+Gui, 3:Submit, NoHide
+Gui, 3:+OwnDialogs
+
+if (drpGroupsOverwriteList <> lGuiGroupSaveNewGroup)
+	strGroupSaveName := drpGroupsOverwriteList
 
 if !StrLen(strGroupSaveName)
 {
@@ -2743,6 +2815,8 @@ MsgBox, 0, % L(lGuiGroupSaveTitle, lMenuGroupSave, strAppName)
 Gosub, ButtonGroupSaveCancel
 strGroupSaveName := ""
 
+Gosub, 3GuiClose
+
 return
 ;------------------------------------------------------------
 
@@ -2751,7 +2825,7 @@ return
 ButtonGroupSaveCancel:
 ;------------------------------------------------------------
 
-Gui, 2:Destroy
+Gosub, 3GuiClose
 
 return
 ;------------------------------------------------------------
@@ -3778,6 +3852,7 @@ Gosub, BuildGroupMenu ; refresh explorers object and intExplorersExist counter
 
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
+
 Gui, 2:New, , % L(lDialogGroupManageGroupsTitle, strAppName, strAppVersion)
 Gui, 2:+Owner1
 Gui, 2:+OwnDialogs
@@ -3809,8 +3884,9 @@ Gui, 2:Font
 Gui, 2:Add, DropDownList, x10 y+10 w%intWidth% vdrpGroupsList, %lDialogGroupSelect%||%strGroups%
 
 Gui, 2:Add, Button, x10 y+10 vbtnGroupManageLoad  gGuiGroupManageLoad, %lDialogGroupLoad%
+Gui, 2:Add, Button, x10 yp vbtnGroupManageEdit gGuiGroupManageEdit, %lDialogGroupEdit%
 Gui, 2:Add, Button, x10 yp vbtnGroupManageDelete gGuiGroupManageDelete, %lDialogGroupDelete%
-GuiCenterButtons(L(lDialogGroupManageGroupsTitle, strAppName, strAppVersion), , , , , "btnGroupManageLoad", "btnGroupManageDelete")
+GuiCenterButtons(L(lDialogGroupManageGroupsTitle, strAppName, strAppVersion), , , , , "btnGroupManageLoad", "btnGroupManageEdit", "btnGroupManageDelete")
 
 Gui, 2:Add, Button, x+10 y+30 vbtnGroupManageClose g2GuiClose, %lGui2Close%
 GuiCenterButtons(L(lDialogGroupManageGroupsTitle, strAppName, strAppVersion), , , , , "btnGroupManageClose")
@@ -3818,6 +3894,26 @@ Gui, 2:Add, Text, x10, %A_Space%
 
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiGroupManageEdit:
+;------------------------------------------------------------
+Gui, 2:Submit, NoHide
+Gui, 2:+OwnDialogs
+
+if !StrLen(drpGroupsList) or (drpGroupsList = lDialogGroupSelect)
+{
+	Oops(lDialogGroupSelectError, lDialogGroupEditError)
+	return
+}
+
+strGroupToEdit := drpGroupsList
+Gosub, GuiGroupEditFromManage
+GuiControl, 2:, drpGroupsList, |%lDialogGroupSelect%||%strGroups%
 
 return
 ;------------------------------------------------------------
@@ -3876,9 +3972,8 @@ return
 GuiGroupManageNew:
 ;------------------------------------------------------------
 
-Gosub, 2GuiClose
-Gosub, GuiClose
-Gosub, GuiGroupSave
+Gosub, GuiGroupSaveFromManage
+GuiControl, 2:, drpGroupsList, |%lDialogGroupSelect%||%strGroups%
 
 return
 ;------------------------------------------------------------
@@ -4347,6 +4442,7 @@ else
 
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
+
 Gui, 2:New, , % L(lDialogAddEditFavoriteTitle, (A_ThisLabel = "GuiEditFavorite" ? lDialogEdit : lDialogAdd), strAppName, strAppVersion)
 Gui, 2:+Owner1
 Gui, 2:+OwnDialogs
@@ -5034,9 +5130,10 @@ ButtonOptionsChangeHotkey6:
 ;------------------------------------------------------------
 
 StringReplace, intIndex, A_ThisLabel, ButtonOptionsChangeHotkey
-intGui2WinID := WinExist("A")
 
+intGui2WinID := WinExist("A")
 Gui, 2:Submit, NoHide
+
 Gui, 3:New, , % L(lOptionsChangeHotkeyTitle, strAppName, strAppVersion)
 Gui, 3:Color, %strGuiWindowColor%
 Gui, 3:+Owner2
@@ -5239,6 +5336,7 @@ return
 ;------------------------------------------------------------
 ButtonChangeHotkeyCancel:
 ;------------------------------------------------------------
+
 Gosub, 3GuiClose
 
 return
@@ -5257,6 +5355,7 @@ GuiAbout:
 
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
+
 Gui, 2:New, , % L(lAboutTitle, strAppName, strAppVersion)
 Gui, 2:Color, %strGuiWindowColor%
 Gui, 2:+Owner1
@@ -5287,6 +5386,7 @@ GuiDonate:
 
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
+
 Gui, 2:New, , % L(lDonateTitle, strAppName, strAppVersion)
 Gui, 2:Color, %strGuiWindowColor%
 Gui, 2:+Owner1
@@ -5355,6 +5455,7 @@ GuiHelp:
 
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
+
 Gui, 2:New, , % L(lHelpTitle, strAppName, strAppVersion)
 Gui, 2:Color, %strGuiWindowColor%
 Gui, 2:+Owner1
