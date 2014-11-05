@@ -2,9 +2,7 @@
 Bugs:
 
 To-do for v4:
-- Set language when installed by Inno Setup
-- Delete the startup shortcut when uninstall with Inno Setup
-- When installed by Inno Setup, offer a way to retrieve ini settings from a protable installation
+- If ini not exist, use language from ini.setup
 - Write DOpus add-in to list folders including special folders
 - Save groups with special folders in DOpus to ini file
 - Load groups with special folders in DOpus from ini file
@@ -26,8 +24,13 @@ To-do for v4:
 
 
 	Version: 3.9.2 BETA (2014-11-??)
-	* Add the possibility to overwrite an existing group of folders
-	
+	* Add the possibility to overwrite an existing group of folders in the save group dialog box
+	* allow to edit a group from the manage groups gui
+	* Delete the startup shortcut when uninstall with Inno Setup
+	* After installation with Inno Setup, copy an existing FoldersPopup.ini file if one exist in a previous protable installation (findable only if a shortcut to the portable installation exists)
+- retrieve language from setup program (not done)
+- set FP language to the language selected during installation when installed by Inno Setup
+
 	Version: 3.9.1 BETA (2014-11-02)
 	* New setup procedure with standard Install / Uninstall procedures (using Inno Setup) - keeping a separate zip file for portable version
 	* Adapt Run at startup shortcut for Inno Setup by using the working directory instead of the script directory
@@ -575,7 +578,7 @@ DllCall("CreateMutex", "uint", 0, "int", false, "str", strAppName . "Mutex")
 ; Gosub, PopupMenuNewWindowKeyboard
 ; Gosub, BuildGroupMenu
 ; Gosub, GuiGroupSaveFromMenu
-; Gosub, GuiManageGroups
+; Gosub, GuiGroupsManage
 
 return
 
@@ -3657,8 +3660,8 @@ Gui, 1:Add, Text, xs y+0 w68 center gGuiEditFavorite, %lGuiEditFavorite% ; Stati
 Gui, 1:Add, Picture, xs+10 gGuiRemoveFavorite, %strTempDir%\delete_property-48.png ; Static18
 Gui, 1:Add, Text, xs y+0 w68 center gGuiRemoveFavorite, %lGuiRemoveFavorite% ; Static19
 
-Gui, 1:Add, Picture, xs+10 y+35 gGuiManageGroups, %strTempDir%\channel_mosaic-48.png ; Static20
-Gui, 1:Add, Text, xs y+5 w68 center gGuiManageGroups, %lDialogGroups% ; Static21
+Gui, 1:Add, Picture, xs+10 y+30 gGuiGroupsManage, %strTempDir%\channel_mosaic-48.png ; Static20
+Gui, 1:Add, Text, xs y+5 w68 center gGuiGroupsManage, %lDialogGroups% ; Static21
 
 Gui, 1:Add, Text, Section x185 ys+250
 
@@ -3667,7 +3670,7 @@ Gui, 1:Add, Text, xm yp w520 center, %lGuiDropFilesIncentive%
 
 Gui, 1:Add, Text, xm y+60
 Gui, 1:Font, s9 w600, Verdana
-Gui, 1:Add, Button, ys+70 Disabled Default vbtnGuiSave gGuiSave, %lGuiSave% ; Button1
+Gui, 1:Add, Button, ys+60 Disabled Default vbtnGuiSave gGuiSave, %lGuiSave% ; Button1
 Gui, 1:Add, Button, yp vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur - Button2
 Gui, 1:Font, s6 w400, Verdana
 GuiCenterButtons(L(lGuiTitle, strAppName, strAppVersion), 50, 30, 40, -80, "btnGuiSave", "btnGuiCancel")
@@ -3843,7 +3846,7 @@ return
 
 
 ;------------------------------------------------------------
-GuiManageGroups:
+GuiGroupsManage:
 ;------------------------------------------------------------
 
 intWidth := 350
