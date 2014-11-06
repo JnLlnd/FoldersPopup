@@ -2,7 +2,6 @@
 Bugs:
 
 To-do for v4:
-- If ini not exist, use language from ini.setup
 - Write DOpus add-in to list folders including special folders
 - Save groups with special folders in DOpus to ini file
 - Load groups with special folders in DOpus from ini file
@@ -23,13 +22,18 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 3.9.2 BETA (2014-11-??)
+	Version: 3.9.3 BETA (2014-11-??)
+	* retrieve language from ini file created by setup program and use when creating the FP ini file
+	* accept space in Change hotkey dialog box to allow combinations with spacebar as a potential hotkey
+	* detect TreeView folder select dialog box and exclude them because of a Windows limitation (Edit1 control not handling the Enter)
+	* add the option OpenMenuOnTaskbar to open or not the popup menu over the taskbar (class Shell_TrayWnd)
+	
+	Version: 3.9.2 BETA (2014-11-05)
+	* Addition of German language to Setup program
 	* Add the possibility to overwrite an existing group of folders in the save group dialog box
 	* allow to edit a group from the manage groups gui
 	* Delete the startup shortcut when uninstall with Inno Setup
 	* After installation with Inno Setup, copy an existing FoldersPopup.ini file if one exist in a previous protable installation (findable only if a shortcut to the portable installation exists)
-- retrieve language from setup program (not done)
-- set FP language to the language selected during installation when installed by Inno Setup
 
 	Version: 3.9.1 BETA (2014-11-02)
 	* New setup procedure with standard Install / Uninstall procedures (using Inno Setup) - keeping a separate zip file for portable version
@@ -481,6 +485,8 @@ DllCall("SetErrorMode", "uint", SEM_FAILCRITICALERRORS := 1)
 ; Piece of code for development phase only - won't be compiled
 ; see http://fincs.ahk4.net/Ahk2ExeDirectives.htm
 SetWorkingDir, %A_ScriptDir%
+; to test user data directory: SetWorkingDir, %A_AppData%\FoldersPopup
+
 ListLines, On
 ; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
@@ -702,16 +708,20 @@ Global arrMenus := Object() ; list of menus (Main and submenus), non-hierachical
 arrMainMenu := Object() ; array of favorites of the Main menu
 arrMenus.Insert(lMainMenuName, arrMainMenu) ; lMainMenuName is used in the objects but not saved/restores in the ini file
 
-strPopupHotkeyMouseDefault := arrHotkeyDefaults1 ; "MButton"
-strPopupHotkeyMouseNewDefault := arrHotkeyDefaults2 ; "+MButton"
-strPopupHotkeyKeyboardDefault := arrHotkeyDefaults3 ; "#a"
-strPopupHotkeyKeyboardNewDefault := arrHotkeyDefaults4 ; "+#a"
-strRecentsHotkeyDefault := arrHotkeyDefaults5 ; "+#r"
-strSettingsHotkeyDefault := arrHotkeyDefaults6 ; "+#f"
-
-intIconSize := (A_OSVersion = "WIN_XP" ? 16 : 24)
-
 IfNotExist, %strIniFile%
+{
+	strPopupHotkeyMouseDefault := arrHotkeyDefaults1 ; "MButton"
+	strPopupHotkeyMouseNewDefault := arrHotkeyDefaults2 ; "+MButton"
+	strPopupHotkeyKeyboardDefault := arrHotkeyDefaults3 ; "#a"
+	strPopupHotkeyKeyboardNewDefault := arrHotkeyDefaults4 ; "+#a"
+	strRecentsHotkeyDefault := arrHotkeyDefaults5 ; "+#r"
+	strSettingsHotkeyDefault := arrHotkeyDefaults6 ; "+#f"
+	
+	intIconSize := (A_OSVersion = "WIN_XP" ? 16 : 24)
+	
+	; read language code from ini file created by the Inno Setup script in the user data folder
+	IniRead, strLanguageCode, % A_WorkingDir . "\" . strAppName . "-setup.ini", Global , LanguageCode, EN
+	
 	FileAppend,
 		(LTrim Join`r`n
 			[Global]
@@ -732,9 +742,10 @@ IfNotExist, %strIniFile%
 			PopupFixPosition=20,20
 			DiagMode=0
 			Startups=1
-			LanguageCode=EN
+			LanguageCode=%strLanguageCode%
 			DirectoryOpusPath=
 			IconSize=%intIconSize%
+			OpenMenuOnTaskbar=1
 			[Folders]
 			Folder1=C:\|C:\
 			Folder2=Windows|%A_WinDir%
@@ -742,6 +753,7 @@ IfNotExist, %strIniFile%
 
 )
 		, %strIniFile%
+}
 
 Gosub, LoadIniHotkeys
 
@@ -776,6 +788,7 @@ IniRead, intStartups, %strIniFile%, Global, Startups, 1
 IniRead, intRecentFolders, %strIniFile%, Global, RecentFolders, 10
 IniRead, intIconSize, %strIniFile%, Global, IconSize, 24
 IniRead, strGroups, %strIniFile%, Global, Groups, %A_Space% ; empty string if not found
+IniRead, blnOpenMenuOnTaskbar, %strIniFile%, Global, OpenMenuOnTaskbar, 1
 
 IniRead, blnDonor, %strIniFile%, Global, Donor, 0 ; Please, be fair. Don't cheat with this.
 if !(blnDonor)
@@ -1419,7 +1432,7 @@ if (blnUseDirectoryOpus)
 	for intIndex, objLister in objDOpusListers
 	{
 		; if popup menu is for dialog box and we have no path or have a collection, skip it
-		if (WindowIsDialog(strTargetClass) and !(blnNewWindow))
+		if (WindowIsDialog(strTargetClass, strTargetWinId) and !(blnNewWindow))
 			and (!StrLen(objLister.Path) or InStr(objLister.Path, "coll://"))
 			continue
 		
@@ -1473,7 +1486,7 @@ if (blnUseTotalCommander)
 for intIndex, objExplorer in objExplorersWindows
 {
 	; if popup menu is for dialog box and we have no path, skip it
-	if (WindowIsDialog(strTargetClass) and !(blnNewWindow))
+	if (WindowIsDialog(strTargetClass, strTargetWinId) and !(blnNewWindow))
 		and !StrLen(objExplorer.LocationURL)
 		continue
 		
@@ -1503,7 +1516,7 @@ intShortcutGroup := 0
 for intIndex, objGroupMenuExplorer in objGroupMenuExplorers
 {
 	strMenuName := (blnDisplayMenuShortcuts and (intShortcutGroup <= 35) ? "&" . NextMenuShortcut(intShortcutGroup, false) . " " : "") . objGroupMenuExplorer.Name
-	if !WindowIsDialog(strTargetClass) or (blnNewWindow)
+	if !WindowIsDialog(strTargetClass, strTargetWinId) or (blnNewWindow)
 		AddMenuIcon("menuGroup"
 			, strMenuName . (objGroupMenuExplorer.WindowType = "DO" ? " (DOpus)" : (objGroupMenuExplorer.WindowType = "TC" ? " (TC)" : ""))
 			, "SwitchExplorer"
@@ -1985,21 +1998,21 @@ if (blnDisplaySpecialFolders)
 {
 	Menu, menuSpecialFolders
 		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
-		or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
+		or WindowIsDialog(strTargetClass, strTargetWinId) ? "Disable" : "Enable"
 		, %lMenuMyComputer%
 	Menu, menuSpecialFolders
 		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
-		or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
+		or WindowIsDialog(strTargetClass, strTargetWinId) ? "Disable" : "Enable"
 		, %lMenuNetworkNeighborhood%
 
 	; There is no point to navigate a dialog box or console to Control Panel or Recycle Bin, unknown for FreeCommander
 	Menu, menuSpecialFolders
 		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
-		or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
+		or WindowIsDialog(strTargetClass, strTargetWinId) ? "Disable" : "Enable"
 		, %lMenuControlPanel%
 	Menu, menuSpecialFolders
 		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
-		or WindowIsDialog(strTargetClass) ? "Disable" : "Enable"
+		or WindowIsDialog(strTargetClass, strTargetWinId) ? "Disable" : "Enable"
 		, %lMenuRecycleBin%
 }
 
@@ -2013,7 +2026,7 @@ if (blnDisplayGroupMenu)
 
 if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass)
 	or WindowIsFreeCommander(strTargetClass) or WindowIsTotalCommander(strTargetClass)
-	or WindowIsDirectoryOpus(strTargetClass) or WindowIsDialog(strTargetClass))
+	or WindowIsDirectoryOpus(strTargetClass) or WindowIsDialog(strTargetClass, strTargetWinId))
 {
 	; Enable Add This Folder only if the mouse is over an Explorer (tested on WIN_XP and WIN_7) or a dialog box (works on WIN_7, not on WIN_XP)
 	; Other tests shown that WIN_8 behaves like WIN_7. So, I assume WIN_8 to work. If someone could confirm (until I can test it myself)?
@@ -2021,12 +2034,12 @@ if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or Win
 		Diag("ShowMenu", "Favorites Menu " 
 			. (WindowIsAnExplorer(strTargetClass)  or WindowIsFreeCommander(strTargetClass)
 			or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
-			or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT")
+			or (WindowIsDialog(strTargetClass, strTargetWinId) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT")
 			. " Add this folder")
 	Menu, %lMainMenuName%
 		, % WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass)
 		or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
-		or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
+		or (WindowIsDialog(strTargetClass, strTargetWinId) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 		, %lMenuAddThisFolder%...
 	Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; at mouse pointer if option 1, 20x20 offset of active window if option 2 and fix location if option 3
 }
@@ -2064,7 +2077,7 @@ if (blnDiagMode)
 	Diag("Class", strTargetClass)
 	Diag("ShowMenu", "Favorites Menu " . (WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass) 
 	or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
-		or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT") . " Add this folder")
+		or (WindowIsDialog(strTargetClass, strTargetWinId) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT") . " Add this folder")
 }
 
 if (blnDisplaySpecialFolders)
@@ -2090,7 +2103,7 @@ if (blnDisplayGroupMenu)
 Menu, %lMainMenuName%
 	, % WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass)
 	or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
-	or (WindowIsDialog(strTargetClass) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
+	or (WindowIsDialog(strTargetClass, strTargetWinId) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 	, %lMenuAddThisFolder%...
 Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; at mouse pointer if option 1, 20x20 offset of active window if option 2 and fix location if option 3
 
@@ -2163,7 +2176,7 @@ CanOpenFavorite(strMouseOrKeyboard, ByRef strWinId, ByRef strClass, ByRef strCon
 	WinGetClass strClass, % "ahk_id " . strWinId
 
 	blnCanOpenFavorite := WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or WindowIsConsole(strClass)
-		or WindowIsDialog(strClass) or WindowIsFreeCommander(strClass)
+		or WindowIsDialog(strClass, strWinId) or WindowIsFreeCommander(strClass)
 		or (WindowIsTotalCommander(strClass) and blnUseTotalCommander)
 		or (WindowIsDirectoryOpus(strClass) and blnUseDirectoryOpus)
 
@@ -2195,7 +2208,9 @@ WindowIsAnExplorer(strClass)
 WindowIsDesktop(strClass)
 ;------------------------------------------------------------
 {
-	return (strClass = "ProgMan") or (strClass = "WorkerW") or (strClass = "Shell_TrayWnd")
+	global blnOpenMenuOnTaskbar
+	
+	return (strClass = "ProgMan") or (strClass = "WorkerW") or ((strClass = "Shell_TrayWnd") and blnOpenMenuOnTaskbar)
 }
 ;------------------------------------------------------------
 
@@ -2219,12 +2234,31 @@ WindowIsConsole(strClass)
 
 
 ;------------------------------------------------------------
-WindowIsDialog(strClass)
+WindowIsDialog(strClass, strWinId)
 ;------------------------------------------------------------
 {
-	return (strClass = "#32770")
+	return (strClass = "#32770") and !WindowIsTreeview(strWinId)
+	
 	; or InStr(strClass, "bosa_sdm_")
 	; Removed 2014-09-27  (see http://code.jeanlalonde.ca/folderspopup/#comment-7912)
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+WindowIsTreeview(strWinId)
+; Disable popup menu in folder select dialog boxes (like those displayed by FileSelectFolder)
+; because their Edit1 control does not react as expected in NavigateDialog.
+; Signature: contains both SysTreeView321 and SHBrowseForFolder controls (tested on Win7 only)
+; but NOT 100% sure this is a unique signature...
+;------------------------------------------------------------
+{
+	WinGet, strControlsList, ControlList, ahk_id %strWinId%
+	blnIsTreeView := InStr(strControlsList, "SysTreeView321") and InStr(strControlsList, "SHBrowseForFolder")
+	if (blnIsTreeView)
+		TrayTip, %lWindowIsTreeviewTitle%, % L(lWindowIsTreeviewText, strAppName), , 2
+	
+	return, blnIsTreeView
 }
 ;------------------------------------------------------------
 
@@ -4864,6 +4898,9 @@ GuiControl, , blnDisplayIcons, %blnDisplayIcons%
 if !OSVersionIsWorkstation()
 	GuiControl, Disable, blnDisplayIcons
 
+Gui, 2:Add, CheckBox, y+10 xs vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
+GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
+
 ; Build Gui footer
 
 Gui, 2:Add, Text, x15 y+15 h2 w595 0x10 ; Horizontal Line > Etched Gray
@@ -4879,7 +4916,7 @@ Gui, 2:Add, Checkbox, x+10 yp vblnDirectoryOpusUseTabs, %lOptionsDirectoryOpusUs
 GuiControl, , blnDirectoryOpusUseTabs, %blnDirectoryOpusUseTabs%
 
 Gui, 2:Font, s8 w700
-Gui, 2:Add, Text, y+5 xs, % L(lOptionsThirdPartyTitle, "Total Commander")
+Gui, 2:Add, Text, y+15 xs, % L(lOptionsThirdPartyTitle, "Total Commander")
 Gui, 2:Font
 Gui, 2:Add, Text, y+5 xs,  % L(lOptionsThirdPartyDetail, "Total Commander")
 Gui, 2:Add, Text, y+10 xs, %lOptionsThirdPartyPrompt%
@@ -4901,9 +4938,6 @@ Gui, 2:Add, Text, ys x240 Section, %lOptionsIconSize%
 Gui, 2:Add, DropDownList, ys x+10 w40 vdrpIconSize Sort, 16|24|32|64
 GuiControl, ChooseString, drpIconSize, %intIconSize%
 
-Gui, 2:Add, CheckBox, y+10 xs vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
-GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
-
 Gui, 2:Add, CheckBox, y+10 xs vblnDisplayGroupMenu, %lOptionsDisplayGroupMenu%
 GuiControl, , blnDisplayGroupMenu, %blnDisplayGroupMenu%
 
@@ -4912,6 +4946,9 @@ GuiControl, , blnDisplayRecentFolders, %blnDisplayRecentFolders%
 
 Gui, 2:Add, Edit, % "y+10 xs w36 h17 vintRecentFolders center " . (blnDisplayRecentFolders ? "" : "hidden"), %intRecentFolders%
 Gui, 2:Add, Text, % "yp x+10 vlblRecentFolders " . (blnDisplayRecentFolders ? "" : "hidden"), %lOptionsRecentFolders%
+
+Gui, 2:Add, CheckBox, y+10 xs vblnOpenMenuOnTaskbar, %lOptionsOpenMenuOnTaskbar%
+GuiControl, , blnOpenMenuOnTaskbar, %blnOpenMenuOnTaskbar%
 
 ; column 3
 
@@ -5024,6 +5061,7 @@ IniWrite, %blnDisplayRecentFolders%, %strIniFile%, Global, DisplayRecentFolders
 IniWrite, %intRecentFolders%, %strIniFile%, Global, RecentFolders
 IniWrite, %blnDisplayGroupMenu%, %strIniFile%, Global, DisplaySwitchMenu ; keep "Switch" for backward compatibility
 IniWrite, %blnDisplayMenuShortcuts%, %strIniFile%, Global, DisplayMenuShortcuts
+IniWrite, %blnOpenMenuOnTaskbar%, %strIniFile%, Global, OpenMenuOnTaskbar
 
 if (radPopupMenuPosition1)
 	intPopupMenuPosition := 1
@@ -5159,7 +5197,7 @@ Gui, 3:Add, Text, x10 y+5 w350, % lOptionsArrDescriptions%intIndex%
 
 Gui, 3:Add, CheckBox, y+20 x50 vblnOptionsShift, %lOptionsShift%
 GuiControl, , blnOptionsShift, % InStr(strModifiers%intIndex%, "+") ? 1 : 0
-GuiControlGet, posTop, Pos, blnOptionsShift
+GuiControlGet, arrTop, Pos, blnOptionsShift
 Gui, 3:Add, CheckBox, y+10 x50 vblnOptionsCtrl, %lOptionsCtrl%
 GuiControl, , blnOptionsCtrl, % InStr(strModifiers%intIndex%, "^") ? 1 : 0
 Gui, 3:Add, CheckBox, y+10 x50 vblnOptionsAlt, %lOptionsAlt%
@@ -5172,17 +5210,18 @@ strOptionsMouse := ""
 strOptionsKey := ""
 
 if (intHotkeyType = 1)
-	Gui, 3:Add, DropDownList, % "y" . posTopY . " x150 w200 vstrOptionsMouse gOptionsMouseChanged", % strMouseButtonsWithDefault%intIndex%
+	Gui, 3:Add, DropDownList, % "y" . arrTopY . " x150 w200 vstrOptionsMouse gOptionsMouseChanged", % strMouseButtonsWithDefault%intIndex%
 if (intHotkeyType <> 1)
 {
-	Gui, 3:Add, Text, % "y" . posTopY . " x150 w60", %lOptionsKeyboard%
-	Gui, 3:Add, Hotkey, yp x+10 w130 vstrOptionsKey gOptionsHotkeyChanged
+	Gui, 3:Add, Text, % "y" . arrTopY . " x150 w60", %lOptionsKeyboard%
+	Gui, 3:Add, Hotkey, yp x+10 w130 vstrOptionsKey gOptionsHotkeyChanged section
+	Gui, 3:Add, Link, y+3 xs w130 gOptionsHotkeySpaceClicked, <a>%lOptionsSpacebar%</a>
 	GuiControl, , strOptionsKey, % strOptionsKey%intIndex%
 }
 if (intHotkeyType = 3)
-	Gui, 3:Add, DropDownList, % "y" . posTopY + 50 . " x150 w200 vstrOptionsMouse gOptionsMouseChanged", % strMouseButtonsWithDefault%intIndex%
+	Gui, 3:Add, DropDownList, % "y" . arrTopY + 50 . " x150 w200 vstrOptionsMouse gOptionsMouseChanged", % strMouseButtonsWithDefault%intIndex%
 
-Gui, 3:Add, Button, x10 y220 vbtnResetHotkey gButtonResetHotkey%intIndex%, %lGuiResetDefault%
+Gui, 3:Add, Button, % "x10 y" . arrTopY + 100 . " vbtnResetHotkey gButtonResetHotkey" . intIndex, %lGuiResetDefault%
 GuiCenterButtons(L(lOptionsChangeHotkeyTitle, strAppName, strAppVersion), 10, 5, 20, , "btnResetHotkey")
 Gui, 3:Add, Button, y+20 x10 vbtnChangeHotkeySave gButtonChangeHotkeySave%intIndex%, %lGuiSave%
 Gui, 3:Add, Button, yp x+20 vbtnChangeHotkeyCancel gButtonChangeHotkeyCancel, %lGuiCancel%
@@ -5192,6 +5231,17 @@ Gui, 3:Add, Text
 GuiControl, Focus, btnChangeHotkeySave
 Gui, 3:Show, AutoSize Center
 Gui, 2:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+OptionsHotkeySpaceClicked:
+;------------------------------------------------------------
+
+GuiControl, , strOptionsKey, %A_Space%
+GuiControl, Choose, strOptionsMouse, 0
 
 return
 ;------------------------------------------------------------

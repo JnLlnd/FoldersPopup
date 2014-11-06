@@ -199,6 +199,7 @@ lOptionsMouseButtonsText	Bouton de gauche de la souris|Bouton du milieu de la so
 lOptionsMouseCheckLButton	Vous ne pouvez pas attribuer le "Bouton de gauche de la souris" sans touche de modification.
 lOptionsMouseNone	Aucun
 lOptionsNoKeyOrMouseSpecified	Aucune touche du clavier ou bouton de la souris n'a été sélectionné. La sélection actuelle ~1~ est inchangée.
+lOptionsOpenMenuOnTaskbar	Ouvrir le menu sur la barre des tâches
 lOptionsOtherOptions	Autres options
 lOptionsPopupFix	Menu popup à une position fixe
 lOptionsPopupFixPositionX	Position X:
@@ -206,6 +207,7 @@ lOptionsPopupFixPositionY	Y:
 lOptionsRecentFolders	Emplacements récents
 lOptionsRunAtStartup	Exécuter au démarrage
 lOptionsShift	Maj
+lOptionsSpacebar	utiliser la barre d'espace
 lOptionsTheme	Thème
 lOptionsThirdPartyDetail	Pour activer l'intégration avec ~1~, localisez le programme .exe sous votre dossier Program Files.
 lOptionsThirdPartyPrompt	Fichier:
@@ -228,3 +230,5 @@ lUpdateError	Une erreur est survenue lors de la vérification du numéro de la plu
 lUpdatePrompt	Mettre à jour ~1~ de la version v~2~ à la version v~3~?
 lUpdateTitle	Mettre à jour ~1~?
 lUpdateYouHaveLatest	Vous avez la version la plus récente: ~1~.`n`nVisiter la page web de ~2~ quand même?
+lWindowIsTreeviewText	Désolé... À cause d'une limitation de Windows, ce type de boîte de dialogue (TreeView) n'est pas compatible avec ~1~ pour le moment.
+lWindowIsTreeviewTitle	Boîte de dialogue incompatible
