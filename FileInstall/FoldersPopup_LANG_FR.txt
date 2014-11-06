@@ -37,10 +37,10 @@ lDialogFileLabel	Document
 lDialogFileShortName	Nom du document (pour les menus)
 lDialogFolderLabel	Dossier
 lDialogFolderShortName	Nom court du dossier (pour les menus)
-lDialogGroupDelete	Supprimer ce groupe
+lDialogGroupDelete	Supprimer
 lDialogGroupDeleteError	supprimer
 lDialogGroupDeletePrompt	Supprimer le groupe "~1~"?
-lDialogGroupEdit	Modifier ce groupe
+lDialogGroupEdit	Modifier
 lDialogGroupEditError	modifier
 lDialogGroupManageCannotSave	Attention: Il n'y a aucune fenêtre à enregistrer dans un groupe. Ouvrez au moins une fenêtre de lo'Explorateur de fichiers ou de Directory Opus et essayez à nouveau d'enregistrer un groupe.
 lDialogGroupManageCreatingPrompt	Pour créer un groupe, cliquez le bouton "~1~" ou sélectionnez le menu "~2~" à tout moment.
@@ -232,3 +232,5 @@ lUpdateTitle	Mettre à jour ~1~?
 lUpdateYouHaveLatest	Vous avez la version la plus récente: ~1~.`n`nVisiter la page web de ~2~ quand même?
 lWindowIsTreeviewText	Désolé... À cause d'une limitation de Windows, ce type de boîte de dialogue (TreeView) n'est pas compatible avec ~1~ pour le moment.
 lWindowIsTreeviewTitle	Boîte de dialogue incompatible
+lDialogGroupLoad	Restaurer
+lDialogGroupNew	Enregistrer un nouveau groupe

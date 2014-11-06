@@ -3932,7 +3932,7 @@ Gui, 2:Add, Button, x10 yp vbtnGroupManageEdit gGuiGroupManageEdit, %lDialogGrou
 Gui, 2:Add, Button, x10 yp vbtnGroupManageDelete gGuiGroupManageDelete, %lDialogGroupDelete%
 GuiCenterButtons(L(lDialogGroupManageGroupsTitle, strAppName, strAppVersion), , , , , "btnGroupManageLoad", "btnGroupManageEdit", "btnGroupManageDelete")
 
-Gui, 2:Add, Button, x+10 y+30 vbtnGroupManageClose g2GuiClose, %lGui2Close%
+Gui, 2:Add, Button, x+10 y+30 vbtnGroupManageClose g2GuiClose h33, %lGui2Close%
 GuiCenterButtons(L(lDialogGroupManageGroupsTitle, strAppName, strAppVersion), , , , , "btnGroupManageClose")
 Gui, 2:Add, Text, x10, %A_Space%
 
