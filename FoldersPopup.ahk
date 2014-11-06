@@ -1316,7 +1316,7 @@ intRecentFoldersIndex := 0 ; used in PopupMenu... to check if we disable the men
 RegRead, strRecentsFolder, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, Recent
 
 /*
-Alternative to collect recent files *** DO NOT WORK with XP
+Alternative to collect recent files *** NOT WORKING with XP
 See: post from Skan http://ahkscript.org/boards/viewtopic.php?f=5&t=4477#p25261
 Implement for Win7+ if FileGetShortcut still produce Windows errors when external drive is not available (despite DllCall in initialization)
 
@@ -1538,6 +1538,9 @@ if (intExplorersIndex)
 	Menu, menuGroup, Add
 AddMenuIcon("menuGroup", lMenuGroupSave, "GuiGroupSaveFromMenu", "menuGroupSave")
 AddMenuIcon("menuGroup", lMenuGroupLoad, ":menuGroupsList", "menuGroupLoad")
+
+objDOpusListers := 
+objExplorersWindows :=
 
 return
 ;------------------------------------------------------------
@@ -2768,6 +2771,8 @@ Gui, 3:Show, AutoSize Center
 if InStr(A_ThisLabel, "FromManage")
 	Gui, 2:+Disabled
 
+objIniExplorersInGroup :=
+
 return
 ;------------------------------------------------------------
 
@@ -2996,6 +3001,8 @@ while, intDOWindow := WindowOfType("DO") ; returns the index of the first DOpus 
 	}
 }
 Tooltip ; clear tooltip
+
+objIniExplorersInGroup :=
 
 return
 ;------------------------------------------------------------
@@ -4280,7 +4287,9 @@ for strMenuName, arrMenuBK in arrMenusBK
 		arrMenu.Insert(objFavorite)
 	}
 	arrMenus.Insert(strMenuName, arrMenu) ; add this submenu to the array of menus
+	objFavoriteBK := 
 }
+arrMenusBK :=
 
 return
 ;------------------------------------------------------------
@@ -4411,6 +4420,8 @@ else
 	Gosub, GuiShow
 	Gosub, GuiAddFromPopup
 }
+
+objDOpusListers :=
 
 return
 ;------------------------------------------------------------
@@ -5934,10 +5945,7 @@ Url2Var(strUrl)
 OSVersionIsWorkstation()
 ;------------------------------------------------------------
 {
-	If (OSVersion := GetOSVersionInfo())
-		return (OSVersion.ProductType = 1)
-	else
-		return false
+	return (GetOSVersionInfo() and (GetOSVersionInfo().ProductType = 1))
 }
 ;------------------------------------------------------------
 
@@ -5949,6 +5957,7 @@ GetOSVersionInfo()
 ;------------------------------------------------------------
 {
 	static Ver
+
 	If !Ver
 	{
 		VarSetCapacity(OSVer, 284, 0)
