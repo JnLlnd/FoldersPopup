@@ -31,6 +31,7 @@ To-do for v4:
 	* improve reliability and performance of group load with Explorer and DOpus
 	* fix bug with windows move/resize when group load
 	* fix bug with minimize/maximize Explorers when group load
+	* fix wrong web link when an beta version update is available
 	
 	Version: 3.9.2 BETA (2014-11-05)
 	* Addition of German language to Setup program
