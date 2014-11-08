@@ -1,5 +1,5 @@
 lAboutText1	~1~ ~2~ (~3~ bits)
-lAboutText2	~1~ wird entwickelt von Jean Lalonde unter`nVerwendung der <a href="http://ahkscript.org/">AutoHotkey</a> Programmiersprache.`n`nDeutsche Übersetzung: Edgar "Fast Edi" Hoffmann`nFranzösische Übersetzung: Jean Lalonde`nHolländische Übersetzung: Pieter Dejonghe`Koreanisch Übersetzung: Om Il-Sung`nEnglische Gegenleser: (Hilfe willkommen)`n`nIcons von: <a href="http://www.visualpharm.com">Visual Pharm</a>`nAutoHotkey_L v1.1 Sourcen: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText2	~1~ wird entwickelt von Jean Lalonde unter`nVerwendung der <a href="http://ahkscript.org/">AutoHotkey</a> Programmiersprache.`n`nDeutsche Übersetzung: Edgar "Fast Edi" Hoffmann`nFranzösische Übersetzung: Jean Lalonde`nHolländische Übersetzung: Pieter Dejonghe`Koreanisch Übersetzung: Om Il-Sung`nSchwedisch Übersetzung: Åke Engelbrektson`nEnglische Gegenleser: (Hilfe willkommen)`n`nIcons von: <a href="http://www.visualpharm.com">Visual Pharm</a>`nProgramm installieren: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> von jrsoftware.org`nAutoHotkey_L v1.1 Sourcen: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
 lAboutText4	Support unter <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	Über - ~1~ ~2~
@@ -28,6 +28,7 @@ lDialogFavoriteDoesNotExistPrompt	Der Favorit "~1~" existiert nicht oder ist nic
 lDialogFavoriteDoesNotExistTitle	Favorit existiert nicht - ~1~
 lDialogFavoriteLocationEmpty	Dieser Ort ist leer. Bitte wählen Sie einen Ort.
 lDialogFavoriteNameEmpty	Der Name des Favorite ist leer. Bitte wählen Sie einen kurzen Namen.
+lDialogFavoriteNameNoColumnBreak	Der Menüname kann die reservierten Zeichen "~1~" nicht als Spaltentrennzeichen verwenden.
 lDialogFavoriteNameNoSeparator	Das Untermenü darf das reservierte Zeichen "~1~" nicht enthalten.
 lDialogFavoriteNameNotNew	Der Name ~1~ wird bereits in diesem Menü verwendet. Bitte wählen Sie einen anderen Namen.
 lDialogFavoriteParentMenu	Favorite Hauptmenü
@@ -37,6 +38,24 @@ lDialogFileLabel	Dokumente
 lDialogFileShortName	Dokument-Kurzname (für Menü)
 lDialogFolderLabel	Ordner
 lDialogFolderShortName	Kurzname des Ordners für das Menü
+lDialogGroupDelete	Löschen
+lDialogGroupDeleteError	löschen
+lDialogGroupDeletePrompt	Löschen der Gruppe "~1~"?
+lDialogGroupEdit	Bearbeiten
+lDialogGroupEditError	bearbeiten
+lDialogGroupLoad	Laden
+lDialogGroupLoadError	laden
+lDialogGroupManageCannotSave	Warnung: Es gibt kein offenes Fenster zum Speichern in einer neuen Gruppe. Öffnen Sie zumindest ein Explorer oder Directory Opus Fenster und versuchen Sie erneut eine neue Gruppe zu speichern.
+lDialogGroupManageCreatingPrompt	Um eine Gruppe zu erstellen, klicken Sie die Schaltfläche "~1~" oder wählen Sie jederzeit das "~2~" Menü.
+lDialogGroupManageCreatingTitle	Gruppe erstellen
+lDialogGroupManageGroupsTitle	Gruppen - ~1~ ~2~ verwalten
+lDialogGroupManageIntro	Mittels "Gruppen" können Sie Ihre Arbeitsumgebung speichern und wieder laden, um effektiv zwischen Ihren Arbeitssitzungen hin- und herzuschalten. "Gruppen" speichern die Ordner, Größe, Position und Status (normal, minimiert oder maximiert) von Windows Explorer und Directory Opus Fenstern (Total Commander noch nicht unterstützt).
+lDialogGroupManageManagingTitle	Gruppen verwalten
+lDialogGroupNew	Neue Gruppe speichern
+lDialogGroupRemoveTitle	Gruppe - ~1~ löschen
+lDialogGroups	Gruppen
+lDialogGroupSelect	Gruppe auswählen
+lDialogGroupSelectError	Bitte die Gruppe zum ~1~ auswählen.
 lDialogInvalidHotkey	Mit dem derzeitigen Tastaturlayout kann das Tastenkürzel "~1~" nicht verwendet werden, um das Popup-Menü aufzurufen (kein gültiger Tasten Name).`n`nBitte öffnen Sie das "~2~ Einstellungen" aus dem Tray-Menü und klicken Sie auf "Optionen". Wählen Sie in diesem Dialog ein anderes Tastenkürzel für "~3~".
 lDialogOpenThisMenu	Dieses Menü öffnen
 lDialogSave	Speichern
@@ -79,6 +98,21 @@ lGuiClose	&Schliessen
 lGuiDonate	Unterstützen
 lGuiDropFilesIncentive	Sie können Ihre Favoriten in dieses Fenster ziehen
 lGuiEditFavorite	Bearbeiten
+lGuiGroupClosing	Schliesse Fenster
+lGuiGroupOf	von
+lGuiGroupSaveAddWindowsLabel	Zu bestehendem Fenster hinzufügen
+lGuiGroupSaved	Gruppe "~1~" gespeichert.`n`nKlicken Sie im Menü "~2~" um diese Gruppe zu laden.
+lGuiGroupSaveEditPrompt	~1~ diese Gruppe
+lGuiGroupSaveEditTitle	~1~ eine Gruppe von Fenstern - ~2~ ~3~
+lGuiGroupSaveLvHeader	Pfad|Anwendung|Fensterstatus|Links|Oben|Breite|Höhe|Seite
+lGuiGroupSaveNameEmpty	Der Gruppenname ist leer. Bitte wählen Sie einen Gruppennamen.
+lGuiGroupSaveNewGroup	Neue Gruppe
+lGuiGroupSaveReplaceGroup	Gruppe "~1~" besteht bereits. Ersetzen?
+lGuiGroupSaveReplaceWindowsLabel	Ersetzen bestehender Fenster
+lGuiGroupSaveRestoreOption	Wenn diese Gruppe wiederhergestellt wird:
+lGuiGroupSaveSelect	Wählen Sie die in dieser Gruppe zu speichernden Ordner
+lGuiGroupSaveSelectExisting	oder wählen Sie eine bestehende Gruppe zum Überschreiben:
+lGuiGroupSaveShortName	Kurzname der Gruppe (für das Menü)
 lGuiHelp	Hilfe
 lGuiLvDialogsHeader	Unterstützte Dialoge`n(Teile der Namen)
 lGuiLvFavoritesHeader	Name|Ort
@@ -86,6 +120,8 @@ lGuiMoveFavoriteDown	Nach u&nten bewegen
 lGuiMoveFavoriteUp	Nach o&ben bewegen
 lGuiOptions	Optionen
 lGuiRemoveFavorite	Entfernen
+lGuiResetDefault	Zurücksetzen des Standard-Hotkeys
+lGuiResetDefault	Zurücksetzen des Standard-Hotkeys
 lGuiSave	&Speichern
 lGuiSeparator	Se&parator
 lGuiSubmenuDropdownLabel	Zu bearbeitendes Menü:
@@ -104,12 +140,18 @@ lHelpTitle	Hilfe - ~1~ ~2~
 lMainMenuName	Haupt
 lMenuAbout	Ü&ber
 lMenuAddThisFolder	&Diesen Ordner hinzufügen
+lMenuColumnBreak	Spalte
 lMenuControlPanel	&Systemsteuerung
 lMenuDesktop	&Desktop
 lMenuDialogNotSupported	Diese Dialogbox wird momentan noch nicht unterstützt
 lMenuDocuments	D&okumente
 lMenuExitFoldersPopup	Beenden ~1~
 lMenuFPMenu	~1~ ~2~
+lMenuGroup	Gruppe von Ordnern
+lMenuGroupAdd	hinzufügen
+lMenuGroupLoad	Gruppe laden
+lMenuGroupReplace	ersetzen
+lMenuGroupSave	Diese Gruppe speichern
 lMenuHelp	Hilfe
 lMenuMenu	Menü
 lMenuMyComputer	&Mein Computer
@@ -138,11 +180,13 @@ lOptionsArrDescriptions1	Wählen Sie die MAUStaste und die Kombitasten, welche da
 lOptionsArrDescriptions2	Wählen Sie die MAUStaste und die Kombitasten, welche das FoldersPopup Menü in JEDEM Fenster öffnet und zum gewählten Ordner in einem NEUEN Explorer-Fenster navigiert. Standardmäßig ist dies die mittlere Maustaste mit gedrückter Shift-Taste.
 lOptionsArrDescriptions3	Wählen Sie die TASTENkombination, welche das popup menü im Windows Explorer oder Dateidialogboxen aufruft. Standardmäßig ist dies Win+K (Taste K, während die Windows-Taste gdrückt wird).
 lOptionsArrDescriptions4	Wählen Sie die TASTENkombination, welche das popup menu Menü in JEDEM Fenster öffnet und zum gewählten Ordner in einem NEUEN Explorer-Fenster navigiert. Standardmäßig ist dies Shift+Win+K (Tasten Shift und K, während die Windows-Taste gedrückt wird).
+lOptionsArrDescriptions5	Wählen Sie die Schnelltaste oder Maustastenkombination, welche das FoldersPopup Menü "Kürzlich verwendete Ordner" öffnet. Standardmäßig ist dies Shift+Windows+R.
 lOptionsArrDescriptions6	Wählen Sie die Tastenkombination oder Maustasten-Kombination, welche den FoldersPopup Einstellungsdialog aufruft. Standardmäßig ist dies Shift+Windows+F.
 lOptionsChangeHotkey	Ändern
 lOptionsChangeHotkeyTitle	Tastenkürzel ändern - ~1~ ~2~
 lOptionsCtrl	Strg
-lOptionsDisplayGroupMenu	Zeige Switch Menü
+lOptionsDirectoryOpusUseTabs	Verwende Registerkarten
+lOptionsDisplayGroupMenu	Zeige Gruppe der Ordnermenüs an
 lOptionsDisplayIcons	Zeige Icons im Menü
 lOptionsDisplayMenuShortcuts	Zeige &numerische Menü-Tastenkürzel
 lOptionsDisplayRecentFolders	Zeige kürzlich verwendete Ordner
@@ -162,6 +206,7 @@ lOptionsMouseButtonsText	Linke Maustaste|Mittlere Maustaste|Rechte Maustaste|Mau
 lOptionsMouseCheckLButton	Die linke Maustaste kann nicht ohne Zusatztaste definiert werden.
 lOptionsMouseNone	Keine
 lOptionsNoKeyOrMouseSpecified	Kein Tastenkürzel oder Maustaste definiert. Der bestehende Hotkey ~1~ ist unverändert.
+lOptionsOpenMenuOnTaskbar	Menü in der Taskleiste öffnen
 lOptionsOtherOptions	Weitere einstellungen
 lOptionsPopupFix	Popup-&Menü an fester Position
 lOptionsPopupFixPositionX	Position X:
@@ -169,16 +214,19 @@ lOptionsPopupFixPositionY	Y:
 lOptionsRecentFolders	Zuletzt verwendete Ordner
 lOptionsRunAtStartup	Beim Sta&rt ausführen
 lOptionsShift	Shift
+lOptionsSpacebar	verwende Leertaste
 lOptionsTheme	Thema
 lOptionsThirdPartyDetail	WÃ¤hlen Sie die ~1~ Programmdatei (.exe) um die ~1~ Integration einzuschalten.
 lOptionsThirdPartyPrompt	Programmdatei:
 lOptionsThirdPartyTitle	~1~ Benutzer
 lOptionsTitles	Maus - Ordner Popup|Maus - Neu Explorer|Tastatur - Ordner Popup|Tastatur - Neu Explorer|Zuletzt verwendete Ordner|Einstellungsfenster
 lOptionsTitlesSub	(Pop-Menü überlagert Explorer und Dialogboxen)|(Pop-Menü aus beliebigem Fenster)|(Pop-Menü im Explorer und Dialogboxen)|(Pop-Menü aus beliebigem Fenster)|(Windows-Liste kürzlicher Orte)|(Menükonfiguration und Optionen)
+lOptionsTotalCommanderUseTabs	Verwende Registerkarten
 lOptionsTrayTip	Beim Start &Tray-Tip anzeigen
 lOptionsTriggerFor	Auslöser für:
 lOptionsWin	Win
 lReloadPrompt	~1~  wurde in ~2~ geändert. Wollen Sie jetzt ~3~ in ~2~ neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
+lReloadPromptDefaultHotkey	Schnelltaste auf Standard zurückgesetzt. Diese Änderung tritt erst durch erneutes Laden von ~1~ in Kraft.`n`nWollen Sie ~1~ jetzt neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
 lTrayTipInstalledDetail	Zur Anzeige des ~1~ Menüs`nim Windows Explorer oder einer Dialogbox`n~2~ oder ~3~ drücken.`n`n~4~ oder ~5~`num ein neues Explorer-Fenster zu öffnen.
 lTrayTipinstalledTitle	~1~ ~2~ bereit!
 lTrayTipWorkingDetail	Erzeuge Menüs
@@ -189,3 +237,5 @@ lUpdateError	Beim Zugriff auf die letzte Versionsnummer trat ein Fehler auf. Prü
 lUpdatePrompt	Update ~1~ von v~2~ auf v~3~?
 lUpdateTitle	Update ~1~?
 lUpdateYouHaveLatest	Sie verwenden die aktuellste Version: ~1~.`n`nTrotzdem die ~2~ Webseite besuchen?
+lWindowIsTreeviewText	Entschuldigung... Aufgrund einer Beschränkung von Windows wird diese Art Dialogbox (Baumstruktur) momentan nicht von ~1~ unterstützt.
+lWindowIsTreeviewTitle	Baumstruktur-Dialogbox nicht unterstützt

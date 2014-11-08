@@ -22,6 +22,9 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 3.9.4 BETA (2014-11-08)
+	* Swedish, German and Korean translations for new features in v3.9.1 and v3.9.2
+	
 	Version: 3.9.3 BETA (2014-11-08)
 	* retrieve language from ini file created by setup program and use when creating the FP ini file
 	* accept space in Change hotkey dialog box to allow combinations with spacebar as a potential hotkey
@@ -462,7 +465,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 3.9.3 BETA
+;@Ahk2Exe-SetVersion 3.9.4 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -500,7 +503,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.9.3" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "3.9.4" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
