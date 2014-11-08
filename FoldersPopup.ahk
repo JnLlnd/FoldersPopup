@@ -27,6 +27,10 @@ To-do for v4:
 	* accept space in Change hotkey dialog box to allow combinations with spacebar as a potential hotkey
 	* detect TreeView folder select dialog box and exclude them because of a Windows limitation (Edit1 control not handling the Enter)
 	* add the option OpenMenuOnTaskbar to open or not the popup menu over the taskbar (class Shell_TrayWnd)
+	* add column breaks in menu
+	* improve reliability and performance of group load with Explorer and DOpus
+	* fix bug with windows move/resize when group load
+	* fix bug with minimize/maximize Explorers when group load
 	
 	Version: 3.9.2 BETA (2014-11-05)
 	* Addition of German language to Setup program
@@ -610,6 +614,7 @@ FileInstall, FileInstall\add_property-48.png, %strTempDir%\add_property-48.png
 FileInstall, FileInstall\delete_property-48.png, %strTempDir%\delete_property-48.png
 FileInstall, FileInstall\channel_mosaic-48.png, %strTempDir%\channel_mosaic-48.png
 FileInstall, FileInstall\separator-26.png, %strTempDir%\separator-26.png
+FileInstall, FileInstall\column-26.png, %strTempDir%\column-26.png
 FileInstall, FileInstall\down_circular-26.png, %strTempDir%\down_circular-26.png
 FileInstall, FileInstall\edit_property-48.png, %strTempDir%\edit_property-48.png
 FileInstall, FileInstall\generic_sorting2-26-grey.png, %strTempDir%\generic_sorting2-26-grey.png
@@ -1166,7 +1171,7 @@ WM_MOUSEMOVE(wParam, lParam)
 	MouseGetPos, , , , strControl ; Static1, StaticN, Button1, ButtonN
 	StringReplace, strControl, strControl, Static
 
-	If InStr(".3.4.6.7.9.10.11.12.14.15.16.17.18.19.20.21.25.26.27.28.29.30.Button1.Button2.", "." . strControl . ".")
+	If InStr(".3.4.6.7.9.10.11.12.13.15.16.17.18.19.20.21.22.26.27.28.29.30.31.Button1.Button2.", "." . strControl . ".")
 		DllCall("SetCursor", "UInt", objCursor)
 
 	return
@@ -1747,13 +1752,17 @@ if (A_ThisLabel = "BuildFavoritesMenusWithStatus")
 	TrayTip, % L(lTrayTipWorkingTitle, strAppName, strAppVersion)
 		, %lTrayTipWorkingDetail%, , 1
 
+objMenuColumnBreaks := Object()
+
 Menu, %lMainMenuName%, Add
 Menu, %lMainMenuName%, DeleteAll
 Menu, %lMainMenuName%, Color, %strMenuBackgroundColor%
 
 BuildOneMenu(lMainMenuName) ; and recurse for submenus
 
-Menu, %lMainMenuName%, Add
+if !IsColumnBreak(arrMenus[lMainMenuName][arrMenus[lMainMenuName].MaxIndex()].FavoriteName)
+; column break not allowed if first item is a separator
+	Menu, %lMainMenuName%, Add
 
 if (blnDisplaySpecialFolders)
 	AddMenuIcon(lMainMenuName, lMenuSpecialFolders, ":menuSpecialFolders", "lMenuSpecialFolders")
@@ -1797,6 +1806,7 @@ BuildOneMenu(strMenu)
 	global blnDisplayIcons
 	global intIconSize
 	global strMenuBackgroundColor
+	global objMenuColumnBreaks
 	
 	intShortcut := 0
 	
@@ -1805,7 +1815,13 @@ BuildOneMenu(strMenu)
 	try Menu, %strMenu%, DeleteAll
 	
 	arrThisMenu := arrMenus[strMenu]
+	intMenuItemsCount := 0
+	intMenuArrayItemsCount := 0
+	
 	Loop, % arrThisMenu.MaxIndex()
+	{	
+		intMenuItemsCount := intMenuItemsCount + 1
+		intMenuArrayItemsCount := intMenuArrayItemsCount + 1
 		
 		if (arrThisMenu[A_Index].FavoriteType = "S") ; this is a submenu
 		{
@@ -1829,15 +1845,26 @@ BuildOneMenu(strMenu)
 		}
 		
 		else if (arrThisMenu[A_Index].FavoriteName = lMenuSeparator) ; this is a separator
-
-			Menu, % arrThisMenu[A_Index].MenuName, Add
 			
+			if IsColumnBreak(arrThisMenu[A_Index - 1].FavoriteName)
+				intMenuItemsCount := intMenuItemsCount - 1 ; separator not allowed as first item is a column, skip it
+			else
+				Menu, % arrThisMenu[A_Index].MenuName, Add
+			
+		else if IsColumnBreak(arrThisMenu[A_Index].FavoriteName)
+		{
+			intMenuItemsCount := intMenuItemsCount - 1
+			objMenuColumnBreak := Object()
+			objMenuColumnBreak.MenuName := strMenu
+			objMenuColumnBreak.MenuPosition := intMenuItemsCount
+			objMenuColumnBreak.MenuArrayPosition := intMenuArrayItemsCount
+			objMenuColumnBreaks.Insert(objMenuColumnBreak)
+		}
 		else ; this is a favorite (folder, document or URL)
 		{
 			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = lMainMenuName)) . " " : "")
 				. arrThisMenu[A_Index].FavoriteName
 			Menu, % arrThisMenu[A_Index].MenuName, Add, %strMenuName%, OpenFavorite
-
 
 			if (blnDisplayIcons)
 			{
@@ -1862,6 +1889,7 @@ BuildOneMenu(strMenu)
 				}
 			}
 		}
+	}
 }
 ;------------------------------------------------------------
 
@@ -1956,6 +1984,65 @@ GetIcon4Location(strLocation, ByRef strDefaultIcon, ByRef intDefaultIcon)
 ;------------------------------------------------------------
 
 
+;------------------------------------------------------------
+InsertColumnBreaks:
+; Based on Lexikos
+; http://www.autohotkey.com/board/topic/69553-menu-with-columns-problem-with-adding-column-separator/#entry440866
+;------------------------------------------------------------
+
+VarSetCapacity(mii, cb:=16+8*A_PtrSize, 0) ; A_PtrSize is used for 64-bit compatibility.
+NumPut(cb, mii, "uint")
+NumPut(0x100, mii, 4, "uint") ; fMask = MIIM_FTYPE
+NumPut(0x20, mii, 8, "uint") ; fType = MFT_MENUBARBREAK
+
+for intIndex, objMenuColumnBreak in objMenuColumnBreaks
+{
+	pMenuHandle := GetMenuHandle(objMenuColumnBreak.MenuName) 
+	DllCall("SetMenuItemInfo", "ptr", pMenuHandle, "uint", objMenuColumnBreak.MenuPosition, "int", 1, "ptr", &mii)
+}
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GetMenuHandle(strMenuName)
+; from MenuIcons v2 by Lexikos
+; http://www.autohotkey.com/board/topic/20253-menu-icons-v2/
+;------------------------------------------------------------
+{
+	static pMenuDummy
+	
+	; v2.2: Check for !pMenuDummy instead of pMenuDummy="" in case init failed last time.
+	If !pMenuDummy
+	{
+		Menu, menuDummy, Add
+		Menu, menuDummy, DeleteAll
+		
+		Gui, 99:Menu, menuDummy
+		; v2.2: Use LastFound method instead of window title. [Thanks animeaime.]
+		Gui, 99:+LastFound
+		
+		pMenuDummy := DllCall("GetMenu", "uint", WinExist())
+		
+		Gui, 99:Menu
+		Gui, 99:Destroy
+		
+		; v2.2: Return only after cleaning up. [Thanks animeaime.]
+		if !pMenuDummy
+			return 0
+	}
+
+	Menu, menuDummy, Add, :%strMenuName%
+	pMenu := DllCall( "GetSubMenu", "uint", pMenuDummy, "int", 0 )
+	DllCall( "RemoveMenu", "uint", pMenuDummy, "uint", 0, "uint", 0x400 )
+	Menu, menuDummy, Delete, :%strMenuName%
+
+	return pMenu
+}
+;------------------------------------------------------------
+
+
 
 ;========================================================================================================================
 ; POPUP MNEU
@@ -2044,6 +2131,9 @@ if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or Win
 		or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
 		or (WindowIsDialog(strTargetClass, strTargetWinId) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 		, %lMenuAddThisFolder%...
+		
+	Gosub, InsertColumnBreaks
+
 	Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; at mouse pointer if option 1, 20x20 offset of active window if option 2 and fix location if option 3
 }
 
@@ -2108,6 +2198,9 @@ Menu, %lMainMenuName%
 	or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
 	or (WindowIsDialog(strTargetClass, strTargetWinId) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
 	, %lMenuAddThisFolder%...
+
+Gosub, InsertColumnBreaks
+
 Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; at mouse pointer if option 1, 20x20 offset of active window if option 2 and fix location if option 3
 
 return
@@ -2680,14 +2773,14 @@ GuiGroupEditFromManage:
 
 intGui2WinID := WinExist("A")
 	
-strGuiGroupSaveEditTitle := L(lGuiGroupSaveEditTitle, (A_ThisLabel = "GuiGroupSaveFromMenu" ? lDialogSave : lDialogEdit), strAppName, strAppVersion)
+strGuiGroupSaveEditTitle := L(lGuiGroupSaveEditTitle, (A_ThisLabel = "GuiGroupEditFromManage" ? lDialogEdit : lDialogSave), strAppName, strAppVersion)
 Gui, 3:New, , %strGuiGroupSaveEditTitle%
 Gui, 3:Margin, 10, 10
 Gui, 3:Color, %strGuiWindowColor%
 Gui, 3:+OwnDialogs
 
 Gui, 3:Font, s10 w700, Verdana
-Gui, 3:Add, Text, x10 y10 w670 center, %lMenuGroupSave%
+Gui, 3:Add, Text, x10 y10 w670 center, % L(lGuiGroupSaveEditPrompt, (A_ThisLabel = "GuiGroupEditFromManage" ? lDialogEdit : lDialogSave))
 Gui, 3:Font
 
 Gui, 3:Add, Text, x10 y+15 w670 center, %lGuiGroupSaveSelect%
@@ -2706,19 +2799,15 @@ if (A_ThisLabel = "GuiGroupEditFromManage")
 	Gosub, Group2Object
 
 	for intIndex, objIniExplorerInGroup in objIniExplorersInGroup
-	{
-		arrExplorerPosition := objGroupMenuExplorer.Position
-		StringSplit, arrExplorerPosition, arrExplorerPosition, "|"
 		LV_Add("Check", objIniExplorerInGroup.Name
 			, (objIniExplorerInGroup.WindowType = "DO" ? "Directory Opus" : (objIniExplorerInGroup.WindowType = "TC" ? "Total Commander" : "Windows Explorer"))
 			, (objIniExplorerInGroup.MinMax = -1 ? "Minimized" : (objIniExplorerInGroup.MinMax = "1" ? "Maximized" : "Normal"))
-			, (objIniExplorerInGroup.MinMax = 0 ? arrExplorerPosition1 : "-")
-			, (objIniExplorerInGroup.MinMax = 0 ? arrExplorerPosition2 : "-")
-			, (objIniExplorerInGroup.MinMax = 0 ? arrExplorerPosition3 : "-")
-			, (objIniExplorerInGroup.MinMax = 0 ? arrExplorerPosition4 : "-")
+			, (objIniExplorerInGroup.MinMax = 0 ? objIniExplorerInGroup.Left : "-")
+			, (objIniExplorerInGroup.MinMax = 0 ? objIniExplorerInGroup.Top : "-")
+			, (objIniExplorerInGroup.MinMax = 0 ? objIniExplorerInGroup.Width : "-")
+			, (objIniExplorerInGroup.MinMax = 0 ? objIniExplorerInGroup.Height : "-")
 			, (objIniExplorerInGroup.Pane ? objIniExplorerInGroup.Pane : "-")
 			, objIniExplorerInGroup.Path, objIniExplorerInGroup.IsSpecialFolder, objIniExplorerInGroup.WindowId, objIniExplorerInGroup.Position, objIniExplorerInGroup.TabId)
-	}		
 	IniRead, blnReplaceWhenRestoringThisGroup, %strIniFile%, %strGroup%, ReplaceWhenRestoringThisGroup, 0 ; false if not found
 }
 else
@@ -2893,8 +2982,6 @@ GroupLoad:
 GroupLoadFromManage:
 ;------------------------------------------------------------
 
-intSleepAfterWindowCommand := 400
-
 if (A_ThisLabel = "GroupLoad")
 {
 	strGroup := "Group-" . A_ThisMenuItem
@@ -2916,23 +3003,41 @@ intActualWindowInIni := 1
 while, intExplorer := WindowOfType("EX") ; returns the index of the first Explorer saved window in the group
 {
 	Tooltip, %intActualWindowInIni% %lGuiGroupOf% %intTotalWindowsInIni%
+	
 	if (objIniExplorersInGroup[intExplorer].IsSpecialFolder)
 		strExplorerLocationOrClassId := "shell:::" . objClassIdByLocalizedName[objIniExplorersInGroup[intExplorer].Name]
 	else
 		strExplorerLocationOrClassId := objIniExplorersInGroup[intExplorer].Name
+	
+	intWinIdBeforeRun := WinExist("A")
 	Run, % "explorer.exe " . strExplorerLocationOrClassId,
 		, % (objIniExplorersInGroup[intExplorer].MinMax = -1 ? "Min" : (objIniExplorersInGroup[intExplorer].MinMax = 1 ? "Max" : ""))
-		
-	Sleep, %intSleepAfterWindowCommand%
-	WinWaitActive, A, , 5
+	Loop
+	{
+		if (A_Index > 20)
+		{
+			Oops(lDialogGroupLoadErrorLoading, strExplorerLocationOrClassId)
+			Tooltip ; clear tooltip
+			return
+		}
+		Sleep, 20
+		strNewWindowId := WinExist("A")
+	} until (intWinIdBeforeRun <> strNewWindowId)
+	
+	WinWait, ahk_id %strNewWindowId%, , 5
 	Sleep, 200
 	
 	if !(objIniExplorersInGroup[intExplorer].MinMax) ; window normal, not min nor max
-		WinMove, A, 
+		WinMove, ahk_id %strNewWindowId%,
 			, % objIniExplorersInGroup[intExplorer].Left
 			, % objIniExplorersInGroup[intExplorer].Top
 			, % objIniExplorersInGroup[intExplorer].Width
 			, % objIniExplorersInGroup[intExplorer].Height
+	else
+		if (objIniExplorersInGroup[intExplorer].MinMax = -1)
+			WinMinimize, ahk_id %strNewWindowId%
+		else
+			WinMaximize, ahk_id %strNewWindowId%
 	
 	objIniExplorersInGroup.Remove(intExplorer) ; remove the first Explorer saved window from the group
 	intActualWindowInIni := intActualWindowInIni + 1
@@ -2948,34 +3053,48 @@ while, intDOWindow := WindowOfType("DO") ; returns the index of the first DOpus 
 		if !StrLen(strNewWindowId) ; the window does not exist, create it with the first path in the pane 1
 		{
 			Tooltip, %intActualWindowInIni% %lGuiGroupOf% %intTotalWindowsInIni%
+			
+			intWinIdBeforeRun := WinExist("A")
 			RunDOpusRt("/acmd Go ", objIniExplorersInGroup[intDOWindow].Name, " NEW=nodual") ; open in a new lister
-			Sleep, %intSleepAfterWindowCommand%
-			WinWaitActive, A, , 5
+			Loop
+			{
+				if (A_Index > 20)
+				{
+					Oops(lDialogGroupLoadErrorLoading, strExplorerLocationOrClassId)
+					Tooltip ; clear tooltip
+					return
+				}
+				Sleep, 20
+				strNewWindowId := WinExist("A")		
+			} until (intWinIdBeforeRun <> strNewWindowId)
+
+			WinWait, ahk_id %strNewWindowId%, , 5
 			Sleep, 200
 			
-			strNewWindowId := WinExist("A")
 			if !(objIniExplorersInGroup[intDOWindow].MinMax) ; window normal, not min nor max
-				WinMove, A,
+				WinMove, ahk_id %strNewWindowId%,
 					, % objIniExplorersInGroup[intDOWindow].Left
 					, % objIniExplorersInGroup[intDOWindow].Top
 					, % objIniExplorersInGroup[intDOWindow].Width
 					, % objIniExplorersInGroup[intDOWindow].Height
 			else
 				if (objIniExplorersInGroup[intDOWindow].MinMax = -1)
-					WinMinimize, A
+					WinMinimize, ahk_id %strNewWindowId%
 				else
-					WinMaximize, A
+					WinMaximize, ahk_id %strNewWindowId%
 
 			objIniExplorersInGroup.Remove(intDOWindow) ; remove the first DOpus saved window from the group
 			intActualWindowInIni := intActualWindowInIni + 1
 		}
 		else ; the window exist, add other path of pane tabs or pane 2
 		{
+			intSleepAfterDOpusRtCommand := 200
+			
 			while, intDOIndexPane := DOpusWindowOfPane(1, strFirstWindowId) ; returns the paths of the windows of the left pane for this group of windows
 			{
 				Tooltip, %intActualWindowInIni% %lGuiGroupOf% %intTotalWindowsInIni%
 				RunDOpusRt("/acmd Go ", objIniExplorersInGroup[intDOIndexPane].Name, " NEWTAB") ; open in a new tab of pane 1
-				Sleep, %intSleepAfterWindowCommand%
+				Sleep, %intSleepAfterDOpusRtCommand%
 				objIniExplorersInGroup.Remove(intDOIndexPane) ; remove the first DOpus saved window from the group
 				intActualWindowInIni := intActualWindowInIni + 1
 			}
@@ -2986,13 +3105,13 @@ while, intDOWindow := WindowOfType("DO") ; returns the index of the first DOpus 
 				if (blnNewPane2)
 				{
 					RunDOpusRt("/acmd Go ", objIniExplorersInGroup[intDOIndexPane].Name, " OPENINRIGHT") ; open in a first tab of pane 2
-					Sleep, %intSleepAfterWindowCommand%
+					Sleep, %intSleepAfterDOpusRtCommand%
 					blnNewPane2 := false
 				}
 				else
 				{
 					RunDOpusRt("/acmd Go ", objIniExplorersInGroup[intDOIndexPane].Name, " OPENINRIGHT NEWTAB") ; open in a new tab of pane 2
-					Sleep, %intSleepAfterWindowCommand%
+					Sleep, %intSleepAfterDOpusRtCommand%
 				}
 				objIniExplorersInGroup.Remove(intDOIndexPane) ; remove the first DOpus saved window from the group
 				intActualWindowInIni := intActualWindowInIni + 1
@@ -3686,22 +3805,23 @@ Gui, 1:Add, Text, Section x+0 yp
 Gui, 1:Add, Picture, xm ys+25 gGuiMoveFavoriteUp, %strTempDir%\up_circular-26.png ; 9
 Gui, 1:Add, Picture, xm ys+55 gGuiMoveFavoriteDown, %strTempDir%\down_circular-26.png ; Static10
 Gui, 1:Add, Picture, xm ys+85 gGuiAddSeparator, %strTempDir%\separator-26.png ; Static11
-Gui, 1:Add, Picture, xm+1 ys+205 gGuiSortFavorites, %strTempDir%\generic_sorting2-26-grey.png ; Static12
+Gui, 1:Add, Picture, xm ys+115 gGuiAddColumnBreak, %strTempDir%\column-26.png ; Static12
+Gui, 1:Add, Picture, xm+1 ys+205 gGuiSortFavorites, %strTempDir%\generic_sorting2-26-grey.png ; Static13
 
 Gui, 1:Add, Text, Section xs ys
 
 Gui, 1:Font, s8 w400, Arial ; button legend
 
-Gui, 1:Add, Picture, xs+10 ys+7 gGuiAddFavorite, %strTempDir%\add_property-48.png ; Static14
-Gui, 1:Add, Text, xs y+0 w68 center gGuiAddFavorite, %lGuiAddFavorite% ; Static15
+Gui, 1:Add, Picture, xs+10 ys+7 gGuiAddFavorite, %strTempDir%\add_property-48.png ; Static15
+Gui, 1:Add, Text, xs y+0 w68 center gGuiAddFavorite, %lGuiAddFavorite% ; Static16
 
-Gui, 1:Add, Picture, xs+10 gGuiEditFavorite, %strTempDir%\edit_property-48.png ; Static16
-Gui, 1:Add, Text, xs y+0 w68 center gGuiEditFavorite, %lGuiEditFavorite% ; Static17
+Gui, 1:Add, Picture, xs+10 gGuiEditFavorite, %strTempDir%\edit_property-48.png ; Static17
+Gui, 1:Add, Text, xs y+0 w68 center gGuiEditFavorite, %lGuiEditFavorite% ; Static18
 
-Gui, 1:Add, Picture, xs+10 gGuiRemoveFavorite, %strTempDir%\delete_property-48.png ; Static18
-Gui, 1:Add, Text, xs y+0 w68 center gGuiRemoveFavorite, %lGuiRemoveFavorite% ; Static19
+Gui, 1:Add, Picture, xs+10 gGuiRemoveFavorite, %strTempDir%\delete_property-48.png ; Static19
+Gui, 1:Add, Text, xs y+0 w68 center gGuiRemoveFavorite, %lGuiRemoveFavorite% ; Static20
 
-Gui, 1:Add, Picture, xs+10 y+30 gGuiGroupsManage, %strTempDir%\channel_mosaic-48.png ; Static20
+Gui, 1:Add, Picture, xs+10 y+30 gGuiGroupsManage, %strTempDir%\channel_mosaic-48.png ; Static21
 Gui, 1:Add, Text, xs y+5 w68 center gGuiGroupsManage, %lDialogGroups% ; Static21
 
 Gui, 1:Add, Text, Section x185 ys+250
@@ -3716,22 +3836,22 @@ Gui, 1:Add, Button, yp vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until chang
 Gui, 1:Font, s6 w400, Verdana
 GuiCenterButtons(L(lGuiTitle, strAppName, strAppVersion), 50, 30, 40, -80, "btnGuiSave", "btnGuiCancel")
 
-Gui, 1:Add, Picture, x490 yp+13 gGuiAbout Section, %strTempDir%\about-32.png ; Static25
-Gui, 1:Add, Picture, x540 yp gGuiHelp, %strTempDir%\help-32.png ; Static26
+Gui, 1:Add, Picture, x490 yp+13 gGuiAbout Section, %strTempDir%\about-32.png ; Static26
+Gui, 1:Add, Picture, x540 yp gGuiHelp, %strTempDir%\help-32.png ; Static27
 if !(blnDonor)
 {
 	strDonateButtons := "thumbs_up|solutions|handshake|conference|gift"
 	StringSplit, arrDonateButtons, strDonateButtons, |
 	Random, intDonateButton, 1, 5
 
-	Gui, 1:Add, Picture, xm+20 yp gGuiDonate, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png" ; Static27
+	Gui, 1:Add, Picture, xm+20 yp gGuiDonate, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png" ; Static28
 }
 
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs-20 ys+35 w68 center gGuiAbout, %lGuiAbout% ; Static28
-Gui, 1:Add, Text, xs+40 ys+35 w52 center gGuiHelp, %lGuiHelp% ; Static29
+Gui, 1:Add, Text, xs-20 ys+35 w68 center gGuiAbout, %lGuiAbout% ; Static29
+Gui, 1:Add, Text, xs+40 ys+35 w52 center gGuiHelp, %lGuiHelp% ; Static30
 if !(blnDonor)
-	Gui, 1:Add, Text, xm+10 ys+35 w52 center gGuiDonate, %lGuiDonate% ; Static30
+	Gui, 1:Add, Text, xm+10 ys+35 w52 center gGuiDonate, %lGuiDonate% ; Static31
 
 return
 ;------------------------------------------------------------
@@ -4030,6 +4150,27 @@ GuiAddSeparator:
 GuiControl, Focus, lvFavoritesList
 Gui, 1:ListView, lvFavoritesList
 LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", lMenuSeparator, lMenuSeparator . lMenuSeparator, strCurrentMenu)
+LV_Modify(LV_GetNext(), "Vis")
+LV_ModifyCol(1, "AutoHdr")
+LV_ModifyCol(2, "AutoHdr")
+
+GuiControl, Enable, btnGuiSave
+GuiControl, , btnGuiCancel, %lGuiCancel%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiAddColumnBreak:
+;------------------------------------------------------------
+
+GuiControl, Focus, lvFavoritesList
+Gui, 1:ListView, lvFavoritesList
+LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus"
+	, lMenuColumnBreakIndicator . " " lMenuColumnBreak . " " . lMenuColumnBreakIndicator
+	, lMenuColumnBreakIndicator . " " lMenuColumnBreak . " " . lMenuColumnBreakIndicator
+	, strCurrentMenu)
 LV_Modify(LV_GetNext(), "Vis")
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
@@ -4440,7 +4581,7 @@ if (A_ThisLabel = "GuiEditFavorite")
 	intRowToEdit := LV_GetNext()
 	LV_GetText(strCurrentName, intRowToEdit, 1)
 	
-	if (strCurrentName = lMenuSeparator)
+	if (strCurrentName = lMenuSeparator) or IsColumnBreak(strCurrentName)
 		return
 
 	if !StrLen(strCurrentName) or (intRowToEdit = 0)
@@ -4571,6 +4712,12 @@ GuiControlGet, strParentMenu, , drpParentMenu
 if !StrLen(strFavoriteShortName)
 {
 	Oops(blnRadioSubmenu ? lDialogSubmenuNameEmpty : lDialogFavoriteNameEmpty)
+	return
+}
+
+if IsColumnBreak(strFavoriteShortName)
+{
+	Oops(L(lDialogFavoriteNameNoColumnBreak, lMenuColumnBreakIndicator))
 	return
 }
 
@@ -5977,6 +6124,15 @@ GetOSVersionInfo()
 		Ver.EasyVersion       := Ver.MajorVersion . "." . Ver.MinorVersion . "." . Ver.BuildNumber
 	}
 	return Ver
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+IsColumnBreak(strMenuName)
+;------------------------------------------------------------
+{
+	return (SubStr(strMenuName, 1, StrLen(lMenuColumnBreakIndicator)) = lMenuColumnBreakIndicator)
 }
 ;------------------------------------------------------------
 

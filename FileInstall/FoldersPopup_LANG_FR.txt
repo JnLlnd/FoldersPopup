@@ -28,6 +28,7 @@ lDialogFavoriteDoesNotExistPrompt	Le favori "~1~" n'existe pas ou n'est pas disp
 lDialogFavoriteDoesNotExistTitle	Favori introuvable - ~1~
 lDialogFavoriteLocationEmpty	L'emplacement est vide. Veuillez indiquer l'emplacement du dossier.
 lDialogFavoriteNameEmpty	Le nom du favori est vide. Veuillez indiquer un nom court pour ce favori.
+lDialogFavoriteNameNoColumnBreak	Le nom du menu ne peut débuter par les caractères réservés "~1~" utilisés comme indicateur de saut de colonne.
 lDialogFavoriteNameNoSeparator	Le nom du sous-menu ne doit pas inclure le caractère réservé "~1~".
 lDialogFavoriteNameNotNew	Le nom "~1~" est déjà présent dans ce menu. Veuillez choisir un nouveau nom.
 lDialogFavoriteParentMenu	Menu contenant ce favori
@@ -42,12 +43,14 @@ lDialogGroupDeleteError	supprimer
 lDialogGroupDeletePrompt	Supprimer le groupe "~1~"?
 lDialogGroupEdit	Modifier
 lDialogGroupEditError	modifier
+lDialogGroupLoad	Restaurer
 lDialogGroupManageCannotSave	Attention: Il n'y a aucune fenêtre à enregistrer dans un groupe. Ouvrez au moins une fenêtre de lo'Explorateur de fichiers ou de Directory Opus et essayez à nouveau d'enregistrer un groupe.
 lDialogGroupManageCreatingPrompt	Pour créer un groupe, cliquez le bouton "~1~" ou sélectionnez le menu "~2~" à tout moment.
 lDialogGroupManageCreatingTitle	Créer un groupe
 lDialogGroupManageGroupsTitle	Gérer les groupes - ~1~ ~2~
 lDialogGroupManageIntro	Avec les "Groupes", vous pouvez enregistrer et rétablir votre environnement de travail en basculant efficacement d'une session de travail à l'autre. Les "Groupes" mémorisent le dossier, la taille, la position et l'état (normal, minimisé ou maximisé) des fenêtres de l'Explorateur de fichiers et de Directory Opus (soutien de Total Commander à venir).
 lDialogGroupManageManagingTitle	Gestion des groupes
+lDialogGroupNew	Enregistrer un nouveau groupe
 lDialogGroups	Groupes
 lDialogGroupSelect	Sélectionnez un groupe
 lDialogGroupSelectError	Veuillez sélectionner le groupe à ~1~.
@@ -97,6 +100,7 @@ lGuiGroupClosing	Fermeture des fenêtres
 lGuiGroupOf	de
 lGuiGroupSaveAddWindowsLabel	Ajouter aux fenêtres existantes
 lGuiGroupSaved	Le groupe "~1~" a été enregistré.`n`nCliquez le menu "~2~" pour restaurer ce groupe.
+lGuiGroupSaveEditPrompt	~1~ ce groupe
 lGuiGroupSaveEditTitle	~1~ ce groupe - ~2~ ~3~
 lGuiGroupSaveLvHeader	Dossier|Application|État|Gauche|Haut|Largeur|Hauteur|Côté
 lGuiGroupSaveNameEmpty	Le nom du groupe est vide. Veuillez indiquer le nom deu groupe.
@@ -133,6 +137,7 @@ lHelpTitle	Aide - ~1~ ~2~
 lMainMenuName	Principal
 lMenuAbout	À propos
 lMenuAddThisFolder	&Ajouter ce dossier au menu
+lMenuColumnBreak	colonne
 lMenuControlPanel	Panneau de configuration
 lMenuDesktop	Bureau
 lMenuDialogNotSupported	Ce type de boîte de dialogue n'est pas encore pris en charge
@@ -232,5 +237,3 @@ lUpdateTitle	Mettre à jour ~1~?
 lUpdateYouHaveLatest	Vous avez la version la plus récente: ~1~.`n`nVisiter la page web de ~2~ quand même?
 lWindowIsTreeviewText	Désolé... À cause d'une limitation de Windows, ce type de boîte de dialogue (TreeView) n'est pas compatible avec ~1~ pour le moment.
 lWindowIsTreeviewTitle	Boîte de dialogue incompatible
-lDialogGroupLoad	Restaurer
-lDialogGroupNew	Enregistrer un nouveau groupe
