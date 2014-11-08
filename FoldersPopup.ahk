@@ -22,7 +22,7 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 3.9.3 BETA (2014-11-??)
+	Version: 3.9.3 BETA (2014-11-08)
 	* retrieve language from ini file created by setup program and use when creating the FP ini file
 	* accept space in Change hotkey dialog box to allow combinations with spacebar as a potential hotkey
 	* detect TreeView folder select dialog box and exclude them because of a Windows limitation (Edit1 control not handling the Enter)
@@ -461,7 +461,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 3.9.2 BETA
+;@Ahk2Exe-SetVersion 3.9.3 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -499,7 +499,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.9.2" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "3.9.3" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -3637,6 +3637,10 @@ ExitApp
 ;------------------------------------------------------------
 Check4Update:
 ;------------------------------------------------------------
+
+strAppLandingPage := " http://code.jeanlalonde.ca/folderspopup/"
+strBetaLandingPage := "http://code.jeanlalonde.ca/folderspopup-v4-ready-for-beta-test-testers-wanted/"
+
 Gui, 1:+OwnDialogs
 
 if Time2Donate(intStartups, blnDonor)
@@ -3684,9 +3688,9 @@ if FirstVsSecondIs(strLatestVersion, strCurrentVersion) = 1
 		, 30
 	IfMsgBox, Yes
 		if (strCurrentBranch = "prod")
-			Run, http://code.jeanlalonde.ca/folderspopup/
+			Run, %strAppLandingPage%
 		else
-			Run, http://code.jeanlalonde.ca/beta-testers-wanted-for-folders-popup-v3-2/
+			Run, %strBetaLandingPage%
 	IfMsgBox, No
 		IniWrite, %strLatestVersion%, %strIniFile%, Global, % "LatestVersionSkipped" . (strCurrentBranch = "beta" ? "Beta" : "")
 	IfMsgBox, Cancel ; Remind me
@@ -3699,9 +3703,9 @@ else if (A_ThisMenuItem = lMenuUpdate)
 	MsgBox, 4, % l(lUpdateTitle, strAppName), % l(lUpdateYouHaveLatest, strAppVersion, strAppName), 30
 	IfMsgBox, Yes
 		if (strCurrentBranch = "prod")
-			Run, http://code.jeanlalonde.ca/folderspopup/
+			Run, %strAppLandingPage%
 		else
-			Run, http://code.jeanlalonde.ca/folderspopup-v4-ready-for-beta-test-testers-wanted/
+			Run, %strBetaLandingPage%
 }
 
 return 
