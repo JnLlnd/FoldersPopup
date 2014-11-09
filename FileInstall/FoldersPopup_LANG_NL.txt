@@ -142,11 +142,11 @@ lOptionsArrDescriptions6	Kies de sneltoets of muisknop combinatie die er voor zo
 lOptionsChangeHotkey	Wijzigen
 lOptionsChangeHotkeyTitle	Wijzig sneltoets - ~1~ ~2~
 lOptionsCtrl	Ctrl
-lOptionsDisplayGroupMenu	Toon S&witch Menu's
+lOptionsDisplayGroupMenu	Toon S&witch
 lOptionsDisplayIcons	Toon Menu Iconen
 lOptionsDisplayMenuShortcuts	Toon de &Numerieke Menu Sneltoetsen
-lOptionsDisplayRecentFolders	Toon R&ecente Mappen
-lOptionsDisplaySpecialFolders	Toon S&peciale Mappen
+lOptionsDisplayRecentFolders	Recente bezochte mappen
+lOptionsDisplaySpecialFolders	S&peciale Mappen
 lOptionsGuiIntro	Definieer de muisknoppen en sneltoetsen die ~1~ zullen triggeren.
 lOptionsGuiTitle	Opties - ~1~ ~2~
 lOptionsIconSize	Menu iconen grootte

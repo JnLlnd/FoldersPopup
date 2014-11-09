@@ -186,11 +186,11 @@ lOptionsChangeHotkey	Ändern
 lOptionsChangeHotkeyTitle	Tastenkürzel ändern - ~1~ ~2~
 lOptionsCtrl	Strg
 lOptionsDirectoryOpusUseTabs	Verwende Registerkarten
-lOptionsDisplayGroupMenu	Zeige Gruppe der Ordnermenüs an
+lOptionsDisplayGroupMenu	Gruppe der Ordnermenüs
 lOptionsDisplayIcons	Zeige Icons im Menü
 lOptionsDisplayMenuShortcuts	Zeige &numerische Menü-Tastenkürzel
-lOptionsDisplayRecentFolders	Zeige kürzlich verwendete Ordner
-lOptionsDisplaySpecialFolders	Zeige S&pezielle Ordner
+lOptionsDisplayRecentFolders	Kürzlich verwendete Ordner
+lOptionsDisplaySpecialFolders	S&pezielle Ordner
 lOptionsGuiIntro	Legen Sie die Maustasten und Tastenkürzel fest, welche ~1~ auslösen.
 lOptionsGuiTitle	Optionen - ~1~ ~2~
 lOptionsIconSize	Symbolgröße im Menü

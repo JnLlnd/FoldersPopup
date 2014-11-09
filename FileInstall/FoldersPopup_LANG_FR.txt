@@ -54,6 +54,7 @@ lDialogGroupNew	Enregistrer un nouveau groupe
 lDialogGroups	Groupes
 lDialogGroupSelect	Sélectionnez un groupe
 lDialogGroupSelectError	Veuillez sélectionner le groupe à ~1~.
+lDialogIcon	Icône
 lDialogInvalidHotkey	Avec votre configuration actuelle de clavier, la touche de raccourci "~1~" ne peut être utilisée comme un déclencheur pour le menu popup.`n`nVeuillez ouvrir la fenêtre "Paramètres de ~2~" dans la zone de notification et cliquez sur "Options". Dans cette boîte de dialogue, choisissez une autre touche de raccourci pour "~3~".
 lDialogOpenThisMenu	Ouvrir ce menu
 lDialogSave	Enregistrer
@@ -143,6 +144,7 @@ lMenuDesktop	Bureau
 lMenuDialogNotSupported	Ce type de boîte de dialogue n'est pas encore pris en charge
 lMenuDocuments	Documents
 lMenuExitFoldersPopup	Quitter ~1~
+lMenuFoldersInExplorer	Dossiers dans l'Explorateur
 lMenuFPMenu	~2~ ~1~
 lMenuGroup	Groupes de dossiers
 lMenuGroupAdd	ajouter
@@ -184,11 +186,13 @@ lOptionsChangeHotkey	Modifier
 lOptionsChangeHotkeyTitle	Modification de déclencheur - ~1~ ~2~
 lOptionsCtrl	Ctrl
 lOptionsDirectoryOpusUseTabs	Utiliser les onglets
-lOptionsDisplayGroupMenu	Afficher le menu Explorateurs
+lOptionsDisplayFoldersInExplorerMenu	Dossiers dans l'Explorateur
+lOptionsDisplayGroupMenu	Groupes de dossiers
 lOptionsDisplayIcons	Afficher les icônes des menus
+lOptionsDisplayMenus	Afficher les menus:
 lOptionsDisplayMenuShortcuts	Afficher les raccourcis numériques
-lOptionsDisplayRecentFolders	Afficher les emplacements récents
-lOptionsDisplaySpecialFolders	Afficher les dossiers spéciaux
+lOptionsDisplayRecentFolders	Emplacements récents
+lOptionsDisplaySpecialFolders	Dossiers spéciaux
 lOptionsGuiIntro	Choisisr les boutons de la souris et les raccourcis du clavier déclenchant ~1~.
 lOptionsGuiTitle	Options - ~1~ ~2~
 lOptionsIconSize	Taille des icones de menu
