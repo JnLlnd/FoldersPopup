@@ -24,6 +24,15 @@ To-do for v4:
 
 	Version: 3.9.4 BETA (2014-11-08)
 	* Swedish, German and Korean translations for new features in v3.9.1 and v3.9.2
+	* Custom icons for submenus (custom icons for folders in next release)
+	* Add hidden column in Settings listview for icon resource
+	* Add field in Folders section of ini file for icon resource
+	* Add icon selector to add/edit favorite dialog box (for submenu only in this release)
+	* New special menu Folders in Explorer to open in Explorer or a dialog box a folder already open in another Explorer
+	* Merge open folder in Explorer with Open recent folders
+	* Add option to display or not the Folders in Explorer menu
+	* Regroup Display options in Options dialog box
+	* In Options, add the size 48 pixels to the choie of icon size
 	
 	Version: 3.9.3 BETA (2014-11-08)
 	* retrieve language from ini file created by setup program and use when creating the FP ini file
@@ -656,41 +665,41 @@ strMouseButtons := "None|LButton|MButton|RButton|XButton1|XButton2|WheelUp|Wheel
 StringSplit, arrMouseButtons, strMouseButtons, |
 
 strIconsMenus := "lMenuDesktop|lMenuDocuments|lMenuPictures|lMenuMyComputer|lMenuNetworkNeighborhood|lMenuControlPanel|lMenuRecycleBin"
-	. "|menuRecentFolders|menuGroupDialog|menuGroupExplorer|lMenuSpecialFolders|lMenuGroup"
+	. "|menuRecentFolders|menuGroupDialog|menuGroupExplorer|lMenuSpecialFolders|lMenuGroup|lMenuFoldersInExplorer"
 	. "|lMenuRecentFolders|lMenuSettings|lMenuAddThisFolder|lDonateMenu|Submenu|Network|UnknownDocument|Folder"
 	. "|menuGroupSave|menuGroupLoad"
 
 if (A_OSVersion = "WIN_XP")
 {
 	strIconsFile := "shell32|shell32|shell32|shell32|shell32|shell32|shell32"
-				. "|shell32|shell32|shell32|shell32|shell32"
+				. "|shell32|shell32|shell32|shell32|shell32|shell32"
 				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
 				. "|shell32|shell32"
 	strIconsIndex := "35|127|118|16|19|22|33"
-				. "|4|147|4|4|147"
+				. "|4|147|4|4|147|147"
 				. "|214|166|111|161|85|10|3|4"
 				. "|7|7"
 }
 else if (A_OSVersion = "WIN_VISTA")
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
-				. "|imageres|imageres|imageres|imageres|shell32"
+				. "|imageres|imageres|imageres|imageres|shell32|imageres"
 				. "|imageres|imageres|shell32|shell32|shell32|imageres|imageres|imageres"
 				. "|shell32|shell32"
 	strIconsIndex := "105|85|67|104|114|22|49"
-				. "|112|174|3|3|251|"
-				. "112|109|88|161|85|28|2|3"
+				. "|112|174|3|3|251|174"
+				. "|112|109|88|161|85|28|2|3"
 				. "|259|259"
 }
 else
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
-				. "|imageres|imageres|imageres|imageres|shell32"
+				. "|imageres|imageres|imageres|imageres|shell32|imageres"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres|imageres|imageres"
 				. "|shell32|shell32"
 	strIconsIndex := "106|189|68|105|115|23|50"
-				. "|113|176|203|203|99|"
-				. "113|110|217|208|298|29|3|4"
+				. "|113|176|203|203|99|176"
+				. "|113|110|217|208|298|29|3|4"
 				. "|297|46"
 }
 
@@ -786,6 +795,7 @@ IniRead, blnDisplayIcons, %strIniFile%, Global, DisplayIcons, 1
 blnDisplayIcons := (blnDisplayIcons and OSVersionIsWorkstation())
 IniRead, blnDisplaySpecialFolders, %strIniFile%, Global, DisplaySpecialFolders, 1
 IniRead, blnDisplayRecentFolders, %strIniFile%, Global, DisplayRecentFolders, 1
+IniRead, blnDisplayFoldersInExplorerMenu, %strIniFile%, Global, DisplayFoldersInExplorerMenu, 1
 IniRead, blnDisplayGroupMenu, %strIniFile%, Global, DisplaySwitchMenu, 1 ; keep "Switch" in label instead of "Group" for backward compatibility
 IniRead, intPopupMenuPosition, %strIniFile%, Global, PopupMenuPosition, 1
 IniRead, strPopupFixPosition, %strIniFile%, Global, PopupFixPosition, 20,20
@@ -875,7 +885,7 @@ Loop
 	if (strIniLine = "ERROR")
 		Break
 	strIniLine := strIniLine . "|||" ; additional "|" to make sure we have all empty items
-	; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType
+	; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
 	StringSplit, arrThisFavorite, strIniLine, |
 
 	objFavorite := Object() ; new menu item
@@ -887,6 +897,7 @@ Loop
 		objFavorite.SubmenuFullName := lMainMenuName . arrThisFavorite4 ; full name of the submenu, adding main menu name
 	else
 		objFavorite.SubmenuFullName := ""
+	
 	if StrLen(arrThisFavorite5)
 		
 		objFavorite.FavoriteType := arrThisFavorite5 ; "F" folder, "D" document, "U" URL or "S" submenu
@@ -896,6 +907,8 @@ Loop
 			objFavorite.FavoriteType := "S" ; "S" submenu
 		else ; for upward compatibility from v1 ini files
 			objFavorite.FavoriteType := "F" ; "F" folder
+
+	objFavorite.IconResource := arrThisFavorite6 ; icon resource in format "iconfile,iconindex"
 
 	if (objFavorite.FavoriteType = "S") ; then this is a new submenu
 	{
@@ -1516,6 +1529,10 @@ for intIndex, objExplorer in objExplorersWindows
 	objGroupMenuExplorers.Insert(intExplorersIndex, objGroupMenuExplorer)
 }
 
+Menu, menuFoldersInExplorer, Add
+Menu, menuFoldersInExplorer, DeleteAll
+Menu, menuFoldersInExplorer, Color, %strMenuBackgroundColor%
+
 Menu, menuGroup, Add
 Menu, menuGroup, DeleteAll
 Menu, menuGroup, Color, %strMenuBackgroundColor%
@@ -1525,6 +1542,7 @@ intShortcutGroup := 0
 for intIndex, objGroupMenuExplorer in objGroupMenuExplorers
 {
 	strMenuName := (blnDisplayMenuShortcuts and (intShortcutGroup <= 35) ? "&" . NextMenuShortcut(intShortcutGroup, false) . " " : "") . objGroupMenuExplorer.Name
+	
 	if !WindowIsDialog(strTargetClass, strTargetWinId) or (blnNewWindow)
 		AddMenuIcon("menuGroup"
 			, strMenuName . (objGroupMenuExplorer.WindowType = "DO" ? " (DOpus)" : (objGroupMenuExplorer.WindowType = "TC" ? " (TC)" : ""))
@@ -1532,6 +1550,8 @@ for intIndex, objGroupMenuExplorer in objGroupMenuExplorers
 			, (objGroupMenuExplorer.WindowType = "DO" ? "DirectoryOpus" : (objGroupMenuExplorer.WindowType = "TC" ? "TotalCommander" : "menuGroupExplorer")))
 	else
 		AddMenuIcon("menuGroup", strMenuName, "SwitchDialog", "menuGroupDialog")
+	
+	AddMenuIcon("menuFoldersInExplorer", strMenuName, "OpenFolderInExplorer", "lMenuFoldersInExplorer")
 }
 
 Menu, menuGroupsList, Add
@@ -1771,6 +1791,12 @@ if !IsColumnBreak(arrMenus[lMainMenuName][arrMenus[lMainMenuName].MaxIndex()].Fa
 if (blnDisplaySpecialFolders)
 	AddMenuIcon(lMainMenuName, lMenuSpecialFolders, ":menuSpecialFolders", "lMenuSpecialFolders")
 
+if (blnDisplayFoldersInExplorerMenu)
+{
+	AddMenuIcon(lMainMenuName, lMenuFoldersInExplorer, ":menuFoldersInExplorer", "lMenuFoldersInExplorer")
+	Menu, menuFoldersInExplorer, Color, %strMenuBackgroundColor%
+}
+
 if (blnDisplayGroupMenu)
 {
 	AddMenuIcon(lMainMenuName, lMenuGroup, ":menuGroup", "lMenuGroup")
@@ -1780,7 +1806,7 @@ if (blnDisplayGroupMenu)
 if (blnDisplayRecentFolders)
 	AddMenuIcon(lMainMenuName, lMenuRecentFolders . "...", "RefreshRecentFolders", "lMenuRecentFolders")
 
-if (blnDisplaySpecialFolders or blnDisplayRecentFolders or blnDisplayGroupMenu)
+if (blnDisplaySpecialFolders or blnDisplayRecentFolders or blnDisplayFoldersInExplorerMenu or blnDisplayGroupMenu)
 	Menu, %lMainMenuName%, Add
 
 AddMenuIcon(lMainMenuName, L(lMenuSettings, strAppName) . "...", "GuiShow", "lMenuSettings")
@@ -1844,8 +1870,18 @@ BuildOneMenu(strMenu)
 				Menu, % arrThisMenu[A_Index].MenuName, Disable, %strMenuName%
 			}
 			if (blnDisplayIcons)
+			{
+				if StrLen(arrThisMenu[A_Index].IconResource)
+					ParseIconResource(arrThisMenu[A_Index].IconResource, strThisIconFile, intThisIconIndex)
+				else
+				{
+					strThisIconFile := objIconsFile["Submenu"]
+					intThisIconIndex := objIconsIndex["Submenu"]
+				}
+				
 				Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
-					, % objIconsFile["Submenu"], % objIconsIndex["Submenu"], %intIconSize%
+					, %strThisIconFile%, %intThisIconIndex% , %intIconSize%
+			}
 		}
 		
 		else if (arrThisMenu[A_Index].FavoriteName = lMenuSeparator) ; this is a separator
@@ -2110,13 +2146,18 @@ if (blnDisplaySpecialFolders)
 		, %lMenuRecycleBin%
 }
 
-if (blnDisplayGroupMenu)
-{
+if (blnDisplayGroupMenu or blnDisplayFoldersInExplorerMenu)
 	Gosub, BuildGroupMenu
+
+if (blnDisplayFoldersInExplorerMenu)
+	Menu, %lMainMenuName%
+		, % (!intExplorersExist ? "Disable" : "Enable") ; disable Folders in Explorer menu if no Explorer
+		, %lMenuFoldersInExplorer%
+
+if (blnDisplayGroupMenu)
 	Menu, menuGroup
 		, % (!intExplorersExist ? "Disable" : "Enable") ; disable Save group menu if no Explorer
 		, %lMenuGroupSave%
-}
 
 if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass)
 	or WindowIsFreeCommander(strTargetClass) or WindowIsTotalCommander(strTargetClass)
@@ -2186,13 +2227,18 @@ if (blnDisplaySpecialFolders)
 	Menu, menuSpecialFolders, Enable, %lMenuRecycleBin%
 }
 
-if (blnDisplayGroupMenu)
-{
+if (blnDisplayGroupMenu or blnDisplayFoldersInExplorerMenu)
 	Gosub, BuildGroupMenu
+
+if (blnDisplayFoldersInExplorerMenu)
+	Menu, %lMainMenuName%
+		, % (!intExplorersExist ? "Disable" : "Enable") ; disable Folders in Explorer menu if no Explorer
+		, %lMenuFoldersInExplorer%
+
+if (blnDisplayGroupMenu)
 	Menu, menuGroup
 		, % (!intExplorersExist ? "Disable" : "Enable") ; disable Save group menu if no Explorer
 		, %lMenuGroupSave%
-}
 
 ; Enable "Add This Folder" only if the target window is an Explorer (tested on WIN_XP and WIN_7)
 ; or a dialog box under WIN_7 (does not work under WIN_XP).
@@ -2700,38 +2746,47 @@ return
 
 ;------------------------------------------------------------
 OpenRecentFolder:
+OpenFolderInExplorer:
 ;------------------------------------------------------------
+
+if (A_ThisLabel = "OpenRecentFolder")
+	strThisFolderName := objRecentFolders[A_ThisMenuItemPos]
+else
+	If StrLen(objClassIdByLocalizedName[A_ThisMenuItem])
+		strThisFolderName := "shell:::" . objClassIdByLocalizedName[A_ThisMenuItem]
+	else
+		strThisFolderName :=  A_ThisMenuItem
 
 if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
 	if (blnUseDirectoryOpus)
 	{
-		RunDOpusRt("/acmd Go ", objRecentFolders[A_ThisMenuItemPos], " " . strDirectoryOpusNewTabOrWindow) ; open in a new lister or tab
+		RunDOpusRt("/acmd Go ", strThisFolderName, " " . strDirectoryOpusNewTabOrWindow) ; open in a new lister or tab
 		WinActivate, ahk_class dopus.lister
 	}
 	else if (blnUseTotalCommander)
-		NewTotalCommander(objRecentFolders[A_ThisMenuItemPos], strTargetWinId, strTargetControl)
+		NewTotalCommander(strThisFolderName, strTargetWinId, strTargetControl)
 	else
 		; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
-		ComObjCreate("Shell.Application").Explore(objRecentFolders[A_ThisMenuItemPos])
+		ComObjCreate("Shell.Application").Explore(strThisFolderName)
 else if WindowIsAnExplorer(strTargetClass)
-	NavigateExplorer(objRecentFolders[A_ThisMenuItemPos], strTargetWinId)
+	NavigateExplorer(strThisFolderName, strTargetWinId)
 else if WindowIsDirectoryOpus(strTargetClass)
 	if (blnUseDirectoryOpus)
-		RunDOpusRt("/aCmd Go", objRecentFolders[A_ThisMenuItemPos]) ; navigate the current lister
+		RunDOpusRt("/aCmd Go", strThisFolderName) ; navigate the current lister
 	else
-		NavigateExplorer(objRecentFolders[A_ThisMenuItemPos], strTargetWinId)
+		NavigateExplorer(strThisFolderName, strTargetWinId)
 else ; this is the console, FreeCommander or a dialog box
 	if WindowIsConsole(strTargetClass)
-		NavigateConsole(objRecentFolders[A_ThisMenuItemPos], strTargetWinId)
+		NavigateConsole(strThisFolderName, strTargetWinId)
 	else if WindowIsFreeCommander(strTargetClass)
-		NavigateFreeCommander(objRecentFolders[A_ThisMenuItemPos], strTargetWinId, strTargetControl)
+		NavigateFreeCommander(strThisFolderName, strTargetWinId, strTargetControl)
 	else if WindowIsTotalCommander(strTargetClass)
 	if (blnUseTotalCommander)
-		NavigateTotalCommander(objRecentFolders[A_ThisMenuItemPos], strTargetWinId, strTargetControl)
+		NavigateTotalCommander(strThisFolderName, strTargetWinId, strTargetControl)
 	else
-		NavigateExplorer(objRecentFolders[A_ThisMenuItemPos], strTargetWinId)
+		NavigateExplorer(strThisFolderName, strTargetWinId)
 	else
-		NavigateDialog(objRecentFolders[A_ThisMenuItemPos], strTargetWinId, strTargetClass)
+		NavigateDialog(strThisFolderName, strTargetWinId, strTargetClass)
 
 return
 ;------------------------------------------------------------
@@ -3804,9 +3859,9 @@ Gui, 1:Add, DropDownList, xm+30 yp w480 vdrpMenusList gGuiMenusListChanged
 Gui, 1:Font, s8 w400, Verdana
 Gui, 1:Add, ListView
 	, xm+30 w480 h240 Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFavoritesList gGuiFavoritesListEvent
-	, %lGuiLvFavoritesHeader%|Hidden Menu|Hidden Submenu|Hidden FavoriteType
-Loop, 3
-	LV_ModifyCol(A_Index + 2, 0) ; hide 3rd-5th columns
+	, %lGuiLvFavoritesHeader%|Hidden Menu|Hidden Submenu|Hidden FavoriteType|Hidden IconResource
+Loop, 4
+	LV_ModifyCol(A_Index + 2, 0) ; hide 3rd-6th columns
 
 Gui, 1:Add, Text, Section x+0 yp
 
@@ -3891,10 +3946,11 @@ LV_Delete()
 Loop, % arrMenus[strCurrentMenu].MaxIndex()
 	if (arrMenus[strCurrentMenu][A_Index].FavoriteType = "S") ; this is a submenu
 		LV_Add(, arrMenus[strCurrentMenu][A_Index].FavoriteName, lGuiSubmenuLocation, arrMenus[strCurrentMenu][A_Index].MenuName
-			, arrMenus[strCurrentMenu][A_Index].SubmenuFullName, arrMenus[strCurrentMenu][A_Index].FavoriteType)
+			, arrMenus[strCurrentMenu][A_Index].SubmenuFullName, arrMenus[strCurrentMenu][A_Index].FavoriteType
+			, arrMenus[strCurrentMenu][A_Index].IconResource)
 	else ; this is a folder or document
 		LV_Add(, arrMenus[strCurrentMenu][A_Index].FavoriteName, arrMenus[strCurrentMenu][A_Index].FavoriteLocation, arrMenus[strCurrentMenu][A_Index].MenuName
-			, "", arrMenus[strCurrentMenu][A_Index].FavoriteType)
+			, "", arrMenus[strCurrentMenu][A_Index].FavoriteType, arrMenus[strCurrentMenu][A_Index].IconResource)
 LV_Modify(1, "Select Focus")
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
@@ -3919,6 +3975,7 @@ Loop % LV_GetCount()
 	LV_GetText(strMenu, A_Index, 3)
 	LV_GetText(strSubmenu, A_Index, 4)
 	LV_GetText(strFavoriteType, A_Index, 5)
+	LV_GetText(strIconResource, A_Index, 6)
 
 	objFavorite := Object() ; new menu item
 	objFavorite.FavoriteName := strName ; display name of this menu item
@@ -3926,6 +3983,7 @@ Loop % LV_GetCount()
 	objFavorite.MenuName := strCurrentMenu ; parent menu of this menu item - do not use strMenu because lack of lMainMenuName
 	objFavorite.SubmenuFullName := strSubmenu ; if menu, full name of the submenu
 	objFavorite.FavoriteType := strFavoriteType ; "F" folder, "D" document or "S" submenu
+	objFavorite.IconResource := strIconResource ; icon resource in format "iconfile,iconindex"
 	arrMenus[strCurrentMenu].Insert(objFavorite) ; add this menu item to parent menu - do not use strMenu because lack of lMainMenuName
 }
 
@@ -4309,6 +4367,7 @@ SaveOneMenu(strMenu)
 			. "|" . SubStr(arrMenus[strMenu][A_Index].MenuName, StrLen(lMainMenuName) + 1) ; remove main menu name for ini file
 			. "|" . SubStr(arrMenus[strMenu][A_Index].SubmenuFullName, StrLen(lMainMenuName) + 1) ; remove main menu name for ini file
 			. "|" . arrMenus[strMenu][A_Index].FavoriteType
+			. "|" . arrMenus[strMenu][A_Index].IconResource
 		intIndex := intIndex + 1
 		IniWrite, %strValue%, %strIniFile%, Folders, Folder%intIndex% ; keep "Folders" label instead of "Favorite" for backward compatibility
 		if (arrMenus[strMenu][A_Index].FavoriteType = "S")
@@ -4407,6 +4466,7 @@ for strMenuName, arrMenu in arrMenus
 		objFavoriteBK.FavoriteLocation := objFavorite.FavoriteLocation
 		objFavoriteBK.SubmenuFullName := objFavorite.SubmenuFullName
 		objFavoriteBK.FavoriteType := objFavorite.FavoriteType
+		objFavoriteBK.IconResource := objFavorite.IconResource
 		arrMenuBK.Insert(objFavoriteBK)
 	}
 	arrMenusBK.Insert(strMenuName, arrMenuBK) ; add this submenu to the array of menus
@@ -4433,6 +4493,7 @@ for strMenuName, arrMenuBK in arrMenusBK
 		objFavorite.FavoriteLocation := objFavoriteBK.FavoriteLocation
 		objFavorite.SubmenuFullName := objFavoriteBK.SubmenuFullName
 		objFavorite.FavoriteType := objFavoriteBK.FavoriteType
+		objFavorite.IconResource := objFavoriteBK.IconResource
 		arrMenu.Insert(objFavorite)
 	}
 	arrMenus.Insert(strMenuName, arrMenu) ; add this submenu to the array of menus
@@ -4600,11 +4661,14 @@ if (A_ThisLabel = "GuiEditFavorite")
 	LV_GetText(strCurrentLocation, intRowToEdit, 2)
 	LV_GetText(strCurrentSubmenuFullName, intRowToEdit, 4)
 	LV_GetText(strFavoriteType, intRowToEdit, 5)
-	
+	LV_GetText(strCurrentIconResource, intRowToEdit, 6)
+	ParseIconResource(strIconResource, strCurrentIconFile, intCurrentIconIndex)
+
 	blnRadioSubmenu := (strFavoriteType = "S")
 	blnRadioFolder := (strFavoriteType = "F")
 	blnRadioFile := (strFavoriteType = "D")
 	blnRadioURL := (strFavoriteType = "U")
+	
 }
 else
 {
@@ -4612,6 +4676,8 @@ else
 	strCurrentName := "" ; make sure it is empty
 	strCurrentSubmenuFullName := "" ;  make sure it is empty
 	strFavoriteType := "" ;  make sure it is empty
+	strCurrentIconFile := "" ;  make sure it is empty
+	intCurrentIconIndex := 0
 	
 	if (A_ThisLabel = "GuiAddFromPopup" or A_ThisLabel = "GuiAddFromDropFiles")
 		; strCurrentLocation is received from AddThisFolder or GuiDropFiles
@@ -4637,6 +4703,13 @@ else
 	}
 }
 
+if !StrLen(strCurrentIconFile)
+{
+	strCurrentIconFile := objIconsFile["Submenu"]
+	intCurrentIconIndex := objIconsIndex["Submenu"]
+}
+; ###_D("strCurrentIconFile: " . strCurrentIconFile . "`nintCurrentIconIndex: " . intCurrentIconIndex)
+
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
 
@@ -4647,6 +4720,12 @@ Gui, 2:Color, %strGuiWindowColor%
 
 Gui, 2:Add, Text, % x10 y10 vlblFavoriteParentMenu, % (blnRadioSubmenu ? lDialogSubmenuParentMenu : lDialogFavoriteParentMenu)
 Gui, 2:Add, DropDownList, x10 w300 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
+Gui, 2:Add, Text, yp x+10 section
+Gui, 2:Add, Text, xs y10 w48 center vlblIcon gGuiPickIconDialog, %lDialogIcon%
+Gui, Add, Picture, % "xs+" . ((48-32)/2) . " y+5 w32 h32 vpicIcon gGuiPickIconDialog"
+GuiControl, , picIcon, *icon%intCurrentIconIndex% %strCurrentIconFile%
+GuiControl, % (blnRadioSubmenu ? "Show" : "Hide"), picIcon
+GuiControl, % (blnRadioSubmenu ? "Show" : "Hide"), lblIcon
 
 if (A_ThisLabel = "GuiAddFavorite")
 {
@@ -4703,6 +4782,92 @@ GuiControl, 1:Focus, lvFavoritesList
 Gui, 1:ListView, lvFavoritesList
 
 Gosub, OpenMenuFromEditForm
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiGetFavoriteIcon:
+;------------------------------------------------------------
+
+/*
+
+if edit (intRowToEdit <> 0)
+
+if StrLen(strCurrentLocation)
+	if (blnRadioFolder or blnRadioFile)
+		; get current icon file and index from Desktop.ini if folder or file if file
+		if folder
+			Gosub, GuiGetIconFromDesktopIni
+		else ; file
+					else ; this is a document
+						GetIcon4Location(arrThisMenu[A_Index].FavoriteLocation, strDefaultIcon, intDefaultIcon)
+		###
+	else ; submenu or url
+		if edit
+			; get current icon and index from listview
+			LV_GetText(strCurrentLocation, intRowToEdit, 2)
+
+
+					if (arrThisMenu[A_Index].FavoriteType = "U") ; this is an URL
+						GetIcon4Location(strTempDir . "\default_browser_icon.html", strDefaultIcon, intDefaultIcon)
+						; not sure it is required to have a physical file with .html extension - but keep it as is by safety
+
+*/
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiFavoriteProperties:
+;------------------------------------------------------------
+
+/*
+
+XP
+[.ShellClassInfo]
+IconFile=%SystemRoot%\System32\mydocs.dll
+IconIndex=-101
+
+Vista+
+[.ShellClassInfo]
+IconResource=%SystemRoot%\system32\imageres.dll,-108
+
+*/
+
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiGetIconFromDesktopIni:
+;------------------------------------------------------------
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiPickIconDialog:
+; Source: http://ahkscript.org/boards/viewtopic.php?f=5&t=5108#p29970
+;------------------------------------------------------------
+
+VarSetCapacity(strNewIconFile, 1024) ; must be placed before strNewIconFile is initialized because VarSetCapacity erase its content
+strNewIconFile := strCurrentIconFile
+intNewIconIndex := intCurrentIconIndex - 1
+
+WinGet, hWnd, ID, A
+DllCall("shell32\PickIconDlg", "Uint", hWnd, "str", strNewIconFile, "Uint", 260, "intP", intNewIconIndex)
+
+if StrLen(strNewIconFile)
+{
+	strCurrentIconFile := strNewIconFile
+	intCurrentIconIndex := intNewIconIndex + 1
+}
+GuiControl, , picIcon, *icon%intCurrentIconIndex% %strCurrentIconFile%
 
 return
 ;------------------------------------------------------------
@@ -4778,7 +4943,7 @@ if (strParentMenu = strCurrentMenu) ; add as top row to current menu
 	if (A_ThisLabel = "GuiAddFavoriteSave")
 	{
 		LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus"
-			, strFavoriteShortName, strFolderLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType)
+			, strFavoriteShortName, strFolderLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType, strCurrentIconFile . "," . intCurrentIconIndex)
 		LV_Modify(LV_GetNext(), "Vis")
 	
 		Gosub, SaveCurrentListviewToMenuObject ; save current LV tbefore update the dropdown menu
@@ -4787,7 +4952,7 @@ if (strParentMenu = strCurrentMenu) ; add as top row to current menu
 	else ; GuiEditFavoriteSave
 	{
 		LV_Modify(intRowToEdit, "Select Focus"
-			, strFavoriteShortName, strFolderLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType)
+			, strFavoriteShortName, strFolderLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType, strCurrentIconFile . "," . intCurrentIconIndex)
 	}
 }
 else ; add menu item to selected menu object
@@ -4798,6 +4963,7 @@ else ; add menu item to selected menu object
 	objFavorite.FavoriteLocation := strFolderLocation ; path for this menu item
 	objFavorite.SubmenuFullName := strNewSubmenuFullName ; full name of the submenu
 	objFavorite.FavoriteType := strFavoriteType ; "F" folder, "D" document, "U" for URL or "S" submenu
+	objFavorite.IconResource := strCurrentIconFile . "," . intCurrentIconIndex ; icon resource in format "iconfile,iconindex"
 	arrMenus[objFavorite.MenuName].Insert(1, objFavorite) ; add this menu item to the new menu
 
 	if (A_ThisLabel = "GuiEditFavoriteSave")
@@ -4904,6 +5070,9 @@ else ; blnRadioSubmenu
 GuiControl, % (blnRadioSubmenu ? "Hide" : "Show"), lblFolder
 GuiControl, % (blnRadioSubmenu ? "Hide" : "Show"), strFolderLocation
 GuiControl, % (blnRadioSubmenu or blnRadioURL ? "Hide" : "Show"), btnSelectFolderLocation
+
+GuiControl, % (blnRadioSubmenu ? "Show" : "Hide"), picIcon
+GuiControl, % (blnRadioSubmenu ? "Show" : "Hide"), lblIcon
 
 if (blnRadioSubmenu or blnRadioURL)
 	GuiControl, +Default, btnAddFolderAdd
@@ -5064,8 +5233,8 @@ GuiControl, , blnDisplayIcons, %blnDisplayIcons%
 if !OSVersionIsWorkstation()
 	GuiControl, Disable, blnDisplayIcons
 
-Gui, 2:Add, CheckBox, y+10 xs vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
-GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
+Gui, 2:Add, CheckBox, y+10 xs vblnOpenMenuOnTaskbar, %lOptionsOpenMenuOnTaskbar%
+GuiControl, , blnOpenMenuOnTaskbar, %blnOpenMenuOnTaskbar%
 
 ; Build Gui footer
 
@@ -5101,20 +5270,22 @@ GuiControl, Focus, btnOptionsSave
 
 ; column 2
 Gui, 2:Add, Text, ys x240 Section, %lOptionsIconSize%
-Gui, 2:Add, DropDownList, ys x+10 w40 vdrpIconSize Sort, 16|24|32|64
+Gui, 2:Add, DropDownList, ys x+10 w40 vdrpIconSize Sort, 16|24|32|48|64
 GuiControl, ChooseString, drpIconSize, %intIconSize%
+
+Gui, 2:Add, Text, y+7 x240, %lOptionsDisplayMenus%
+
+Gui, 2:Add, CheckBox, y+10 xs vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
+GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
+
+Gui, 2:Add, CheckBox, y+10 xs vblnDisplayFoldersInExplorerMenu, %lOptionsDisplayFoldersInExplorerMenu%
+GuiControl, , blnDisplayFoldersInExplorerMenu, %blnDisplayFoldersInExplorerMenu%
 
 Gui, 2:Add, CheckBox, y+10 xs vblnDisplayGroupMenu, %lOptionsDisplayGroupMenu%
 GuiControl, , blnDisplayGroupMenu, %blnDisplayGroupMenu%
 
 Gui, 2:Add, CheckBox, y+10 xs vblnDisplayRecentFolders gDisplayRecentFoldersClicked, %lOptionsDisplayRecentFolders%
 GuiControl, , blnDisplayRecentFolders, %blnDisplayRecentFolders%
-
-Gui, 2:Add, Edit, % "y+10 xs w36 h17 vintRecentFolders center " . (blnDisplayRecentFolders ? "" : "hidden"), %intRecentFolders%
-Gui, 2:Add, Text, % "yp x+10 vlblRecentFolders " . (blnDisplayRecentFolders ? "" : "hidden"), %lOptionsRecentFolders%
-
-Gui, 2:Add, CheckBox, y+10 xs vblnOpenMenuOnTaskbar, %lOptionsOpenMenuOnTaskbar%
-GuiControl, , blnOpenMenuOnTaskbar, %blnOpenMenuOnTaskbar%
 
 ; column 3
 
@@ -5132,6 +5303,9 @@ Gui, 2:Add, Text, % "y+5 xs+18 vlblPopupFixPositionX " . (intPopupMenuPosition =
 Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionX center " . (intPopupMenuPosition = 3 ? "" : "hidden"), %arrPopupFixPosition1%
 Gui, 2:Add, Text, % "yp x+5 vlblPopupFixPositionY " . (intPopupMenuPosition = 3 ? "" : "hidden"), %lOptionsPopupFixPositionY%
 Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionY center " . (intPopupMenuPosition = 3 ? "" : "hidden"), %arrPopupFixPosition2%
+
+Gui, 2:Add, Edit, % "y+5 xs w36 h17 vintRecentFolders center " . (blnDisplayRecentFolders ? "" : "hidden"), %intRecentFolders%
+Gui, 2:Add, Text, % "yp x+10 vlblRecentFolders " . (blnDisplayRecentFolders ? "" : "hidden"), %lOptionsRecentFolders%
 
 
 Gui, 2:Show, AutoSize Center
@@ -5225,6 +5399,7 @@ IniWrite, %blnDisplayIcons%, %strIniFile%, Global, DisplayIcons
 IniWrite, %blnDisplaySpecialFolders%, %strIniFile%, Global, DisplaySpecialFolders
 IniWrite, %blnDisplayRecentFolders%, %strIniFile%, Global, DisplayRecentFolders
 IniWrite, %intRecentFolders%, %strIniFile%, Global, RecentFolders
+IniWrite, %blnDisplayFoldersInExplorerMenu%, %strIniFile%, Global, DisplayFoldersInExplorerMenu
 IniWrite, %blnDisplayGroupMenu%, %strIniFile%, Global, DisplaySwitchMenu ; keep "Switch" for backward compatibility
 IniWrite, %blnDisplayMenuShortcuts%, %strIniFile%, Global, DisplayMenuShortcuts
 IniWrite, %blnOpenMenuOnTaskbar%, %strIniFile%, Global, OpenMenuOnTaskbar
@@ -5819,7 +5994,9 @@ if FileExist(strCheckTotalCommanderPath)
 		strTotalCommanderPath := strCheckTotalCommanderPath
 		Gosub, SetTCCommand
 		
-		; disable Group menu for TC users until the tabs issue is resolved
+		; disable Folders in Explorer and Group menus for TC users until the tabs issue is resolved
+		blnDisplayFoldersInExplorerMenu := 0
+		IniWrite, %blnDisplayFoldersInExplorerMenu%, %strIniFile%, Global, DisplayFoldersInExplorerMenu
 		blnDisplayGroupMenu := 0
 		IniWrite, %blnDisplayGroupMenu%, %strIniFile%, Global, DisplaySwitchMenu
 	}
@@ -6145,3 +6322,12 @@ IsColumnBreak(strMenuName)
 ;------------------------------------------------------------
 
 
+;------------------------------------------------------------
+ParseIconResource(strIconResource, ByRef strIconFile, ByRef intIconIndex)
+;------------------------------------------------------------
+{
+	intIconResourceCommaPosition := InStr(strIconResource, ",", , 0) ; search reverse
+	StringLeft, strIconFile, strIconResource, % intIconResourceCommaPosition - 1
+	StringRight, intIconIndex, strIconResource, % StrLen(strIconResource) - intIconResourceCommaPosition
+}
+;------------------------------------------------------------
