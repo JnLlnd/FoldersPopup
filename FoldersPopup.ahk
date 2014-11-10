@@ -22,7 +22,7 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 3.9.4 BETA (2014-11-08)
+	Version: 3.9.4 BETA (2014-11-09)
 	* Swedish, German and Korean translations for new features in v3.9.1 and v3.9.2
 	* Custom icons for submenus (custom icons for folders in next release)
 	* Add hidden column in Settings listview for icon resource
