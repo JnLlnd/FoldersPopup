@@ -1888,9 +1888,14 @@ BuildOneMenu(strMenu)
 					strThisIconFile := objIconsFile["Submenu"]
 					intThisIconIndex := objIconsIndex["Submenu"]
 				}
-				
+
+				Menu, % arrThisMenu[A_Index].MenuName, UseErrorLevel, on
 				Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
 					, %strThisIconFile%, %intThisIconIndex% , %intIconSize%
+				if (ErrorLevel)
+					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
+						, % objIconsFile["UnknownDocument"], % objIconsIndex["UnknownDocument"], %intIconSize%
+				Menu, % arrThisMenu[A_Index].MenuName, UseErrorLevel, off
 			}
 		}
 		
@@ -1918,10 +1923,14 @@ BuildOneMenu(strMenu)
 
 			if (blnDisplayIcons)
 			{
+				Menu, % arrThisMenu[A_Index].MenuName, UseErrorLevel, on
 				if (arrThisMenu[A_Index].FavoriteType = "F") ; this is a folder
 					
 					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
 						, % objIconsFile["Folder"], % objIconsIndex["Folder"], %intIconSize%
+					if (ErrorLevel)
+						Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
+							, % objIconsFile["UnknownDocument"], % objIconsIndex["UnknownDocument"], %intIconSize%
 				
 				else ;  this is a document or an URL
 				{
@@ -1934,12 +1943,14 @@ BuildOneMenu(strMenu)
 					else ; this is a document
 						GetIcon4Location(arrThisMenu[A_Index].FavoriteLocation, strThisIconFile, intThisIconIndex)
 					
-					if StrLen(strThisIconFile) and !InStr(strThisIconFile, "%")
+					ErrorLevel := 0 ; for safety clear in case Menu is not called in next if
+					if StrLen(strThisIconFile)
 						Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %strThisIconFile%, %intThisIconIndex%, %intIconSize%
-					else
+					if (!StrLen(strThisIconFile) or ErrorLevel)
 						Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
 							, % objIconsFile["UnknownDocument"], % objIconsIndex["UnknownDocument"], %intIconSize%
 				}
+				Menu, % arrThisMenu[A_Index].MenuName, UseErrorLevel, off
 			}
 		}
 	}
@@ -1994,7 +2005,14 @@ AddMenuIcon(strMenuName, ByRef strMenuItemName, strLabel, strIconValue)
 	
 	Menu, %strMenuName%, Add, %strMenuItemName%, %strLabel%
 	if (blnDisplayIcons)
+	{
+		Menu, %strMenuName%, UseErrorLevel, on
 		Menu, %strMenuName%, Icon, %strMenuItemName%, % objIconsFile[strIconValue], % objIconsIndex[strIconValue], %intIconSize%
+		if (ErrorLevel)
+			Menu, %strMenuName%, Icon, %strMenuItemName%
+				, % objIconsFile["UnknownDocument"], % objIconsIndex["UnknownDocument"], %intIconSize%
+		Menu, %strMenuName%, UseErrorLevel, off
+	}
 }
 ;------------------------------------------------------------
 
