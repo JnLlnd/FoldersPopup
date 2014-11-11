@@ -2,6 +2,13 @@
 Bugs:
 
 To-do for v4:
+- finish icon for edit favorite (except folder)
+- pick icon for documents
+- icons for folders
+
+- Optimize special folders clsid management (try x := window.Document.Folder.Self.Path)
+- Solve "Folders in Explorer" vs "Group of folders" issue
+- Continue custom icons for folders and documents
 - Write DOpus add-in to list folders including special folders
 - Save groups with special folders in DOpus to ini file
 - Load groups with special folders in DOpus from ini file
@@ -22,6 +29,9 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 3.9.5 BETA (2014-11-??)
+	* display and select icon in add favorite for url and documents
+	
 	Version: 3.9.4 BETA (2014-11-09)
 	* Swedish, German and Korean translations for new features in v3.9.1 and v3.9.2
 	* Custom icons for submenus (custom icons for folders in next release)
@@ -474,7 +484,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 3.9.4 BETA
+;@Ahk2Exe-SetVersion 3.9.5 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -512,7 +522,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.9.4" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "3.9.5" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -1916,13 +1926,16 @@ BuildOneMenu(strMenu)
 				else ;  this is a document or an URL
 				{
 					if (arrThisMenu[A_Index].FavoriteType = "U") ; this is an URL
-						GetIcon4Location(strTempDir . "\default_browser_icon.html", strDefaultIcon, intDefaultIcon)
-						; not sure it is required to have a physical file with .html extension - but keep it as is by safety
+						if StrLen(arrThisMenu[A_Index].IconResource)
+							ParseIconResource(arrThisMenu[A_Index].IconResource, strThisIconFile, intThisIconIndex)
+						else
+							GetIcon4Location(strTempDir . "\default_browser_icon.html", strThisIconFile, intThisIconIndex)
+							; not sure it is required to have a physical file with .html extension - but keep it as is by safety
 					else ; this is a document
-						GetIcon4Location(arrThisMenu[A_Index].FavoriteLocation, strDefaultIcon, intDefaultIcon)
+						GetIcon4Location(arrThisMenu[A_Index].FavoriteLocation, strThisIconFile, intThisIconIndex)
 					
-					if StrLen(strDefaultIcon) and !InStr(strDefaultIcon, "%")
-						Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %strDefaultIcon%, %intDefaultIcon%, %intIconSize%
+					if StrLen(strThisIconFile) and !InStr(strThisIconFile, "%")
+						Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %strThisIconFile%, %intThisIconIndex%, %intIconSize%
 					else
 						Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
 							, % objIconsFile["UnknownDocument"], % objIconsIndex["UnknownDocument"], %intIconSize%
@@ -4664,10 +4677,10 @@ if (A_ThisLabel = "GuiEditFavorite")
 	LV_GetText(strCurrentIconResource, intRowToEdit, 6)
 	ParseIconResource(strIconResource, strCurrentIconFile, intCurrentIconIndex)
 
-	blnRadioSubmenu := (strFavoriteType = "S")
 	blnRadioFolder := (strFavoriteType = "F")
 	blnRadioFile := (strFavoriteType = "D")
 	blnRadioURL := (strFavoriteType = "U")
+	blnRadioSubmenu := (strFavoriteType = "S")
 	
 }
 else
@@ -4676,8 +4689,8 @@ else
 	strCurrentName := "" ; make sure it is empty
 	strCurrentSubmenuFullName := "" ;  make sure it is empty
 	strFavoriteType := "" ;  make sure it is empty
+	strCurrentIconResource := "" ;  make sure it is empty
 	strCurrentIconFile := "" ;  make sure it is empty
-	intCurrentIconIndex := 0
 	
 	if (A_ThisLabel = "GuiAddFromPopup" or A_ThisLabel = "GuiAddFromDropFiles")
 		; strCurrentLocation is received from AddThisFolder or GuiDropFiles
@@ -4689,10 +4702,10 @@ else
 		strFavoriteShortName := ""
 	}
 
-	blnRadioSubmenu := false
-	blnRadioFolder := false
+	blnRadioFolder := true
 	blnRadioFile := false
 	blnRadioURL := false
+	blnRadioSubmenu := false
 	
 	if (A_ThisLabel = "GuiAddFromPopup")
 		blnRadioFolder := true
@@ -4702,13 +4715,6 @@ else
 		blnRadioFolder := not blnRadioFile
 	}
 }
-
-if !StrLen(strCurrentIconFile)
-{
-	strCurrentIconFile := objIconsFile["Submenu"]
-	intCurrentIconIndex := objIconsIndex["Submenu"]
-}
-; ###_D("strCurrentIconFile: " . strCurrentIconFile . "`nintCurrentIconIndex: " . intCurrentIconIndex)
 
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
@@ -4721,11 +4727,12 @@ Gui, 2:Color, %strGuiWindowColor%
 Gui, 2:Add, Text, % x10 y10 vlblFavoriteParentMenu, % (blnRadioSubmenu ? lDialogSubmenuParentMenu : lDialogFavoriteParentMenu)
 Gui, 2:Add, DropDownList, x10 w300 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
 Gui, 2:Add, Text, yp x+10 section
-Gui, 2:Add, Text, xs y10 w48 center vlblIcon gGuiPickIconDialog, %lDialogIcon%
-Gui, Add, Picture, % "xs+" . ((48-32)/2) . " y+5 w32 h32 vpicIcon gGuiPickIconDialog"
-GuiControl, , picIcon, *icon%intCurrentIconIndex% %strCurrentIconFile%
-GuiControl, % (blnRadioSubmenu ? "Show" : "Hide"), picIcon
-GuiControl, % (blnRadioSubmenu ? "Show" : "Hide"), lblIcon
+Gui, 2:Add, Text, xs y10 w48 center vlblIcon gGuiShowIconDialog, %lDialogIcon%
+Gui, Add, Picture, % "xs+" . ((48-32)/2) . " y+5 w32 h32 vpicIcon gGuiShowIconDialog"
+GuiControl, % (blnRadioFolder ? "Hide" : "Show"), picIcon
+GuiControl, % (blnRadioFolder ? "Hide" : "Show"), lblIcon
+
+Gosub, GuiFavoriteIconInit
 
 if (A_ThisLabel = "GuiAddFavorite")
 {
@@ -4744,7 +4751,7 @@ if (blnRadioSubmenu)
 else
 {
 	Gui, 2:Add, Text, x10 w300 vlblFolder, % (blnRadioFile ? lDialogFileLabel : (blnRadioURL ? lDialogURLLabel : lDialogFolderLabel))
-	Gui, 2:Add, Edit, x10 w300 h20 vstrFolderLocation, %strCurrentLocation%
+	Gui, 2:Add, Edit, x10 w300 h20 vstrFolderLocation gEditFolderLocationChanged, %strCurrentLocation%
 	if !(blnRadioURL)
 		Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation default, %lDialogBrowseButton%
 }
@@ -4782,6 +4789,53 @@ GuiControl, 1:Focus, lvFavoritesList
 Gui, 1:ListView, lvFavoritesList
 
 Gosub, OpenMenuFromEditForm
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiFavoriteIconInit:
+;------------------------------------------------------------
+
+if !StrLen(strCurrentIconResource)
+{
+	if (blnRadioSubmenu)
+	{
+		strCurrentIconFile := objIconsFile["Submenu"]
+		intCurrentIconIndex := objIconsIndex["Submenu"]
+	}
+	else if (blnRadioURL)
+		GetIcon4Location(strTempDir . "\default_browser_icon.html", strCurrentIconFile, intCurrentIconIndex)
+	else if (blnRadioFile)
+		if StrLen(arrThisMenu[A_Index].FavoriteLocation)
+			GetIcon4Location(arrThisMenu[A_Index].FavoriteLocation, strCurrentIconFile, intCurrentIconIndex)
+		else if StrLen(strFolderLocation)
+			GetIcon4Location(strFolderLocation, strCurrentIconFile, intCurrentIconIndex)
+		else
+		{
+			strCurrentIconFile := objIconsFile["UnknownDocument"]
+			intCurrentIconIndex := objIconsIndex["UnknownDocument"]
+		}
+	else ; blnRadioFolder
+		x := x ; ###_D("not yet-1")
+}
+GuiControl, , picIcon, *icon%intCurrentIconIndex% %strCurrentIconFile%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiShowIconDialog:
+;------------------------------------------------------------
+
+if (blnRadioSubmenu or blnRadioURL)
+	Gosub, GuiPickIconDialog
+else if (blnRadioFile)
+	###_D("Not yet ready for document icon selection")
+else ; blnRadioFolder
+	###_D("Not yet ready for folder icon selection")
 
 return
 ;------------------------------------------------------------
@@ -5071,8 +5125,9 @@ GuiControl, % (blnRadioSubmenu ? "Hide" : "Show"), lblFolder
 GuiControl, % (blnRadioSubmenu ? "Hide" : "Show"), strFolderLocation
 GuiControl, % (blnRadioSubmenu or blnRadioURL ? "Hide" : "Show"), btnSelectFolderLocation
 
-GuiControl, % (blnRadioSubmenu ? "Show" : "Hide"), picIcon
-GuiControl, % (blnRadioSubmenu ? "Show" : "Hide"), lblIcon
+GuiControl, % (blnRadioFolder ? "Hide" : "Show"), picIcon
+GuiControl, % (blnRadioFolder ? "Hide" : "Show"), lblIcon
+Gosub, GuiFavoriteIconInit
 
 if (blnRadioSubmenu or blnRadioURL)
 	GuiControl, +Default, btnAddFolderAdd
@@ -5080,6 +5135,17 @@ else
 	GuiControl, +Default, btnSelectFolderLocation
 
 GuiControl, Focus, strFavoriteShortName
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+EditFolderLocationChanged:
+;------------------------------------------------------------
+Gui, 2:Submit, NoHide
+
+Gosub, GuiFavoriteIconInit
 
 return
 ;------------------------------------------------------------
