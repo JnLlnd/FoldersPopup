@@ -31,6 +31,8 @@ To-do for v4:
 
 	Version: 3.9.5 BETA (2014-11-??)
 	* display and select icon in add favorite for url and documents
+	* better error management around menu icon assignment, fix the *.msc bug
+	* use shell32.dll icon #1 for unknown icon
 	
 	Version: 3.9.4 BETA (2014-11-09)
 	* Swedish, German and Korean translations for new features in v3.9.1 and v3.9.2
@@ -687,29 +689,29 @@ if (A_OSVersion = "WIN_XP")
 				. "|shell32|shell32"
 	strIconsIndex := "35|127|118|16|19|22|33"
 				. "|4|147|4|4|147|147"
-				. "|214|166|111|161|85|10|3|4"
+				. "|214|166|111|161|85|10|1|4"
 				. "|7|7"
 }
 else if (A_OSVersion = "WIN_VISTA")
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres"
-				. "|imageres|imageres|shell32|shell32|shell32|imageres|imageres|imageres"
+				. "|imageres|imageres|shell32|shell32|shell32|imageres|shell32|imageres"
 				. "|shell32|shell32"
 	strIconsIndex := "105|85|67|104|114|22|49"
 				. "|112|174|3|3|251|174"
-				. "|112|109|88|161|85|28|2|3"
+				. "|112|109|88|161|85|28|1|3"
 				. "|259|259"
 }
 else
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres"
-				. "|imageres|imageres|imageres|imageres|shell32|imageres|imageres|imageres"
+				. "|imageres|imageres|imageres|imageres|shell32|imageres|shell32|imageres"
 				. "|shell32|shell32"
 	strIconsIndex := "106|189|68|105|115|23|50"
 				. "|113|176|203|203|99|176"
-				. "|113|110|217|208|298|29|3|4"
+				. "|113|110|217|208|298|29|1|4"
 				. "|297|46"
 }
 
