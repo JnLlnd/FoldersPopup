@@ -1927,13 +1927,13 @@ BuildOneMenu(strMenu)
 			{
 				Menu, % arrThisMenu[A_Index].MenuName, UseErrorLevel, on
 				if (arrThisMenu[A_Index].FavoriteType = "F") ; this is a folder
-					
+				{
 					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
 						, % objIconsFile["Folder"], % objIconsIndex["Folder"], %intIconSize%
 					if (ErrorLevel)
 						Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
 							, % objIconsFile["UnknownDocument"], % objIconsIndex["UnknownDocument"], %intIconSize%
-				
+				}
 				else ;  this is a document or an URL
 				{
 					if (arrThisMenu[A_Index].FavoriteType = "U") ; this is an URL
