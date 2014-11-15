@@ -1486,8 +1486,8 @@ if (blnUseDirectoryOpus)
 		objGroupMenuExplorer.MinMax := objLister.MinMax
 		objGroupMenuExplorer.Pane := (objLister.Pane = 0 ? 1 : objLister.Pane) ; consider pane 0 as pane 1
 		objGroupMenuExplorer.WindowType := "DO"
-		if FileExist(objGroupMenuExplorer.Name)
-			intExplorersExist := intExplorersExist + 1
+		; if FileExist(objGroupMenuExplorer.Name) ### check
+		intExplorersExist := intExplorersExist + 1
 		
 		objGroupMenuExplorers.Insert(intExplorersIndex, objGroupMenuExplorer)
 	}
@@ -1534,7 +1534,7 @@ for intIndex, objExplorer in objExplorersWindows
 	objGroupMenuExplorer.Position := objExplorer.Position
 	objGroupMenuExplorer.MinMax := objExplorer.MinMax
 	objGroupMenuExplorer.WindowType := "EX"
-	if FileExist(objGroupMenuExplorer.Name) or (objGroupMenuExplorer.IsSpecialFolder)
+	; if FileExist(objGroupMenuExplorer.Name) or (objGroupMenuExplorer.IsSpecialFolder) ### check
 		intExplorersExist := intExplorersExist + 1
 
 	objGroupMenuExplorers.Insert(intExplorersIndex, objGroupMenuExplorer)
