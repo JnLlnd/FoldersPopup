@@ -2019,53 +2019,6 @@ AddMenuIcon(strMenuName, ByRef strMenuItemName, strLabel, strIconValue)
 
 
 ;------------------------------------------------------------
-GetIcon4Location(strLocation, ByRef strDefaultIcon, ByRef intDefaultIcon)
-; get icon, extract from kiu http://www.autohotkey.com/board/topic/8616-kiu-icons-manager-quickly-change-icon-files/
-;------------------------------------------------------------
-{
-	global blnDiagMode
-	global objIconsFile
-	global objIconsIndex
-	
-	if !StrLen(strLocation)
-	{
-		strDefaultIcon := objIconsFile["UnknownDocument"]
-		intDefaultIcon := objIconsFile["UnknownDocument"]
-		return
-	}
-	
-	SplitPath, strLocation, , , strExtension
-	RegRead, strHKeyClassRoot, HKEY_CLASSES_ROOT, .%strExtension%
-	RegRead, strDefaultIcon, HKEY_CLASSES_ROOT, %strHKeyClassRoot%\DefaultIcon
-	if (blnDiagMode)
-	{
-		Diag("BuildOneMenuIcon", strLocation)
-		Diag("strHKeyClassRoot", strHKeyClassRoot)
-		Diag("strDefaultIcon-1", strDefaultIcon)
-	}
-	
-	if (strDefaultIcon = "%1") ; use the file itself (for executable)
-		strDefaultIcon := strLocation
-	
-	IfInString, strDefaultIcon, `, ; this is for icongroup files
-	{
-		StringSplit, arrDefaultIcon, strDefaultIcon, `,
-		strDefaultIcon := arrDefaultIcon1
-		intDefaultIcon := arrDefaultIcon2
-	}
-	else
-		intDefaultIcon := 1
-
-	if (blnDiagMode)
-	{
-		Diag("strDefaultIcon-2", strDefaultIcon)
-		Diag("intDefaultIcon", intDefaultIcon)
-	}
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
 InsertColumnBreaks:
 ; Based on Lexikos
 ; http://www.autohotkey.com/board/topic/69553-menu-with-columns-problem-with-adding-column-separator/#entry440866
@@ -6399,11 +6352,65 @@ IsColumnBreak(strMenuName)
 
 
 ;------------------------------------------------------------
+GetIcon4Location(strLocation, ByRef strDefaultIcon, ByRef intDefaultIcon)
+; get icon, extract from kiu http://www.autohotkey.com/board/topic/8616-kiu-icons-manager-quickly-change-icon-files/
+;------------------------------------------------------------
+{
+	global blnDiagMode
+	global objIconsFile
+	global objIconsIndex
+	
+	if !StrLen(strLocation)
+	{
+		strDefaultIcon := objIconsFile["UnknownDocument"]
+		intDefaultIcon := objIconsFile["UnknownDocument"]
+		return
+	}
+	
+	SplitPath, strLocation, , , strExtension
+	RegRead, strHKeyClassRoot, HKEY_CLASSES_ROOT, .%strExtension%
+	RegRead, strRegistryIconResource, HKEY_CLASSES_ROOT, %strHKeyClassRoot%\DefaultIcon
+	if (blnDiagMode)
+	{
+		Diag("BuildOneMenuIcon", strLocation)
+		Diag("strHKeyClassRoot", strHKeyClassRoot)
+		Diag("strRegistryIconResource", strRegistryIconResource)
+	}
+	
+	if (strRegistryIconResource = "%1") ; use the file itself (for executable)
+	{
+		strDefaultIcon := strLocation
+		intDefaultIcon := 1
+		return
+	}
+	
+	ParseIconResource(strRegistryIconResource, strDefaultIcon, intDefaultIcon)
+
+	if (blnDiagMode)
+	{
+		Diag("strDefaultIcon", strDefaultIcon)
+		Diag("intDefaultIcon", intDefaultIcon)
+	}
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 ParseIconResource(strIconResource, ByRef strIconFile, ByRef intIconIndex)
 ;------------------------------------------------------------
 {
-	intIconResourceCommaPosition := InStr(strIconResource, ",", , 0) ; search reverse
-	StringLeft, strIconFile, strIconResource, % intIconResourceCommaPosition - 1
-	StringRight, intIconIndex, strIconResource, % StrLen(strIconResource) - intIconResourceCommaPosition
+	If InString(strIconResource, ",") ; this is icongroup files
+	{
+		intIconResourceCommaPosition := InStr(strIconResource, ",", , 0) ; search reverse
+		StringLeft, strIconFile, strIconResource, % intIconResourceCommaPosition - 1
+		StringRight, intIconIndex, strIconResource, % StrLen(strIconResource) - intIconResourceCommaPosition
+	}
+	else
+	{
+		strIconFile := strIconResource
+		intIconIndex := 1
+	}
 }
 ;------------------------------------------------------------
+
+
