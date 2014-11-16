@@ -6367,6 +6367,9 @@ GetIcon4Location(strLocation, ByRef strDefaultIcon, ByRef intDefaultIcon, strDef
 ParseIconResource(strIconResource, ByRef strIconFile, ByRef intIconIndex, strDefaultType := "")
 ;------------------------------------------------------------
 {
+	global objIconsFile
+	global objIconsIndex
+	
 	if !StrLen(strDefaultType)
 		strDefaultType := "UnknownDocument"
 	
@@ -6384,8 +6387,8 @@ ParseIconResource(strIconResource, ByRef strIconFile, ByRef intIconIndex, strDef
 		}
 	else
 	{
-		strThisIconFile := objIconsFile[strDefaultType]
-		intThisIconIndex := objIconsIndex[strDefaultType]
+		strIconFile := objIconsFile[strDefaultType]
+		intIconIndex := objIconsIndex[strDefaultType]
 	}
 }
 ;------------------------------------------------------------
