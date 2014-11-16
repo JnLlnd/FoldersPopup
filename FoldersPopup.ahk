@@ -1882,13 +1882,7 @@ BuildOneMenu(strMenu)
 			}
 			if (blnDisplayIcons)
 			{
-				if StrLen(arrThisMenu[A_Index].IconResource)
-					ParseIconResource(arrThisMenu[A_Index].IconResource, strThisIconFile, intThisIconIndex)
-				else
-				{
-					strThisIconFile := objIconsFile["Submenu"]
-					intThisIconIndex := objIconsIndex["Submenu"]
-				}
+				ParseIconResource(arrThisMenu[A_Index].IconResource, strThisIconFile, intThisIconIndex, "Submenu")
 
 				Menu, % arrThisMenu[A_Index].MenuName, UseErrorLevel, on
 				Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
@@ -1926,31 +1920,23 @@ BuildOneMenu(strMenu)
 			{
 				Menu, % arrThisMenu[A_Index].MenuName, UseErrorLevel, on
 				if (arrThisMenu[A_Index].FavoriteType = "F") ; this is a folder
-				{
-					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
-						, % objIconsFile["Folder"], % objIconsIndex["Folder"], %intIconSize%
-					if (ErrorLevel)
-						Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
-							, % objIconsFile["UnknownDocument"], % objIconsIndex["UnknownDocument"], %intIconSize%
-				}
-				else ;  this is a document or an URL
-				{
-					if (arrThisMenu[A_Index].FavoriteType = "U") ; this is an URL
-						if StrLen(arrThisMenu[A_Index].IconResource)
-							ParseIconResource(arrThisMenu[A_Index].IconResource, strThisIconFile, intThisIconIndex)
-						else
-							GetIcon4Location(strTempDir . "\default_browser_icon.html", strThisIconFile, intThisIconIndex)
-							; not sure it is required to have a physical file with .html extension - but keep it as is by safety
-					else ; this is a document
-						GetIcon4Location(arrThisMenu[A_Index].FavoriteLocation, strThisIconFile, intThisIconIndex)
+					ParseIconResource(arrThisMenu[A_Index].IconResource, strThisIconFile, intThisIconIndex, "Folder")
+				else if (arrThisMenu[A_Index].FavoriteType = "U") ; this is an URL
+					if StrLen(arrThisMenu[A_Index].IconResource)
+						ParseIconResource(arrThisMenu[A_Index].IconResource, strThisIconFile, intThisIconIndex)
+					else
+						GetIcon4Location(strTempDir . "\default_browser_icon.html", strThisIconFile, intThisIconIndex)
+						; not sure it is required to have a physical file with .html extension - but keep it as is by safety
+				else ; this is a document
+					GetIcon4Location(arrThisMenu[A_Index].FavoriteLocation, strThisIconFile, intThisIconIndex)
 					
-					ErrorLevel := 0 ; for safety clear in case Menu is not called in next if
-					if StrLen(strThisIconFile)
-						Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %strThisIconFile%, %intThisIconIndex%, %intIconSize%
-					if (!StrLen(strThisIconFile) or ErrorLevel)
-						Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
-							, % objIconsFile["UnknownDocument"], % objIconsIndex["UnknownDocument"], %intIconSize%
-				}
+				ErrorLevel := 0 ; for safety clear in case Menu is not called in next if
+				if StrLen(strThisIconFile)
+					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%, %strThisIconFile%, %intThisIconIndex%, %intIconSize%
+				if (!StrLen(strThisIconFile) or ErrorLevel)
+					Menu, % arrThisMenu[A_Index].MenuName, Icon, %strMenuName%
+						, % objIconsFile["UnknownDocument"], % objIconsIndex["UnknownDocument"], %intIconSize%
+						
 				Menu, % arrThisMenu[A_Index].MenuName, UseErrorLevel, off
 			}
 		}
@@ -4668,6 +4654,8 @@ else
 	strCurrentSubmenuFullName := "" ;  make sure it is empty
 	strFavoriteType := "" ;  make sure it is empty
 	strSavedIconResource := "" ;  make sure it is empty
+	strDefaultIconResource := "" ;  make sure it is empty
+	strCurrentIconResource := "" ;  make sure it is empty
 	
 	if (A_ThisLabel = "GuiAddFromPopup" or A_ThisLabel = "GuiAddFromDropFiles")
 		; strCurrentLocation is received from AddThisFolder or GuiDropFiles
@@ -4693,8 +4681,6 @@ else
 	}
 }
 
-Gosub, GuiFavoriteIconDefault
-
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
 
@@ -4709,8 +4695,6 @@ Gui, 2:Add, Text, yp x+10 section
 Gui, 2:Add, Text, xs y10 w64 center vlblIcon gGuiPickIconDialog, %lDialogIcon%
 Gui, Add, Picture, % "xs+" . ((64-32)/2) . " y+5 w32 h32 vpicIcon gGuiPickIconDialog"
 Gui, Add, Text, x+5 yp vlblRemoveIcon gGuiRemoveIcon, X
-
-Gosub, GuiFavoriteIconDisplay
 
 if (A_ThisLabel = "GuiAddFavorite")
 {
@@ -4747,6 +4731,9 @@ else
 	GuiCenterButtons(L(lDialogAddEditFavoriteTitle, lDialogAdd, strAppName, strAppVersion), 10, 5, 20, , "btnAddFolderAdd", "btnAddFolderCancel")
 }
 
+Gosub, GuiFavoriteIconDefault
+Gosub, GuiFavoriteIconDisplay
+
 GuiControl, 2:Focus, strFavoriteShortName
 if (A_ThisLabel = "GuiEditFavorite")
 	SendInput, ^a
@@ -4779,39 +4766,45 @@ Gui, 2:Submit, NoHide
 
 if (blnRadioFolder)
 {
-	GuiControl, , lblShortName, %lDialogFolderShortName%
-	GuiControl, , lblFolder, %lDialogFolderLabel%
+	GuiControl, 2:, lblShortName, %lDialogFolderShortName%
+	GuiControl, 2:, lblFolder, %lDialogFolderLabel%
+	if StrLen(strFolderLocation) ; keep only folder name
+	{
+		SplitPath, strFolderLocation, , strFolderNameOnly, strFilenameExtension
+		if StrLen(strFilenameExtension)
+			GuiControl, 2:, strFolderLocation, %strFolderNameOnly%
+	}
 }
 else if (blnRadioFile)
 {
-	GuiControl, , lblShortName, %lDialogFileShortName%
-	GuiControl, , lblFolder, %lDialogFileLabel%
+	GuiControl, 2:, lblShortName, %lDialogFileShortName%
+	GuiControl, 2:, lblFolder, %lDialogFileLabel%
 }
 else if (blnRadioURL)
 {
-	GuiControl, , lblShortName, %lDialogURLShortName%
-	GuiControl, , lblFolder, %lDialogURLLabel%
+	GuiControl, 2:, lblShortName, %lDialogURLShortName%
+	GuiControl, 2:, lblFolder, %lDialogURLLabel%
 }
 else ; blnRadioSubmenu
 {
-	GuiControl, , lblShortName, %lDialogSubmenuShortName%
-	GuiControl, , strFolderLocation ; empty control
+	GuiControl, 2:, lblShortName, %lDialogSubmenuShortName%
+	GuiControl, 2:, strFolderLocation ; empty control
 }
 
-GuiControl, % (blnRadioSubmenu ? "Hide" : "Show"), lblFolder
-GuiControl, % (blnRadioSubmenu ? "Hide" : "Show"), strFolderLocation
-GuiControl, % (blnRadioSubmenu or blnRadioURL ? "Hide" : "Show"), btnSelectFolderLocation
+GuiControl, % "2:" . (blnRadioSubmenu ? "Hide" : "Show"), lblFolder
+GuiControl, % "2:" . (blnRadioSubmenu ? "Hide" : "Show"), strFolderLocation
+GuiControl, % "2:" . (blnRadioSubmenu or blnRadioURL ? "Hide" : "Show"), btnSelectFolderLocation
 
 Gosub, GuiFavoriteIconDefault
 strCurrentIconResource := strDefaultIconResource
 Gosub, GuiFavoriteIconDisplay
 
 if (blnRadioSubmenu or blnRadioURL)
-	GuiControl, +Default, btnAddFolderAdd
+	GuiControl, 2:+Default, btnAddFolderAdd
 else
-	GuiControl, +Default, btnSelectFolderLocation
+	GuiControl, 2:+Default, btnSelectFolderLocation
 
-GuiControl, Focus, strFavoriteShortName
+GuiControl, 2:Focus, strFavoriteShortName
 
 return
 ;------------------------------------------------------------
@@ -4862,12 +4855,6 @@ GuiPickIconDialog:
 Gui, 2:Submit, NoHide
 Gui, 2:+OwnDialogs
 
-###_D("GuiPickIconDialog BEFORE`n`n"
-	. "strDefaultIconResource: " . strDefaultIconResource . "`n"
-	. "strSavedIconResource: " . strSavedIconResource . "`n"
-	. "strCurrentIconResource: " . strCurrentIconResource
-	. "" )
-
 if (blnRadioFile and !StrLen(strFolderLocation))
 {
 	Oops(lPicIconNoLocation)
@@ -4894,15 +4881,16 @@ return
 ;------------------------------------------------------------
 GuiRemoveIcon:
 ;------------------------------------------------------------
-
-strCurrentIconResource := strDefaultIconResource
+Gui, 2:Submit, NoHide
 
 if (blnRadioFile)
 {
 	GetIcon4Location(strFolderLocation, strThisIconFile, intThisIconIndex)
-	if StrLen(strThisIconFile)
-		strCurrentIconResource := strThisIconFile . "," . intThisIconIndex
+	strCurrentIconResource := strThisIconFile . "," . intThisIconIndex
 }
+else
+	strCurrentIconResource := strDefaultIconResource
+
 Gosub, GuiFavoriteIconDisplay
 
 return
@@ -4912,6 +4900,7 @@ return
 ;------------------------------------------------------------
 GuiFavoriteIconDefault:
 ;------------------------------------------------------------
+Gui, 2:Submit, NoHide
 
 if (blnRadioSubmenu)
 	; default submenu icon
@@ -4923,29 +4912,16 @@ else if (blnRadioURL)
 	strDefaultIconResource := strThisIconFile . "," . intThisIconIndex
 }
 else if (blnRadioFile)
-	if StrLen(strFolderLocation)
-	{
-		; default icon for the selected file in add/edit favorite
-		GetIcon4Location(strFolderLocation, strThisIconFile, intThisIconIndex)
-		if StrLen(strThisIconFile)
-			strDefaultIconResource := strThisIconFile . "," . intThisIconIndex
-		else
-			strDefaultIconResource := objIconsFile["UnknownDocument"] . "," . objIconsIndex["UnknownDocument"]
-	}
-	else
-		; default icon for unknown or empty document
-		strDefaultIconResource := objIconsFile["UnknownDocument"] . "," . objIconsIndex["UnknownDocument"]
+{
+	; default icon for the selected file in add/edit favorite
+	GetIcon4Location(strFolderLocation, strThisIconFile, intThisIconIndex)
+	strDefaultIconResource := strThisIconFile . "," . intThisIconIndex
+}
 else ; blnRadioFolder
 	strDefaultIconResource := objIconsFile["Folder"] . "," . objIconsIndex["Folder"]
 
 if !StrLen(strCurrentIconResource)
 	strCurrentIconResource := strDefaultIconResource
-
-###_D("GuiFavoriteIconDefault`n`n"
-	. "strDefaultIconResource: " . strDefaultIconResource . "`n"
-	. "strSavedIconResource: " . strSavedIconResource . "`n"
-	. "strCurrentIconResource: " . strCurrentIconResource
-	. "" )
 
 return
 ;------------------------------------------------------------
@@ -4958,12 +4934,6 @@ GuiFavoriteIconDisplay:
 ParseIconResource(strCurrentIconResource, strThisIconFile, intThisIconIndex)
 GuiControl, , picIcon, *icon%intThisIconIndex% %strThisIconFile%
 GuiControl, % (strCurrentIconResource <> strDefaultIconResource ? "Show" : "Hide"), lblRemoveIcon
-
-###_D("GuiFavoriteIconDisplay`n`n"
-	. "strDefaultIconResource: " . strDefaultIconResource . "`n"
-	. "strSavedIconResource: " . strSavedIconResource . "`n"
-	. "strCurrentIconResource: " . strCurrentIconResource
-	. "" )
 
 return
 ;------------------------------------------------------------
@@ -6352,7 +6322,7 @@ IsColumnBreak(strMenuName)
 
 
 ;------------------------------------------------------------
-GetIcon4Location(strLocation, ByRef strDefaultIcon, ByRef intDefaultIcon)
+GetIcon4Location(strLocation, ByRef strDefaultIcon, ByRef intDefaultIcon, strDefaultType := "")
 ; get icon, extract from kiu http://www.autohotkey.com/board/topic/8616-kiu-icons-manager-quickly-change-icon-files/
 ;------------------------------------------------------------
 {
@@ -6363,7 +6333,7 @@ GetIcon4Location(strLocation, ByRef strDefaultIcon, ByRef intDefaultIcon)
 	if !StrLen(strLocation)
 	{
 		strDefaultIcon := objIconsFile["UnknownDocument"]
-		intDefaultIcon := objIconsFile["UnknownDocument"]
+		intDefaultIcon := objIconsIndex["UnknownDocument"]
 		return
 	}
 	
@@ -6384,7 +6354,7 @@ GetIcon4Location(strLocation, ByRef strDefaultIcon, ByRef intDefaultIcon)
 		return
 	}
 	
-	ParseIconResource(strRegistryIconResource, strDefaultIcon, intDefaultIcon)
+	ParseIconResource(strRegistryIconResource, strDefaultIcon, intDefaultIcon, strDefaultType)
 
 	if (blnDiagMode)
 	{
@@ -6396,19 +6366,28 @@ GetIcon4Location(strLocation, ByRef strDefaultIcon, ByRef intDefaultIcon)
 
 
 ;------------------------------------------------------------
-ParseIconResource(strIconResource, ByRef strIconFile, ByRef intIconIndex)
+ParseIconResource(strIconResource, ByRef strIconFile, ByRef intIconIndex, strDefaultType := "")
 ;------------------------------------------------------------
 {
-	If InString(strIconResource, ",") ; this is icongroup files
-	{
-		intIconResourceCommaPosition := InStr(strIconResource, ",", , 0) ; search reverse
-		StringLeft, strIconFile, strIconResource, % intIconResourceCommaPosition - 1
-		StringRight, intIconIndex, strIconResource, % StrLen(strIconResource) - intIconResourceCommaPosition
-	}
+	if !StrLen(strDefaultType)
+		strDefaultType := "UnknownDocument"
+	
+	if StrLen(strIconResource)
+		If InStr(strIconResource, ",") ; this is icongroup files
+		{
+			intIconResourceCommaPosition := InStr(strIconResource, ",", , 0) ; search reverse
+			StringLeft, strIconFile, strIconResource, % intIconResourceCommaPosition - 1
+			StringRight, intIconIndex, strIconResource, % StrLen(strIconResource) - intIconResourceCommaPosition
+		}
+		else
+		{
+			strIconFile := strIconResource
+			intIconIndex := 1
+		}
 	else
 	{
-		strIconFile := strIconResource
-		intIconIndex := 1
+		strThisIconFile := objIconsFile[strDefaultType]
+		intThisIconIndex := objIconsIndex[strDefaultType]
 	}
 }
 ;------------------------------------------------------------
