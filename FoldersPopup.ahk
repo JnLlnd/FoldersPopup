@@ -26,7 +26,8 @@ To-do for v4:
 
 
 	Version: 3.9.6 BETA (2014-11-??)
-	*
+	* support for system environment variables in favorite location (e.g.: APPDATA, LOCALAPPDATA, ProgramData, PUBLIC, TEMP, TMP, USERPROFILE)
+	* 
 
 	Version: 3.9.5 BETA (2014-11-15)
 	* display and select icon for folders, url and documents in add/edit favorite and in menu
@@ -2544,7 +2545,15 @@ GetLocationFor(strMenu, strName)
 	
 	Loop, % arrMenus[strMenu].MaxIndex()
 		if (strName = arrMenus[strMenu][A_Index].FavoriteName)
-			return arrMenus[strMenu][A_Index].FavoriteLocation
+		{
+			strLocation := arrMenus[strMenu][A_Index].FavoriteLocation
+			break
+		}
+
+	if InStr(strLocation, "%")
+		return EnvVars(strLocation)
+	else
+		return strLocation
 }
 ;------------------------------------------------------------
 
@@ -6393,6 +6402,24 @@ ParseIconResource(strIconResource, ByRef strIconFile, ByRef intIconIndex, strDef
 		strIconFile := objIconsFile[strDefaultType]
 		intIconIndex := objIconsIndex[strDefaultType]
 	}
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+EnvVars(str)
+; from Lexikos http://www.autohotkey.com/board/topic/40115-func-envvars-replace-environment-variables-in-text/#entry310601
+;------------------------------------------------------------
+{
+    if sz:=DllCall("ExpandEnvironmentStrings", "uint", &str
+                    , "uint", 0, "uint", 0)
+    {
+        VarSetCapacity(dst, A_IsUnicode ? sz*2:sz)
+        if DllCall("ExpandEnvironmentStrings", "uint", &str
+                    , "str", dst, "uint", sz)
+            return dst
+    }
+    return src
 }
 ;------------------------------------------------------------
 
