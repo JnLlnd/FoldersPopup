@@ -2,12 +2,9 @@
 Bugs:
 
 To-do for v4:
-- pick icon for documents
-- icons for folders
 
 - Optimize special folders clsid management (try x := window.Document.Folder.Self.Path)
 - Solve "Folders in Explorer" vs "Group of folders" issue
-- Continue custom icons for folders and documents
 - Write DOpus add-in to list folders including special folders
 - Save groups with special folders in DOpus to ini file
 - Load groups with special folders in DOpus from ini file
@@ -28,10 +25,11 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 3.9.5 BETA (2014-11-??)
-	* display and select icon in add favorite for url and documents
+	Version: 3.9.5 BETA (2014-11-15)
+	* display and select icon for folders, url and documents in add/edit favorite and in menu
 	* better error management around menu icon assignment, fix the *.msc bug
 	* use shell32.dll icon #1 for unknown icon
+	* fix a bug in Group menu for network locations
 	
 	Version: 3.9.4 BETA (2014-11-09)
 	* Swedish, German and Korean translations for new features in v3.9.1 and v3.9.2
@@ -4713,7 +4711,7 @@ if (blnRadioSubmenu)
 else
 {
 	Gui, 2:Add, Text, x10 w300 vlblFolder, % (blnRadioFile ? lDialogFileLabel : (blnRadioURL ? lDialogURLLabel : lDialogFolderLabel))
-	Gui, 2:Add, Edit, x10 w300 h20 vstrFolderLocation gEditFolderLocationChanged, %strCurrentLocation%
+	Gui, 2:Add, Edit, x10 w300 h20 vstrFavoriteLocation gEditFolderLocationChanged, %strCurrentLocation%
 	if !(blnRadioURL)
 		Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation default, %lDialogBrowseButton%
 }
@@ -4768,11 +4766,11 @@ if (blnRadioFolder)
 {
 	GuiControl, 2:, lblShortName, %lDialogFolderShortName%
 	GuiControl, 2:, lblFolder, %lDialogFolderLabel%
-	if StrLen(strFolderLocation) ; keep only folder name
+	if StrLen(strFavoriteLocation) ; keep only folder name
 	{
-		SplitPath, strFolderLocation, , strFolderNameOnly, strFilenameExtension
+		SplitPath, strFavoriteLocation, , strFolderNameOnly, strFilenameExtension
 		if StrLen(strFilenameExtension)
-			GuiControl, 2:, strFolderLocation, %strFolderNameOnly%
+			GuiControl, 2:, strFavoriteLocation, %strFolderNameOnly%
 	}
 }
 else if (blnRadioFile)
@@ -4788,11 +4786,11 @@ else if (blnRadioURL)
 else ; blnRadioSubmenu
 {
 	GuiControl, 2:, lblShortName, %lDialogSubmenuShortName%
-	GuiControl, 2:, strFolderLocation ; empty control
+	GuiControl, 2:, strFavoriteLocation ; empty control
 }
 
 GuiControl, % "2:" . (blnRadioSubmenu ? "Hide" : "Show"), lblFolder
-GuiControl, % "2:" . (blnRadioSubmenu ? "Hide" : "Show"), strFolderLocation
+GuiControl, % "2:" . (blnRadioSubmenu ? "Hide" : "Show"), strFavoriteLocation
 GuiControl, % "2:" . (blnRadioSubmenu or blnRadioURL ? "Hide" : "Show"), btnSelectFolderLocation
 
 Gosub, GuiFavoriteIconDefault
@@ -4840,7 +4838,7 @@ else
 if !(StrLen(strNewLocation))
 	return
 
-GuiControl, 2:, strFolderLocation, %strNewLocation%
+GuiControl, 2:, strFavoriteLocation, %strNewLocation%
 
 if !StrLen(strFavoriteShortName)
 	GuiControl, 2:, strFavoriteShortName, % GetDeepestFolderName(strNewLocation)
@@ -4855,7 +4853,7 @@ GuiPickIconDialog:
 Gui, 2:Submit, NoHide
 Gui, 2:+OwnDialogs
 
-if (blnRadioFile and !StrLen(strFolderLocation))
+if (blnRadioFile and !StrLen(strFavoriteLocation))
 {
 	Oops(lPicIconNoLocation)
 	return
@@ -4885,7 +4883,7 @@ Gui, 2:Submit, NoHide
 
 if (blnRadioFile)
 {
-	GetIcon4Location(strFolderLocation, strThisIconFile, intThisIconIndex)
+	GetIcon4Location(strFavoriteLocation, strThisIconFile, intThisIconIndex)
 	strCurrentIconResource := strThisIconFile . "," . intThisIconIndex
 }
 else
@@ -4914,7 +4912,7 @@ else if (blnRadioURL)
 else if (blnRadioFile)
 {
 	; default icon for the selected file in add/edit favorite
-	GetIcon4Location(strFolderLocation, strThisIconFile, intThisIconIndex)
+	GetIcon4Location(strFavoriteLocation, strThisIconFile, intThisIconIndex)
 	strDefaultIconResource := strThisIconFile . "," . intThisIconIndex
 }
 else ; blnRadioFolder
@@ -4960,7 +4958,7 @@ if IsColumnBreak(strFavoriteShortName)
 	return
 }
 
-if  ((blnRadioFolder or blnRadioFile or blnRadioURL) and !StrLen(strFolderLocation))
+if  ((blnRadioFolder or blnRadioFile or blnRadioURL) and !StrLen(strFavoriteLocation))
 {
 	Oops(lDialogFavoriteLocationEmpty)
 	return
@@ -4985,7 +4983,7 @@ if (blnRadioSubmenu)
 	
 	if (A_ThisLabel = "GuiAddFavoriteSave")
 	{
-		strFolderLocation := lGuiSubmenuLocation
+		strFavoriteLocation := lGuiSubmenuLocation
 		
 		arrNewMenu := Object() ; array of folders of the new menu
 		arrMenus.Insert(strNewSubmenuFullName, arrNewMenu)
@@ -5009,7 +5007,7 @@ if (strParentMenu = strCurrentMenu) ; add as top row to current menu
 	if (A_ThisLabel = "GuiAddFavoriteSave")
 	{
 		LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus"
-			, strFavoriteShortName, strFolderLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType, strCurrentIconResource)
+			, strFavoriteShortName, strFavoriteLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType, strCurrentIconResource)
 		LV_Modify(LV_GetNext(), "Vis")
 	
 		Gosub, SaveCurrentListviewToMenuObject ; save current LV tbefore update the dropdown menu
@@ -5018,7 +5016,7 @@ if (strParentMenu = strCurrentMenu) ; add as top row to current menu
 	else ; GuiEditFavoriteSave
 	{
 		LV_Modify(intRowToEdit, "Select Focus"
-			, strFavoriteShortName, strFolderLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType, strCurrentIconResource)
+			, strFavoriteShortName, strFavoriteLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType, strCurrentIconResource)
 	}
 }
 else ; add menu item to selected menu object
@@ -5026,7 +5024,7 @@ else ; add menu item to selected menu object
 	objFavorite := Object() ; new menu item
 	objFavorite.MenuName := strParentMenu ; parent menu of this menu item
 	objFavorite.FavoriteName := strFavoriteShortName ; display name of this menu item
-	objFavorite.FavoriteLocation := strFolderLocation ; path for this menu item
+	objFavorite.FavoriteLocation := strFavoriteLocation ; path for this menu item
 	objFavorite.SubmenuFullName := strNewSubmenuFullName ; full name of the submenu
 	objFavorite.FavoriteType := strFavoriteType ; "F" folder, "D" document, "U" for URL or "S" submenu
 	objFavorite.IconResource := strCurrentIconResource ; icon resource in format "iconfile,iconindex"
