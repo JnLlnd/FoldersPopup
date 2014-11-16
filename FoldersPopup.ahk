@@ -25,6 +25,9 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 3.9.6 BETA (2014-11-??)
+	*
+
 	Version: 3.9.5 BETA (2014-11-15)
 	* display and select icon for folders, url and documents in add/edit favorite and in menu
 	* better error management around menu icon assignment, fix the *.msc bug
@@ -483,7 +486,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 3.9.5 BETA
+;@Ahk2Exe-SetVersion 3.9.6 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -521,7 +524,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.9.5" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "3.9.6" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
