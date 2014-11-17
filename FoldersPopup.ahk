@@ -3,6 +3,7 @@ Bugs:
 
 To-do for v4:
 
+- Merge PopupMenuNewWindowMouse, PopupMenuNewWindowKeyboard, PopupMenuMouse, PopupMenuKeyboard ?
 - Optimize special folders clsid management (try x := window.Document.Folder.Self.Path)
 - Solve "Folders in Explorer" vs "Group of folders" issue
 - Write DOpus add-in to list folders including special folders
@@ -568,7 +569,8 @@ Gosub, LoadTheme
 ; build even if blnDisplaySpecialFolders or blnDisplaySwitchMenu are false because they could become true
 ; no need to build Recent folders menu at startup since this menu is refreshed on demand
 Gosub, BuildSpecialFoldersMenu
-Gosub, BuildGroupMenu ; need to be initialized here - will be updated at each call to popup menu
+Gosub, BuildFoldersInExplorerMenu ; need to be initialized here - will be updated at each call to popup menu
+Gosub, BuildGroupMenu
 Gosub, BuildFavoritesMenus
 Gosub, BuildGui
 Gosub, Check4Update
@@ -612,6 +614,7 @@ DllCall("CreateMutex", "uint", 0, "int", false, "str", strAppName . "Mutex")
 ; Gosub, GuiAddFromDropFiles
 ; Gosub, GuiEditFavorite
 ; Gosub, PopupMenuNewWindowKeyboard
+; Gosub, BuildFoldersInExplorerMenu
 ; Gosub, BuildGroupMenu
 ; Gosub, GuiGroupSaveFromMenu
 ; Gosub, GuiGroupsManage
@@ -1426,7 +1429,7 @@ return
 
 
 ;------------------------------------------------------------
-BuildGroupMenu:
+BuildFoldersInExplorerMenu:
 ;------------------------------------------------------------
 
 if (blnUseDirectoryOpus)
@@ -1458,47 +1461,52 @@ if (blnUseTotalCommander)
 objExplorersWindows := Object()
 CollectExplorers(objExplorersWindows, ComObjCreate("Shell.Application").Windows)
 
-objGroupMenuExplorers := Object()
+objFoldersInExplorers := Object()
 
-intExplorersIndex := 0
-intExplorersExist := 0 ; used in PopupMenu and SaveGroup to check if we disable menu or button when empty
+intExplorersIndex := 0 ; used in PopupMenu and SaveGroup to check if we disable menu or button when empty
 
 if (blnUseDirectoryOpus)
 	for intIndex, objLister in objDOpusListers
 	{
-		; if popup menu is for dialog box and we have no path or have a collection, skip it
-		if (WindowIsDialog(strTargetClass, strTargetWinId) and !(blnNewWindow))
-			and (!StrLen(objLister.Path) or InStr(objLister.Path, "coll://"))
+		; if we have no path, skip it
+		if !StrLen(objLister.Path)
 			continue
 		
-		if !NameAndTypeIsInObject(objLister.Path, "DO", objGroupMenuExplorers)
-			intExplorersIndex := intExplorersIndex + 1
-			
-		objGroupMenuExplorer := Object()
-		objGroupMenuExplorer.Path := objLister.Path
-		if InStr(objLister.Path, "Lister-Quick-Find-Results")
-			objGroupMenuExplorer.Name := "Directory Opus Quick Find Results (" . intExplorersIndex . ")"
-		else if InStr(objLister.Path, "coll://")
-			objGroupMenuExplorer.Name := "Directory Opus Collection (" . intExplorersIndex . ")"
-		else
-			objGroupMenuExplorer.Name := objLister.Path
-		objGroupMenuExplorer.WindowId := objLister.Lister
-		objGroupMenuExplorer.TabId := objLister.Tab
-		objGroupMenuExplorer.Position := objLister.Position
-		objGroupMenuExplorer.MinMax := objLister.MinMax
-		objGroupMenuExplorer.Pane := (objLister.Pane = 0 ? 1 : objLister.Pane) ; consider pane 0 as pane 1
-		objGroupMenuExplorer.WindowType := "DO"
-		; if FileExist(objGroupMenuExplorer.Name) ### check
-		intExplorersExist := intExplorersExist + 1
+		; if popup menu is not for DOpus and we have a collection, skip it
+		if (!WindowIsDirectoryOpus(strTargetClass) and !(blnNewWindow))
+			and InStr(objLister.Path, "coll://")
+			continue
 		
-		objGroupMenuExplorers.Insert(intExplorersIndex, objGroupMenuExplorer)
+		if NameIsInObject(objLister.Path, objFoldersInExplorers)
+			continue
+		
+		intExplorersIndex := intExplorersIndex + 1
+			
+		objFolderInExplorer := Object()
+		objFolderInExplorer.Path := objLister.Path
+		if InStr(objLister.Path, "coll://") ; ### check if this is supported
+			objFolderInExplorer.Name := "Directory Opus Collection (" . intExplorersIndex . ")"
+		else
+			objFolderInExplorer.Name := objLister.Path
+		
+		; used?
+		objFolderInExplorer.WindowId := objLister.Lister
+		
+		; info used to create groups
+		objFolderInExplorer.TabId := objLister.Tab
+		objFolderInExplorer.Position := objLister.Position
+		objFolderInExplorer.MinMax := objLister.MinMax
+		objFolderInExplorer.Pane := (objLister.Pane = 0 ? 1 : objLister.Pane) ; consider pane 0 as pane 1
+		objFolderInExplorer.WindowType := "DO"
+		
+		objFoldersInExplorers.Insert(intExplorersIndex, objFolderInExplorer)
 	}
 
 /* when TC tabs resolved
 if (blnUseTotalCommander)
 	for intIndex, objTCList in objTCLists
 	{
-		if !NameIsInObject(objTCList.Path, objGroupMenuExplorers)
+		if !NameIsInObject(objTCList.Path, objFoldersInExplorers)
 		{
 			intExplorersIndex := intExplorersIndex + 1
 			
@@ -1510,76 +1518,54 @@ if (blnUseTotalCommander)
 			objGroupMenuExplorer.MinMax := objTCList.MinMax
 			objGroupMenuExplorer.Pane := objTCList.Pane
 			objGroupMenuExplorer.WindowType := "TC"
-			if FileExist(objGroupMenuExplorer.Name)
-				intExplorersExist := intExplorersExist + 1
 			
-			objGroupMenuExplorers.Insert(intExplorersIndex, objGroupMenuExplorer)
+			objFoldersInExplorers.Insert(intExplorersIndex, objGroupMenuExplorer)
 		}
 	}
 */
 
-for intIndex, objExplorer in objExplorersWindows
+for intIndex, objFolder in objExplorersWindows
 {
-	; if popup menu is for dialog box and we have no path, skip it
-	if (WindowIsDialog(strTargetClass, strTargetWinId) and !(blnNewWindow))
-		and !StrLen(objExplorer.LocationURL)
+	; if we have no path, skip it
+	if !StrLen(objFolder.LocationURL)
 		continue
 		
-	if !NameAndTypeIsInObject(objExplorer.LocationName, "EX", objGroupMenuExplorers)
-		intExplorersIndex := intExplorersIndex + 1
-		
-	objGroupMenuExplorer := Object()
-	objGroupMenuExplorer.Path := objExplorer.LocationURL
-	objGroupMenuExplorer.Name := objExplorer.LocationName
-	objGroupMenuExplorer.IsSpecialFolder := objExplorer.IsSpecialFolder
-	objGroupMenuExplorer.WindowId := objExplorer.WindowId
-	objGroupMenuExplorer.Position := objExplorer.Position
-	objGroupMenuExplorer.MinMax := objExplorer.MinMax
-	objGroupMenuExplorer.WindowType := "EX"
-	; if FileExist(objGroupMenuExplorer.Name) or (objGroupMenuExplorer.IsSpecialFolder) ### check
-		intExplorersExist := intExplorersExist + 1
+	if NameIsInObject(objFolder.LocationName, objFoldersInExplorers)
+		continue
+	
+	intExplorersIndex := intExplorersIndex + 1
+	
+	objFolderInExplorer := Object()
+	objFolderInExplorer.Path := objFolder.LocationURL
+	objFolderInExplorer.Name := objFolder.LocationName
+	objFolderInExplorer.IsSpecialFolder := objFolder.IsSpecialFolder
+	
+	; used?
+	objFolderInExplorer.WindowId := objFolder.WindowId
 
-	objGroupMenuExplorers.Insert(intExplorersIndex, objGroupMenuExplorer)
+	; info used to create groups
+	objFolderInExplorer.Position := objFolder.Position
+	objFolderInExplorer.MinMax := objFolder.MinMax
+	objFolderInExplorer.WindowType := "EX"
+
+	objFoldersInExplorers.Insert(intExplorersIndex, objFolderInExplorer)
+	; ###_D(objFolder.LocationURL)
 }
 
 Menu, menuFoldersInExplorer, Add
 Menu, menuFoldersInExplorer, DeleteAll
 Menu, menuFoldersInExplorer, Color, %strMenuBackgroundColor%
 
-Menu, menuGroup, Add
-Menu, menuGroup, DeleteAll
-Menu, menuGroup, Color, %strMenuBackgroundColor%
+intShortcutFoldersInExplorer := 0
+objLocationUrlByName := Object()
 
-intShortcutGroup := 0
-
-for intIndex, objGroupMenuExplorer in objGroupMenuExplorers
+for intIndex, objFolderInExplorer in objFoldersInExplorers
 {
-	strMenuName := (blnDisplayMenuShortcuts and (intShortcutGroup <= 35) ? "&" . NextMenuShortcut(intShortcutGroup, false) . " " : "") . objGroupMenuExplorer.Name
-	
-	if !WindowIsDialog(strTargetClass, strTargetWinId) or (blnNewWindow)
-		AddMenuIcon("menuGroup"
-			, strMenuName . (objGroupMenuExplorer.WindowType = "DO" ? " (DOpus)" : (objGroupMenuExplorer.WindowType = "TC" ? " (TC)" : ""))
-			, "SwitchExplorer"
-			, (objGroupMenuExplorer.WindowType = "DO" ? "DirectoryOpus" : (objGroupMenuExplorer.WindowType = "TC" ? "TotalCommander" : "menuGroupExplorer")))
-	else
-		AddMenuIcon("menuGroup", strMenuName, "SwitchDialog", "menuGroupDialog")
-	
-	AddMenuIcon("menuFoldersInExplorer", strMenuName, "OpenFolderInExplorer", "lMenuFoldersInExplorer")
+	strMenuName := (blnDisplayMenuShortcuts and (intShortcutFoldersInExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutFoldersInExplorer, false) . " " : "") . objFolderInExplorer.Name
+	; ###_D(strMenuName . " / " . objFolderInExplorer.Path)
+	objLocationUrlByName.Insert(strMenuName, objFolderInExplorer.Path) ; can include the numeric shortcut
+	AddMenuIcon("menuFoldersInExplorer", strMenuName, "OpenFolderInExplorer", "Folder")
 }
-
-Menu, menuGroupsList, Add
-Menu, menuGroupsList, DeleteAll
-Menu, menuGroupsList, Color, %strMenuBackgroundColor%
-
-Loop, Parse, strGroups, |
-{
-	IniRead, blnReplaceWhenRestoringThisGroup, %striniFile%, Group-%A_LoopField%, ReplaceWhenRestoringThisGroup, %A_Space% ; empty if not found
-	AddMenuIcon("menuGroupsList", A_LoopField . " (" . (blnReplaceWhenRestoringThisGroup ? lMenuGroupReplace : lMenuGroupAdd) . ")" , "GroupLoad", "lMenuGroup")
-}
-if (intExplorersIndex)
-	Menu, menuGroup, Add
-AddMenuIcon("menuGroup", lMenuGroupSave, "GuiGroupSaveFromMenu", "menuGroupSave")
-AddMenuIcon("menuGroup", lMenuGroupLoad, ":menuGroupsList", "menuGroupLoad")
 
 objDOpusListers := 
 objExplorersWindows :=
@@ -1589,9 +1575,34 @@ return
 
 
 ;------------------------------------------------------------
+BuildGroupMenu:
+;------------------------------------------------------------
+
+Menu, menuGroups, Add
+Menu, menuGroups, DeleteAll
+Menu, menuGroups, Color, %strMenuBackgroundColor%
+
+AddMenuIcon("menuGroup", lMenuGroupSave, "GuiGroupSaveFromMenu", "menuGroupSave")
+if (intExplorersIndex)
+	Menu, menuGroup, Add
+
+intShortcutGroups := 0
+Loop, Parse, strGroups, |
+{
+	IniRead, blnReplaceWhenRestoringThisGroup, %striniFile%, Group-%A_LoopField%, ReplaceWhenRestoringThisGroup, %A_Space% ; empty if not found
+	AddMenuIcon("menuGroups", A_LoopField . " (" . (blnReplaceWhenRestoringThisGroup ? lMenuGroupReplace : lMenuGroupAdd) . ")" , "GroupLoad", "lMenuGroup")
+}
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 CollectExplorers(objExplorers, pExplorers)
 ;------------------------------------------------------------
 {
+	intExplorers := 0
+	
 	For pExplorer in pExplorers
 	; see http://msdn.microsoft.com/en-us/library/windows/desktop/aa752084(v=vs.85).aspx
 	{
@@ -1605,6 +1616,7 @@ CollectExplorers(objExplorers, pExplorers)
 		
 		if !StrLen(strType)
 		{
+			intExplorers := intExplorers + 1
 			/*
 			###_D(""
 				. "pExplorer.LocationURL: !" . pExplorer.LocationURL . "!`n"
@@ -1615,10 +1627,14 @@ CollectExplorers(objExplorers, pExplorers)
 			*/
 			objExplorer := Object()
 			objExplorer.Position := pExplorer.Left . "|" . pExplorer.Top . "|" . pExplorer.Width . "|" . pExplorer.Height
-			
+
 			objExplorer.IsSpecialFolder := !StrLen(pExplorer.LocationURL) ; empty for special folders like Recycle bin
-			if  (objExplorer.IsSpecialFolder)
+			
+			if (objExplorer.IsSpecialFolder)
+			{
+				objExplorer.LocationURL := pExplorer.Document.Folder.Self.Path
 				objExplorer.LocationName := pExplorer.LocationName ; see http://msdn.microsoft.com/en-us/library/aa752084#properties
+			}
 			else
 			{
 				objExplorer.LocationURL := pExplorer.LocationURL
@@ -1628,12 +1644,11 @@ CollectExplorers(objExplorers, pExplorers)
 				objExplorer.LocationName := strLocationName
 			}
 			
-			objExplorer.WindowId := pExplorer.HWND
+			objExplorer.WindowId := pExplorer.HWND ; ### used?
 			WinGet, intMinMax, MinMax, % "ahk_id " . pExplorer.HWND
 			objExplorer.MinMax := intMinMax
 			
-			if StrLen(pExplorer.HWND)
-				objExplorers.Insert(A_Index, objExplorer)
+			objExplorers.Insert(intExplorers, objExplorer) ; ### I was checking if empty - any reason?
 		}
 	}
 }
@@ -1768,11 +1783,11 @@ ParseDOpusListerProperty(strSource, strProperty)
 
 
 ;------------------------------------------------------------
-NameAndTypeIsInObject(strName, strType, obj)
+NameIsInObject(strName, obj)
 ;------------------------------------------------------------
 {
 	loop, % obj.MaxIndex()
-		if (strName = obj[A_Index].Name) and (strType = obj[A_Index].WindowType)
+		if (strName = obj[A_Index].Name)
 			return true
 		
 	return false
@@ -2096,7 +2111,7 @@ If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass, strTargetContro
 }
 
 blnMouse := InStr(A_ThisLabel, "Mouse")
-blnNewWindow := false ; used in SetMenuPosition and BuildGroupMenu
+blnNewWindow := false ; used in SetMenuPosition and BuildFoldersInExplorerMenu
 Gosub, SetMenuPosition ; sets strTargetWinId or activate the window strTargetWinId set by CanOpenFavorite
 
 if (A_ThisLabel = "PopupMenuMouse") and (WindowIsDirectoryOpus(strTargetClass) or WindowIsTotalCommander(strTargetClass))
@@ -2128,17 +2143,20 @@ if (blnDisplaySpecialFolders)
 		, %lMenuRecycleBin%
 }
 
-if (blnDisplayGroupMenu or blnDisplayFoldersInExplorerMenu)
-	Gosub, BuildGroupMenu
+if (blnDisplayFoldersInExplorerMenu)
+	Gosub, BuildFoldersInExplorerMenu
+
+; ### not needed if refreshed after group add/manage if (blnDisplayGroupMenu)
+;	Gosub, BuildGroupMenu
 
 if (blnDisplayFoldersInExplorerMenu)
 	Menu, %lMainMenuName%
-		, % (!intExplorersExist ? "Disable" : "Enable") ; disable Folders in Explorer menu if no Explorer
+		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Folders in Explorer menu if no Explorer
 		, %lMenuFoldersInExplorer%
 
 if (blnDisplayGroupMenu)
 	Menu, menuGroup
-		, % (!intExplorersExist ? "Disable" : "Enable") ; disable Save group menu if no Explorer
+		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Save group menu if no Explorer
 		, %lMenuGroupSave%
 
 if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass)
@@ -2177,7 +2195,7 @@ if !(blnMenuReady)
 	return
 
 blnMouse := InStr(A_ThisLabel, "Mouse")
-blnNewWindow := true ; used in SetMenuPosition and BuildGroupMenu
+blnNewWindow := true ; used in SetMenuPosition and BuildFoldersInExplorerMenu
 Gosub, SetMenuPosition ; sets strTargetWinId
 
 WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
@@ -2209,17 +2227,20 @@ if (blnDisplaySpecialFolders)
 	Menu, menuSpecialFolders, Enable, %lMenuRecycleBin%
 }
 
-if (blnDisplayGroupMenu or blnDisplayFoldersInExplorerMenu)
-	Gosub, BuildGroupMenu
+if (blnDisplayFoldersInExplorerMenu)
+	Gosub, BuildFoldersInExplorerMenu
+
+; ### not needed if refreshed after group add/manage if (blnDisplayGroupMenu)
+;	Gosub, BuildGroupMenu
 
 if (blnDisplayFoldersInExplorerMenu)
 	Menu, %lMainMenuName%
-		, % (!intExplorersExist ? "Disable" : "Enable") ; disable Folders in Explorer menu if no Explorer
+		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Folders in Explorer menu if no Explorer
 		, %lMenuFoldersInExplorer%
 
 if (blnDisplayGroupMenu)
 	Menu, menuGroup
-		, % (!intExplorersExist ? "Disable" : "Enable") ; disable Save group menu if no Explorer
+		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Save group menu if no Explorer
 		, %lMenuGroupSave%
 
 ; Enable "Add This Folder" only if the target window is an Explorer (tested on WIN_XP and WIN_7)
@@ -2426,15 +2447,37 @@ WindowIsDirectoryOpus(strClass)
 
 ;------------------------------------------------------------
 OpenFavorite:
+OpenRecentFolder:
+OpenFolderInExplorer:
 ;------------------------------------------------------------
 
-if (blnDisplayMenuShortcuts)
-	StringTrimLeft, strThisMenu, A_ThisMenuItem, 3 ; remove "&1 " from menu item
-else
-	strThisMenu := A_ThisMenuItem
-strLocation := GetLocationFor(A_ThisMenu, strThisMenu)
-strFavoriteType := GetFavoriteTypeFor(A_ThisMenu, strThisMenu)
-
+if (A_ThisLabel = "OpenRecentFolder")
+{
+	strLocation := objRecentFolders[A_ThisMenuItemPos]
+	strFavoriteType := "F" ; folder
+}
+else if (A_ThisLabel = "OpenFolderInExplorer")
+{
+	If (InStr(objLocationUrlByName[A_ThisMenuItem], "::") = 1) ; can include the numeric shortcut
+		strLocation := "shell:" . objLocationUrlByName[A_ThisMenuItem]
+	else
+	{
+		if (blnDisplayMenuShortcuts)
+			StringTrimLeft, strLocation, A_ThisMenuItem, 3 ; remove "&1 " from menu item
+		else
+			strLocation :=  A_ThisMenuItem
+	}
+	strFavoriteType := "F" ; folder
+}
+else ; this is a favorite
+{
+	if (blnDisplayMenuShortcuts)
+		StringTrimLeft, strThisMenu, A_ThisMenuItem, 3 ; remove "&1 " from menu item
+	else
+		strThisMenu := A_ThisMenuItem
+	strLocation := GetLocationFor(A_ThisMenu, strThisMenu)
+	strFavoriteType := GetFavoriteTypeFor(A_ThisMenu, strThisMenu)
+}
 if (blnDiagMode)
 {
 	Diag("A_ThisHotkey", A_ThisHotkey)
@@ -2443,8 +2486,9 @@ if (blnDiagMode)
 	Diag("FavoriteType", strFavoriteType)
 }
 
-if !FileExist(strLocation) ; this favorite does not exist
-	if (strFavoriteType <> "U") ;  and this is not an URL
+if !FileExist(strLocation)
+	and !((InStr(objLocationUrlByName[A_ThisMenuItem], "::") = 1) or (strFavoriteType = "U"))
+	; this favorite does not exist and it is not a special folder or an URL
 	{
 		Gui, 1:+OwnDialogs
 		MsgBox, 0, % L(lDialogFavoriteDoesNotExistTitle, strAppName)
@@ -2735,86 +2779,6 @@ return
 
 
 ;------------------------------------------------------------
-OpenRecentFolder:
-OpenFolderInExplorer:
-;------------------------------------------------------------
-
-if (A_ThisLabel = "OpenRecentFolder")
-	strThisFolderName := objRecentFolders[A_ThisMenuItemPos]
-else
-	If StrLen(objClassIdByLocalizedName[A_ThisMenuItem])
-		strThisFolderName := "shell:::" . objClassIdByLocalizedName[A_ThisMenuItem]
-	else
-		strThisFolderName :=  A_ThisMenuItem
-
-if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
-	if (blnUseDirectoryOpus)
-	{
-		RunDOpusRt("/acmd Go ", strThisFolderName, " " . strDirectoryOpusNewTabOrWindow) ; open in a new lister or tab
-		WinActivate, ahk_class dopus.lister
-	}
-	else if (blnUseTotalCommander)
-		NewTotalCommander(strThisFolderName, strTargetWinId, strTargetControl)
-	else
-		; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
-		ComObjCreate("Shell.Application").Explore(strThisFolderName)
-else if WindowIsAnExplorer(strTargetClass)
-	NavigateExplorer(strThisFolderName, strTargetWinId)
-else if WindowIsDirectoryOpus(strTargetClass)
-	if (blnUseDirectoryOpus)
-		RunDOpusRt("/aCmd Go", strThisFolderName) ; navigate the current lister
-	else
-		NavigateExplorer(strThisFolderName, strTargetWinId)
-else ; this is the console, FreeCommander or a dialog box
-	if WindowIsConsole(strTargetClass)
-		NavigateConsole(strThisFolderName, strTargetWinId)
-	else if WindowIsFreeCommander(strTargetClass)
-		NavigateFreeCommander(strThisFolderName, strTargetWinId, strTargetControl)
-	else if WindowIsTotalCommander(strTargetClass)
-	if (blnUseTotalCommander)
-		NavigateTotalCommander(strThisFolderName, strTargetWinId, strTargetControl)
-	else
-		NavigateExplorer(strThisFolderName, strTargetWinId)
-	else
-		NavigateDialog(strThisFolderName, strTargetWinId, strTargetClass)
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-SwitchExplorer:
-;------------------------------------------------------------
-
-if (objGroupMenuExplorers[A_ThisMenuItemPos].WindowType = "DO") ; this is a DOpus lister
-{
-	if InStr(objGroupMenuExplorers[A_ThisMenuItemPos].Path, "%")
-	{
-		; double % for DOpusRT (http://resource.dopus.com/viewtopic.php?f=3&t=23013#p124395)
-		strDOpusPathOK := objGroupMenuExplorers[A_ThisMenuItemPos].Path
-		StringReplace, strDOpusPathOK, strDOpusPathOK, % "%", % "%%", A
-		objGroupMenuExplorers[A_ThisMenuItemPos].Path := strDOpusPathOK
-	}
-	RunDOpusRt("/acmd Go ", objGroupMenuExplorers[A_ThisMenuItemPos].Path, " EXISTINGLISTER") ; activate an existing lister listing this path
-}
-else ; Explorer
-	WinActivate, % "ahk_id " . objGroupMenuExplorers[A_ThisMenuItemPos].WindowId
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-SwitchDialog:
-;------------------------------------------------------------
-
-NavigateDialog(objGroupMenuExplorers[A_ThisMenuItemPos].Path, strTargetWinId, strTargetClass)
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
 GuiGroupSaveFromMenu:
 GuiGroupSaveFromManage:
 GuiGroupEditFromManage:
@@ -2861,7 +2825,7 @@ if (A_ThisLabel = "GuiGroupEditFromManage")
 }
 else
 {
-	for intIndex, objGroupMenuExplorer in objGroupMenuExplorers
+	for intIndex, objGroupMenuExplorer in objFoldersInExplorers
 	{
 		arrExplorerPosition := objGroupMenuExplorer.Position
 		StringSplit, arrExplorerPosition, arrExplorerPosition, "|"
@@ -2976,13 +2940,13 @@ Loop
 	intRow := LV_GetNext(intRow, "Checked")
     if !(intRow)
         break
-	IniWrite, % objGroupMenuExplorers[intRow].Name
-		. "|" . objGroupMenuExplorers[intRow].WindowType
-		. "|" . objGroupMenuExplorers[intRow].MinMax
-		. "|" . objGroupMenuExplorers[intRow].Position
-		. "|" . objGroupMenuExplorers[intRow].Pane
-		. "|" . objGroupMenuExplorers[intRow].WindowId
-		. "|" . objGroupMenuExplorers[intRow].IsSpecialFolder
+	IniWrite, % objFoldersInExplorers[intRow].Name
+		. "|" . objFoldersInExplorers[intRow].WindowType
+		. "|" . objFoldersInExplorers[intRow].MinMax
+		. "|" . objFoldersInExplorers[intRow].Position
+		. "|" . objFoldersInExplorers[intRow].Pane
+		. "|" . objFoldersInExplorers[intRow].WindowId
+		. "|" . objFoldersInExplorers[intRow].IsSpecialFolder
 		, %strIniFile%, Group-%strGroupSaveName%, Explorer%A_Index%
 }
 
@@ -3231,16 +3195,16 @@ Loop
 
 	StringSplit, arrThisExplorer, strExplorer, |
 
-	;  1	objGroupMenuExplorers[intRow].Name
-	;  2	objGroupMenuExplorers[intRow].WindowType
-	;  3	objGroupMenuExplorers[intRow].MinMax
-	;  4	objGroupMenuExplorers[intRow].Left
-	;  5	objGroupMenuExplorers[intRow].Top
-	;  6	objGroupMenuExplorers[intRow].Width
-	;  7	objGroupMenuExplorers[intRow].Height
-	;  8	objGroupMenuExplorers[intRow].Pane
-	;  9	objGroupMenuExplorers[intRow].WindowId
-	; 10	objGroupMenuExplorers[intRow].IsSpecialFolder
+	;  1	objFoldersInExplorers[intRow].Name
+	;  2	objFoldersInExplorers[intRow].WindowType
+	;  3	objFoldersInExplorers[intRow].MinMax
+	;  4	objFoldersInExplorers[intRow].Left
+	;  5	objFoldersInExplorers[intRow].Top
+	;  6	objFoldersInExplorers[intRow].Width
+	;  7	objFoldersInExplorers[intRow].Height
+	;  8	objFoldersInExplorers[intRow].Pane
+	;  9	objFoldersInExplorers[intRow].WindowId
+	; 10	objFoldersInExplorers[intRow].IsSpecialFolder
 	
 	objIniEntry := Object()
 	objIniEntry.Name := arrThisExplorer1
@@ -4060,7 +4024,7 @@ GuiGroupsManage:
 
 intWidth := 350
 
-Gosub, BuildGroupMenu ; refresh explorers object and intExplorersExist counter
+Gosub, BuildFoldersInExplorerMenu ; refresh explorers object and intExplorersIndex counter
 
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
@@ -4083,10 +4047,10 @@ Gui, 2:Font
 strUseMenuSave := lMenuGroup . " > " . lMenuGroupSave
 Gui, 2:Add, Text, x10 y+10 w%intWidth%, % L(lDialogGroupManageCreatingPrompt, lDialogGroupNew, strUseMenuSave)
 Gui, 2:Add, Button, x10 y+10 vbtnGroupManageNew gGuiGroupManageNew, %lDialogGroupNew%
-GuiControl, % (!intExplorersExist ? "Disable" : "Enable") ; disable Save group menu if no Explorer
+GuiControl, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Save group menu if no Explorer
 	, btnGroupManageNew
 GuiCenterButtons(L(lDialogGroupManageGroupsTitle, strAppName, strAppVersion), , , , , "btnGroupManageNew")
-if !(intExplorersExist)
+if !(intExplorersIndex)
 	Gui, 2:Add, Text, x10 y+10 w%intWidth%, %lDialogGroupManageCannotSave%
 
 Gui, 2:Font, w600 
@@ -4388,7 +4352,8 @@ if (blnSaveEnabled)
 		
 		; restore popup menu
 		Gosub, BuildSpecialFoldersMenu
-		Gosub, BuildGroupMenu
+		Gosub, BuildFoldersInExplorerMenu
+		; ### not needed if refreshed after group add/manage Gosub, BuildGroupMenu
 		Gosub, BuildFavoritesMenus ; need to be initialized here - will be updated at each call to popup menu
 
 		GuiControl, Disable, btnGuiSave
@@ -5483,6 +5448,7 @@ if (strLanguageCodePrev <> strLanguageCode) or (strThemePrev <> strTheme)
 
 ; else rebuild special and Group menus
 Gosub, BuildSpecialFoldersMenu
+Gosub, BuildFoldersInExplorerMenu
 Gosub, BuildGroupMenu
 
 ; and rebuild Folders menus w/ or w/o optional folders and shortcuts
