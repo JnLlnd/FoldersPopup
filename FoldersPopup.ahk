@@ -11,6 +11,9 @@ To-do for v4:
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: 3.3.1 (2014-11-17)
+	* fix a bug occurring in some situation when a favorite location contains a comma
+	
 	Version: 3.3 (2014-10-24)
 	
 	TotalCommander integration
@@ -417,7 +420,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 3.3
+;@Ahk2Exe-SetVersion 3.3.1
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -478,7 +481,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.3" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "3.3.1" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -3968,7 +3971,7 @@ if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetCla
 		if (A_OSVersion = "WIN_XP")
 			ComObjCreate("Shell.Application").Explore(strLocation)
 		else
-			Run, Explorer %strLocation%
+			Run, Explorer "%strLocation%"
 	; http://msdn.microsoft.com/en-us/library/bb774094
 	; ComObjCreate("Shell.Application").Explore(strLocation)
 	; ComObjCreate("WScript.Shell").Exec("Explorer.exe /e /select," . strLocation) ; not tested on XP
