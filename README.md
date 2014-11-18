@@ -13,6 +13,9 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### Version: 3.3.1 (2014-11-17)
+* fix a bug occurring in some situation when a favorite location contains a comma
+
 ### Version: 3.3 (2014-10-24)
 	
 TotalCommander integration
