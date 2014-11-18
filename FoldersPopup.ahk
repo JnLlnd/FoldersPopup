@@ -1,5 +1,6 @@
 /*
 Bugs:
+- check double-quotes need in Run command
 
 To-do for v4:
 
@@ -82,6 +83,9 @@ To-do for v4:
 	* Fix a bug with labels when changing the hotkey for Recent folders menu and Settings windows
 
 
+	Version: 3.3.1 (2014-11-17)
+	* fix a bug occurring in some situation when a favorite location contains a comma
+	
 	Version: 3.3 (2014-10-24)
 	
 	TotalCommander integration
@@ -2521,7 +2525,7 @@ if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetCla
 		if (A_OSVersion = "WIN_XP")
 			ComObjCreate("Shell.Application").Explore(strLocation)
 		else
-			Run, Explorer %strLocation%
+			Run, Explorer "%strLocation%" ; was a bug prior to v3.3.1 because the lack of double-quotes
 	; http://msdn.microsoft.com/en-us/library/bb774094
 	; ComObjCreate("Shell.Application").Explore(strLocation)
 	; ComObjCreate("WScript.Shell").Exec("Explorer.exe /e /select," . strLocation) ; not tested on XP
