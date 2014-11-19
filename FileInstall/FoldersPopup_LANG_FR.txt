@@ -28,7 +28,8 @@ lDialogFavoriteDoesNotExistPrompt	Le favori "~1~" n'existe pas ou n'est pas disp
 lDialogFavoriteDoesNotExistTitle	Favori introuvable - ~1~
 lDialogFavoriteLocationEmpty	L'emplacement est vide. Veuillez indiquer l'emplacement du dossier.
 lDialogFavoriteNameEmpty	Le nom du favori est vide. Veuillez indiquer un nom court pour ce favori.
-lDialogFavoriteNameNoColumnBreak	Le nom du menu ne peut débuter par les caractères réservés "~1~" utilisés comme indicateur de saut de colonne.
+lDialogFavoriteNameNoColumnBreak	Le nom du sous-menu ne peut débuter par les caractères réservés "~1~" utilisés comme indicateur de saut de colonne.
+lDialogFavoriteNameNoPipe	Le nom du favori ou du sous-menu ne doit pas inclure le caractère réservé "|" (barre verticale).
 lDialogFavoriteNameNoSeparator	Le nom du sous-menu ne doit pas inclure le caractère réservé "~1~".
 lDialogFavoriteNameNotNew	Le nom "~1~" est déjà présent dans ce menu. Veuillez choisir un nouveau nom.
 lDialogFavoriteParentMenu	Menu contenant ce favori

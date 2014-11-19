@@ -29,6 +29,8 @@ To-do for v4:
 
 	Version: 3.9.6 BETA (2014-11-??)
 	* support for system environment variables in favorite location (e.g.: APPDATA, LOCALAPPDATA, ProgramData, PUBLIC, TEMP, TMP, USERPROFILE)
+	* fix a bug occurring in some situation when a favorite location contains a comma (from v3.3.1)
+	* make the vertical bar (or pipe "|") a reserved character in submenu or favorite name
 	* 
 
 	Version: 3.9.5 BETA (2014-11-15)
@@ -4930,6 +4932,12 @@ GuiControlGet, strParentMenu, , drpParentMenu
 if !StrLen(strFavoriteShortName)
 {
 	Oops(blnRadioSubmenu ? lDialogSubmenuNameEmpty : lDialogFavoriteNameEmpty)
+	return
+}
+
+if InStr(strFavoriteShortName, "|")
+{
+	Oops(lDialogFavoriteNameNoPipe)
 	return
 }
 
