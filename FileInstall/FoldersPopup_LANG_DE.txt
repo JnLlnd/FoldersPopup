@@ -147,7 +147,6 @@ lMenuDialogNotSupported	Diese Dialogbox wird momentan noch nicht unterstützt
 lMenuDocuments	D&okumente
 lMenuExitFoldersPopup	Beenden ~1~
 lMenuFPMenu	~1~ ~2~
-lMenuGroup	Gruppe von Ordnern
 lMenuGroupAdd	hinzufügen
 lMenuGroupLoad	Gruppe laden
 lMenuGroupReplace	ersetzen
