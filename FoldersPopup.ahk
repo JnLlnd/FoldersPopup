@@ -577,7 +577,7 @@ Gosub, LoadTheme
 Gosub, BuildSpecialFoldersMenu
 Gosub, BuildFoldersInExplorerMenu ; need to be initialized here - will be updated at each call to popup menu
 Gosub, BuildGroupMenu
-Gosub, BuildFavoritesMenus
+Gosub, BuildMainMenu
 Gosub, BuildGui
 Gosub, Check4Update
 Gosub, BuildTrayMenu
@@ -1588,16 +1588,18 @@ Menu, menuGroups, Add
 Menu, menuGroups, DeleteAll
 Menu, menuGroups, Color, %strMenuBackgroundColor%
 
-AddMenuIcon("menuGroup", lMenuGroupSave, "GuiGroupSaveFromMenu", "menuGroupSave")
-if (intExplorersIndex)
-	Menu, menuGroup, Add
-
-intShortcutGroups := 0
+intShortcut := 0
 Loop, Parse, strGroups, |
 {
 	IniRead, blnReplaceWhenRestoringThisGroup, %striniFile%, Group-%A_LoopField%, ReplaceWhenRestoringThisGroup, %A_Space% ; empty if not found
-	AddMenuIcon("menuGroups", A_LoopField . " (" . (blnReplaceWhenRestoringThisGroup ? lMenuGroupReplace : lMenuGroupAdd) . ")" , "GroupLoad", "lMenuGroup")
+	strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "")
+		. A_LoopField . " (" . (blnReplaceWhenRestoringThisGroup ? lMenuGroupReplace : lMenuGroupAdd) . ")"
+	AddMenuIcon("menuGroups", strMenuName, "GroupLoad", "lMenuGroup")
 }
+
+if StrLen(strGroups)
+	Menu, menuGroups, Add
+AddMenuIcon("menuGroups", lMenuGroupSave, "GuiGroupSaveFromMenu", "menuGroupSave")
 
 return
 ;------------------------------------------------------------
@@ -1802,11 +1804,11 @@ NameIsInObject(strName, obj)
 
 
 ;------------------------------------------------------------
-BuildFavoritesMenus:
-BuildFavoritesMenusWithStatus:
+BuildMainMenu:
+BuildMainMenuWithStatus:
 ;------------------------------------------------------------
 
-if (A_ThisLabel = "BuildFavoritesMenusWithStatus")
+if (A_ThisLabel = "BuildMainMenuWithStatus")
 	TrayTip, % L(lTrayTipWorkingTitle, strAppName, strAppVersion)
 		, %lTrayTipWorkingDetail%, , 1
 
@@ -1833,8 +1835,8 @@ if (blnDisplayFoldersInExplorerMenu)
 
 if (blnDisplayGroupMenu)
 {
-	AddMenuIcon(lMainMenuName, lMenuGroup, ":menuGroup", "lMenuGroup")
-	Menu, menuGroup, Color, %strMenuBackgroundColor%
+	AddMenuIcon(lMainMenuName, lMenuGroup, ":menuGroups", "lMenuGroup")
+	Menu, menuGroups, Color, %strMenuBackgroundColor%
 }
 
 if (blnDisplayRecentFolders)
@@ -1853,7 +1855,7 @@ if !(blnDonor)
 	AddMenuIcon(lMainMenuName, lDonateMenu . "...", "GuiDonate", "lDonateMenu")
 }
 
-if (A_ThisLabel = "BuildFavoritesMenusWithStatus")
+if (A_ThisLabel = "BuildMainMenuWithStatus")
 	TrayTip, % L(lTrayTipInstalledTitle, strAppName, strAppVersion)
 		, %lTrayTipWorkingDetailFinished%, , 1
 
@@ -2152,16 +2154,13 @@ if (blnDisplaySpecialFolders)
 if (blnDisplayFoldersInExplorerMenu)
 	Gosub, BuildFoldersInExplorerMenu
 
-; ### not needed if refreshed after group add/manage if (blnDisplayGroupMenu)
-;	Gosub, BuildGroupMenu
-
 if (blnDisplayFoldersInExplorerMenu)
 	Menu, %lMainMenuName%
 		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Folders in Explorer menu if no Explorer
 		, %lMenuFoldersInExplorer%
 
 if (blnDisplayGroupMenu)
-	Menu, menuGroup
+	Menu, menuGroups
 		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Save group menu if no Explorer
 		, %lMenuGroupSave%
 
@@ -2205,8 +2204,7 @@ blnNewWindow := true ; used in SetMenuPosition and BuildFoldersInExplorerMenu
 Gosub, SetMenuPosition ; sets strTargetWinId
 
 WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
-
-if (A_ThisLabel = "PopupMenuMouse") and WindowIsTotalCommander(strTargetClass)
+if (A_ThisLabel = "PopupMenuNewWindowMouse") and (WindowIsDirectoryOpus(strTargetClass) or WindowIsTotalCommander(strTargetClass))
 {
 	Click ; to make sure the TC pane under the mouse become active before creating a new tab
 	Sleep, 20
@@ -2236,16 +2234,13 @@ if (blnDisplaySpecialFolders)
 if (blnDisplayFoldersInExplorerMenu)
 	Gosub, BuildFoldersInExplorerMenu
 
-; ### not needed if refreshed after group add/manage if (blnDisplayGroupMenu)
-;	Gosub, BuildGroupMenu
-
 if (blnDisplayFoldersInExplorerMenu)
 	Menu, %lMainMenuName%
 		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Folders in Explorer menu if no Explorer
 		, %lMenuFoldersInExplorer%
 
 if (blnDisplayGroupMenu)
-	Menu, menuGroup
+	Menu, menuGroups
 		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Save group menu if no Explorer
 		, %lMenuGroupSave%
 
@@ -2956,16 +2951,15 @@ Loop
 		, %strIniFile%, Group-%strGroupSaveName%, Explorer%A_Index%
 }
 
-strUseMenuLoad := lMenuGroup . " > " . lMenuGroupLoad
-StringReplace, strUseMenuLoad, strUseMenuLoad, &, , All
+StringReplace, strUseMenuLoad, lMenuGroup, &, , All
 MsgBox, 0, % L(lGuiGroupSaveTitle, lMenuGroupSave, strAppName)
 	, % L(lGuiGroupSaved, strGroupSaveName, strUseMenuLoad)
 	, 30
 
-Gosub, ButtonGroupSaveCancel
 strGroupSaveName := ""
 
-Gosub, 3GuiClose
+Gosub, BuildGroupMenu
+Gosub, ButtonGroupSaveCancel
 
 return
 ;------------------------------------------------------------
@@ -3003,7 +2997,11 @@ GroupLoadFromManage:
 
 if (A_ThisLabel = "GroupLoad")
 {
-	strGroup := "Group-" . A_ThisMenuItem
+	if (blnDisplayMenuShortcuts)
+		StringTrimLeft, strGroup, A_ThisMenuItem, 3 ; remove "&1 " from menu item
+	else
+		strGroup :=  A_ThisMenuItem
+	strGroup := "Group-" . strGroup
 	StringLeft, strGroup, strGroup, % InStr(strGroup, "(") - 2 ; remove " (add)" or " (replace)"
 }
 else
@@ -4125,6 +4123,8 @@ GuiControl, 2:, drpGroupsList, |%lDialogGroupSelect%||%strGroups%
 IniDelete, %strIniFile%, Group-%drpGroupsList%
 IniWrite, %strGroups%, %strIniFile%, Global, Groups
 
+Gosub, BuildGroupMenu
+
 return
 ;------------------------------------------------------------
 
@@ -4293,7 +4293,7 @@ intIndex := 0
 SaveOneMenu(lMainMenuName) ; recursive function
 
 Gosub, LoadIniFile
-Gosub, BuildFavoritesMenusWithStatus
+Gosub, BuildMainMenuWithStatus
 GuiControl, Disable, %lGuiSave%
 GuiControl, , %lGuiCancel%, %lGuiClose%
 
@@ -4359,8 +4359,7 @@ if (blnSaveEnabled)
 		; restore popup menu
 		Gosub, BuildSpecialFoldersMenu
 		Gosub, BuildFoldersInExplorerMenu
-		; ### not needed if refreshed after group add/manage Gosub, BuildGroupMenu
-		Gosub, BuildFavoritesMenus ; need to be initialized here - will be updated at each call to popup menu
+		Gosub, BuildMainMenu ; need to be initialized here - will be updated at each call to popup menu
 
 		GuiControl, Disable, btnGuiSave
 		GuiControl, , btnGuiCancel, %lGuiClose%
@@ -5037,7 +5036,7 @@ if (A_ThisLabel = "GuiEditFavoriteSave")
 	GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
 }
 
-Gosub, BuildFavoritesMenusWithStatus ; update menus
+Gosub, BuildMainMenuWithStatus ; update menus
 
 GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lDialogCancelButton%
@@ -5470,7 +5469,7 @@ for strMenuName, arrMenu in arrMenus
 	Menu, %strMenuName%, DeleteAll
 	arrMenu := ; free object's memory
 }
-Gosub, BuildFavoritesMenusWithStatus
+Gosub, BuildMainMenuWithStatus
 
 Gosub, 2GuiClose
 
