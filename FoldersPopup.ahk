@@ -32,6 +32,7 @@ To-do for v4:
 	* support for system environment variables in favorite location (e.g.: APPDATA, LOCALAPPDATA, ProgramData, PUBLIC, TEMP, TMP, USERPROFILE)
 	* make the vertical bar (or pipe "|") a reserved character in submenu or favorite name
 	* fix bug clicking the correct pane in DOpus when popup in new window
+	* fix bug with document favorite custom icons
 	* fix a bug occurring in some situation when a favorite location contains a comma (from v3.3.1)
 	
 	Version: 3.9.5 BETA (2014-11-15)
@@ -1954,7 +1955,10 @@ BuildOneMenu(strMenu)
 						GetIcon4Location(strTempDir . "\default_browser_icon.html", strThisIconFile, intThisIconIndex)
 						; not sure it is required to have a physical file with .html extension - but keep it as is by safety
 				else ; this is a document
-					GetIcon4Location(arrThisMenu[A_Index].FavoriteLocation, strThisIconFile, intThisIconIndex)
+					if StrLen(arrThisMenu[A_Index].IconResource)
+						ParseIconResource(arrThisMenu[A_Index].IconResource, strThisIconFile, intThisIconIndex)
+					else
+						GetIcon4Location(arrThisMenu[A_Index].FavoriteLocation, strThisIconFile, intThisIconIndex)
 					
 				ErrorLevel := 0 ; for safety clear in case Menu is not called in next if
 				if StrLen(strThisIconFile)
