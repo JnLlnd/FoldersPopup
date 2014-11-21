@@ -27,6 +27,7 @@ To-do for v4:
 	Version: 3.9.6 BETA (2014-11-??)
 	* refactor BuildGroupMenu into BuildFoldersInExplorerMenu and stripped BuildGroupMenu
 	* add numeric shortcuts to groups menu
+	* exclude DOpus collection windows of Current folders menu
 	* merged OpenRecentFolder and OpenFolderInExplorer with OpenFavorite
 	* merged 2-in-1 command PopupMenuMouse + PopupMenuKeyboard and 2-in-1 command PopupMenuNewWindowMouse + PopupMenuNewWindowKeyboard, into 4-in-1 command
 	* support for system environment variables in favorite location (e.g.: APPDATA, LOCALAPPDATA, ProgramData, PUBLIC, TEMP, TMP, USERPROFILE)
