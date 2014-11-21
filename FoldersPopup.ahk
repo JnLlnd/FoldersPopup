@@ -3,10 +3,7 @@ Bugs:
 - check double-quotes need in Run command
 
 To-do for v4:
-
-- Merge PopupMenuNewWindowMouse, PopupMenuNewWindowKeyboard, PopupMenuMouse, PopupMenuKeyboard ?
 - Optimize special folders clsid management (try x := window.Document.Folder.Self.Path)
-- Solve "Folders in Explorer" vs "Group of folders" issue
 - Write DOpus add-in to list folders including special folders
 - Save groups with special folders in DOpus to ini file
 - Load groups with special folders in DOpus from ini file
@@ -28,11 +25,15 @@ To-do for v4:
 
 
 	Version: 3.9.6 BETA (2014-11-??)
+	* refactor BuildGroupMenu into BuildFoldersInExplorerMenu and stripped BuildGroupMenu
+	* add numeric shortcuts to groups menu
+	* merged OpenRecentFolder and OpenFolderInExplorer with OpenFavorite
+	* merged 2-in-1 command PopupMenuMouse + PopupMenuKeyboard and 2-in-1 command PopupMenuNewWindowMouse + PopupMenuNewWindowKeyboard, into 4-in-1 command
 	* support for system environment variables in favorite location (e.g.: APPDATA, LOCALAPPDATA, ProgramData, PUBLIC, TEMP, TMP, USERPROFILE)
-	* fix a bug occurring in some situation when a favorite location contains a comma (from v3.3.1)
 	* make the vertical bar (or pipe "|") a reserved character in submenu or favorite name
-	* 
-
+	* fix bug clicking the correct pane in DOpus when popup in new window
+	* fix a bug occurring in some situation when a favorite location contains a comma (from v3.3.1)
+	
 	Version: 3.9.5 BETA (2014-11-15)
 	* display and select icon for folders, url and documents in add/edit favorite and in menu
 	* better error management around menu icon assignment, fix the *.msc bug
@@ -2097,6 +2098,128 @@ GetMenuHandle(strMenuName)
 ;------------------------------------------------------------
 PopupMenuMouse: ; default MButton
 PopupMenuKeyboard: ; default #a
+PopupMenuNewWindowMouse: ; default +MButton::
+PopupMenuNewWindowKeyboard: ; default +#a
+;------------------------------------------------------------
+
+if !(blnMenuReady)
+	return
+
+blnMouse := InStr(A_ThisLabel, "Mouse")
+blnNewWindow := InStr(A_ThisLabel, "New") ; used in SetMenuPosition and BuildFoldersInExplorerMenu
+
+if !(blnNewWindow)
+	If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass, strTargetControl)
+	{
+		StringReplace, strThisHotkey, A_ThisHotkey, $ ; remove $ from hotkey
+		if (A_ThisLabel = "PopupMenuMouse")
+		{
+			SplitModifiersFromKey(strThisHotkey, strThisHotkeyModifiers, strThisHotkeyKey)
+			SendInput, %strThisHotkeyModifiers%{%strThisHotkeyKey%} ; for example {MButton} or +{LButton}
+		}
+		else
+		{
+			StringLower, strThisHotkey, strThisHotkey
+			SendInput, %strThisHotkey% ; for example #a
+		}
+		return
+	}
+else
+	WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
+
+Gosub, SetMenuPosition ; sets strTargetWinId or activate the window strTargetWinId set by CanOpenFavorite
+
+if (blnMouse) and (WindowIsDirectoryOpus(strTargetClass) or WindowIsTotalCommander(strTargetClass))
+{
+	Click ; to make sure the DOpus lister or TC pane under the mouse become active
+	Sleep, 20
+}
+
+if (blnDiagMode)
+{
+	Diag("MouseOrKeyboard", A_ThisLabel)
+	WinGetTitle strDiag, % "ahk_id " . strTargetWinId
+	Diag("WinTitle", strDiag)
+	Diag("WinId", strTargetWinId)
+	Diag("Class", strTargetClass)
+	Diag("ShowMenu", "Favorites Menu " . (WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass) 
+	or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
+		or (WindowIsDialog(strTargetClass, strTargetWinId) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT") . " Add this folder")
+}
+
+; Enable when adapted to use ::ClassID location
+
+if (blnDisplaySpecialFolders)
+	if (blnNewWindow)
+	{
+		; In case it was disabled while in a dialog box
+		Menu, menuSpecialFolders, Enable, %lMenuMyComputer%
+		Menu, menuSpecialFolders, Enable, %lMenuNetworkNeighborhood%
+		Menu, menuSpecialFolders, Enable, %lMenuControlPanel%
+		Menu, menuSpecialFolders, Enable, %lMenuRecycleBin%
+	}
+	else
+	{
+		Menu, menuSpecialFolders
+			, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+			or WindowIsDialog(strTargetClass, strTargetWinId) ? "Disable" : "Enable"
+			, %lMenuMyComputer%
+		Menu, menuSpecialFolders
+			, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+			or WindowIsDialog(strTargetClass, strTargetWinId) ? "Disable" : "Enable"
+			, %lMenuNetworkNeighborhood%
+	
+		; There is no point to navigate a dialog box or console to Control Panel or Recycle Bin, unknown for FreeCommander
+		Menu, menuSpecialFolders
+			, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+			or WindowIsDialog(strTargetClass, strTargetWinId) ? "Disable" : "Enable"
+			, %lMenuControlPanel%
+		Menu, menuSpecialFolders
+			, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+			or WindowIsDialog(strTargetClass, strTargetWinId) ? "Disable" : "Enable"
+			, %lMenuRecycleBin%
+	}
+
+if (blnDisplayFoldersInExplorerMenu)
+	Gosub, BuildFoldersInExplorerMenu
+
+if (blnDisplayFoldersInExplorerMenu)
+	Menu, %lMainMenuName%
+		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Folders in Explorer menu if no Explorer
+		, %lMenuFoldersInExplorer%
+
+if (blnDisplayGroupMenu)
+	Menu, menuGroups
+		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Save group menu if no Explorer
+		, %lMenuGroupSave%
+
+; Enable "Add This Folder" only if the target window is an Explorer FreeCommander, TotalCommander,
+; Directory Opus or a dialog box under WIN_7 (does not work under WIN_XP). Tested on WIN_XP and WIN_7.
+; Other tests shown that WIN_8 behaves like WIN_7.
+if (blnDiagMode)
+	Diag("ShowMenu", "Favorites Menu " 
+		. (WindowIsAnExplorer(strTargetClass)  or WindowIsFreeCommander(strTargetClass)
+		or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
+		or (WindowIsDialog(strTargetClass, strTargetWinId) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT")
+		. " Add this folder")
+Menu, %lMainMenuName%
+	, % WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+	or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
+	or (WindowIsDialog(strTargetClass, strTargetWinId) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
+	, %lMenuAddThisFolder%...
+
+Gosub, InsertColumnBreaks
+
+Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; at mouse pointer if option 1, 20x20 offset of active window if option 2 and fix location if option 3
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+XPopupMenuMouse: ; default MButton
+XPopupMenuKeyboard: ; default #a
+; REPLACED BY MERGE COMMAND ABOVE
 ;------------------------------------------------------------
 
 if !(blnMenuReady)
@@ -2192,8 +2315,9 @@ return
 
 
 ;------------------------------------------------------------
-PopupMenuNewWindowMouse: ; default +MButton::
-PopupMenuNewWindowKeyboard: ; default +#a
+XPopupMenuNewWindowMouse: ; default +MButton::
+XPopupMenuNewWindowKeyboard: ; default +#a
+; REPLACED BY MERGE COMMAND ABOVE
 ;------------------------------------------------------------
 
 if !(blnMenuReady)
