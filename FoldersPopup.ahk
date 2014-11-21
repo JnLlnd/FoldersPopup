@@ -1476,13 +1476,8 @@ intExplorersIndex := 0 ; used in PopupMenu and SaveGroup to check if we disable 
 if (blnUseDirectoryOpus)
 	for intIndex, objLister in objDOpusListers
 	{
-		; if we have no path, skip it
-		if !StrLen(objLister.Path)
-			continue
-		
-		; if popup menu is not for DOpus and we have a collection, skip it
-		if (!WindowIsDirectoryOpus(strTargetClass) and !(blnNewWindow))
-			and InStr(objLister.Path, "coll://")
+		; if we have no path or or DOpus collection, skip it
+		if !StrLen(objLister.Path) or InStr(objLister.Path, "coll://")
 			continue
 		
 		if NameIsInObject(objLister.Path, objFoldersInExplorers)
@@ -1492,12 +1487,9 @@ if (blnUseDirectoryOpus)
 			
 		objFolderInExplorer := Object()
 		objFolderInExplorer.Path := objLister.Path
-		if InStr(objLister.Path, "coll://") ; ### check if this is supported
-			objFolderInExplorer.Name := "Directory Opus Collection (" . intExplorersIndex . ")"
-		else
-			objFolderInExplorer.Name := objLister.Path
+		objFolderInExplorer.Name := objLister.Path
 		
-		; used?
+		; used for DOpus windows to discriminatre different listers
 		objFolderInExplorer.WindowId := objLister.Lister
 		
 		; info used to create groups
@@ -1548,7 +1540,7 @@ for intIndex, objFolder in objExplorersWindows
 	objFolderInExplorer.Name := objFolder.LocationName
 	objFolderInExplorer.IsSpecialFolder := objFolder.IsSpecialFolder
 	
-	; used?
+	; not used for Explorer windows, but keep it
 	objFolderInExplorer.WindowId := objFolder.WindowId
 
 	; info used to create groups
@@ -1557,7 +1549,6 @@ for intIndex, objFolder in objExplorersWindows
 	objFolderInExplorer.WindowType := "EX"
 
 	objFoldersInExplorers.Insert(intExplorersIndex, objFolderInExplorer)
-	; ###_D(objFolder.LocationURL)
 }
 
 Menu, menuFoldersInExplorer, Add
@@ -1570,7 +1561,6 @@ objLocationUrlByName := Object()
 for intIndex, objFolderInExplorer in objFoldersInExplorers
 {
 	strMenuName := (blnDisplayMenuShortcuts and (intShortcutFoldersInExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutFoldersInExplorer, false) . " " : "") . objFolderInExplorer.Name
-	; ###_D(strMenuName . " / " . objFolderInExplorer.Path)
 	objLocationUrlByName.Insert(strMenuName, objFolderInExplorer.Path) ; can include the numeric shortcut
 	AddMenuIcon("menuFoldersInExplorer", strMenuName, "OpenFolderInExplorer", "Folder")
 }
@@ -1627,14 +1617,6 @@ CollectExplorers(objExplorers, pExplorers)
 		if !StrLen(strType)
 		{
 			intExplorers := intExplorers + 1
-			/*
-			###_D(""
-				. "pExplorer.LocationURL: !" . pExplorer.LocationURL . "!`n"
-				. "pExplorer.Type: !" . pExplorer.Type . "!`n"
-				. "pExplorer.LocationName: !" . pExplorer.LocationName . "!`n"
-				. "pExplorer.HWND: !" . pExplorer.HWND . "!`n"
-				. "")
-			*/
 			objExplorer := Object()
 			objExplorer.Position := pExplorer.Left . "|" . pExplorer.Top . "|" . pExplorer.Width . "|" . pExplorer.Height
 
@@ -1654,11 +1636,11 @@ CollectExplorers(objExplorers, pExplorers)
 				objExplorer.LocationName := strLocationName
 			}
 			
-			objExplorer.WindowId := pExplorer.HWND ; ### used?
+			objExplorer.WindowId := pExplorer.HWND ; not used for Explorer windows, but keep it
 			WinGet, intMinMax, MinMax, % "ahk_id " . pExplorer.HWND
 			objExplorer.MinMax := intMinMax
 			
-			objExplorers.Insert(intExplorers, objExplorer) ; ### I was checking if empty - any reason?
+			objExplorers.Insert(intExplorers, objExplorer) ; I was checking if StrLen(pExplorer.HWND) - any reason?
 		}
 	}
 }
@@ -2002,17 +1984,6 @@ AddMenuIcon(strMenuName, ByRef strMenuItemName, strLabel, strIconValue)
 	global objIconsFile
 	global objIconsIndex
 
-	/*
-	###_D(""
-		. "strMenuName: " . strMenuName . "`n"
-		. "strMenuItemName: " . strMenuItemName . "`n"
-		. "strLabel: " . strLabel . "`n"
-		. "strIconValue: " . strIconValue . "`n"
-		. "objIconsFile[strIconValue]: " . objIconsFile[strIconValue] . "`n"
-		. "objIconsIndex[strIconValue]: " . objIconsIndex[strIconValue] . "`n"
-		. "")
-	*/
-	
 	if !StrLen(strMenuItemName)
 		return
 	
@@ -3528,14 +3499,6 @@ NavigateTotalCommander(strLocation, strWinId, strControl)
 {
 	global strTotalCommanderPath
 	
-	/*
-	###_D(""
-		. "strLocation: " . strLocation . "`n"
-		. "strWinId: " . strWinId . "`n"
-		. "strControl: " . strControl . "`n"
-		. "")
-	*/
-	
 	if (WinExist("A") <> strWinId) ; in case that some window just popped out, and initialy active window lost focus
 	{
 		WinActivate, ahk_id %strWinId% ; we'll activate initialy active window
@@ -3552,14 +3515,6 @@ NewTotalCommander(strLocation, strWinId, strControl)
 {
 	global strTotalCommanderPath
 	global strTotalCommanderNewTabOrWindow
-	
-	/*
-	###_D(""
-		. "strLocation: " . strLocation . "`n"
-		. "strWinId: " . strWinId . "`n"
-		. "strControl: " . strControl . "`n"
-		. "")
-	*/
 	
 	; strTotalCommanderNewTabOrWindow in ini file should contain "/O /T" to open in an new tab of the existing file list (default), or "/N" to open in a new file list
 	Run, %strTotalCommanderPath% %strTotalCommanderNewTabOrWindow% /S "/L=%strLocation%" ; /L= left pane of the new window
