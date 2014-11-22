@@ -3,6 +3,7 @@ Bugs:
 - check double-quotes need in Run command
 
 To-do for v4:
+- Sort groups list in manage groups
 - Optimize special folders clsid management (try x := window.Document.Folder.Self.Path)
 - Write DOpus add-in to list folders including special folders
 - Save groups with special folders in DOpus to ini file
@@ -1486,17 +1487,17 @@ if (blnUseDirectoryOpus)
 	for intIndex, objLister in objDOpusListers
 	{
 		; if we have no path or or DOpus collection, skip it
-		if !StrLen(objLister.Path) or InStr(objLister.Path, "coll://")
+		if !StrLen(objLister.LocationURL) or InStr(objLister.LocationURL, "coll://")
 			continue
 		
-		if NameIsInObject(objLister.Path, objFoldersInExplorers)
+		if NameIsInObject(objLister.LocationURL, objFoldersInExplorers)
 			continue
 		
 		intExplorersIndex := intExplorersIndex + 1
 			
 		objFolderInExplorer := Object()
-		objFolderInExplorer.Path := objLister.Path
-		objFolderInExplorer.Name := objLister.Path
+		objFolderInExplorer.LocationURL := objLister.LocationURL
+		objFolderInExplorer.Name := objLister.LocationURL
 		
 		; used for DOpus windows to discriminatre different listers
 		objFolderInExplorer.WindowId := objLister.Lister
@@ -1515,13 +1516,13 @@ if (blnUseDirectoryOpus)
 if (blnUseTotalCommander)
 	for intIndex, objTCList in objTCLists
 	{
-		if !NameIsInObject(objTCList.Path, objFoldersInExplorers)
+		if !NameIsInObject(objTCList.LocationURL, objFoldersInExplorers)
 		{
 			intExplorersIndex := intExplorersIndex + 1
 			
 			objGroupMenuExplorer := Object()
-			objGroupMenuExplorer.Path := objTCList.Path
-			objGroupMenuExplorer.Name := objTCList.Path
+			objGroupMenuExplorer.LocationURL := objTCList.LocationURL
+			objGroupMenuExplorer.Name := objTCList.LocationURL
 			objGroupMenuExplorer.WindowId := objTCList.WindowId
 			objGroupMenuExplorer.Position := objTCList.Position
 			objGroupMenuExplorer.MinMax := objTCList.MinMax
@@ -1545,7 +1546,7 @@ for intIndex, objFolder in objExplorersWindows
 	intExplorersIndex := intExplorersIndex + 1
 	
 	objFolderInExplorer := Object()
-	objFolderInExplorer.Path := objFolder.LocationURL
+	objFolderInExplorer.LocationURL := objFolder.LocationURL
 	objFolderInExplorer.Name := objFolder.LocationName
 	objFolderInExplorer.IsSpecialFolder := objFolder.IsSpecialFolder
 	
@@ -1570,7 +1571,7 @@ objLocationUrlByName := Object()
 for intIndex, objFolderInExplorer in objFoldersInExplorers
 {
 	strMenuName := (blnDisplayMenuShortcuts and (intShortcutFoldersInExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutFoldersInExplorer, false) . " " : "") . objFolderInExplorer.Name
-	objLocationUrlByName.Insert(strMenuName, objFolderInExplorer.Path) ; can include the numeric shortcut
+	objLocationUrlByName.Insert(strMenuName, objFolderInExplorer.LocationURL) ; can include the numeric shortcut
 	AddMenuIcon("menuFoldersInExplorer", strMenuName, "OpenFolderInExplorer", "Folder")
 }
 
@@ -1633,7 +1634,7 @@ CollectExplorers(objExplorers, pExplorers)
 			
 			if (objExplorer.IsSpecialFolder)
 			{
-				objExplorer.LocationURL := pExplorer.Document.Folder.Self.Path
+				objExplorer.LocationURL := pExplorer.Document.Folder.Self.LocationURL
 				objExplorer.LocationName := pExplorer.LocationName ; see http://msdn.microsoft.com/en-us/library/aa752084#properties
 			}
 			else
@@ -1697,7 +1698,7 @@ CollectTCLists(objLists)
 		if StrLen(ClipBoard)
 		{
 			objTCList := Object()
-			objTCList.Path := ClipBoard
+			objTCList.LocationURL := ClipBoard
 			objTCList.WindowId := strWindowId
 			objTCList.Position := intX . "|" . intY . "|" . intW . "|" . intH
 			objTCList.MinMax := intMinMax
@@ -1712,7 +1713,7 @@ CollectTCLists(objLists)
 		if StrLen(ClipBoard)
 		{
 			objTCList := Object()
-			objTCList.Path := ClipBoard
+			objTCList.LocationURL := ClipBoard
 			objTCList.WindowId := strWindowId
 			objTCList.Position := intX . "|" . intY . "|" . intW . "|" . intH
 			objTCList.MinMax := intMinMax
@@ -1750,7 +1751,7 @@ CollectDOpusListersList(objListers, strList)
 			objLister.Side := ParseDOpusListerProperty(strSubStr, "side")
 			objLister.Tab := ParseDOpusListerProperty(strSubStr, "tab")
 			objLister.Tab_state := ParseDOpusListerProperty(strSubStr, "tab_state")
-			objLister.Path := SubStr(strSubStr, InStr(strSubStr, ">") + 1)
+			objLister.LocationURL := SubStr(strSubStr, InStr(strSubStr, ">") + 1)
 
 			WinGetPos, intX, intY, intW, intH, % "ahk_id " . objLister.lister
 			objLister.Position := intX . "|" . intY . "|" . intW . "|" . intH
@@ -1758,7 +1759,7 @@ CollectDOpusListersList(objListers, strList)
 			objLister.MinMax := intMinMax
 			objLister.Pane := objLister.Side
 			
-			if !InStr(objLister.Path, "ftp://")
+			if !InStr(objLister.LocationURL, "ftp://")
 				; Swith Explorer to DOpus FTP folder not supported (see https://github.com/JnLlnd/FoldersPopup/issues/84)
 				objListers.Insert(A_Index, objLister)
 				
@@ -2929,7 +2930,7 @@ if (A_ThisLabel = "GuiGroupEditFromManage")
 			, (objIniExplorerInGroup.MinMax = 0 ? objIniExplorerInGroup.Width : "-")
 			, (objIniExplorerInGroup.MinMax = 0 ? objIniExplorerInGroup.Height : "-")
 			, (objIniExplorerInGroup.Pane ? objIniExplorerInGroup.Pane : "-")
-			, objIniExplorerInGroup.Path, objIniExplorerInGroup.IsSpecialFolder, objIniExplorerInGroup.WindowId, objIniExplorerInGroup.Position, objIniExplorerInGroup.TabId)
+			, objIniExplorerInGroup.LocationURL, objIniExplorerInGroup.IsSpecialFolder, objIniExplorerInGroup.WindowId, objIniExplorerInGroup.Position, objIniExplorerInGroup.TabId)
 	IniRead, blnReplaceWhenRestoringThisGroup, %strIniFile%, %strGroup%, ReplaceWhenRestoringThisGroup, 0 ; false if not found
 }
 else
@@ -2946,7 +2947,7 @@ else
 			, (objGroupMenuExplorer.MinMax = 0 ? arrExplorerPosition3 : "-")
 			, (objGroupMenuExplorer.MinMax = 0 ? arrExplorerPosition4 : "-")
 			, (objGroupMenuExplorer.Pane ? objGroupMenuExplorer.Pane : "-")
-			, objGroupMenuExplorer.Path, objGroupMenuExplorer.IsSpecialFolder, objGroupMenuExplorer.WindowId, objGroupMenuExplorer.Position, objGroupMenuExplorer.TabId)
+			, objGroupMenuExplorer.LocationURL, objGroupMenuExplorer.IsSpecialFolder, objGroupMenuExplorer.WindowId, objGroupMenuExplorer.Position, objGroupMenuExplorer.TabId)
 	}
 	blnReplaceWhenRestoringThisGroup := True ; default for new group
 }
@@ -3130,7 +3131,7 @@ while, intExplorer := WindowOfType("EX") ; returns the index of the first Explor
 	Tooltip, %intActualWindowInIni% %lGuiGroupOf% %intTotalWindowsInIni%
 	
 	if (objIniExplorersInGroup[intExplorer].IsSpecialFolder)
-		strExplorerLocationOrClassId := "shell:::" . objClassIdByLocalizedName[objIniExplorersInGroup[intExplorer].Name]
+		###_D(objIniExplorersInGroup[intExplorer].LocationURL) ; strExplorerLocationOrClassId := "shell:::" . objClassIdByLocalizedName[objIniExplorersInGroup[intExplorer].Name]
 	else
 		strExplorerLocationOrClassId := objIniExplorersInGroup[intExplorer].Name
 	
@@ -3317,6 +3318,7 @@ Loop
 	;  8	objFoldersInExplorers[intRow].Pane
 	;  9	objFoldersInExplorers[intRow].WindowId
 	; 10	objFoldersInExplorers[intRow].IsSpecialFolder
+	; 11	objFoldersInExplorers[intRow].####Path
 	
 	objIniEntry := Object()
 	objIniEntry.Name := arrThisExplorer1
@@ -4587,7 +4589,7 @@ if WindowIsDirectoryOpus(strTargetClass)
 	for intIndex, objLister in objDOpusListers
 		if (objLister.active_lister = "1" and objLister.tab_state = "1")
 		{
-			strCurrentLocation := objLister.path
+			strCurrentLocation := objLister.LocationURL
 			break
 		}
 }
