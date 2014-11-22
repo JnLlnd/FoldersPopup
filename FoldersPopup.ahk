@@ -24,7 +24,11 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 3.9.6 BETA (2014-11-??)
+	Version: 3.9.7 BETA (2014-11-??)
+	* add an item in the Tray menu to open the FoldersPopup.ini file
+	* add an option to disable check for update at startup
+	
+	Version: 3.9.6 BETA (2014-11-21)
 	* refactor BuildGroupMenu into BuildFoldersInExplorerMenu and stripped BuildGroupMenu
 	* add numeric shortcuts to groups menu
 	* exclude DOpus collection windows of Current folders menu
@@ -497,7 +501,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 3.9.6 BETA
+;@Ahk2Exe-SetVersion 3.9.7 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -535,7 +539,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.9.6" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "3.9.7" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -582,8 +586,10 @@ Gosub, BuildFoldersInExplorerMenu ; need to be initialized here - will be update
 Gosub, BuildGroupMenu
 Gosub, BuildMainMenu
 Gosub, BuildGui
-Gosub, Check4Update
 Gosub, BuildTrayMenu
+
+if (blnCheck4Update)
+	Gosub, Check4Update
 
 IfExist, %A_Startup%\%strAppName%.lnk ; update the shortcut in case the exe filename changed
 {
@@ -832,6 +838,7 @@ IniRead, intStartups, %strIniFile%, Global, Startups, 1
 IniRead, intRecentFolders, %strIniFile%, Global, RecentFolders, 10
 IniRead, intIconSize, %strIniFile%, Global, IconSize, 24
 IniRead, strGroups, %strIniFile%, Global, Groups, %A_Space% ; empty string if not found
+IniRead, blnCheck4Update, %strIniFile%, Global, Check4Update, 1
 IniRead, blnOpenMenuOnTaskbar, %strIniFile%, Global, OpenMenuOnTaskbar, 1
 
 IniRead, blnDonor, %strIniFile%, Global, Donor, 0 ; Please, be fair. Don't cheat with this.
@@ -1279,6 +1286,7 @@ Menu, Tray, Add
 ;@Ahk2Exe-IgnoreEnd
 ; Menu, Tray, Add, % L(lMenuFPMenu, strAppName, lMenuMenu), :%lMainMenuName% ; REMOVED seems to cause a BUG in submenu display (first display only) - unexplained...
 Menu, Tray, Add, % L(lMenuSettings, strAppName), GuiShow
+Menu, Tray, Add, % strAppName . ".ini", ShowIniFile
 Menu, Tray, Add
 Menu, Tray, Add, %lMenuRunAtStartup%, RunAtStartup
 Menu, Tray, Add, %lMenuSuspendHotkeys%, SuspendHotkeys
@@ -3697,6 +3705,16 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 
 
 ;------------------------------------------------------------
+ShowIniFile:
+;------------------------------------------------------------
+
+Run, %strIniFile%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 RunAtStartup:
 ;------------------------------------------------------------
 ; Startup code adapted from Avi Aryan Ryan in Clipjump
@@ -5302,6 +5320,9 @@ GuiControl, , blnDisplayIcons, %blnDisplayIcons%
 if !OSVersionIsWorkstation()
 	GuiControl, Disable, blnDisplayIcons
 
+Gui, 2:Add, CheckBox, y+10 xs vblnCheck4Update, %lOptionsCheck4Update%
+GuiControl, , blnCheck4Update, %blnCheck4Update%
+
 Gui, 2:Add, CheckBox, y+10 xs vblnOpenMenuOnTaskbar, %lOptionsOpenMenuOnTaskbar%
 GuiControl, , blnOpenMenuOnTaskbar, %blnOpenMenuOnTaskbar%
 
@@ -5356,6 +5377,9 @@ GuiControl, , blnDisplayGroupMenu, %blnDisplayGroupMenu%
 Gui, 2:Add, CheckBox, y+10 xs vblnDisplayRecentFolders gDisplayRecentFoldersClicked, %lOptionsDisplayRecentFolders%
 GuiControl, , blnDisplayRecentFolders, %blnDisplayRecentFolders%
 
+Gui, 2:Add, Edit, % "y+5 xs+15 w36 h17 vintRecentFolders center " . (blnDisplayRecentFolders ? "" : "hidden"), %intRecentFolders%
+Gui, 2:Add, Text, % "yp x+10 vlblRecentFolders " . (blnDisplayRecentFolders ? "" : "hidden"), %lOptionsRecentFolders%
+
 ; column 3
 
 Gui, 2:Add, Text, ys x430 Section, %lOptionsTheme%
@@ -5372,9 +5396,6 @@ Gui, 2:Add, Text, % "y+5 xs+18 vlblPopupFixPositionX " . (intPopupMenuPosition =
 Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionX center " . (intPopupMenuPosition = 3 ? "" : "hidden"), %arrPopupFixPosition1%
 Gui, 2:Add, Text, % "yp x+5 vlblPopupFixPositionY " . (intPopupMenuPosition = 3 ? "" : "hidden"), %lOptionsPopupFixPositionY%
 Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionY center " . (intPopupMenuPosition = 3 ? "" : "hidden"), %arrPopupFixPosition2%
-
-Gui, 2:Add, Edit, % "y+5 xs w36 h17 vintRecentFolders center " . (blnDisplayRecentFolders ? "" : "hidden"), %intRecentFolders%
-Gui, 2:Add, Text, % "yp x+10 vlblRecentFolders " . (blnDisplayRecentFolders ? "" : "hidden"), %lOptionsRecentFolders%
 
 
 Gui, 2:Show, AutoSize Center
@@ -5471,6 +5492,7 @@ IniWrite, %intRecentFolders%, %strIniFile%, Global, RecentFolders
 IniWrite, %blnDisplayFoldersInExplorerMenu%, %strIniFile%, Global, DisplayFoldersInExplorerMenu
 IniWrite, %blnDisplayGroupMenu%, %strIniFile%, Global, DisplaySwitchMenu ; keep "Switch" for backward compatibility
 IniWrite, %blnDisplayMenuShortcuts%, %strIniFile%, Global, DisplayMenuShortcuts
+IniWrite, %blnCheck4Update%, %strIniFile%, Global, Check4Update
 IniWrite, %blnOpenMenuOnTaskbar%, %strIniFile%, Global, OpenMenuOnTaskbar
 
 if (radPopupMenuPosition1)

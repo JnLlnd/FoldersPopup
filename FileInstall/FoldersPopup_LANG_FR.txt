@@ -169,7 +169,7 @@ lMenuSettings	&Paramètres de ~1~
 lMenuSpecialExplorer	Fenêtre spéciale de l'Explorateur
 lMenuSpecialFolders	&Dossiers spéciaux
 lMenuSuspendHotkeys	Suspendre les déclencheurs (Hotkeys)
-lMenuUpdate	Mettre à jour
+lMenuUpdate	Vérifier la mise à jour
 lNavigateFileError	Une erreur s'est produite lors de l'ouverture du dossier:`n~1~.
 lNavigateSpecialError	Une erreur s'est produite lors de l'ouverture du dossier spécial #~1~.
 lOopsTitle	~1~ (~2~)
@@ -185,6 +185,7 @@ lOptionsArrDescriptions5	Choisissez la combinaison de touches du clavier ou le b
 lOptionsArrDescriptions6	Choisissez la combinaison de touches du clavier ou le bouton de la souris qui ouvrira la boîte de dialogue Paramètres de FoldersPopup. Par défaut, il s'agit de Maj+Windows+F.
 lOptionsChangeHotkey	Modifier
 lOptionsChangeHotkeyTitle	Modification de déclencheur - ~1~ ~2~
+lOptionsCheck4Update	Vérifier la mise à jour
 lOptionsCtrl	Ctrl
 lOptionsDirectoryOpusUseTabs	Utiliser les onglets
 lOptionsDisplayFoldersInExplorerMenu	Dossiers dans l'Explorateur
@@ -231,7 +232,7 @@ lOptionsWin	Win
 lPickIconButtonCustom	Personnalisé
 lPickIconButtonDefault	Par défaut
 lPickIconDocumentPrompt	Voulez-vous choisir une icône personnalisée ou l'icône par défaut pour ce type de document?
-lPicIconNoLocation	Veuillez d'abord choisisr le document avant de sélectionner une icône.
+lPickIconNoLocation	Veuillez d'abord choisisr le document avant de sélectionner une icône.
 lPickIconTitle	Selection Icône de ~1~ - ~2~
 lReloadPrompt	Changement de ~1~ enregistré: ~2~. Voulez-vous relancer ~3~ en ~2~ maintenant? Les changements non sauvegardés dans le menu des dossiers seront perdus.
 lReloadPromptDefaultHotkey	La valeur par défaut pour ce déclencheur a été rétablie. Ceci ne sera effectif qu'après la relance de ~1~.`n`nVoulez-vous relancer ~1~ maintenant? Les changements non sauvegardés dans le menu des dossiers seront perdus.

@@ -183,6 +183,7 @@ lOptionsArrDescriptions5	Wählen Sie die Schnelltaste oder Maustastenkombination,
 lOptionsArrDescriptions6	Wählen Sie die Tastenkombination oder Maustasten-Kombination, welche den FoldersPopup Einstellungsdialog aufruft. Standardmäßig ist dies Shift+Windows+F.
 lOptionsChangeHotkey	Ändern
 lOptionsChangeHotkeyTitle	Tastenkürzel ändern - ~1~ ~2~
+lOptionsCheck4Update	Nach Update suchen
 lOptionsCtrl	Strg
 lOptionsDirectoryOpusUseTabs	Verwende Registerkarten
 lOptionsDisplayGroupMenu	Gruppe der Ordnermenüs

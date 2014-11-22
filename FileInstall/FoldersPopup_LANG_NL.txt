@@ -141,6 +141,7 @@ lOptionsArrDescriptions4	Kies de TOETSENBORD sneltoets combinatie die er voor zo
 lOptionsArrDescriptions6	Kies de sneltoets of muisknop combinatie die er voor zorgt dat de FoldersPopup instellingen geopend worden. Standaard is dit de toetsencombinatie Shift+Windows+F.
 lOptionsChangeHotkey	Wijzigen
 lOptionsChangeHotkeyTitle	Wijzig sneltoets - ~1~ ~2~
+lOptionsCheck4Update	Controleren op nieuwe versies
 lOptionsCtrl	Ctrl
 lOptionsDisplayGroupMenu	Toon S&witch
 lOptionsDisplayIcons	Toon Menu Iconen
