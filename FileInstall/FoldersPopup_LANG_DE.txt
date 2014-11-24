@@ -150,7 +150,6 @@ lMenuFPMenu	~1~ ~2~
 lMenuGroupAdd	hinzufügen
 lMenuGroupLoad	Gruppe laden
 lMenuGroupReplace	ersetzen
-lMenuGroupSave	Diese Gruppe speichern
 lMenuHelp	Hilfe
 lMenuMenu	Menü
 lMenuMyComputer	&Mein Computer

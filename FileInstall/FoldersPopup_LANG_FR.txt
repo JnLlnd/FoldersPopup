@@ -152,7 +152,7 @@ lMenuGroupAdd	ajouter
 lMenuGroupDOpus	Listes Directory Opus et
 lMenuGroupLoad	Ouvrir un groupe
 lMenuGroupReplace	remplacer
-lMenuGroupSave	Enregistrer ce groupe
+lMenuGroupSave	Enregistrer les Dossiers dans l'Explorateur dans un groupe
 lMenuHelp	Aide
 lMenuMenu	Menu
 lMenuMyComputer	Ordinateur
