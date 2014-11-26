@@ -31,6 +31,7 @@ To-do for v4:
 	Version: 3.9.7 BETA (2014-11-25)
 	* add an item in the right-click Tray menu to open the FoldersPopup.ini file
 	* add an option to disable check for update at startup
+	* add Downloads folder to Special Folders menu, support for DOpus and TC, not available on Win_XP
 	* fix a bug making custom icons not following when favorites were moved up or down in the menu
 	* merge and refactor GuiMoveFavoriteUp and GuiMoveFavoriteDown commands
 	* fix a bug visible only to Total Commander users occuring when you left-click the tray icon button or when left-click on the tray icon was in the overflow area
@@ -706,40 +707,40 @@ StringSplit, arrMouseButtons, strMouseButtons, |
 strIconsMenus := "lMenuDesktop|lMenuDocuments|lMenuPictures|lMenuMyComputer|lMenuNetworkNeighborhood|lMenuControlPanel|lMenuRecycleBin"
 	. "|menuRecentFolders|menuGroupDialog|menuGroupExplorer|lMenuSpecialFolders|lMenuGroup|lMenuFoldersInExplorer"
 	. "|lMenuRecentFolders|lMenuSettings|lMenuAddThisFolder|lDonateMenu|Submenu|Network|UnknownDocument|Folder"
-	. "|menuGroupSave|menuGroupLoad"
+	. "|menuGroupSave|menuGroupLoad|lMenuDownloads"
 
 if (A_OSVersion = "WIN_XP")
 {
 	strIconsFile := "shell32|shell32|shell32|shell32|shell32|shell32|shell32"
 				. "|shell32|shell32|shell32|shell32|shell32|shell32"
 				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
-				. "|shell32|shell32"
+				. "|shell32|shell32|shell32"
 	strIconsIndex := "35|127|118|16|19|22|33"
 				. "|4|147|4|4|147|147"
 				. "|214|166|111|161|85|10|1|4"
-				. "|7|7"
+				. "|7|7|156"
 }
 else if (A_OSVersion = "WIN_VISTA")
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres"
 				. "|imageres|imageres|shell32|shell32|shell32|imageres|shell32|imageres"
-				. "|shell32|shell32"
+				. "|shell32|shell32|shell32"
 	strIconsIndex := "105|85|67|104|114|22|49"
 				. "|112|174|3|3|251|174"
 				. "|112|109|88|161|85|28|1|3"
-				. "|259|259"
+				. "|259|259|123"
 }
 else
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres|shell32|imageres"
-				. "|shell32|shell32"
+				. "|shell32|shell32|shell32"
 	strIconsIndex := "106|189|68|105|115|23|50"
 				. "|113|176|203|203|99|176"
 				. "|113|110|217|208|298|29|1|4"
-				. "|297|46"
+				. "|297|46|123"
 }
 
 StringSplit, arrIconsFile, strIconsFile, |
@@ -1357,6 +1358,8 @@ Menu, menuSpecialFolders, Color, %strMenuBackgroundColor%
 AddMenuIcon("menuSpecialFolders", lMenuDesktop, "OpenSpecialFolder", "lMenuDesktop")
 AddMenuIcon("menuSpecialFolders", lMenuDocuments, "OpenSpecialFolder", "lMenuDocuments")
 AddMenuIcon("menuSpecialFolders", lMenuPictures, "OpenSpecialFolder", "lMenuPictures")
+if (A_OSVersion <> "WIN_XP")
+	AddMenuIcon("menuSpecialFolders", lMenuDownloads, "OpenSpecialFolder", "lMenuDownloads")
 Menu, menuSpecialFolders, Add
 AddMenuIcon("menuSpecialFolders", lMenuMyComputer, "OpenSpecialFolder", "lMenuMyComputer")
 AddMenuIcon("menuSpecialFolders", lMenuNetworkNeighborhood, "OpenSpecialFolder", "lMenuNetworkNeighborhood")
@@ -2777,6 +2780,8 @@ if (blnNewSpecialWindow and blnUseDirectoryOpus) or WindowIsDirectoryOpus(strTar
 		strDOpusAlias := "network"
 	else if (A_ThisMenuItem = lMenuPictures)
 		strDOpusAlias := "mypictures"
+	else if (A_ThisMenuItem = lMenuDownloads)
+		strDOpusAlias := "downloads"
 	
 	if (blnNewSpecialWindow)
 	{
@@ -2803,6 +2808,8 @@ else if (blnNewSpecialWindow and blnUseTotalCommander) or WindowIsTotalCommander
 		intTCCommand := 2125 ; cm_OpenNetwork
 	else if (A_ThisMenuItem = lMenuPictures)
 		RegRead, strLocation, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Pictures
+	else if (A_ThisMenuItem = lMenuDownloads)
+		RegRead, strLocation, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, {374DE290-123F-4565-9164-39C4925E467B}
 	
 	if (intTCCommand = 2123)
 		Run, Control ; workaround for command 2123 cm_OpenControls not working in my tests with TC v8.51a
@@ -2863,7 +2870,10 @@ else ; this is Explorer, Console, FreeCommander or a dialog box
 		intSpecialFolder := 18
 	else if (A_ThisMenuItem = lMenuPictures)
 		intSpecialFolder := 39
-	
+	else if (A_ThisMenuItem = lMenuDownloads)
+		; intSpecialFolder contains a sting here - this is awkward, I know, but it works and I will rework all OpenSpecialFolder very soon...
+		RegRead, intSpecialFolder, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, {374DE290-123F-4565-9164-39C4925E467B}
+
 	if (blnNewSpecialWindow)
 		ComObjCreate("Shell.Application").Explore(intSpecialFolder)
 		; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
@@ -2879,6 +2889,8 @@ else ; this is Explorer, Console, FreeCommander or a dialog box
 				strLocation := A_MyDocuments
 			else if (intSpecialFolder = 39)
 				RegRead, strLocation, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Pictures
+			else if (A_ThisMenuItem = lMenuDownloads)
+				strLocation := intSpecialFolder ; still awkward, of course...
 			else
 				; We cannot open the special folders lMenuMyComputer, lMenuNetworkNeighborhood, lMenuControlPanel and lMenuRecycleBin
 				; in the current window. Need to open an Explorer with ComObjCreate
