@@ -3,6 +3,9 @@ Bugs:
 - check double-quotes need in Run command
 
 To-do for v4:
+- check load group using LocationURL
+- check Current Folders using LocationURL
+
 - Sort groups list in manage groups
 - Optimize special folders clsid management (try x := window.Document.Folder.Self.Path)
 - Write DOpus add-in to list folders including special folders
@@ -25,9 +28,13 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 3.9.7 BETA (2014-11-??)
-	* add an item in the Tray menu to open the FoldersPopup.ini file
+	Version: 3.9.7 BETA (2014-11-25)
+	* add an item in the right-click Tray menu to open the FoldersPopup.ini file
 	* add an option to disable check for update at startup
+	* fix a bug making custom icons not following when favorites were moved up or down in the menu
+	* merge and refactor GuiMoveFavoriteUp and GuiMoveFavoriteDown commands
+	* fix a bug visible only to Total Commander users occuring when you left-click the tray icon button or when left-click on the tray icon was in the overflow area
+	* add location URL of folders in groups saved to the ini file
 	
 	Version: 3.9.6 BETA (2014-11-21)
 	* refactor BuildGroupMenu into BuildFoldersInExplorerMenu and stripped BuildGroupMenu
@@ -1234,12 +1241,15 @@ AHK_NOTIFYICON(wParam, lParam)
 ; Adapted from Lexikos http://www.autohotkey.com/board/topic/11250-mouseover-trayicon-triggering-an-event/#entry153388
 ; To popup menu when left click on the tray icon - See the OnMessage command in the init section
 ;------------------------------------------------------------
-{ 
+{
+	global blnClickOnTrayIcon
+	
 	if (lParam = 0x202) ; WM_LBUTTONUP
-	{ 
-		SetTimer, PopupMenuNewWindowMouse, -1 
-		return 0 
-	} 
+	{
+		blnClickOnTrayIcon := 1
+		SetTimer, PopupMenuNewWindowMouse, -1
+		return 0
+	}
 } 
 ;------------------------------------------------------------
 
@@ -1323,8 +1333,8 @@ RegRead, str, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explo
 A_Desktop et remplacer Desktop par Music
 RegRead, str, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Music
 
-/mymusic
-A_Desktop et remplacer Desktop par Music
+/myvideo
+A_Desktop et remplacer Desktop par Video
 RegRead, str, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Video
 
 /recent
@@ -1634,7 +1644,7 @@ CollectExplorers(objExplorers, pExplorers)
 			
 			if (objExplorer.IsSpecialFolder)
 			{
-				objExplorer.LocationURL := pExplorer.Document.Folder.Self.LocationURL
+				objExplorer.LocationURL := pExplorer.Document.Folder.Self.Path
 				objExplorer.LocationName := pExplorer.LocationName ; see http://msdn.microsoft.com/en-us/library/aa752084#properties
 			}
 			else
@@ -2109,10 +2119,11 @@ if !(blnNewWindow)
 		}
 		return
 	}
-else
-	WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
 
 Gosub, SetMenuPosition ; sets strTargetWinId or activate the window strTargetWinId set by CanOpenFavorite
+
+if (blnNewWindow) ;  must be placed after SetMenuPosition to have a fresh strTargetWinId
+	WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
 
 if (blnMouse) and (WindowIsDirectoryOpus(strTargetClass) or WindowIsTotalCommander(strTargetClass))
 {
@@ -2468,8 +2479,18 @@ WindowIsDesktop(strClass)
 ;------------------------------------------------------------
 {
 	global blnOpenMenuOnTaskbar
+	global blnClickOnTrayIcon
 	
-	return (strClass = "ProgMan") or (strClass = "WorkerW") or ((strClass = "Shell_TrayWnd") and blnOpenMenuOnTaskbar)
+	blnWindowIsDesktop := (strClass = "ProgMan")
+		or (strClass = "WorkerW")
+		or (strClass = "Shell_TrayWnd" and (blnOpenMenuOnTaskbar or blnClickOnTrayIcon))
+		or (strClass = "NotifyIconOverflowWindow")
+
+	blnClickOnTrayIcon := 0
+	; blnClickOnTrayIcon was turned on by AHK_NOTIFYICON
+	; turn it off to avoid further clicks on taskbar to be accepted if blnOpenMenuOnTaskbar is off
+
+	return blnWindowIsDesktop
 }
 ;------------------------------------------------------------
 
@@ -2626,7 +2647,9 @@ if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetCla
 		WinActivate, ahk_class dopus.lister
 	}
 	else if (blnUseTotalCommander)
+		
 		NewTotalCommander(strLocation, strTargetWinId, strTargetControl)
+		
 	else
 		if (A_OSVersion = "WIN_XP")
 			ComObjCreate("Shell.Application").Explore(strLocation)
@@ -2910,7 +2933,7 @@ Gui, 3:Add, Text, x10 y+15 w670 center, %lGuiGroupSaveSelect%
 
 Gui, 3:Add, ListView
 	, xm w680 h200 Checked Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvGroupList
-	, %lGuiGroupSaveLvHeader%|Hidden: Path|IsSpecialFolder|WindowId|Position|TabId
+	, %lGuiGroupSaveLvHeader%|Hidden: LocationURL|IsSpecialFolder|WindowId|Position|TabId
 Loop, 4
 	LV_ModifyCol(A_Index + 3, "Right")
 
@@ -3057,6 +3080,7 @@ Loop
 		. "|" . objFoldersInExplorers[intRow].Pane
 		. "|" . objFoldersInExplorers[intRow].WindowId
 		. "|" . objFoldersInExplorers[intRow].IsSpecialFolder
+		. "|" . objFoldersInExplorers[intRow].LocationURL
 		, %strIniFile%, Group-%strGroupSaveName%, Explorer%A_Index%
 }
 
@@ -3128,10 +3152,13 @@ intActualWindowInIni := 1
 
 while, intExplorer := WindowOfType("EX") ; returns the index of the first Explorer saved window in the group
 {
+	if !StrLen(objIniExplorersInGroup[intExplorer].LocationURL) ; for compatibility before v3.9.7
+		objIniExplorersInGroup[intExplorer].LocationURL := objIniExplorersInGroup[intExplorer].Name
+	
 	Tooltip, %intActualWindowInIni% %lGuiGroupOf% %intTotalWindowsInIni%
 	
 	if (objIniExplorersInGroup[intExplorer].IsSpecialFolder)
-		###_D(objIniExplorersInGroup[intExplorer].LocationURL) ; strExplorerLocationOrClassId := "shell:::" . objClassIdByLocalizedName[objIniExplorersInGroup[intExplorer].Name]
+		strExplorerLocationOrClassId := "shell:::" . objClassIdByLocalizedName[objIniExplorersInGroup[intExplorer].Name]
 	else
 		strExplorerLocationOrClassId := objIniExplorersInGroup[intExplorer].Name
 	
@@ -3318,7 +3345,7 @@ Loop
 	;  8	objFoldersInExplorers[intRow].Pane
 	;  9	objFoldersInExplorers[intRow].WindowId
 	; 10	objFoldersInExplorers[intRow].IsSpecialFolder
-	; 11	objFoldersInExplorers[intRow].####Path
+	; 11	objFoldersInExplorers[intRow].LocationURL
 	
 	objIniEntry := Object()
 	objIniEntry.Name := arrThisExplorer1
@@ -3331,6 +3358,7 @@ Loop
 	objIniEntry.Pane := arrThisExplorer8
 	objIniEntry.WindowId := arrThisExplorer9
 	objIniEntry.IsSpecialFolder := arrThisExplorer10
+	objIniEntry.LocationURL := arrThisExplorer11
 	
 	objIniExplorersInGroup.Insert(A_Index, objIniEntry)
 }
@@ -4320,60 +4348,23 @@ return
 
 ;------------------------------------------------------------
 GuiMoveFavoriteUp:
-;------------------------------------------------------------
-
-GuiControl, Focus, lvFavoritesList
-Gui, 1:ListView, lvFavoritesList
-intSelectedRow := LV_GetNext()
-if (intSelectedRow = 1)
-	return
-
-LV_GetText(strThisName, intSelectedRow, 1)
-LV_GetText(strThisLocation, intSelectedRow, 2)
-LV_GetText(strThisMenu, intSelectedRow, 3)
-LV_GetText(strThisSubmenu, intSelectedRow, 4)
-LV_GetText(strThisFavoriteType, intSelectedRow, 5)
-
-LV_GetText(strPriorName, intSelectedRow - 1, 1)
-LV_GetText(strPriorLocation, intSelectedRow - 1, 2)
-LV_GetText(strPriorMenu, intSelectedRow - 1, 3)
-LV_GetText(strPriorSubmenu, intSelectedRow - 1, 4)
-LV_GetText(strPriorFavoriteType, intSelectedRow - 1, 5)
-
-LV_Modify(intSelectedRow, "", strPriorName, strPriorLocation, strPriorMenu, strPriorSubmenu, strPriorFavoriteType)
-LV_Modify(intSelectedRow - 1, "Select Focus Vis", strThisName, strThisLocation, strThisMenu, strThisSubmenu, strThisFavoriteType)
-
-GuiControl, Enable, btnGuiSave
-GuiControl, , btnGuiCancel, %lGuiCancel%
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
 GuiMoveFavoriteDown:
 ;------------------------------------------------------------
 
 GuiControl, Focus, lvFavoritesList
 Gui, 1:ListView, lvFavoritesList
 intSelectedRow := LV_GetNext()
-if (intSelectedRow = LV_GetCount())
+if (intSelectedRow = (A_ThisLabel = "GuiMoveFavoriteUp" ? 1 : LV_GetCount()))
 	return
 
-LV_GetText(strThisName, intSelectedRow, 1)
-LV_GetText(strThisLocation, intSelectedRow, 2)
-LV_GetText(strThisMenu, intSelectedRow, 3)
-LV_GetText(strThisSubmenu, intSelectedRow, 4)
-LV_GetText(strThisFavoriteType, intSelectedRow, 5)
+Loop, 6
+	LV_GetText(arrThis%A_Index%, intSelectedRow, A_Index)
 
-LV_GetText(strNextName, intSelectedRow + 1, 1)
-LV_GetText(strNextLocation, intSelectedRow + 1, 2)
-LV_GetText(strNextMenu, intSelectedRow + 1, 3)
-LV_GetText(strNextSubmenu, intSelectedRow + 1, 4)
-LV_GetText(strNextFavoriteType, intSelectedRow + 1, 5)
-	
-LV_Modify(intSelectedRow, "", strNextName, strNextLocation, strNextMenu, strNextSubmenu, strNextFavoriteType)
-LV_Modify(intSelectedRow + 1, "Select Focus Vis", strThisName, strThisLocation, strThisMenu, strThisSubmenu, strThisFavoriteType)
+Loop, 6
+	LV_GetText(arrOther%A_Index%, intSelectedRow + (A_ThisLabel = "GuiMoveFavoriteUp" ? -1 : 1), A_Index)
+
+LV_Modify(intSelectedRow, "", arrOther1, arrOther2, arrOther3, arrOther4, arrOther5, arrOther6)
+LV_Modify(intSelectedRow + (A_ThisLabel = "GuiMoveFavoriteUp" ? -1 : 1), "Select Focus Vis", arrThis1, arrThis2, arrThis3, arrThis4, arrThis5, arrThis6)
 
 GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lGuiCancel%
