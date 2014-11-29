@@ -1,6 +1,7 @@
 /*
 Bugs:
 - check double-quotes need in Run command
+- add this folder in DOpus does not default with the correct pane
 
 To-do for v4:
 - check load group using LocationURL
@@ -28,6 +29,10 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 3.9.8 BETA (2014-1?-??)
+	* fix lOptionsDisplayFoldersInExplorerMenu label.
+	* add column break and system variable in default menu
+	
 	Version: 3.9.7 BETA (2014-11-25)
 	* add an item in the right-click Tray menu to open the FoldersPopup.ini file
 	* add an option to disable check for update at startup
@@ -510,7 +515,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 3.9.7 BETA
+;@Ahk2Exe-SetVersion 3.9.8 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -548,7 +553,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.9.7" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "3.9.8" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -808,6 +813,9 @@ IfNotExist, %strIniFile%
 			Folder1=C:\|C:\
 			Folder2=Windows|%A_WinDir%
 			Folder3=Program Files|%A_ProgramFiles%
+			Folder4=User Profile|`%USERPROFILE`%
+			Folder5==== column ===|=== column ===
+
 
 )
 		, %strIniFile%
@@ -1629,15 +1637,22 @@ CollectExplorers(objExplorers, pExplorers)
 	For pExplorer in pExplorers
 	; see http://msdn.microsoft.com/en-us/library/windows/desktop/aa752084(v=vs.85).aspx
 	{
+		/* in v.3.9.8: stop interupting Explorer collection if an error occurs - just check for content and continue
 		if (A_LastError)
 			; an error occurred during ComObjCreate (A_LastError probably is E_UNEXPECTED = -2147418113 #0x8000FFFFL)
 			break
+		*/
 
 		strType := ""
+		strWindowID := ""
 		try
+		{
 			strType := pExplorer.Type ; Gets the user type name of the contained document object. "Document HTML" for IE windows. Should be empty for file Explorer windows.
+			strWindowID := pExplorer.HWND ; Try to get the handle of the window. Some ghost Explorer in the ComObjCreate may return an empty handle
+		}
 		
-		if !StrLen(strType)
+		if !StrLen(strType) ; must be empty
+			and StrLen(strWindowID) ; must not be empty
 		{
 			intExplorers := intExplorers + 1
 			objExplorer := Object()
@@ -3182,8 +3197,7 @@ while, intExplorer := WindowOfType("EX") ; returns the index of the first Explor
 		if (A_Index > 20)
 		{
 			Oops(lDialogGroupLoadErrorLoading, strExplorerLocationOrClassId)
-			Tooltip ; clear tooltip
-			return
+			continue
 		}
 		Sleep, 20
 		strNewWindowId := WinExist("A")
@@ -3226,8 +3240,7 @@ while, intDOWindow := WindowOfType("DO") ; returns the index of the first DOpus 
 				if (A_Index > 20)
 				{
 					Oops(lDialogGroupLoadErrorLoading, strExplorerLocationOrClassId)
-					Tooltip ; clear tooltip
-					return
+					continue
 				}
 				Sleep, 20
 				strNewWindowId := WinExist("A")		
