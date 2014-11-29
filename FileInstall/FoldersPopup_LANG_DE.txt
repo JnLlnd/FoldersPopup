@@ -31,6 +31,7 @@ lDialogFavoriteNameEmpty	Der Name des Favorite ist leer. Bitte wählen Sie einen 
 lDialogFavoriteNameNoColumnBreak	Der Menüname kann die reservierten Zeichen "~1~" nicht als Spaltentrennzeichen verwenden.
 lDialogFavoriteNameNoSeparator	Das Untermenü darf das reservierte Zeichen "~1~" nicht enthalten.
 lDialogFavoriteNameNotNew	Der Name ~1~ wird bereits in diesem Menü verwendet. Bitte wählen Sie einen anderen Namen.
+lDialogFavoriteNameNoPipe	Der Favorit oder Menüname darf das reservierte Zeichen "|" (vertikale Linie) nicht enthalten.
 lDialogFavoriteParentMenu	Favorite Hauptmenü
 lDialogFavoriteRemovePrompt	Entfernen des Untermenü "~1~"`nund ALL seines Inhalts (Ordner und Untermenüs)?
 lDialogFavoriteRemoveTitle	Entfernen des Favorite - ~1~
@@ -56,6 +57,7 @@ lDialogGroupRemoveTitle	Gruppe - ~1~ löschen
 lDialogGroups	Gruppen
 lDialogGroupSelect	Gruppe auswählen
 lDialogGroupSelectError	Bitte die Gruppe zum ~1~ auswählen.
+lDialogIcon	Symbol
 lDialogInvalidHotkey	Mit dem derzeitigen Tastaturlayout kann das Tastenkürzel "~1~" nicht verwendet werden, um das Popup-Menü aufzurufen (kein gültiger Tasten Name).`n`nBitte öffnen Sie das "~2~ Einstellungen" aus dem Tray-Menü und klicken Sie auf "Optionen". Wählen Sie in diesem Dialog ein anderes Tastenkürzel für "~3~".
 lDialogOpenThisMenu	Dieses Menü öffnen
 lDialogSave	Speichern
@@ -145,11 +147,15 @@ lMenuControlPanel	&Systemsteuerung
 lMenuDesktop	&Desktop
 lMenuDialogNotSupported	Diese Dialogbox wird momentan noch nicht unterstützt
 lMenuDocuments	D&okumente
+lMenuDownloads	Downloads
 lMenuExitFoldersPopup	Beenden ~1~
+lMenuFoldersInExplorer	Ordner im Explorer
 lMenuFPMenu	~1~ ~2~
+lMenuGroup	Ordner &Gruppen
 lMenuGroupAdd	hinzufügen
 lMenuGroupLoad	Gruppe laden
 lMenuGroupReplace	ersetzen
+lMenuGroupSave	Aktuelle Ordner als Gruppe speichern
 lMenuHelp	Hilfe
 lMenuMenu	Menü
 lMenuMyComputer	&Mein Computer
@@ -185,11 +191,13 @@ lOptionsChangeHotkeyTitle	Tastenkürzel ändern - ~1~ ~2~
 lOptionsCheck4Update	Nach Update suchen
 lOptionsCtrl	Strg
 lOptionsDirectoryOpusUseTabs	Verwende Registerkarten
+lOptionsDisplayFoldersInExplorerMenu	Ordner im Explorer
 lOptionsDisplayGroupMenu	Gruppe der Ordnermenüs
 lOptionsDisplayIcons	Zeige Icons im Menü
 lOptionsDisplayMenuShortcuts	Zeige &numerische Menü-Tastenkürzel
 lOptionsDisplayRecentFolders	Kürzlich verwendete Ordner
 lOptionsDisplaySpecialFolders	S&pezielle Ordner
+lOptionsDisplayMenus	Anzuzeigende Menüs:
 lOptionsGuiIntro	Legen Sie die Maustasten und Tastenkürzel fest, welche ~1~ auslösen.
 lOptionsGuiTitle	Optionen - ~1~ ~2~
 lOptionsIconSize	Symbolgröße im Menü
@@ -224,6 +232,11 @@ lOptionsTotalCommanderUseTabs	Verwende Registerkarten
 lOptionsTrayTip	Beim Start &Tray-Tip anzeigen
 lOptionsTriggerFor	Auslöser für:
 lOptionsWin	Win
+lPickIconButtonCustom	Angepasst
+lPickIconButtonDefault	Standard
+lPickIconDocumentPrompt	Angepasstes oder Standard-Symbol für diese Art von Dokument verwenden?
+lPickIconNoLocation	Vor der Wahl des Symbols bitte zuerst das Dokument auswählen.
+lPickIconTitle	Auswahl ~1~ Symbol - ~2~
 lReloadPrompt	~1~  wurde in ~2~ geändert. Wollen Sie jetzt ~3~ in ~2~ neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
 lReloadPromptDefaultHotkey	Schnelltaste auf Standard zurückgesetzt. Diese Änderung tritt erst durch erneutes Laden von ~1~ in Kraft.`n`nWollen Sie ~1~ jetzt neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
 lTrayTipInstalledDetail	Zur Anzeige des ~1~ Menüs`nim Windows Explorer oder einer Dialogbox`n~2~ oder ~3~ drücken.`n`n~4~ oder ~5~`num ein neues Explorer-Fenster zu öffnen.
