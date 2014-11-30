@@ -1,5 +1,5 @@
 lAboutText1	~1~ ~2~ (~3~ bits)
-lAboutText2	~1~ wordt ontwikkeld door Jean Lalonde gebruik`nmakend van <a href="http://ahkscript.org/">AutoHotkey</a> programmeertaal.`n`nNederlandse vertaling: Pieter Dejonghe`nDuitse vertaling: Edgar "Fast Edi" Hoffmann`nFranse vertaling: Jean Lalonde`nKorean vertaling: Om Il-Sung`nZweedse vertaling: Åke Engelbrektson`nAndere talen: (hulp is welkom)`nCorrectie Engelse vertaling: (hulp is welkom)`n`nOntwerp icons: <a href="http://www.visualpharm.com">Visual Pharm</a>`nAutoHotkey_L v1.1 bronbestanden: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText2	~1~ wordt ontwikkeld door Jean Lalonde gebruik`nmakend van <a href="http://ahkscript.org/">AutoHotkey</a> programmeertaal.`n`nNederlandse vertaling: Pieter Dejonghe`nDuitse vertaling: Edgar "Fast Edi" Hoffmann`nFranse vertaling: Jean Lalonde`nKorean vertaling: Om Il-Sung`nZweedse vertaling: Åke Engelbrektson`nAndere talen: (hulp is welkom)`nCorrectie Engelse vertaling: (hulp is welkom)`n`nOntwerp icons: <a href="http://www.visualpharm.com">Visual Pharm</a>`nInstaller: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> van jrsoftware.org`nAutoHotkey_L v1.1 bronbestanden: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
 lAboutText4	Ondersteuning via <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	Over... - ~1~ ~2~
@@ -28,6 +28,8 @@ lDialogFavoriteDoesNotExistPrompt	De favoriet "~1~" bestaat niet of is niet besc
 lDialogFavoriteDoesNotExistTitle	Favorite does not exist - ~1~
 lDialogFavoriteLocationEmpty	Deze locatie is leeg. Kies alstublieft een locatie.
 lDialogFavoriteNameEmpty	De naam van de favoriet is leeg. Kies een naam...
+lDialogFavoriteNameNoColumnBreak	De naam van het menu kan niet beginnen met de speciale tekens  "~1~" die gebruikt worden als scheiding tussen kolommen.
+lDialogFavoriteNameNoPipe	De naam van de favoriet of menu mag het gereserveerde karakter "|" niet bevatten.
 lDialogFavoriteNameNoSeparator	De naam voor een submenu mag het gereserveerde letterteken "~1~" niet bevatten.
 lDialogFavoriteNameNotNew	De naam "~1~" is reeds in gebruik in dit menu. Kies alstublieft een andere naam.
 lDialogFavoriteParentMenu	Favoriet hoofd menu
@@ -37,6 +39,25 @@ lDialogFileLabel	Document
 lDialogFileShortName	Document naam (voor in het menu)
 lDialogFolderLabel	Map
 lDialogFolderShortName	Korte naam voor de map (voor in het menu)
+lDialogGroupDelete	Verwijderen
+lDialogGroupDeleteError	verwijderen
+lDialogGroupDeletePrompt	Verwijder de groep "~1~"?
+lDialogGroupEdit	Bewerken
+lDialogGroupEditError	bewerken
+lDialogGroupLoad	Laden
+lDialogGroupLoadError	laden
+lDialogGroupManageCannotSave	Opgepast: Er is geen geopend venster wat je kan bewaren in een nieuwe groep. Open op zijn minst 1 venster van een Verkenner of Directory Opus en probeer opnieuw. 
+lDialogGroupManageCreatingPrompt	Om een nieuwe groep aan te maken, klik de "~1~" knop of kies het "~2~" menu.
+lDialogGroupManageCreatingTitle	Een groep aanmaken
+lDialogGroupManageGroupsTitle	Groepen beheren - ~1~ ~2~
+lDialogGroupManageIntro	Met "Groepen" kan je jouw werkruimte bewaren en terug oproepen. Op deze manier kan je makkelijk omschakelen. "Groepen" onthouden de map, grootte, positie en status (normaal, geminimaliseerd of gemaximaliseerd) van de Windows Verkenner of de Directory Opus vensters. Total Commander wordt nog niet ondersteund.
+lDialogGroupManageManagingTitle	Groepen beheren
+lDialogGroupNew	Een nieuwe groep bewaren
+lDialogGroupRemoveTitle	Verwijder groep - ~1~
+lDialogGroupSelect	Selecteer een groep
+lDialogGroupSelectError	Gelieve de groep te selecteren om ~1~.
+lDialogGroups	Groepen
+lDialogIcon	Icoon
 lDialogInvalidHotkey	Met je huidige toetsenbordindeling kan de sneltoets "~1~" niet gebruikt worden als een trigger voor het popup menu.`n`nGelieve het "~2~ Settings" venster te openen vanuit het taakbalkmenu en selecteers "Opties". Gelieve in dit venster een andere sneltoets te kiezen voor "~3~".
 lDialogOpenThisMenu	Open dit menu
 lDialogSave	Bewaren
@@ -79,6 +100,21 @@ lGuiClose	&Sluiten
 lGuiDonate	Steun
 lGuiDropFilesIncentive	Je kan je favoriete mappen naar dit venster slepen en neerzetten
 lGuiEditFavorite	Bewerken
+lGuiGroupClosing	Vensters sluiten
+lGuiGroupOf	van
+lGuiGroupSaveAddWindowsLabel	Toevoegen bij bestaande vensters
+lGuiGroupSaveEditPrompt	~1~ deze groep
+lGuiGroupSaveEditTitle	~1~ een groep van vensters - ~2~ ~3~
+lGuiGroupSaveLvHeader	Pad|Toepassing|Toestand van het venster|Links|Boven|Breedte|Hoogte|Zijde
+lGuiGroupSaveNameEmpty	De groepsnaam is niet ingevuld. Kies alsjeblieft een groepsnaam.
+lGuiGroupSaveNewGroup	Nieuwe groep
+lGuiGroupSaveReplaceGroup	Groep "~1~" bestaat. Wil je deze vervangen?
+lGuiGroupSaveReplaceWindowsLabel	Vervang bestaande vensters
+lGuiGroupSaveRestoreOption	Indien deze groep opgeroepen wordt:
+lGuiGroupSaveSelect	Selecteer de mappen om te bewaren in deze groep
+lGuiGroupSaveSelectExisting	of kies een bestaande groep om te overschrijven:
+lGuiGroupSaveShortName	Verkorte groepsnaam (voor menu)
+lGuiGroupSaved	Groep "~1~" werd bewaard.`n`nSelecteer het menu "~2~" om deze groep te laden.
 lGuiHelp	Hulp
 lGuiLvDialogsHeader	Ondersteunde dialoogvensters`n(deel van de naam volstaat)
 lGuiLvFavoritesHeader	Naam|Locatie
@@ -86,6 +122,7 @@ lGuiMoveFavoriteDown	Naar beneden
 lGuiMoveFavoriteUp	Naar boven
 lGuiOptions	Opties
 lGuiRemoveFavorite	Verwijderen
+lGuiResetDefault	Zet de standaard sneltoets terug
 lGuiSave	Bewaren
 lGuiSeparator	Se&parator
 lGuiSubmenuDropdownLabel	Te wijzigen menu:
@@ -104,12 +141,20 @@ lHelpTitle	Hulp - ~1~ ~2~
 lMainMenuName	Hoofdmenu
 lMenuAbout	Over
 lMenuAddThisFolder	Deze m&ap toevoegen
+lMenuColumnBreak	kolom
 lMenuControlPanel	&Configuratiescherm
 lMenuDesktop	Bureaublad
 lMenuDialogNotSupported	Dit type dialoogvenster wordt nog niet ondersteund
 lMenuDocuments	D&ocumenten
+lMenuDownloads	Downloads
 lMenuExitFoldersPopup	Exit ~1~
 lMenuFPMenu	~1~ ~2~
+lMenuFoldersInExplorer	Huidige Mappen
+lMenuGroup	&Groepen van Mappen
+lMenuGroupAdd	toevoegen
+lMenuGroupLoad	Laad een groep
+lMenuGroupReplace	vervangen
+lMenuGroupSave	De huidige mappen als een groep bewaren
 lMenuHelp	Hulp
 lMenuMenu	Menu
 lMenuMyComputer	&Mijn Computer
@@ -138,14 +183,18 @@ lOptionsArrDescriptions1	Kies de combinatie van MUISknop en speciale toetsen (CT
 lOptionsArrDescriptions2	Kies de combinatie van MUISknop en speciale toetsen (CTRL/ALT/SHIFT/WIN) die het popup menu voor mappen opent in elk willekeurig venster en die navigeert naar de geselecteerde map in een NIEUW venster van Windows Verkenner. Standaard is dit de middenste muisknop terwijl de Shift toets wordt ingedrukt.
 lOptionsArrDescriptions3	Kies de TOETSENBORD sneltoets combinatie die er voor zorgt dat het popup menu voor mappen opent in Windows Verkenner of in bestandsdialoogvensters. Standaard is dit de Win+K combinatie (de letter "K" terwijl de Windows toets wordt ingedrukt).
 lOptionsArrDescriptions4	Kies de TOETSENBORD sneltoets combinatie die er voor zorgt dat het popup menu voor mappen opent in elk willekeurig venster en die navigeert naar de geselecteerde map in een NIEUW venster van Windows Verkenner. Standaard is dit de Shift+Win+K combinatie (de letter "K" terwijl de Shift toets en de Windows toets worden ingedrukt).
+lOptionsArrDescriptions5	Kies een sneltoets of een muisknop combinatie die het "Recente Mappen" menu dient te openen. Standaard is dit Shift+Windows+R.
 lOptionsArrDescriptions6	Kies de sneltoets of muisknop combinatie die er voor zorgt dat de FoldersPopup instellingen geopend worden. Standaard is dit de toetsencombinatie Shift+Windows+F.
 lOptionsChangeHotkey	Wijzigen
 lOptionsChangeHotkeyTitle	Wijzig sneltoets - ~1~ ~2~
 lOptionsCheck4Update	Controleren op nieuwe versies
 lOptionsCtrl	Ctrl
-lOptionsDisplayGroupMenu	Toon S&witch
+lOptionsDirectoryOpusUseTabs	Gebruik tabbladen
+lOptionsDisplayFoldersInExplorerMenu	Huidige Mappen
+lOptionsDisplayGroupMenu	Groep van mappen
 lOptionsDisplayIcons	Toon Menu Iconen
 lOptionsDisplayMenuShortcuts	Toon de &Numerieke Menu Sneltoetsen
+lOptionsDisplayMenus	Toon Menus:
 lOptionsDisplayRecentFolders	Recente bezochte mappen
 lOptionsDisplaySpecialFolders	S&peciale Mappen
 lOptionsGuiIntro	Definieer de muisknoppen en sneltoetsen die ~1~ zullen triggeren.
@@ -153,7 +202,7 @@ lOptionsGuiTitle	Opties - ~1~ ~2~
 lOptionsIconSize	Menu iconen grootte
 lOptionsKeyboard	Toetsenbord
 lOptionsLanguage	Taal
-lOptionsLanguageLabels	Engels|Frans|Duits|Nederlands|Korean|Zweeds
+lOptionsLanguageLabels	Engels|Frans|Duits|Nederlands|Koreaans|Zweeds
 lOptionsMenuActiveWindow	In het actieve venster
 lOptionsMenuFixPosition	Op een vaste positie
 lOptionsMenuNearMouse	In de buurt van de muisaanwijzer
@@ -163,6 +212,7 @@ lOptionsMouseButtonsText	Linkermuisknop|Middenste muisknop|Rechtermuisknop|Speci
 lOptionsMouseCheckLButton	Je kan de linkermuisknop niet toewijzen zonder een extra speciale toets erbij.
 lOptionsMouseNone	Geen
 lOptionsNoKeyOrMouseSpecified	Geen toets of muisknop werd gespecifieerd. De bestaande "~1~" combinatie blijft ongewijzigd.
+lOptionsOpenMenuOnTaskbar	Open menu via de taakbalk
 lOptionsOtherOptions	Andere Opties
 lOptionsPopupFix	Popup &Menu op een Vaste Positie
 lOptionsPopupFixPositionX	Positie X:
@@ -170,23 +220,34 @@ lOptionsPopupFixPositionY	Y:
 lOptionsRecentFolders	R&ecente Mappen
 lOptionsRunAtStartup	&Uitvoeren bij Opstarten
 lOptionsShift	Shift
+lOptionsSpacebar	gebruik de spatiebalk
 lOptionsTheme	Thema
 lOptionsThirdPartyDetail	Selecteer het ~1~ programma (.exe) om de ~1~ integratie te activeren.
 lOptionsThirdPartyPrompt	Programma:
 lOptionsThirdPartyTitle	~1~ gebruikers
 lOptionsTitles	Muis - Folders Popup|Muis - Nieuwe Verkenner|Toetsenbord - Folders Popup|Toetsenbord - Nieuwe Verkenner|Recente Mappen|Instellingen
 lOptionsTitlesSub	(toon menu in de Verkenner en dialoogvensters)|(toon menu in een willekeurig venster)|(toon menu in de Verkenner en dialoogvensters)|(toon menu in een willekeurig venster)|(lijst met recent bezochte Windows locaties)|(menu configuratie and opties)
+lOptionsTotalCommanderUseTabs	Gebruik tabs
 lOptionsTrayTip	Toon &Startup Systeembalk Tip
 lOptionsTriggerFor	Trigger voor:
 lOptionsWin	Win
+lPickIconButtonCustom	Aangepast
+lPickIconButtonDefault	Standaard
+lPickIconDocumentPrompt	Wil je een aangepast icoon gebruiken of liever het standaard icoon voor dit type document? 
+lPickIconNoLocation	Selecteer eerst het document en dan pas het icoon.
+lPickIconTitle	Selecteer ~1~ Icoon - ~2~
 lReloadPrompt	~1~ werd gewijzigd naar ~2~. Wil je ~3~ laden in het ~2~ nu? Niet bewaarde wijzigingen gaan verloren.
+lReloadPromptDefaultHotkey	Hotkey changed to default value. This change will be effective only after you reload ~1~.`n`nDo you want to reload ~1~ now? Unsaved changes to the folders menu will be lost.
+lReloadPromptDefaultHotkey	Standaard sneltoets werd terug gezet op de standaard waarde. Deze wijziging gaat pas in als je ~1~ opnieuw laadt. Wil je ~1~ nu opnieuw laden? Niet bewaarde wijzigingen aan het menu gaan dan verloren. 
 lTrayTipInstalledDetail	Om het ~1~ menu te tonen, druk:`n`n~2~ / ~3~`nin Windows Verkenner of in een dialoogvenster`n`n~4~ / ~5~`nom een nieuw Verkenner venster te openen
-lTrayTipinstalledTitle	~1~ ~2~ klaar!
 lTrayTipWorkingDetail	Menus aan het opbouwen
 lTrayTipWorkingDetailFinished	Het menu is bijgewerkt.
 lTrayTipWorkingTitle	~1~ ~2~ opbouwen...
+lTrayTipinstalledTitle	~1~ ~2~ klaar!
 lUpdateButtonRemind	Herinner me
 lUpdateError	Een fout trad op bij het controleren van het versienummer. De controle voor een update wordt stopgezet.
 lUpdatePrompt	Update ~1~ van v~2~ naar v~3~?
 lUpdateTitle	Update ~1~?
 lUpdateYouHaveLatest	Je hebt reeds de meest recente versie: ~1~.`n`nWil je de ~2~ pagina toch bezoeken?
+lWindowIsTreeviewText	Sorry... maar door een beperking in Windows is dit type venster (TreeView) nog niet ondersteund.
+lWindowIsTreeviewTitle	Tree view dialoog vensters worden niet ondersteund
