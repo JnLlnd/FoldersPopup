@@ -32,6 +32,7 @@ To-do for v4:
 	Version: 3.9.8 BETA (2014-1?-??)
 	* fix lOptionsDisplayFoldersInExplorerMenu label.
 	* add column break and system variable in default menu
+	* fix bug when edit and save a submenu under the same name
 	
 	Version: 3.9.7 BETA (2014-11-25)
 	* add an item in the right-click Tray menu to open the FoldersPopup.ini file
@@ -3963,7 +3964,7 @@ Gui, 1:Add, Picture, xm y+5 gGuiGotoPreviousMenu vpicPreviousMenu hidden, %strTe
 Gui, 1:Add, Picture, xm+15 yp gGuiGotoUpMenu vpicUpMenu hidden, %strTempDir%\up-12.png ; Static7
 Gui, 1:Add, DropDownList, xm+30 yp w480 vdrpMenusList gGuiMenusListChanged
 
-Gui, 1:Font, s8 w400, Verdana
+; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
 Gui, 1:Add, ListView
 	, xm+30 w480 h240 Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFavoritesList gGuiFavoritesListEvent
 	, %lGuiLvFavoritesHeader%|Hidden Menu|Hidden Submenu|Hidden FavoriteType|Hidden IconResource
@@ -4050,6 +4051,7 @@ LoadOneMenuToGui:
 Gui, 1:ListView, lvFavoritesList
 LV_Delete()
 
+; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
 Loop, % arrMenus[strCurrentMenu].MaxIndex()
 	if (arrMenus[strCurrentMenu][A_Index].FavoriteType = "S") ; this is a submenu
 		LV_Add(, arrMenus[strCurrentMenu][A_Index].FavoriteName, lGuiSubmenuLocation, arrMenus[strCurrentMenu][A_Index].MenuName
@@ -4075,6 +4077,7 @@ SaveCurrentListviewToMenuObject:
 arrMenus[strCurrentMenu] := Object() ; re-init current menu array
 Gui, 1:ListView, lvFavoritesList
 
+; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
 Loop % LV_GetCount()
 {
 	LV_GetText(strName, A_Index, 1)
@@ -4324,7 +4327,7 @@ GuiAddSeparator:
 
 GuiControl, Focus, lvFavoritesList
 Gui, 1:ListView, lvFavoritesList
-LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", lMenuSeparator, lMenuSeparator . lMenuSeparator, strCurrentMenu)
+LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", lMenuSeparator, lMenuSeparator . lMenuSeparator, strCurrentMenu, "", "", "")
 LV_Modify(LV_GetNext(), "Vis")
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
@@ -4342,10 +4345,11 @@ GuiAddColumnBreak:
 
 GuiControl, Focus, lvFavoritesList
 Gui, 1:ListView, lvFavoritesList
+; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
 LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus"
 	, lMenuColumnBreakIndicator . " " lMenuColumnBreak . " " . lMenuColumnBreakIndicator
 	, lMenuColumnBreakIndicator . " " lMenuColumnBreak . " " . lMenuColumnBreakIndicator
-	, strCurrentMenu)
+	, strCurrentMenu, "", "", "")
 LV_Modify(LV_GetNext(), "Vis")
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
@@ -4434,6 +4438,7 @@ SaveOneMenu(strMenu)
 	
 	Loop, % arrMenus[strMenu].MaxIndex()
 	{
+		; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
 		strValue := arrMenus[strMenu][A_Index].FavoriteName
 			. "|" . arrMenus[strMenu][A_Index].FavoriteLocation
 			. "|" . SubStr(arrMenus[strMenu][A_Index].MenuName, StrLen(lMainMenuName) + 1) ; remove main menu name for ini file
@@ -5097,7 +5102,10 @@ if (blnRadioSubmenu)
 		arrMenus.Insert(strNewSubmenuFullName, arrNewMenu)
 	}
 	else ; GuiEditFavoriteSave
+	{
+		strFavoriteLocation := lGuiSubmenuLocation
 		UpdateMenuNameInSubmenus(strCurrentSubmenuFullName, strNewSubmenuFullName) ; change names in arrMenus and arrMenu objects
+	}
 }
 else
 	strNewSubmenuFullName := ""
@@ -5172,6 +5180,9 @@ UpdateMenuNameInSubmenus(strOldMenu, strNewMenu)
 ; recursive function
 ;------------------------------------------------------------
 {
+	if (strOldMenu = strNewMenu) ; do not continue if both menus have same name: this destroys the menu
+		return
+	
 	arrMenus.Insert(strNewMenu, arrMenus[strOldMenu])
 	Loop, % arrMenus[strNewMenu].MaxIndex()
 	{
