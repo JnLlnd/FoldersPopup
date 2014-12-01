@@ -1,16 +1,12 @@
-/*
-Bugs:
-
-To-do for v4:
-- manage group gui
-- Win-K shortcut not available in Win 8.1 (available: Win-A, Win-J, Win-N used by OneNote, Win-Y)
-*/
 ;===============================================
 /*
 	FoldersPopup
 	Written using AutoHotkey_L v1.1.09.03+ (http://l.autohotkey.net/)
 	By Jean Lalonde (JnLlnd on AHKScript.org forum), based on DirMenu v2 by Robert Ryan (rbrtryn on AutoHotkey.com forum)
 
+	Version: 3.3.2 (2014-12-01)
+	* fix a bug occurring when editing a submenu and saving it under the same name
+	
 	Version: 3.3.1 (2014-11-17)
 	* fix a bug occurring in some situation when a favorite location contains a comma
 	
@@ -420,7 +416,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 3.3.1
+;@Ahk2Exe-SetVersion 3.3.2
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -481,7 +477,7 @@ FileInstall, FileInstall\gift-32.png, %strTempDir%\gift-32.png
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.3.1" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "3.3.2" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -2986,7 +2982,11 @@ if (blnRadioSubmenu)
 		arrMenus.Insert(strNewSubmenuFullName, arrNewMenu)
 	}
 	else ; GuiEditFolderSave
+	{
+		strFolderLocation := lGuiSubmenuLocation
+		
 		UpdateMenuNameInSubmenus(strCurrentSubmenuFullName, strNewSubmenuFullName) ; change names in arrMenus and arrMenu objects
+	}
 }
 else
 	strNewSubmenuFullName := ""
@@ -3060,6 +3060,9 @@ UpdateMenuNameInSubmenus(strOldMenu, strNewMenu)
 ; recursive function
 ;------------------------------------------------------------
 {
+	if (strOldMenu = strNewMenu) ; do not continue if both menus have same name: this destroys the menu
+		return
+	
 	arrMenus.Insert(strNewMenu, arrMenus[strOldMenu])
 	Loop, % arrMenus[strNewMenu].MaxIndex()
 	{
