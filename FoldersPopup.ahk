@@ -22,13 +22,13 @@ To-do for v4.x:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 3.9.8 BETA (2014-1?-??)
+	Version: 3.9.8 BETA (2014-12-01)
 	* fix lOptionsDisplayFoldersInExplorerMenu label.
 	* add column break and system variable in default menu
 	* fix bug when edit and save a submenu under the same name
+	* add double-quotes to Run command parameters
 	* sort groups list in manage groups and edit group
 
-	
 	Version: 3.9.7 BETA (2014-11-25)
 	* add an item in the right-click Tray menu to open the FoldersPopup.ini file
 	* add an option to disable check for update at startup
