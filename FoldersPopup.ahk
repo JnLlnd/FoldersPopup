@@ -2,7 +2,6 @@
 Bugs:
 
 To-do for v4:
-- keep a backup of the ini file
 
 To-do for v4.x:
 - Write DOpus add-in to list folders including special folders
@@ -27,6 +26,7 @@ To-do for v4.x:
 
 	Version: 3.9.9 BETA (2014-12-??)
 	* detect if app is started in program files folder and set working dir to appdata
+	* create a backup of the ini file at launch time
 	
 	Version: 3.9.8 BETA (2014-12-01)
 	* fix lOptionsDisplayFoldersInExplorerMenu label.
@@ -569,6 +569,7 @@ global str32or64 := A_PtrSize * 8
 global blnDiagMode := False
 global strDiagFile := A_WorkingDir . "\" . strAppName . "-DIAG.txt"
 global strIniFile := A_WorkingDir . "\" . strAppName . ".ini"
+global strIniBackupFile := A_WorkingDir . "\" . strAppName . "-backup.ini"
 global blnMenuReady := false
 global arrSubmenuStack := Object()
 global objIconsFile := Object()
@@ -774,6 +775,9 @@ return
 ;-----------------------------------------------------------
 LoadIniFile:
 ;-----------------------------------------------------------
+
+; create a backup of the ini file before loading
+FileCopy, %strIniFile%, %strIniBackupFile%, 1
 
 ; reinit after Settings save if already exist
 Global arrMenus := Object() ; list of menus (Main and submenus), non-hierachical
