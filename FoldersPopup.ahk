@@ -1,6 +1,9 @@
 /*
 Bugs:
 
+To-do for v4:
+- keep a backup of the ini file
+
 To-do for v4.x:
 - Write DOpus add-in to list folders including special folders
 - Save groups with special folders in DOpus to ini file
@@ -22,6 +25,9 @@ To-do for v4.x:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 3.9.9 BETA (2014-12-??)
+	* detect if app is started in program files folder and set working dir to appdata
+	
 	Version: 3.9.8 BETA (2014-12-01)
 	* fix lOptionsDisplayFoldersInExplorerMenu label.
 	* add column break and system variable in default menu
@@ -511,7 +517,7 @@ To-do for v4.x:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 3.9.8 BETA
+;@Ahk2Exe-SetVersion 3.9.9 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -534,6 +540,13 @@ DllCall("SetErrorMode", "uint", SEM_FAILCRITICALERRORS := 1)
 ; In portable mode, the user can set the working directory in his own Windows shortcut.
 ; If user enable "Run at startup", the "Start in:" shortcut option is set to the current A_WorkingDir.
 
+; If A_WorkingDir equals A_ScriptDir and the file _do_not_remove_or_rename.txt is found in A_WorkingDir
+; it means that FP has been installed with the setup program but that it was launched directly in the
+; Program Files directory instead of using the Start menu or Startup shortcuts. In this situation, we
+; know that the working directory has not been set properly. The following lines will fix it.
+if (A_WorkingDir = A_ScriptDir) and FileExist(A_WorkingDir . "\_do_not_remove_or_rename.txt")
+	SetWorkingDir, %A_AppData%\FoldersPopup
+
 ; Force A_WorkingDir to A_ScriptDir if uncomplied (development phase)
 ;@Ahk2Exe-IgnoreBegin
 ; Piece of code for development phase only - won't be compiled
@@ -549,7 +562,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.9.8" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "3.9.9" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
