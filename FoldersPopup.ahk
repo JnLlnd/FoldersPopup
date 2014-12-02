@@ -1,14 +1,7 @@
 /*
 Bugs:
-- check double-quotes need in Run command
-- add this folder in DOpus does not default with the correct pane
 
-To-do for v4:
-- check load group using LocationURL
-- check Current Folders using LocationURL
-
-- Sort groups list in manage groups
-- Optimize special folders clsid management (try x := window.Document.Folder.Self.Path)
+To-do for v4.x:
 - Write DOpus add-in to list folders including special folders
 - Save groups with special folders in DOpus to ini file
 - Load groups with special folders in DOpus from ini file
@@ -33,6 +26,8 @@ To-do for v4:
 	* fix lOptionsDisplayFoldersInExplorerMenu label.
 	* add column break and system variable in default menu
 	* fix bug when edit and save a submenu under the same name
+	* sort groups list in manage groups and edit group
+
 	
 	Version: 3.9.7 BETA (2014-11-25)
 	* add an item in the right-click Tray menu to open the FoldersPopup.ini file
@@ -3013,7 +3008,7 @@ Gui, 3:Add, Text, x10 y+10 w250, %lGuiGroupSaveShortName%
 Gui, 3:Add, Edit, x10 y+5 w250 Limit248 vstrGroupSaveName gGuiGroupSaveNameChanged section, % (A_ThisLabel = "GuiGroupEditFromManage" ? strGroupToEdit : "") ; maximum length of ini section name is 255 ("Group-" is prepended)
 
 Gui, 3:Add, Text, x10 y+5 w250, %lGuiGroupSaveSelectExisting%
-Gui, 3:Add, DropDownList, x10 y+5 w250 vdrpGroupsOverwriteList gGuiGroupSaveOverwriteListChanged, %lGuiGroupSaveNewGroup%|%strGroups%
+Gui, 3:Add, DropDownList, x10 y+5 w250 vdrpGroupsOverwriteList gGuiGroupSaveOverwriteListChanged Sort, %lGuiGroupSaveNewGroup%|%strGroups%
 GuiControl, ChooseString, drpGroupsOverwriteList, %lGuiGroupSaveNewGroup%
 
 Gui, 3:Add, Button, y+20 vbtnGroupSave gButtonGroupSave, %lGuiSave%
@@ -3191,7 +3186,7 @@ while, intExplorer := WindowOfType("EX") ; returns the index of the first Explor
 		strExplorerLocationOrClassId := objIniExplorersInGroup[intExplorer].Name
 	
 	intWinIdBeforeRun := WinExist("A")
-	Run, % "explorer.exe " . strExplorerLocationOrClassId,
+	Run, % "explorer.exe """ . strExplorerLocationOrClassId . """",
 		, % (objIniExplorersInGroup[intExplorer].MinMax = -1 ? "Min" : (objIniExplorersInGroup[intExplorer].MinMax = 1 ? "Max" : ""))
 	Loop
 	{
@@ -3500,7 +3495,7 @@ http://msdn.microsoft.com/en-us/library/aa752094
 			if varPath is integer ; ShellSpecialFolderConstant
 				ComObjCreate("Shell.Application").Explore(varPath)
 			else
-				Run, Explorer %varPath%
+				Run, Explorer "%varPath%"
 	}
 	else
 		; Workaround for the hash (aka Sharp / "#") bug in Shell.Application - occurs only when navigating in the current Explorer window
@@ -3630,7 +3625,7 @@ http://ahkscript.org/boards/viewtopic.php?f=5&t=526&start=20#p4673
 		if (A_OSVersion = "WIN_XP")
 			ComObjCreate("Shell.Application").Explore(strLocation)
 		else
-			Run, Explorer %strLocation%
+			Run, Explorer "%strLocation%"
 		; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 		if (blnDiagMode)
 			Diag("NavigateDialog", "Not #32770: open New Explorer")
@@ -4221,7 +4216,7 @@ Gui, 2:Font, w600
 Gui, 2:Add, Text, x10 y+20, %lDialogGroupManageManagingTitle%
 Gui, 2:Font
 
-Gui, 2:Add, DropDownList, x10 y+10 w%intWidth% vdrpGroupsList, %lDialogGroupSelect%||%strGroups%
+Gui, 2:Add, DropDownList, x10 y+10 w%intWidth% vdrpGroupsList Sort, %lDialogGroupSelect%||%strGroups%
 
 Gui, 2:Add, Button, x10 y+10 vbtnGroupManageLoad  gGuiGroupManageLoad, %lDialogGroupLoad%
 Gui, 2:Add, Button, x10 yp vbtnGroupManageEdit gGuiGroupManageEdit, %lDialogGroupEdit%
