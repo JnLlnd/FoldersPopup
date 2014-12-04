@@ -8,7 +8,7 @@ To-do for v4.x:
 - Save groups with special folders in DOpus to ini file
 - Load groups with special folders in DOpus from ini file
 - adapt website to new default hotkey Win-A and Shift-Win-A
-- adapt website to new standard setup procedure
+- adapt website to new standard setup procedure (including http://code.jeanlalonde.ca/about-folders-popup-color-themes/)
 */
 ;===============================================
 /*
