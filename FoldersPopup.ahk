@@ -2,13 +2,11 @@
 Bugs:
 
 To-do for v4:
-
-To-do for v4.x:
-- Write DOpus add-in to list folders including special folders
-- Save groups with special folders in DOpus to ini file
-- Load groups with special folders in DOpus from ini file
 - adapt website to new default hotkey Win-A and Shift-Win-A
-- adapt website to new standard setup procedure (including http://code.jeanlalonde.ca/about-folders-popup-color-themes/)
+- adapt website to new standard setup procedure including
+  http://code.jeanlalonde.ca/about-folders-popup-color-themes/
+  http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/
+
 */
 ;===============================================
 /*
@@ -24,9 +22,10 @@ To-do for v4.x:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 3.9.9 BETA (2014-12-??)
+	Version: 3.9.9 BETA (2014-12-04)
 	* detect if app is started in program files folder and set working dir to appdata
 	* create a backup of the ini file at launch time
+	* Dutch and Korean language updates
 	
 	Version: 3.9.8 BETA (2014-12-01)
 	* fix lOptionsDisplayFoldersInExplorerMenu label.
