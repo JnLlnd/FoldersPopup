@@ -1,5 +1,5 @@
 lAboutText1	~1~ ~2~ (~3~ bits)
-lAboutText2	~1~ wird entwickelt von Jean Lalonde unter`nVerwendung der <a href="http://ahkscript.org/">AutoHotkey</a> Programmiersprache.`n`nDeutsche Übersetzung: Edgar "Fast Edi" Hoffmann`nFranzösische Übersetzung: Jean Lalonde`nHolländische Übersetzung: Pieter Dejonghe`Koreanisch Übersetzung: Om Il-Sung`nEnglische Gegenleser: (Hilfe willkommen)`n`nIcons von: <a href="http://www.visualpharm.com">Visual Pharm</a>`nAutoHotkey_L v1.1 Sourcen: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText2	~1~ wird entwickelt von Jean Lalonde unter`nVerwendung der <a href="http://ahkscript.org/">AutoHotkey</a> Programmiersprache.`n`nDeutsche Übersetzung: Edgar "Fast Edi" Hoffmann`nFranzösische Übersetzung: Jean Lalonde`nHolländische Übersetzung: Pieter Dejonghe`Koreanisch Übersetzung: Om Il-Sung`nSchwedisch Übersetzung: Åke Engelbrektson`nEnglische Gegenleser: (Hilfe willkommen)`n`nIcons von: <a href="http://www.visualpharm.com">Visual Pharm</a>`nProgramm installieren: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> von jrsoftware.org`nAutoHotkey_L v1.1 Sourcen: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
 lAboutText4	Support unter <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	Über - ~1~ ~2~
@@ -12,7 +12,7 @@ lDialogAdd	Hinzufügen
 lDialogAddDialogAlready	Diese Dialogbox-Typ wird schon unterstützt.
 lDialogAddDialogPrompt	Geben Sie den neuen Namen für die Dialogbox an`n(oder einen Teil des Namens):
 lDialogAddDialogTitle	Dialogbox hinzufügen - ~1~ ~2~
-lDialogAddEditFolderTitle	~1~ Favoriten - ~2~ ~3~
+lDialogAddEditFavoriteTitle	~1~ Favoriten - ~2~ ~3~
 lDialogAddFileSelect	Neue Datei wählen:
 lDialogAddFolderManuallyPrompt	Entschuldigung, der aktuelle Ordner kann in diesem Fenstertyp nicht ermittelt werden.`n`nWollen Sie es jetzt von Hand hinzufügen?
 lDialogAddFolderManuallyTitle	Diesen Dokumente hinzufügen - ~1~ ~2~
@@ -26,17 +26,38 @@ lDialogEditDialogPrompt	Geben Sie den neuen Namen für die Dialogbox ein`n(oder e
 lDialogEditDialogTitle	Dialogbox bearbeiten - ~1~ ~2~
 lDialogFavoriteDoesNotExistPrompt	Der Favorit "~1~" existiert nicht oder ist nicht verfügbar.`n`nSollte sich dieser Favorit auf einem Netzlaufwerk befinden, versuchen Sie es nach erfolgter Authentifizierung nochmals.`n`nSollte dieser Favorit ein Link auf eine Webseite sein, wählen Sie die Option "Link (URL)" wenn Sie den Favoriten hinzufügen.
 lDialogFavoriteDoesNotExistTitle	Favorit existiert nicht - ~1~
+lDialogFavoriteLocationEmpty	Dieser Ort ist leer. Bitte wählen Sie einen Ort.
+lDialogFavoriteNameEmpty	Der Name des Favorite ist leer. Bitte wählen Sie einen kurzen Namen.
+lDialogFavoriteNameNoColumnBreak	Der Menüname kann die reservierten Zeichen "~1~" nicht als Spaltentrennzeichen verwenden.
+lDialogFavoriteNameNoSeparator	Das Untermenü darf das reservierte Zeichen "~1~" nicht enthalten.
+lDialogFavoriteNameNotNew	Der Name ~1~ wird bereits in diesem Menü verwendet. Bitte wählen Sie einen anderen Namen.
+lDialogFavoriteNameNoPipe	Der Favorit oder Menüname darf das reservierte Zeichen "|" (vertikale Linie) nicht enthalten.
+lDialogFavoriteParentMenu	Favorite Hauptmenü
+lDialogFavoriteRemovePrompt	Entfernen des Untermenü "~1~"`nund ALL seines Inhalts (Ordner und Untermenüs)?
+lDialogFavoriteRemoveTitle	Entfernen des Favorite - ~1~
 lDialogFileLabel	Dokumente
 lDialogFileShortName	Dokument-Kurzname (für Menü)
 lDialogFolderLabel	Ordner
-lDialogFolderLocationEmpty	Dieser Ort ist leer. Bitte wählen Sie einen Ort.
-lDialogFolderNameEmpty	Der Name des Favorite ist leer. Bitte wählen Sie einen kurzen Namen.
-lDialogFolderNameNoSeparator	Das Untermenü darf das reservierte Zeichen "~1~" nicht enthalten.
-lDialogFolderNameNotNew	Der Name ~1~ wird bereits in diesem Menü verwendet. Bitte wählen Sie einen anderen Namen.
-lDialogFolderParentMenu	Favorite Hauptmenü
-lDialogFolderRemovePrompt	Entfernen des Untermenü "~1~"`nund ALL seines Inhalts (Ordner und Untermenüs)?
-lDialogFolderRemoveTitle	Entfernen des Favorite - ~1~
 lDialogFolderShortName	Kurzname des Ordners für das Menü
+lDialogGroupDelete	Löschen
+lDialogGroupDeleteError	löschen
+lDialogGroupDeletePrompt	Löschen der Gruppe "~1~"?
+lDialogGroupEdit	Bearbeiten
+lDialogGroupEditError	bearbeiten
+lDialogGroupLoad	Laden
+lDialogGroupLoadError	laden
+lDialogGroupManageCannotSave	Warnung: Es gibt kein offenes Fenster zum Speichern in einer neuen Gruppe. Öffnen Sie zumindest ein Explorer oder Directory Opus Fenster und versuchen Sie erneut eine neue Gruppe zu speichern.
+lDialogGroupManageCreatingPrompt	Um eine Gruppe zu erstellen, klicken Sie die Schaltfläche "~1~" oder wählen Sie jederzeit das "~2~" Menü.
+lDialogGroupManageCreatingTitle	Gruppe erstellen
+lDialogGroupManageGroupsTitle	Gruppen - ~1~ ~2~ verwalten
+lDialogGroupManageIntro	Mittels "Gruppen" können Sie Ihre Arbeitsumgebung speichern und wieder laden, um effektiv zwischen Ihren Arbeitssitzungen hin- und herzuschalten. "Gruppen" speichern die Ordner, Größe, Position und Status (normal, minimiert oder maximiert) von Windows Explorer und Directory Opus Fenstern (Total Commander noch nicht unterstützt).
+lDialogGroupManageManagingTitle	Gruppen verwalten
+lDialogGroupNew	Neue Gruppe speichern
+lDialogGroupRemoveTitle	Gruppe - ~1~ löschen
+lDialogGroups	Gruppen
+lDialogGroupSelect	Gruppe auswählen
+lDialogGroupSelectError	Bitte die Gruppe zum ~1~ auswählen.
+lDialogIcon	Symbol
 lDialogInvalidHotkey	Mit dem derzeitigen Tastaturlayout kann das Tastenkürzel "~1~" nicht verwendet werden, um das Popup-Menü aufzurufen (kein gültiger Tasten Name).`n`nBitte öffnen Sie das "~2~ Einstellungen" aus dem Tray-Menü und klicken Sie auf "Optionen". Wählen Sie in diesem Dialog ein anderes Tastenkürzel für "~3~".
 lDialogOpenThisMenu	Dieses Menü öffnen
 lDialogSave	Speichern
@@ -73,44 +94,68 @@ lDonateTitle	Unterstützen Sie Freeware! - ~1~ ~2~
 lGui2Close	Schliessen
 lGuiAbout	Über
 lGuiAddDialog	Hinzufügen
-lGuiAddFolder	Hinzufügen
+lGuiAddFavorite	Hinzufügen
 lGuiCancel	&Abbrechen
 lGuiClose	&Schliessen
 lGuiDonate	Unterstützen
 lGuiDropFilesIncentive	Sie können Ihre Favoriten in dieses Fenster ziehen
-lGuiEditFolder	Bearbeiten
+lGuiEditFavorite	Bearbeiten
+lGuiGroupClosing	Schliesse Fenster
+lGuiGroupOf	von
+lGuiGroupSaveAddWindowsLabel	Zu bestehendem Fenster hinzufügen
+lGuiGroupSaved	Gruppe "~1~" gespeichert.`n`nKlicken Sie im Menü "~2~" um diese Gruppe zu laden.
+lGuiGroupSaveEditPrompt	~1~ diese Gruppe
+lGuiGroupSaveEditTitle	~1~ eine Gruppe von Fenstern - ~2~ ~3~
+lGuiGroupSaveLvHeader	Pfad|Anwendung|Fensterstatus|Links|Oben|Breite|Höhe|Seite
+lGuiGroupSaveNameEmpty	Der Gruppenname ist leer. Bitte wählen Sie einen Gruppennamen.
+lGuiGroupSaveNewGroup	Neue Gruppe
+lGuiGroupSaveReplaceGroup	Gruppe "~1~" besteht bereits. Ersetzen?
+lGuiGroupSaveReplaceWindowsLabel	Ersetzen bestehender Fenster
+lGuiGroupSaveRestoreOption	Wenn diese Gruppe wiederhergestellt wird:
+lGuiGroupSaveSelect	Wählen Sie die in dieser Gruppe zu speichernden Ordner
+lGuiGroupSaveSelectExisting	oder wählen Sie eine bestehende Gruppe zum Überschreiben:
+lGuiGroupSaveShortName	Kurzname der Gruppe (für das Menü)
 lGuiHelp	Hilfe
 lGuiLvDialogsHeader	Unterstützte Dialoge`n(Teile der Namen)
-lGuiLvFoldersHeader	Name|Ort
-lGuiMoveFolderDown	Nach u&nten bewegen
-lGuiMoveFolderUp	Nach o&ben bewegen
+lGuiLvFavoritesHeader	Name|Ort
+lGuiMoveFavoriteDown	Nach u&nten bewegen
+lGuiMoveFavoriteUp	Nach o&ben bewegen
 lGuiOptions	Optionen
-lGuiRemoveFolder	Entfernen
+lGuiRemoveFavorite	Entfernen
+lGuiResetDefault	Zurücksetzen des Standard-Hotkeys
+lGuiResetDefault	Zurücksetzen des Standard-Hotkeys
 lGuiSave	&Speichern
 lGuiSeparator	Se&parator
 lGuiSubmenuDropdownLabel	Zu bearbeitendes Menü:
 lGuiSubmenuLocation	>
 lGuiSubmenuSeparator	>
 lGuiTitle	Einstellungen - ~1~ ~2~
-lHelpText1	Beim Start fügt FoldersPopup ein Symbol im System Tray hinzu und wartet auf den Einsatz. Wenn Sie das aktuelle Verzeichnis im Windows Explorer oder in einem Dateiauswahlfenster wechseln möchten, klicken Sie einfach mit der mittleren Maustaste oder drücken Sie Windows-K und wählen Sie im Popup-Menü das gewünschte Verzeichnis. FoldersPopup wechselt dann sofort dorthin! Oder nutzen Sie die Möglichkeit, schnell ein bestimmtes Dokument oder eine Webseite zu öffnen.
+lHelpText1	Beim Start fügt FoldersPopup ein Symbol im System Tray hinzu und wartet auf den Einsatz. Wenn Sie das aktuelle Verzeichnis im Windows Explorer oder in einem Dateiauswahlfenster wechseln möchten, klicken Sie einfach mit der mittleren Maustaste oder drücken Sie Windows-A und wählen Sie im Popup-Menü das gewünschte Verzeichnis. FoldersPopup wechselt dann sofort dorthin! Oder nutzen Sie die Möglichkeit, schnell ein bestimmtes Dokument oder eine Webseite zu öffnen.
 lHelpText2	Wählen Sie "Einstellungen" um das Einstellungsfenster zu öffnen, wo Sie favorisierte ORDNER, DOKUMENTE oder WEBSEITEN zum Menü hinzufügen können. Sie können diese verschieben, umbenennen oder löschen. Sie können ebenfalls UNTERMENÜS hinzufügen, verschieben oder löschen. Wählen Sie hierzu "Zu bearbeitendes Menü:" in der Dropdown-Auswahl. Klicken Sie auf "Speichern" um die Änderungen zu sichern.
-lHelpText3	Um schnell einen neuen Favoriten zum Popup-Menü hinzuzufügen:`n1) Navigieren Sie zu einem oft benutzten Ordner.`n2) Klicken Sie mit der mittleren Maustaste (oder drücken Sie Windows-K) und wählen Sie "Diesen Ordner hinzufügen".`n3) Vergeben Sie einen kurzen, sprechenden Namen, klicken sie "Hinzufügen" und "Speichern" im Einstellungsfenster.
+lHelpText3	Um schnell einen neuen Favoriten zum Popup-Menü hinzuzufügen:`n1) Navigieren Sie zu einem oft benutzten Ordner.`n2) Klicken Sie mit der mittleren Maustaste (oder drücken Sie Windows-A) und wählen Sie "Diesen Ordner hinzufügen".`n3) Vergeben Sie einen kurzen, sprechenden Namen, klicken sie "Hinzufügen" und "Speichern" im Einstellungsfenster.
 lHelpText4	Um schnell ein neues DOKUMENT oder einen WEBLINK zum Popup-Menü hinzuzufügen:`n1) Öffnen Sie das Popup-Menü des Ordners und wählen Sie "Einstellungen" (Shift-Windows-F).`n2) Klicken Sie "Hinzufügen" und wählen Sie die Option "Dokument" oder "Link (URL)".`n3) Vergeben Sie einen kurzen, sprechenden Namen, navigieren Sie zum Dokument oder geben Sie die URL der Webseite ein, klicken Sie "Hinzufügen" und "Speichern" im Einstellungsfenster.
-lHelpText5	TIPS UND TRICKS`n- Aktivieren Sie  die Option "Beim Starten ausführen" im Tray-Menü, um FoldersPopup automatisch beim Systemstart auszuführen.`n- Soll ein bevorzugter Ordner in einem neuen Explorer-Fenster geöffnet werden? Drücken Sie einfach die Shift-Taste zusammen mit der linken und mittleren Maustaste (oder Shift-Windows-K). Dies erlaubt es, einen bevorzugten Ordner aus jedem Fenster heraus zu öffnen.`n- Wählen Sie das "Kürzlich geöffnete Ordner..." Menü (Shift-Windows-R) um eine aktualisierte Liste der kürzlich geöffneten Ordner zu sehen.`n- Konfigurieren Sie die Popup-Menü Trigger: wählen Sie die bevorzugte Maustaste oder das Tastaturkürzel unter "Einstellungen, Optionen".`n- Ebenfalls unter "Optionen": wählen Sie die bevorzugte Sprache, Symbolgröße oder Fensterfarbe. Wählen Sie die Optionen zur Anzeige der bevorzugten Ordner, fügen Sie dem Ordner-Menü numerische Tastenkürzel hinzu oder geben Sie dem Popup-Menü eine feste Position.`n- Directory Opus Benutzer, lesen Sie bitte <a href=http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/">Diese Seite</a> für weitere Informationen.`n- Total Commander Benutzer, lesen Sie bitte <a href=http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/">Diese Seite</a> für weitere Informationen.
+lHelpText5	TIPS UND TRICKS`n- Aktivieren Sie  die Option "Beim Starten ausführen" im Tray-Menü, um FoldersPopup automatisch beim Systemstart auszuführen.`n- Soll ein bevorzugter Ordner in einem neuen Explorer-Fenster geöffnet werden? Drücken Sie einfach die Shift-Taste zusammen mit der linken und mittleren Maustaste (oder Shift-Windows-A). Dies erlaubt es, einen bevorzugten Ordner aus jedem Fenster heraus zu öffnen.`n- Wählen Sie das "Kürzlich geöffnete Ordner..." Menü (Shift-Windows-R) um eine aktualisierte Liste der kürzlich geöffneten Ordner zu sehen.`n- Konfigurieren Sie die Popup-Menü Trigger: wählen Sie die bevorzugte Maustaste oder das Tastaturkürzel unter "Einstellungen, Optionen".`n- Ebenfalls unter "Optionen": wählen Sie die bevorzugte Sprache, Symbolgröße oder Fensterfarbe. Wählen Sie die Optionen zur Anzeige der bevorzugten Ordner, fügen Sie dem Ordner-Menü numerische Tastenkürzel hinzu oder geben Sie dem Popup-Menü eine feste Position.`n- Directory Opus Benutzer, lesen Sie bitte <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/">Diese Seite</a> für weitere Informationen.`n- Total Commander Benutzer, lesen Sie bitte <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/">Diese Seite</a> für weitere Informationen.
 lHelpText6	Support für FoldersPopup gibt es auf`n<a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
 lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware!
 lHelpTextLead	FoldersPopup ermöglicht es Ihnen, schnell zwischen häufig benutzten Ordnern, Dokumenten und Webseiten zu wechseln!
 lHelpTitle	Hilfe - ~1~ ~2~
 lMainMenuName	Haupt
 lMenuAbout	Ü&ber
-lMenuAddThisDialog	Diese Di&alogbox zur Liste unterstützter Dialogboxen hinzufügen
 lMenuAddThisFolder	&Diesen Ordner hinzufügen
+lMenuColumnBreak	Spalte
 lMenuControlPanel	&Systemsteuerung
 lMenuDesktop	&Desktop
 lMenuDialogNotSupported	Diese Dialogbox wird momentan noch nicht unterstützt
 lMenuDocuments	D&okumente
+lMenuDownloads	Downloads
 lMenuExitFoldersPopup	Beenden ~1~
+lMenuFoldersInExplorer	Ordner im Explorer
 lMenuFPMenu	~1~ ~2~
+lMenuGroup	Ordner &Gruppen
+lMenuGroupAdd	hinzufügen
+lMenuGroupLoad	Gruppe laden
+lMenuGroupReplace	ersetzen
+lMenuGroupSave	Aktuelle Ordner als Gruppe speichern
 lMenuHelp	Hilfe
 lMenuMenu	Menü
 lMenuMyComputer	&Mein Computer
@@ -127,7 +172,6 @@ lMenuSettings	&~1~ Einstellungen
 lMenuSpecialExplorer	Spezielles Explorer-Fenster
 lMenuSpecialFolders	&Spezielle Ordner
 lMenuSuspendHotkeys	Suspend Hotkeys
-lMenuSwitch	S&witch
 lMenuUpdate	Nach &Update suchen
 lNavigateFileError	Beim Öffnen des Ordners `n~1~ trat ein Fehler auf.
 lNavigateSpecialError	Beim Öffnen des Speziellen Ordners #~1~ trat ein Fehler auf.
@@ -140,15 +184,20 @@ lOptionsArrDescriptions1	Wählen Sie die MAUStaste und die Kombitasten, welche da
 lOptionsArrDescriptions2	Wählen Sie die MAUStaste und die Kombitasten, welche das FoldersPopup Menü in JEDEM Fenster öffnet und zum gewählten Ordner in einem NEUEN Explorer-Fenster navigiert. Standardmäßig ist dies die mittlere Maustaste mit gedrückter Shift-Taste.
 lOptionsArrDescriptions3	Wählen Sie die TASTENkombination, welche das popup menü im Windows Explorer oder Dateidialogboxen aufruft. Standardmäßig ist dies Win+K (Taste K, während die Windows-Taste gdrückt wird).
 lOptionsArrDescriptions4	Wählen Sie die TASTENkombination, welche das popup menu Menü in JEDEM Fenster öffnet und zum gewählten Ordner in einem NEUEN Explorer-Fenster navigiert. Standardmäßig ist dies Shift+Win+K (Tasten Shift und K, während die Windows-Taste gedrückt wird).
-lOptionsArrDescriptions5	Wählen Sie die Tastenkombination oder Maustasten-Kombination, welche den FoldersPopup Einstellungsdialog aufruft. Standardmäßig ist dies Shift+Windows+F.
+lOptionsArrDescriptions5	Wählen Sie die Schnelltaste oder Maustastenkombination, welche das FoldersPopup Menü "Kürzlich verwendete Ordner" öffnet. Standardmäßig ist dies Shift+Windows+R.
+lOptionsArrDescriptions6	Wählen Sie die Tastenkombination oder Maustasten-Kombination, welche den FoldersPopup Einstellungsdialog aufruft. Standardmäßig ist dies Shift+Windows+F.
 lOptionsChangeHotkey	Ändern
 lOptionsChangeHotkeyTitle	Tastenkürzel ändern - ~1~ ~2~
+lOptionsCheck4Update	Nach Update suchen
 lOptionsCtrl	Strg
+lOptionsDirectoryOpusUseTabs	Verwende Registerkarten
+lOptionsDisplayFoldersInExplorerMenu	Ordner im Explorer
+lOptionsDisplayGroupMenu	Gruppe der Ordnermenüs
 lOptionsDisplayIcons	Zeige Icons im Menü
 lOptionsDisplayMenuShortcuts	Zeige &numerische Menü-Tastenkürzel
-lOptionsDisplayRecentFolders	Zeige kürzlich verwendete Ordner
-lOptionsDisplaySpecialFolders	Zeige S&pezielle Ordner
-lOptionsDisplaySwitchMenu	Zeige Switch Menü
+lOptionsDisplayRecentFolders	Kürzlich verwendete Ordner
+lOptionsDisplaySpecialFolders	S&pezielle Ordner
+lOptionsDisplayMenus	Anzuzeigende Menüs:
 lOptionsGuiIntro	Legen Sie die Maustasten und Tastenkürzel fest, welche ~1~ auslösen.
 lOptionsGuiTitle	Optionen - ~1~ ~2~
 lOptionsIconSize	Symbolgröße im Menü
@@ -164,6 +213,7 @@ lOptionsMouseButtonsText	Linke Maustaste|Mittlere Maustaste|Rechte Maustaste|Mau
 lOptionsMouseCheckLButton	Die linke Maustaste kann nicht ohne Zusatztaste definiert werden.
 lOptionsMouseNone	Keine
 lOptionsNoKeyOrMouseSpecified	Kein Tastenkürzel oder Maustaste definiert. Der bestehende Hotkey ~1~ ist unverändert.
+lOptionsOpenMenuOnTaskbar	Menü in der Taskleiste öffnen
 lOptionsOtherOptions	Weitere einstellungen
 lOptionsPopupFix	Popup-&Menü an fester Position
 lOptionsPopupFixPositionX	Position X:
@@ -171,16 +221,24 @@ lOptionsPopupFixPositionY	Y:
 lOptionsRecentFolders	Zuletzt verwendete Ordner
 lOptionsRunAtStartup	Beim Sta&rt ausführen
 lOptionsShift	Shift
+lOptionsSpacebar	verwende Leertaste
 lOptionsTheme	Thema
 lOptionsThirdPartyDetail	WÃ¤hlen Sie die ~1~ Programmdatei (.exe) um die ~1~ Integration einzuschalten.
 lOptionsThirdPartyPrompt	Programmdatei:
 lOptionsThirdPartyTitle	~1~ Benutzer
 lOptionsTitles	Maus - Ordner Popup|Maus - Neu Explorer|Tastatur - Ordner Popup|Tastatur - Neu Explorer|Zuletzt verwendete Ordner|Einstellungsfenster
 lOptionsTitlesSub	(Pop-Menü überlagert Explorer und Dialogboxen)|(Pop-Menü aus beliebigem Fenster)|(Pop-Menü im Explorer und Dialogboxen)|(Pop-Menü aus beliebigem Fenster)|(Windows-Liste kürzlicher Orte)|(Menükonfiguration und Optionen)
+lOptionsTotalCommanderUseTabs	Verwende Registerkarten
 lOptionsTrayTip	Beim Start &Tray-Tip anzeigen
 lOptionsTriggerFor	Auslöser für:
 lOptionsWin	Win
+lPickIconButtonCustom	Angepasst
+lPickIconButtonDefault	Standard
+lPickIconDocumentPrompt	Angepasstes oder Standard-Symbol für diese Art von Dokument verwenden?
+lPickIconNoLocation	Vor der Wahl des Symbols bitte zuerst das Dokument auswählen.
+lPickIconTitle	Auswahl ~1~ Symbol - ~2~
 lReloadPrompt	~1~  wurde in ~2~ geändert. Wollen Sie jetzt ~3~ in ~2~ neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
+lReloadPromptDefaultHotkey	Schnelltaste auf Standard zurückgesetzt. Diese Änderung tritt erst durch erneutes Laden von ~1~ in Kraft.`n`nWollen Sie ~1~ jetzt neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
 lTrayTipInstalledDetail	Zur Anzeige des ~1~ Menüs`nim Windows Explorer oder einer Dialogbox`n~2~ oder ~3~ drücken.`n`n~4~ oder ~5~`num ein neues Explorer-Fenster zu öffnen.
 lTrayTipinstalledTitle	~1~ ~2~ bereit!
 lTrayTipWorkingDetail	Erzeuge Menüs
@@ -191,3 +249,5 @@ lUpdateError	Beim Zugriff auf die letzte Versionsnummer trat ein Fehler auf. Prü
 lUpdatePrompt	Update ~1~ von v~2~ auf v~3~?
 lUpdateTitle	Update ~1~?
 lUpdateYouHaveLatest	Sie verwenden die aktuellste Version: ~1~.`n`nTrotzdem die ~2~ Webseite besuchen?
+lWindowIsTreeviewText	Entschuldigung... Aufgrund einer Beschränkung von Windows wird diese Art Dialogbox (Baumstruktur) momentan nicht von ~1~ unterstützt.
+lWindowIsTreeviewTitle	Baumstruktur-Dialogbox nicht unterstützt
