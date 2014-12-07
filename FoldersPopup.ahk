@@ -22,6 +22,10 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 4.0.0 (2014-12-07)
+	* See all changes from v3.9.1 to v3.9.9 BETA
+	* Korean language update
+
 	Version: 3.9.9 BETA (2014-12-04)
 	* detect if app is started in program files folder and set working dir to appdata
 	* create a backup of the ini file at launch time
@@ -30,7 +34,7 @@ To-do for v4:
 	Version: 3.9.8 BETA (2014-12-01)
 	* fix lOptionsDisplayFoldersInExplorerMenu label.
 	* add column break and system variable in default menu
-	* fix bug when edit and save a submenu under the same name
+	* fix bug when edit and save a submenu under the same name (from v3.3.2)
 	* add double-quotes to Run command parameters
 	* sort groups list in manage groups and edit group
 
@@ -107,6 +111,9 @@ To-do for v4:
 	* Fix a bug with labels when changing the hotkey for Recent folders menu and Settings windows
 
 
+	Version: 3.3.2 (2014-12-01)
+	* fix a bug occurring when editing a submenu and saving it under the same name
+	
 	Version: 3.3.1 (2014-11-17)
 	* fix a bug occurring in some situation when a favorite location contains a comma
 	
@@ -516,7 +523,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 3.9.9 BETA
+;@Ahk2Exe-SetVersion 4.0
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -561,8 +568,8 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "3.9.9" ; "major.minor.bugs" or "major.minor.beta.release"
-global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
+global strCurrentVersion := "4.0" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
 global blnDiagMode := False

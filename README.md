@@ -13,6 +13,96 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### Version: 4.0.0 (2014-12-07)
+* See all changes from v3.9.1 to v3.9.9 BETA
+
+### Version: 3.9.9 BETA (2014-12-04)
+* detect if app is started in program files folder and set working dir to appdata
+* create a backup of the ini file at launch time
+* Dutch and Korean language updates
+
+### Version: 3.9.8 BETA (2014-12-01)
+* fix lOptionsDisplayFoldersInExplorerMenu label.
+* add column break and system variable in default menu
+* fix bug when edit and save a submenu under the same name (from v3.3.2)
+* add double-quotes to Run command parameters
+* sort groups list in manage groups and edit group
+
+### Version: 3.9.7 BETA (2014-11-25)
+* add an item in the right-click Tray menu to open the FoldersPopup.ini file
+* add an option to disable check for update at startup
+* add Downloads folder to Special Folders menu, support for DOpus and TC, not available on Win_XP
+* fix a bug making custom icons not following when favorites were moved up or down in the menu
+* merge and refactor GuiMoveFavoriteUp and GuiMoveFavoriteDown commands
+* fix a bug visible only to Total Commander users occuring when you left-click the tray icon button or when left-click on the tray icon was in the overflow area
+* add location URL of folders in groups saved to the ini file
+
+### Version: 3.9.6 BETA (2014-11-21)
+* refactor BuildGroupMenu into BuildFoldersInExplorerMenu and stripped BuildGroupMenu
+* add numeric shortcuts to groups menu
+* exclude DOpus collection windows of Current folders menu
+* merged OpenRecentFolder and OpenFolderInExplorer with OpenFavorite
+* merged 2-in-1 command PopupMenuMouse + PopupMenuKeyboard and 2-in-1 command PopupMenuNewWindowMouse + PopupMenuNewWindowKeyboard, into 4-in-1 command
+* support for system environment variables in favorite location (e.g.: APPDATA, LOCALAPPDATA, ProgramData, PUBLIC, TEMP, TMP, USERPROFILE)
+* make the vertical bar (or pipe "|") a reserved character in submenu or favorite name
+* fix bug clicking the correct pane in DOpus when popup in new window
+* fix bug with document favorite custom icons
+* fix a bug occurring in some situation when a favorite location contains a comma (from v3.3.1)
+
+### Version: 3.9.5 BETA (2014-11-15)
+* display and select icon for folders, url and documents in add/edit favorite and in menu
+* better error management around menu icon assignment, fix the *.msc bug
+* use shell32.dll icon #1 for unknown icon
+* fix a bug in Group menu for network locations
+
+### Version: 3.9.4 BETA (2014-11-09)
+* Swedish, German and Korean translations for new features in v3.9.1 and v3.9.2
+* Custom icons for submenus (custom icons for folders in next release)
+* Add hidden column in Settings listview for icon resource
+* Add field in Folders section of ini file for icon resource
+* Add icon selector to add/edit favorite dialog box (for submenu only in this release)
+* New special menu Folders in Explorer to open in Explorer or a dialog box a folder already open in another Explorer
+* Merge open folder in Explorer with Open recent folders
+* Add option to display or not the Folders in Explorer menu
+* Regroup Display options in Options dialog box
+* In Options, add the size 48 pixels to the choie of icon size
+
+### Version: 3.9.3 BETA (2014-11-08)
+* retrieve language from ini file created by setup program and use when creating the FP ini file
+* accept space in Change hotkey dialog box to allow combinations with spacebar as a potential hotkey
+* detect TreeView folder select dialog box and exclude them because of a Windows limitation (Edit1 control not handling the Enter)
+* add the option OpenMenuOnTaskbar to open or not the popup menu over the taskbar (class Shell_TrayWnd)
+* add column breaks in menu
+* improve reliability and performance of group load with Explorer and DOpus
+* fix bug with windows move/resize when group load
+* fix bug with minimize/maximize Explorers when group load
+* fix wrong web link when an beta version update is available
+
+### Version: 3.9.2 BETA (2014-11-05)
+* Addition of German language to Setup program
+* Add the possibility to overwrite an existing group of folders in the save group dialog box
+* allow to edit a group from the manage groups gui
+* Delete the startup shortcut when uninstall with Inno Setup
+* After installation with Inno Setup, copy an existing FoldersPopup.ini file if one exist in a previous protable installation (findable only if a shortcut to the portable installation exists)
+
+### Version: 3.9.1 BETA (2014-11-02)
+* New setup procedure with standard Install / Uninstall procedures (using Inno Setup) - keeping a separate zip file for portable version
+* Adapt Run at startup shortcut for Inno Setup by using the working directory instead of the script directory
+* Create a unique environment code (mutex) to allow Inno Setup to detect if FP is running before uninstall or update
+* Changed default FP hotkeys Windows-K and Shift-Windows-K to Windows-A and Shift-Windows-A (Windows-K is a reserved shortcut in Win 8.1) - configs of actual users are not changed
+* Add the option "Use tabs" for DirectoryOpus users to choose to open new folders in new tab (new default) or in a new lister
+* After DOpusRt opens a folder in a new tab, activate that window
+* Change Group menu label to "Group of folders"
+* Support Group menu of Explorer and DOpus windows containing the same folder
+* Support saving multiple windows (Explorers or DOpus) containing the same folder
+* Create objects to get special folders class id by name and name by class id
+* Save groups with special folders to ini file
+* Load groups with special folders from ini file
+* Fix a bug with labels when changing the hotkey for Recent folders menu and Settings windows
+
+### Version: 3.3.2 (2014-12-01)
+* fix a bug occurring when editing a submenu and saving it under the same name
+
 ### Version: 3.3.1 (2014-11-17)
 * fix a bug occurring in some situation when a favorite location contains a comma
 
