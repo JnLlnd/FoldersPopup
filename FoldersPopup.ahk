@@ -523,7 +523,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.0
+;@Ahk2Exe-SetVersion 4.0.1
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -568,7 +568,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.0" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.0.1" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -2445,7 +2445,7 @@ if (blnMouse)
 		MouseGetPos, , , strTargetWinId ; sets strTargetWinId for PopupMenuNewWindowMouse
 	else
 		WinActivate, % "ahk_id " . strTargetWinId ; activate for PopupMenuMouse
-else (keyboard)
+else ; (keyboard)
 	if (blnNewWindow)
 		strTargetWinId := WinExist("A") ; sets strTargetWinId for PopupMenuNewWindowKeyboard
 
@@ -2623,6 +2623,8 @@ if (A_ThisLabel = "OpenRecentFolder")
 {
 	strLocation := objRecentFolders[A_ThisMenuItemPos]
 	strFavoriteType := "F" ; folder
+	strTargetWinId := WinExist("A")
+	WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
 }
 else if (A_ThisLabel = "OpenFolderInExplorer")
 {
@@ -2674,30 +2676,9 @@ if (strFavoriteType = "D" or strFavoriteType = "U") ; this is a document or an U
 ; else this is a folder
 
 if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
-{
-	if (blnDiagMode)
-		Diag("Navigate", "RunNewWindow")
 	
-	if (blnUseDirectoryOpus)
-	{
-		RunDOpusRt("/acmd Go ", strLocation, " " . strDirectoryOpusNewTabOrWindow) ; open in a new lister or tab
-		WinActivate, ahk_class dopus.lister
-	}
-	else if (blnUseTotalCommander)
-		
-		NewTotalCommander(strLocation, strTargetWinId, strTargetControl)
-		
-	else
-		if (A_OSVersion = "WIN_XP")
-			ComObjCreate("Shell.Application").Explore(strLocation)
-		else
-			Run, Explorer "%strLocation%" ; was a bug prior to v3.3.1 because the lack of double-quotes
-	; http://msdn.microsoft.com/en-us/library/bb774094
-	; ComObjCreate("Shell.Application").Explore(strLocation)
-	; ComObjCreate("WScript.Shell").Exec("Explorer.exe /e /select," . strLocation) ; not tested on XP
-	; ComObjCreate("Shell.Application").Open(strLocation)
-	; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
-}
+	Gosub, OpenFavoriteInNewWindow
+
 else if WindowIsAnExplorer(strTargetClass)
 {
 	if (blnDiagMode)
@@ -2733,19 +2714,54 @@ else if WindowIsTotalCommander(strTargetClass)
 	
 	NavigateTotalCommander(strLocation, strTargetWinId, strTargetControl)
 }
-else ; dialog box
+else if WindowIsDialog(strTargetClass, strTargetWinId)
 {
 	if (blnDiagMode)
 	{
 		Diag("Navigate", "NavigateDialog")
 		Diag("TargetClass", strTargetClass)
 	}
-	
 	NavigateDialog(strLocation, strTargetWinId, strTargetClass)
 }
+else ; we open the folder in a new window
+	Gosub, OpenFavoriteInNewWindow
 
 if (blnDiagMode)
 	Diag("NavigateResult", ErrorLevel)
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+OpenFavoriteInNewWindow:
+;------------------------------------------------------------
+
+if (blnDiagMode)
+{
+	Diag("OpenInNewWindowWinID", strTargetWinId)
+	Diag("OpenInNewWindowClass", strTargetControl)
+}
+
+if (blnUseDirectoryOpus)
+{
+	RunDOpusRt("/acmd Go ", strLocation, " " . strDirectoryOpusNewTabOrWindow) ; open in a new lister or tab
+	WinActivate, ahk_class dopus.lister
+}
+else if (blnUseTotalCommander)
+	
+	NewTotalCommander(strLocation, strTargetWinId, strTargetControl)
+	
+else
+	if (A_OSVersion = "WIN_XP")
+		ComObjCreate("Shell.Application").Explore(strLocation)
+	else
+		Run, Explorer "%strLocation%" ; was a bug prior to v3.3.1 because the lack of double-quotes
+; http://msdn.microsoft.com/en-us/library/bb774094
+; ComObjCreate("Shell.Application").Explore(strLocation)
+; ComObjCreate("WScript.Shell").Exec("Explorer.exe /e /select," . strLocation) ; not tested on XP
+; ComObjCreate("Shell.Application").Open(strLocation)
+; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
 
 return
 ;------------------------------------------------------------
