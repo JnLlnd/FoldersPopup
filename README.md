@@ -13,6 +13,10 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### Version: 4.0.1 (2014-12-09)
+* fix bug with Recent shortcut opening in a new Explorer window instead of navigating in the correct window
+* fix bug properly exit group load loop when an error occurs within an iteration
+
 ### Version: 4.0.0 (2014-12-07)
 * See all changes from v3.9.1 to v3.9.9 BETA
 
