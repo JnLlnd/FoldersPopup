@@ -3214,6 +3214,7 @@ intActualWindowInIni := 1
 
 while, intExplorer := WindowOfType("EX") ; returns the index of the first Explorer saved window in the group
 {
+	blnGroupLoadError := False
 	if !StrLen(objIniExplorersInGroup[intExplorer].LocationURL) ; for compatibility before v3.9.7
 		objIniExplorersInGroup[intExplorer].LocationURL := objIniExplorersInGroup[intExplorer].Name
 	
@@ -3232,26 +3233,30 @@ while, intExplorer := WindowOfType("EX") ; returns the index of the first Explor
 		if (A_Index > 20)
 		{
 			Oops(lDialogGroupLoadErrorLoading, strExplorerLocationOrClassId)
-			continue
+			blnGroupLoadError := True
+			Break
 		}
 		Sleep, 20
 		strNewWindowId := WinExist("A")
 	} until (intWinIdBeforeRun <> strNewWindowId)
 	
-	WinWait, ahk_id %strNewWindowId%, , 5
-	Sleep, 200
-	
-	if !(objIniExplorersInGroup[intExplorer].MinMax) ; window normal, not min nor max
-		WinMove, ahk_id %strNewWindowId%,
-			, % objIniExplorersInGroup[intExplorer].Left
-			, % objIniExplorersInGroup[intExplorer].Top
-			, % objIniExplorersInGroup[intExplorer].Width
-			, % objIniExplorersInGroup[intExplorer].Height
-	else
-		if (objIniExplorersInGroup[intExplorer].MinMax = -1)
-			WinMinimize, ahk_id %strNewWindowId%
+	if !(blnGroupLoadError)
+	{
+		WinWait, ahk_id %strNewWindowId%, , 5
+		Sleep, 200
+		
+		if !(objIniExplorersInGroup[intExplorer].MinMax) ; window normal, not min nor max
+			WinMove, ahk_id %strNewWindowId%,
+				, % objIniExplorersInGroup[intExplorer].Left
+				, % objIniExplorersInGroup[intExplorer].Top
+				, % objIniExplorersInGroup[intExplorer].Width
+				, % objIniExplorersInGroup[intExplorer].Height
 		else
-			WinMaximize, ahk_id %strNewWindowId%
+			if (objIniExplorersInGroup[intExplorer].MinMax = -1)
+				WinMinimize, ahk_id %strNewWindowId%
+			else
+				WinMaximize, ahk_id %strNewWindowId%
+	}
 	
 	objIniExplorersInGroup.Remove(intExplorer) ; remove the first Explorer saved window from the group
 	intActualWindowInIni := intActualWindowInIni + 1
@@ -3259,6 +3264,7 @@ while, intExplorer := WindowOfType("EX") ; returns the index of the first Explor
 
 while, intDOWindow := WindowOfType("DO") ; returns the index of the first DOpus saved window in the group
 {
+	blnGroupLoadError := False
 	strFirstWindowId := objIniExplorersInGroup[intDOWindow].WindowId
 	strNewWindowId := ""
 	
@@ -3274,27 +3280,31 @@ while, intDOWindow := WindowOfType("DO") ; returns the index of the first DOpus 
 			{
 				if (A_Index > 20)
 				{
-					Oops(lDialogGroupLoadErrorLoading, strExplorerLocationOrClassId)
-					continue
+					Oops(lDialogGroupLoadErrorLoading, objIniExplorersInGroup[intDOWindow].Name)
+					blnGroupLoadError := True
+					Break
 				}
 				Sleep, 20
 				strNewWindowId := WinExist("A")		
-			} until (intWinIdBeforeRun <> strNewWindowId)
+			} until (intWinIdBeforeRun <> strNewWindowId) and 0
 
-			WinWait, ahk_id %strNewWindowId%, , 5
-			Sleep, 200
-			
-			if !(objIniExplorersInGroup[intDOWindow].MinMax) ; window normal, not min nor max
-				WinMove, ahk_id %strNewWindowId%,
-					, % objIniExplorersInGroup[intDOWindow].Left
-					, % objIniExplorersInGroup[intDOWindow].Top
-					, % objIniExplorersInGroup[intDOWindow].Width
-					, % objIniExplorersInGroup[intDOWindow].Height
-			else
-				if (objIniExplorersInGroup[intDOWindow].MinMax = -1)
-					WinMinimize, ahk_id %strNewWindowId%
+			if !(blnGroupLoadError)
+			{
+				WinWait, ahk_id %strNewWindowId%, , 5
+				Sleep, 200
+				
+				if !(objIniExplorersInGroup[intDOWindow].MinMax) ; window normal, not min nor max
+					WinMove, ahk_id %strNewWindowId%,
+						, % objIniExplorersInGroup[intDOWindow].Left
+						, % objIniExplorersInGroup[intDOWindow].Top
+						, % objIniExplorersInGroup[intDOWindow].Width
+						, % objIniExplorersInGroup[intDOWindow].Height
 				else
-					WinMaximize, ahk_id %strNewWindowId%
+					if (objIniExplorersInGroup[intDOWindow].MinMax = -1)
+						WinMinimize, ahk_id %strNewWindowId%
+					else
+						WinMaximize, ahk_id %strNewWindowId%
+			}
 
 			objIniExplorersInGroup.Remove(intDOWindow) ; remove the first DOpus saved window from the group
 			intActualWindowInIni := intActualWindowInIni + 1
