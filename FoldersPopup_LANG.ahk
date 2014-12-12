@@ -5,7 +5,7 @@ global lAboutText2 := "~1~ is written by Jean Lalonde using the`n<a href=""http:
 global lAboutText3 := "~1~ Jean Lalonde 2013-2014. Freeware."
 global lAboutText4 := "Support on <a href=""http://code.jeanlalonde.ca/folderspopup"">www.code.jeanlalonde.ca</a>"
 global lAboutTitle := "About - ~1~ ~2~"
-global lAppTagline := "Move like a breeze between your frequently used folders and documents!" ; "Jump instantly from one folder to another"
+global lAppTagline := "Move like a breeze between your frequently used folders and documents!"
 global lDiagModeCaution := "~1~ is running in diagnostic mode.`n`nInformation about the app's execution will be collected in the file:`n~2~`n`nNothing will be sent without your consent.`n`nDo you want to keep diagnostic mode ON?"
 global lDiagModeExit := "~1~ colleted diagnostic information in the file ~2~."
 global lDiagModeIntro := "Send this file to ahk@jeanlalonde.ca with a description of the situation requiring diagnostic."

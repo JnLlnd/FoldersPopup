@@ -2,10 +2,6 @@
 Bugs:
 
 To-do for v4:
-- adapt website to new default hotkey Win-A and Shift-Win-A
-- adapt website to new standard setup procedure including
-  http://code.jeanlalonde.ca/about-folders-popup-color-themes/
-  http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/
 
 */
 ;===============================================
@@ -21,6 +17,9 @@ To-do for v4:
 	or Rexx version Folder Menu
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
+
+	Version: 4.0.2 (2014-12-??)
+	* fix bug making language (other than English) in setup not being taken into account oinly at FP first run
 
 	Version: 4.0.1 (2014-12-09)
 	* fix bug with Recent shortcut opening in a new Explorer window instead of navigating in the correct window
@@ -527,7 +526,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.0.1
+;@Ahk2Exe-SetVersion 4.0.2
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -572,7 +571,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.0.1" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.0.2" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
