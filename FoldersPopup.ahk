@@ -805,9 +805,6 @@ IfNotExist, %strIniFile%
 	
 	intIconSize := (A_OSVersion = "WIN_XP" ? 16 : 24)
 	
-	; read language code from ini file created by the Inno Setup script in the user data folder
-	IniRead, strLanguageCode, % A_WorkingDir . "\" . strAppName . "-setup.ini", Global , LanguageCode, EN
-	
 	FileAppend,
 		(LTrim Join`r`n
 			[Global]
@@ -837,7 +834,6 @@ IfNotExist, %strIniFile%
 			Folder2=Windows|%A_WinDir%
 			Folder3=Program Files|%A_ProgramFiles%
 			Folder4=User Profile|`%USERPROFILE`%
-			Folder5==== column ===|=== column ===
 
 
 )
@@ -1041,7 +1037,12 @@ return
 InitLanguage:
 ;------------------------------------------------------------
 
-IniRead, strLanguageCode, %strIniFile%, Global, LanguageCode, EN
+IfNotExist, %strIniFile%
+	; read language code from ini file created by the Inno Setup script in the user data folder
+	IniRead, strLanguageCode, % A_WorkingDir . "\" . strAppName . "-setup.ini", Global , LanguageCode, EN
+else
+	IniRead, strLanguageCode, %strIniFile%, Global, LanguageCode, EN
+
 strLanguageFile := strTempDir . "\" . strAppName . "_LANG_" . strLanguageCode . ".txt"
 
 if FileExist(strLanguageFile)
