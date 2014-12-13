@@ -18,7 +18,7 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.0.3 (2014-12-??)
+	Version: 4.0.3 (2014-12-13)
 	* more robust group load and window move and resize
 	* fix a bug in Explorer collections in case ComObjCreate returns an invalid handle
 	* remove forgotten testing code in DOpus group load
