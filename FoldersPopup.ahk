@@ -1674,9 +1674,9 @@ CollectExplorers(objExplorers, pExplorers)
 		*/
 
 		strType := ""
-		try strType := objExplorer.Type ; Gets the type name of the contained document object. "Document HTML" for IE windows. Should be empty for file Explorer windows.
+		try strType := pExplorer.Type ; Gets the type name of the contained document object. "Document HTML" for IE windows. Should be empty for file Explorer windows.
 		strWindowID := ""
-		try strWindowID := objExplorer.HWND ; Try to get the handle of the window. Some ghost Explorer in the ComObjCreate may return an empty handle
+		try strWindowID := pExplorer.HWND ; Try to get the handle of the window. Some ghost Explorer in the ComObjCreate may return an empty handle
 		
 		if !StrLen(strType) ; must be empty
 			and StrLen(strWindowID) ; must not be empty
