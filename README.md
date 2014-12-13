@@ -13,6 +13,16 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### Version: 4.0.3 (2014-12-13)
+* more robust group load and window move and resize
+* fix a bug in Explorer collections in case ComObjCreate returns an invalid handle
+* remove forgotten testing code in DOpus group load
+* when close before restoring group stop closing IE windows
+* stop closing TC windows before restoring
+
+### Version: 4.0.2 (2014-12-12)
+* bug making language (other than English) in setup not being taken into account at FP first run
+
 ### Version: 4.0.1 (2014-12-09)
 * fix bug with Recent shortcut opening in a new Explorer window instead of navigating in the correct window
 * fix bug properly exit group load loop when an error occurs within an iteration

@@ -18,7 +18,14 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.0.2 (2014-12-??)
+	Version: 4.0.3 (2014-12-??)
+	* more robust group load and window move and resize
+	* fix a bug in Explorer collections in case ComObjCreate returns an invalid handle
+	* remove forgotten testing code in DOpus group load
+	* when close before restoring group stop closing IE windows
+	* stop closing TC windows before restoring
+
+	Version: 4.0.2 (2014-12-12)
 	* fix bug making language (other than English) in setup not being taken into account oinly at FP first run
 
 	Version: 4.0.1 (2014-12-09)
@@ -526,7 +533,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.0.2
+;@Ahk2Exe-SetVersion 4.0.3
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -571,7 +578,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.0.2" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.0.3" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -1667,12 +1674,9 @@ CollectExplorers(objExplorers, pExplorers)
 		*/
 
 		strType := ""
+		try strType := objExplorer.Type ; Gets the type name of the contained document object. "Document HTML" for IE windows. Should be empty for file Explorer windows.
 		strWindowID := ""
-		try
-		{
-			strType := pExplorer.Type ; Gets the user type name of the contained document object. "Document HTML" for IE windows. Should be empty for file Explorer windows.
-			strWindowID := pExplorer.HWND ; Try to get the handle of the window. Some ghost Explorer in the ComObjCreate may return an empty handle
-		}
+		try strWindowID := objExplorer.HWND ; Try to get the handle of the window. Some ghost Explorer in the ComObjCreate may return an empty handle
 		
 		if !StrLen(strType) ; must be empty
 			and StrLen(strWindowID) ; must not be empty
@@ -3229,7 +3233,7 @@ while, intExplorer := WindowOfType("EX") ; returns the index of the first Explor
 	else
 		strExplorerLocationOrClassId := objIniExplorersInGroup[intExplorer].Name
 	
-	intWinIdBeforeRun := WinExist("A")
+	strExplorerIDsBefore := GetExplorersIDs() ;  get a list of existing Explorer windows before launching this new Explorer
 	Run, % "explorer.exe """ . strExplorerLocationOrClassId . """",
 		, % (objIniExplorersInGroup[intExplorer].MinMax = -1 ? "Min" : (objIniExplorersInGroup[intExplorer].MinMax = 1 ? "Max" : ""))
 	Loop
@@ -3240,9 +3244,12 @@ while, intExplorer := WindowOfType("EX") ; returns the index of the first Explor
 			blnGroupLoadError := True
 			Break
 		}
-		Sleep, 20
-		strNewWindowId := WinExist("A")
-	} until (intWinIdBeforeRun <> strNewWindowId)
+		Sleep, 10
+		strExplorerIDsAfter := GetExplorersIDs() ;  get an updated list of existing Explorer windows
+		strNewWindowId := GetNewExplorer(strExplorerIDsBefore, strExplorerIDsAfter) ; check if we have a new Explorer window
+		If StrLen(strNewWindowId)
+			Break ; if we have a new window, WinMove it
+	}
 	
 	if !(blnGroupLoadError)
 	{
@@ -3290,7 +3297,7 @@ while, intDOWindow := WindowOfType("DO") ; returns the index of the first DOpus 
 				}
 				Sleep, 20
 				strNewWindowId := WinExist("A")		
-			} until (intWinIdBeforeRun <> strNewWindowId) and 0
+			} until (intWinIdBeforeRun <> strNewWindowId)
 
 			if !(blnGroupLoadError)
 			{
@@ -3363,8 +3370,15 @@ Tooltip, %lGuiGroupClosing%
 
 strWindowsId := ""
 for objExplorer in ComObjCreate("Shell.Application").Windows
+{
 	; do not close in this loop as it mess up the handlers
-	strWindowsId := strWindowsId . objExplorer.HWND . "|"
+	strType := ""
+	try strType := objExplorer.Type ; Gets the type name of the contained document object. "Document HTML" for IE windows. Should be empty for file Explorer windows.
+	strWindowID := ""
+	try strWindowID := objExplorer.HWND ; Try to get the handle of the window. Some ghost Explorer in the ComObjCreate may return an empty handle
+	if !StrLen(strType) and StrLen(strWindowID) ; strType must be empty and strWindowID must not be empty
+		strWindowsId := strWindowsId . objExplorer.HWND . "|"
+}
 StringTrimRight, strWindowsId, strWindowsId, 1
 Loop, Parse, strWindowsId, |
 {
@@ -3372,6 +3386,7 @@ Loop, Parse, strWindowsId, |
 	Sleep, %intSleepTime%
 }
 
+/*
 if (blnUseTotalCommander)
 {
 	WinGet, arrIDs, List, ahk_class TTOTAL_CMD
@@ -3381,6 +3396,7 @@ if (blnUseTotalCommander)
 		Sleep, %intSleepTime%
 	}
 }
+*/
 
 if (blnUseDirectoryOpus)
 {
@@ -3498,9 +3514,37 @@ DOpusWindowOfPane(intPane, strId)
 			
 	return intFound
 }
-
 ;------------------------------------------------------------
 
+
+;------------------------------------------------------------
+GetExplorersIDs()
+;------------------------------------------------------------
+{
+	strExplorerIDs := ""
+	for objExplorer in ComObjCreate("Shell.Application").Windows
+	{
+		strType := ""
+		try strType := objExplorer.Type ; Gets the type name of the contained document object. "Document HTML" for IE windows. Should be empty for file Explorer windows.
+		strWindowID := ""
+		try strWindowID := objExplorer.HWND ; Try to get the handle of the window. Some ghost Explorer in the ComObjCreate may return an empty handle
+		if !StrLen(strType) and StrLen(strWindowID) ; strType must be empty and strWindowID must not be empty
+			strExplorerIDs := strExplorerIDs . objExplorer.HWND . "|"
+	}
+	return strExplorerIDs
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GetNewExplorer(strIDsBefore, strIDsAfter)
+;------------------------------------------------------------
+{
+	Loop, Parse, strIDsAfter, |
+		if !InStr(strIDsBefore, A_LoopField . "|")
+			return A_LoopField
+}
+;------------------------------------------------------------
 
 
 ;========================================================================================================================
