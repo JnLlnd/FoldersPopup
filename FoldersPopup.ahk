@@ -18,6 +18,11 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 4.0.4 (2014-12-13)
+	* add a button to select or deselect all Explorer windows in Group Save
+	* support column click in Group Save to sort on column content
+	* fix bug in Explorer collection causing the Save Group button and menu to be disabled
+
 	Version: 4.0.3 (2014-12-13)
 	* more robust group load and window move and resize
 	* fix a bug in Explorer collections in case ComObjCreate returns an invalid handle
@@ -2988,7 +2993,7 @@ GuiGroupEditFromManage:
 ;------------------------------------------------------------
 
 intGui2WinID := WinExist("A")
-	
+
 strGuiGroupSaveEditTitle := L(lGuiGroupSaveEditTitle, (A_ThisLabel = "GuiGroupEditFromManage" ? lDialogEdit : lDialogSave), strAppName, strAppVersion)
 Gui, 3:New, , %strGuiGroupSaveEditTitle%
 Gui, 3:Margin, 10, 10
@@ -3000,9 +3005,10 @@ Gui, 3:Add, Text, x10 y10 w670 center, % L(lGuiGroupSaveEditPrompt, (A_ThisLabel
 Gui, 3:Font
 
 Gui, 3:Add, Text, x10 y+15 w670 center, %lGuiGroupSaveSelect%
+Gui, 3:Add, Link, x10 yp w100 vlblGroupSelect gGroupSelectClicked, <a>%lGuiGroupSaveDeselectAll%</a>
 
 Gui, 3:Add, ListView
-	, xm w680 h200 Checked Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvGroupList
+	, xm w680 h200 Checked Count32 -Multi LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% gGuiGroupListViewEvents
 	, %lGuiGroupSaveLvHeader%|Hidden: LocationURL|IsSpecialFolder|WindowId|Position|TabId
 Loop, 4
 	LV_ModifyCol(A_Index + 3, "Right")
@@ -3077,6 +3083,30 @@ if InStr(A_ThisLabel, "FromManage")
 	Gui, 2:+Disabled
 
 objIniExplorersInGroup :=
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GroupSelectClicked:
+;------------------------------------------------------------
+
+GuiControlGet, strGroupSelect, , lblGroupSelect
+Loop, % LV_GetCount()
+	LV_Modify(A_Index, InStr(strGroupSelect, lGuiGroupSaveDeselectAll) ? "-Check" : "Check")
+
+GuiControl, , lblGroupSelect, % "<a>" . (InStr(strGroupSelect, lGuiGroupSaveDeselectAll) ? lGuiGroupSaveSelectAll : lGuiGroupSaveDeselectAll) . "</a>"
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiGroupListViewEvents:
+;------------------------------------------------------------
+if (A_GuiEvent = "ColClick")
+	LV_ModifyCol(A_EventInfo, "Sort")
 
 return
 ;------------------------------------------------------------

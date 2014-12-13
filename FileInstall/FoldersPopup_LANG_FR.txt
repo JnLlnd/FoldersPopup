@@ -102,6 +102,7 @@ lGuiGroupClosing	Fermeture des fenêtres
 lGuiGroupOf	de
 lGuiGroupSaveAddWindowsLabel	Ajouter aux fenêtres existantes
 lGuiGroupSaved	Le groupe "~1~" a été enregistré.`n`nCliquez le menu "~2~" pour restaurer ce groupe.
+lGuiGroupSaveDeselectAll	Désélectionner tout
 lGuiGroupSaveEditPrompt	~1~ ce groupe
 lGuiGroupSaveEditTitle	~1~ ce groupe - ~2~ ~3~
 lGuiGroupSaveLvHeader	Dossier|Application|État|Gauche|Haut|Largeur|Hauteur|Côté
@@ -111,6 +112,7 @@ lGuiGroupSaveReplaceGroup	Le groupe "~1~" existe. Voulez-vous le remplacer?
 lGuiGroupSaveReplaceWindowsLabel	Remplacer les fenêtres existantes
 lGuiGroupSaveRestoreOption	Lors de la restauration du groupe:
 lGuiGroupSaveSelect	Sélectionnez les dossiers à enregistrer dans ce groupe
+lGuiGroupSaveSelectAll	Sélectionner tout
 lGuiGroupSaveSelectExisting	ou choisissez un groupe à remplacer:
 lGuiGroupSaveShortName	Nom du groupe (pour les menus)
 lGuiHelp	Aide
