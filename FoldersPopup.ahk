@@ -1,7 +1,12 @@
 /*
 Bugs:
+- "Error loading group window". under Win XP
+- icon issue with multi column menus under Win XP
 
 To-do for v4:
+- utiliser les tabs dans Options et Help (EeePc 1024x600)
+- "Ajouter aux fenêtres existantes" par défaut
+- Modifier fenêtre minimisée dans "Gestion des Groupes" "Modifier".
 
 */
 ;===============================================
@@ -538,7 +543,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.0.4
+;@Ahk2Exe-SetVersion 4.0.5
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -583,7 +588,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.0.4" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.0.5" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -696,6 +701,8 @@ FileInstall, FileInstall\FoldersPopup_LANG_FR.txt, %strTempDir%\FoldersPopup_LAN
 FileInstall, FileInstall\FoldersPopup_LANG_NL.txt, %strTempDir%\FoldersPopup_LANG_NL.txt, 1
 FileInstall, FileInstall\FoldersPopup_LANG_KO.txt, %strTempDir%\FoldersPopup_LANG_KO.txt, 1
 FileInstall, FileInstall\FoldersPopup_LANG_SV.txt, %strTempDir%\FoldersPopup_LANG_SV.txt, 1
+FileInstall, FileInstall\FoldersPopup_LANG_IT.txt, %strTempDir%\FoldersPopup_LANG_IT.txt, 1
+
 FileInstall, FileInstall\default_browser_icon.html, %strTempDir%\default_browser_icon.html, 1
 
 FileInstall, FileInstall\about-32.png, %strTempDir%\about-32.png
@@ -1080,7 +1087,7 @@ InitLanguageArrays:
 StringSplit, arrOptionsTitles, lOptionsTitles, |
 StringSplit, arrOptionsTitlesSub, lOptionsTitlesSub, |
 StringSplit, arrOptionsTitlesLong, lOptionsTitlesLong, |
-strOptionsLanguageCodes := "EN|FR|DE|NL|KO|SV"
+strOptionsLanguageCodes := "EN|FR|DE|NL|KO|SV|IT"
 StringSplit, arrOptionsLanguageCodes, strOptionsLanguageCodes, |
 StringSplit, arrOptionsLanguageLabels, lOptionsLanguageLabels, |
 

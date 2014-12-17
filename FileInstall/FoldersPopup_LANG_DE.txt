@@ -1,5 +1,5 @@
 lAboutText1	~1~ ~2~ (~3~ bits)
-lAboutText2	~1~ wird entwickelt von Jean Lalonde unter`nVerwendung der <a href="http://ahkscript.org/">AutoHotkey</a> Programmiersprache.`n`nDeutsche Übersetzung: Edgar "Fast Edi" Hoffmann`nFranzösische Übersetzung: Jean Lalonde`nHolländische Übersetzung: Pieter Dejonghe`Koreanisch Übersetzung: Om Il-Sung`nSchwedisch Übersetzung: Åke Engelbrektson`nEnglische Gegenleser: (Hilfe willkommen)`n`nIcons von: <a href="http://www.visualpharm.com">Visual Pharm</a>`nProgramm installieren: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> von jrsoftware.org`nAutoHotkey_L v1.1 Sourcen: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText2	~1~ wird entwickelt von Jean Lalonde unter`nVerwendung der <a href="http://ahkscript.org/">AutoHotkey</a> Programmiersprache.`n`nDeutsche Übersetzung: Edgar "Fast Edi" Hoffmann`nFranzösische Übersetzung: Jean Lalonde`nHolländische Übersetzung: Pieter Dejonghe`Koreanisch Übersetzung: Om Il-Sung`nSchwedisch Übersetzung: Åke Engelbrektson`nItalian Übersetzung: Riccardo Leone`nEnglische Gegenleser: (Hilfe willkommen)`n`nIcons von: <a href="http://www.visualpharm.com">Visual Pharm</a>`nProgramm installieren: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> von jrsoftware.org`nAutoHotkey_L v1.1 Sourcen: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
 lAboutText4	Support unter <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	Über - ~1~ ~2~
@@ -203,7 +203,7 @@ lOptionsGuiTitle	Optionen - ~1~ ~2~
 lOptionsIconSize	Symbolgröße im Menü
 lOptionsKeyboard	Tastatur
 lOptionsLanguage	Sprache
-lOptionsLanguageLabels	Englisch|Französisch|Deutsch|Holländisch|Koreanisch|Schwedisch
+lOptionsLanguageLabels	Englisch|Französisch|Deutsch|Holländisch|Koreanisch|Schwedisch|Italian
 lOptionsMenuActiveWindow	Im aktiven Fenster
 lOptionsMenuFixPosition	An fester Position
 lOptionsMenuNearMouse	Nahe des Mauszeigers
