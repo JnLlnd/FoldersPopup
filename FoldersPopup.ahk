@@ -25,6 +25,7 @@ To-do for v4:
 
 	Version: 4.0.5 (2014-12-16)
 	* addition of Italian language, thanks to Riccardo Leone
+	* redesign the help window into three tabs to save height on small screens
 	
 	Version: 4.0.4 (2014-12-13)
 	* add a button to select or deselect all Explorer windows in Group Save
@@ -6111,18 +6112,49 @@ Gui, 2:Font, s12 w700, Verdana
 Gui, 2:Add, Text, x10 y10, %strAppName%
 Gui, 2:Font, s10 w400, Verdana
 Gui, 2:Add, Link, x10 w%intWidth%, %lHelpTextLead%
-Gui, 2:Font, s8 w400, Verdana
-loop, 6
-	Gui, 2:Add, Link, w%intWidth%, % lHelpText%A_Index%
-Gui, 2:Add, Link, w%intWidth%, % L(lHelpText7, chr(169))
 
-Gui, 2:Add, Button, x180 y+20 vbtnHelpDonate gGuiDonate, %lDonateButton%
+Gui, 2:Font, s8 w600, Verdana
+Gui, 2:Add, Tab2, vintHelpTab w640 h350 AltSubmit, %lHelpTabTitles%
+
+Gui, 2:Font, s8 w400, Verdana
+Gui, 2:Tab, 1
+Gui, 2:Add, Link, w%intWidth%, % lHelpText1
+Gui, 2:Add, Link, w%intWidth%, % lHelpText2
+Gui, 2:Add, Button, vbtnNext1 gNextButtonClicked, %lHelpTabNext%
+GuiCenterButtons(L(lHelpTitle, strAppName, strAppVersion), 10, 5, 20, , "btnNext1")
+
+Gui, 2:Tab, 2
+Gui, 2:Add, Link, w%intWidth%, % lHelpText3
+Gui, 2:Add, Link, w%intWidth%, % lHelpText4
+Gui, 2:Add, Button, vbtnNext2 gNextButtonClicked, %lHelpTabNext%
+GuiCenterButtons(L(lHelpTitle, strAppName, strAppVersion), 10, 5, 20, , "btnNext2")
+
+Gui, 2:Tab, 3
+Gui, 2:Add, Link, w%intWidth%, % lHelpText5
+Gui, 2:Add, Link, w%intWidth%, % lHelpText6
+
+Gui, 2:Tab
+
+GuiControlGet, arrTabPos, Pos, intHelpTab
+Gui, 2:Add, Button, % "x180 y" . arrTabPosY + arrTabPosH + 10. " vbtnHelpDonate gGuiDonate", %lDonateButton%
 Gui, 2:Add, Button, x+80 yp g2GuiClose vbtnHelpClose, %lGui2Close%
 GuiCenterButtons(L(lHelpTitle, strAppName, strAppVersion), 10, 5, 20, , "btnHelpDonate", "btnHelpClose")
 
 GuiControl, Focus, btnHelpClose
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+NextButtonClicked:
+;------------------------------------------------------------
+
+Gui, 2:Submit, NoHide
+
+GuiControl, Choose, intHelpTab, % intHelpTab + 1
 
 return
 ;------------------------------------------------------------
