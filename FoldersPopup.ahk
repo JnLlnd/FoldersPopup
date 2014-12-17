@@ -23,6 +23,9 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 4.0.5 (2014-12-16)
+	* addition of Italian language, thanks to Riccardo Leone
+	
 	Version: 4.0.4 (2014-12-13)
 	* add a button to select or deselect all Explorer windows in Group Save
 	* support column click in Group Save to sort on column content
