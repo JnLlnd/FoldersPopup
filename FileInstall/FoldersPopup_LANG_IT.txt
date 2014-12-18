@@ -1,0 +1,258 @@
+lAboutText1	~1~ ~2~ (~3~ bit)
+lAboutText2	~1~ è stato scritto da Jean Lalonde usando il linguaggio di programmazione`n<a href="http://ahkscript.org/">AutoHotkey</a>.`n`nTraduzione in Italiano: Riccardo Leone`nTraduzione in Tedesco: Edgar "Fast Edi" Hoffmann`nTraduzione in Francese: Jean Lalonde`nTraduzione in Olandese: Pieter Dejonghe`nTraduzione in Coreano: Om Il-Sung`nTraduzione in Svedese:Åke Engelbrektson`nTraduzione in altre lingue: (se volete collaborare siete benvenuti)`nEnglish proof checking: (help welcomed)`n`nIcone realizzate da: <a href="http://www.visualpharm.com">Visual Pharm</a>`nProgramma di installazione: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> di jrsoftware.org`nAutoHotkey_L v1.1 (sorgenti): <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
+lAboutText4	Supporto:  <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
+lAboutTitle	Crediti - ~1~ ~2~
+lAppTagline	Naviga come una scheggia tra le tue cartelle e i documenti più usati!
+lDiagModeCaution	~1~ è in esecuzione in modalità diagnostica.`n`nLe informazioni sull'applicazione in esecuzione saranno raccolte nel file:`n~2~`n`nNulla verrà trasmesso senza il tuo consenso.`n`nVuoi mantenere attiva la modalità diagnostica?
+lDiagModeExit	~1~ ha raccolto le informazioni per il debug nel file ~2~.
+lDiagModeIntro	Invia questo file a: ahk@jeanlalonde.ca con una descrizione della situazione da diagnosticare.
+lDiagModeSee	Vuoi visualizzare il file con le informazioni per il debug?
+lDialogAdd	Aggiungi
+lDialogAddDialogAlready	Questo tipo di Casella di Dialogo è già supportata.
+lDialogAddDialogPrompt	Inserisci il nome della nuova Casella di Dialogo`n(o parte del nome):
+lDialogAddDialogTitle	Aggiungi la Casella di Dialogo - ~1~ ~2~
+lDialogAddEditFavoriteTitle	~1~ Preferito - ~2~ ~3~
+lDialogAddFileSelect	Scegli il nuovo Documento:
+lDialogAddFolderManuallyPrompt	Mi spiace, non riesco a trovare la cartella attuale in questo tipo di finestra.`n`nVuoi aggiungerla manualmente adesso?
+lDialogAddFolderManuallyTitle	Aggiungi Questa Cartella - ~1~ ~2~
+lDialogAddFolderSelect	Scegli o crea una nuova Cartella:
+lDialogBrowseButton	Sfoglia
+lDialogCancelButton	Annulla
+lDialogCancelPrompt	Vuoi scartare le modifiche?
+lDialogCancelTitle	Annulla - ~1~ ~2~
+lDialogEdit	Modifica
+lDialogEditDialogPrompt	Inserisci il nome della nuova Casella di Dialogo`n(o parte del nome):
+lDialogEditDialogTitle	Modifica la Casella di Dialogo - ~1~ ~2~
+lDialogFavoriteDoesNotExistPrompt	Il Preferito "~1~" non esiste oppure non è disponibile.`n`nSe questo Preferito si trova su un disco di rete, si prega di riprovare dopo l'autenticazione di rete.`n`nSe il Preferito è un link ad una pagina web, seleziona l'opzione "Link (URL)" quando aggiungi il Preferito.
+lDialogFavoriteDoesNotExistTitle	Il Preferito non esiste - ~1~
+lDialogFavoriteLocationEmpty	La destinazione è vuota. Si prega di riprovare: scegli una destinazione non vuota.
+lDialogFavoriteNameEmpty	Il nome del Preferito non può essere vuoto. Per favore, scegli un nome.
+lDialogFavoriteNameNoColumnBreak	Il nome del sottomenù non può cominciare con caratteri "~1~", riservati ad uso di indicatori di colonna.
+lDialogFavoriteNameNoPipe	Il Preferito o il nome del sottomenù non può includere la "|" (barra verticale).
+lDialogFavoriteNameNoSeparator	Il nome del sottomenù non può includere il carattere riservato "~1~".
+lDialogFavoriteNameNotNew	Il nome "~1~" è già in uso in questo menù. Si prega di scegliere un altro nome.
+lDialogFavoriteParentMenu	Menù padre del Preferito
+lDialogFavoriteRemovePrompt	Eliminare il sottomenù "~1~"`ne TUTTO il contenuto (cartelle e sottomenù)?
+lDialogFavoriteRemoveTitle	Elimina il Preferito - ~1~
+lDialogFileLabel	Documento
+lDialogFileShortName	Nome breve del Documento (voce menù)
+lDialogFolderLabel	Cartella
+lDialogFolderShortName	Nome breve della Cartella (voce menù)
+lDialogGroupDelete	Elimina
+lDialogGroupDeleteError	eliminare
+lDialogGroupDeletePrompt	Eliminare il gruppo "~1~"?
+lDialogGroupEdit	Modifica
+lDialogGroupEditError	modificare
+lDialogGroupLoad	Apri
+lDialogGroupLoadError	aprire
+lDialogGroupLoadErrorLoading	Errore nell'apertura delle finestre del Gruppo:`n`n"~1~"
+lDialogGroupManageAbout	A proposito dei Gruppi
+lDialogGroupManageCannotSave	Avviso: Non c'è nessuna cartella aperta per formare un nuovo Gruppo. Apri almeno una finestra di Windows Explorer o Directory Opus e riprova a salvare il nuovo gruppo.
+lDialogGroupManageCreatingPrompt	Per creare un Gruppo, puoi cliccare il tasto qui sotto: "~1~", oppure puoi selezionare in qualunque momento il menù: "~2~".
+lDialogGroupManageCreatingTitle	Crea un Gruppo di cartelle
+lDialogGroupManageGroupsTitle	Gestione Gruppi - ~1~ ~2~
+lDialogGroupManageIntro	Con "Gruppi" puoi salvare e ripristinare il tuo spazio di lavoro per spostarti agevolmente tra le tue sessioni di lavoro. "Gruppi" memorizza cartella, dimensione, posizione e stato (normale, minimizzato o massimizzato) delle finestre di Windows Explorer e Directory Opus (Total Commander non ancora supportato).
+lDialogGroupManageManagingTitle	Gestione Gruppi
+lDialogGroupNew	Salva un nuovo Gruppo
+lDialogGroupRemoveTitle	Elimina Gruppo - ~1~
+lDialogGroups	Gruppi
+lDialogGroupSelect	Seleziona un Gruppo
+lDialogGroupSelectError	Per favore, seleziona il Gruppo da ~1~.
+lDialogIcon	Icona
+lDialogInvalidHotkey	Con il tuo attuale layout di tastiera di sistema, non è stato possibile usare l'hotkey "~1~" per aprire il popup menù (errore: tasto scelto non valido).`n`nPer favore, apri la finestra "~2~ Impostazioni" dal menù dell'icona nella barra strumenti e clicca: "Opzioni". In questa casella di dialogo, scegli un altro shortcut per "~3~".
+lDialogOpenThisMenu	Apri questo menù
+lDialogSave	Salva
+lDialogSelectItemToEdit	Per favore, seleziona la voce da modificare.
+lDialogSelectItemToRemove	Per favore, seleziona la voce da eliminare.
+lDialogSubmenuLabel	Sottomenù
+lDialogSubmenuNameEmpty	Il nome del sottomenù non può essere vuoto. Si prega di inserire un nome.
+lDialogSubmenuParentMenu	Menù padre del sottomenù
+lDialogSubmenuShortName	Nome breve del sottomenù (voce menu)
+lDialogThirdPartyDetected	~1~ ha riscontrato che ~2~ è installato nel tuo sistema.`n`nVuoi abilitare l'integrazione con ~2~?
+lDialogURLLabel	Link (URL)
+lDialogURLShortName	Nome breve del Link (voce menu)
+lDonateButton	Supporta il Freeware!
+lDonateCheckPrompt	Sei soddisfatto di ~1~?`n`n~1~ non solo è GRATUITO ma anche PRIVO di fastidiosi annunci o adware, che non si è mai sicuri che non nascondano spyware o malware.`n`nAl momento, per ~2~ volte ~1~ ti ha aiutato nelle tue attività quotidiane. Che ne diresti adesso di fare un'offerta a titolo di supporto del programma?
+lDonateCheckTitle	~1~ volte! - ~2~
+lDonateMenu	S&upporta il Freeware!
+lDonatePlatformComment1	Nel modo più flessibile, usando il tuo account PayPal o la tua carta di credito.
+lDonatePlatformComment2	Ricevi un invio ufficiale, se hai bisogno che ti venga rimborsato.
+lDonatePlatformName1	Usando Paypal
+lDonatePlatformName2	Usando Share-it
+lDonateReviewNameLeft1	Download.com
+lDonateReviewNameLeft2	PortableFreeware.com
+lDonateReviewNameLeft3	Softpedia.com
+lDonateReviewNameRight1	BetaNews.com
+lDonateReviewNameRight2	FileCluster.com
+lDonateReviewNameRight3	Freewares && Tutos (FR)
+lDonateText1	Supporta lo sviluppo di ~1~!
+lDonateText2	<a href="~1~">Perchè supportare il freeware?</a>
+lDonateText3	... o supporta il freeware gratuitamente!
+lDonateText4	Fai una recensione positiva di ~1~ su:
+lDonateText5	Mandami il tuo link
+lDonateThankyou	Grazie di supportare il freeware!
+lDonateTitle	Supporta il freeware! - ~1~ ~2~
+lGui2Close	Chiudi
+lGuiAbout	Crediti
+lGuiAddDialog	Aggiungi
+lGuiAddFavorite	Aggiungi
+lGuiCancel	&Annulla
+lGuiClose	&Chiudi
+lGuiDonate	Supporto
+lGuiDropFilesIncentive	Puoi trascinare i tuoi Preferiti su questa finestra
+lGuiEditFavorite	Modifica
+lGuiGroupClosing	Chiusura delle finestre
+lGuiGroupOf	di
+lGuiGroupSaveAddWindowsLabel	Aggiungi a finestre esistenti
+lGuiGroupSaved	Gruppo "~1~" salvato.`n`nClicca il menù "~2~" per aprire questo gruppo.
+lGuiGroupSaveEditPrompt	~1~ questo gruppo
+lGuiGroupSaveEditTitle	~1~ gruppo di finestre - ~2~ ~3~
+lGuiGroupSaveLvHeader	Percorso|Applicazione|Stato della Finestra|Sinistra|Alto|Larghezza|Altezza|Lato
+lGuiGroupSaveNameEmpty	Il nome del gruppo non può essere vuoto. Si prega di inserire un nome.
+lGuiGroupSaveNewGroup	Nuovo Gruppo
+lGuiGroupSaveReplaceGroup	Group "~1~" esiste già. Vuoi sostituirlo?
+lGuiGroupSaveReplaceWindowsLabel	Sostituisci le finestre esistenti
+lGuiGroupSaveRestoreOption	Nel ripristinare questo gruppo:
+lGuiGroupSaveSelect	Seleziona le cartelle da salvare in questo gruppo
+lGuiGroupSaveSelectExisting	o seleziona un gruppo già esistente da sovrascrivere:
+lGuiGroupSaveShortName	Nome breve del gruppo (voce menù)
+lGuiHelp	Aiuto
+lGuiLvDialogsHeader	Caselle di Dialogo supportate`n(sono ammessi anche nomi incompleti) 
+lGuiLvFavoritesHeader	Nome|Destinazione
+lGuiMoveFavoriteDown	Sposta S&otto
+lGuiMoveFavoriteUp	Sposta &Sopra
+lGuiOptions	Opzioni
+lGuiRemoveFavorite	Elimina
+lGuiResetDefault	Ripristina hotkey predefinito
+lGuiSave	&Salva
+lGuiSeparator	Se&paratore
+lGuiSubmenuDropdownLabel	Menù da modificare:
+lGuiSubmenuLocation	>
+lGuiSubmenuSeparator	>
+lGuiTitle	Impostazioni - ~1~ ~2~
+lHelpText1	All'avvio, FoldersPopup aggiunge un icona nella barra strumenti e resta in attesa. Quando hai bisogno di cambiare la cartella corrente in Windows Explorer o in una casella di dialogo per file, semplicemente clicca il tasto centrale del mouse o premi Windows-A e, nel menù popup, seleziona la cartella desiderata. FoldersPopup ti trasferirà ad essa istantaneamente! Oppure puoi usarlo per aprire velocemente un documento preferito o una pagina web.
+lHelpText2	Secgli "Impostazioni" per aprire la finestra delle Impostazioni di FoldersPopup dove puoi aggiungere al tuo menù CARTELLE, DOCUMENTI o LINK WEB preferiti. Puoi spostarli, rinominarli o eliminarli. Puoi anche aggiungere, spostare, rinominare o eliminare SOTTOMENU. Scegli "Menù per modifiche:" nella lista a discesa. Clicca "Salva" per salvare le modifiche.
+lHelpText3	Per AGGIUNGERE velocemente una nuova CARTELLA preferita al menù popup:`n1) Vai alle cartelle usate di frequente.`n2) Clicca il tasto centrale del mouse (o premi Windows-A) e scegli "Aggiungi questa Cartella".`n3) Assegna alla cartella un nome breve, clicca "Aggiungi", e poi "Salva", nella finestra delle Impostazioni.
+lHelpText4	Per AGGIUNGERE un nuovo DOCUMENTO preferito o un LINK WEB al menù popup:`n1) Apri il menù di FoldersPopup e scegli "Impostazioni" (Shift-Windows-F).`n2) Clicca il tasto "Aggiungi" e scegli l'opzione "Documento" o "Link (URL)".`n3) Dai al Preferito un nome breve, "Sfoglia" fino al documento o inserisci l'URL della pagina web, clicca "Aggiungi", e poi "Salva" nella finestra impostazioni.
+lHelpText5	TRUCCHI E SUGGERIMENTI`n- Dalla barra strumenti, clicca col tasto destro sull'icona di FoldersPopup e seleziona l'opzione "Esegui all'Avvio" per eseguire FoldersPopup automaticamente all'avvio di Windows.`n- Hai bisogno di una nuova finestra di Windows Explorer mentre stai lavorando in un'altra applicazione? Da qualunque finestra, tenendo premuto Shift clicca col tasto destro del mouse (o da tastiera: Shift-Windows-A), o semplicemente clicca sull'icona di FoldersPopup, nella barra strumenti, e seleziona la cartella preferita che vuoi aprire.`n- Seleziona il menù "Cartelle recenti..." (Shift-Windows-R) per mostrare un elenco aggiornato delle cartelle recentemente aperte.`n- Usa "Cartelle Correnti" per aprire una delle cartelle già aperte in Windows Explorer, e "Gruppi di Cartelle" per salvare e richiamare un gruppo di cartelle.`n- Configura i metodi per aprire il menù popup: scegli il tasto del mouse da usare o le combinazioni di tasti in "Impostazioni, Opzioni".`n- Inoltre, in "Opzioni": scegli la lingua preferita, la dimensione delle icone del menù, e i colori delle finestre. Seleziona le opzioni per visualizzare le cartelle recenti, aggiungi i numeri da usare come scorciatoia da tastiera per il menù delle cartelle o fissa una posizione dove aprire il menù popup.`n-Utenti di Directory Opus, per informazioni aggiuntive vedere <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/"> questa pagina</a>.`n-Utenti di Total Commander, per informazioni aggiuntive vedere <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/"> questa pagina</a>.
+lHelpText6	Il supporto a FoldersPopup è disponibile su <a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
+lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware.
+lHelpTextLead	FoldersPopup ti consente di spostarti come una scheggia tra le cartelle, documenti e pagine web che usi più spesso!
+lHelpTitle	Aiuto - ~1~ ~2~
+lMainMenuName	Principale
+lMenuAbout	C&rediti
+lMenuAddThisDialog	&Aggiungi Questa Casella di Dialogo all'elenco supportato
+lMenuAddThisFolder	&Aggiungi Questa Cartella
+lMenuColumnBreak	colonna
+lMenuColumnBreakIndicator	===
+lMenuControlPanel	Pannello di &Controllo
+lMenuDesktop	&Desktop
+lMenuDialogNotSupported	Questa casella di dialogo non è ancora supportata
+lMenuDocuments	D&ocumenti
+lMenuDownloads	Download
+lMenuExitFoldersPopup	Esci ~1~
+lMenuFoldersInExplorer	Cartelle &Correnti
+lMenuFPMenu	~1~ ~2~
+lMenuGroup	&Gruppi di Cartelle
+lMenuGroupAdd	aggiungi
+lMenuGroupLoad	Apri un gruppo
+lMenuGroupReplace	sostituisci
+lMenuGroupSave	Salva le Cartelle correnti come Gruppo
+lMenuHelp	Aiuto
+lMenuMenu	Menù
+lMenuMyComputer	&Mio Computer
+lMenuNetworkNeighborhood	Rete di Wi&ndows
+lMenuPictures	&Immagini
+lMenuRecentFolders	Cartelle &Recenti
+lMenuRecycleBin	&Cestino
+lMenuRefreshRecent	Aggiorna Menù delle Cartelle Recenti
+lMenuReservedShortcuts	SGRFA
+lMenuReservedShortcutsDonate	U
+lMenuRunAtStartup	&Esegui all'Avvio
+lMenuSeparator	----------------
+lMenuSettings	&Impostazioni di ~1~
+lMenuSpecialExplorer	Finestra Speciale di Explorer
+lMenuSpecialFolders	Cartelle &Speciali
+lMenuSuspendHotkeys	Sospendi Scorciatoie
+lMenuUpdate	Cerca &Aggiornamenti
+lNavigateFileError	C'è stato un errore nell'aprire la cartella:`n~1~.
+lNavigateSpecialError	C'è stato un errore nell'aprire la cartella speciale #~1~.
+lOopsTitle	~1~ (~2~)
+lOopsWriteProtectedError	Sembra che ~1~ sia eseguito da una cartella PROTETTA-IN-SCRITTURA perchè non è stato possibile creare il file di configurazione "~1~.ini".`n`nSposta il file ~1~ .EXE in una cartella NON-PROTETTA di tua scelta e ri-eseguilo da quest'ultima.`n`n~1~ verrà chiuso.
+lOopsWrongThirdPartyPath	Percorso ~2~ o nome del file errato nel file ~1~.ini:`n"~4~"`n`nInserisci percorso completo e nome del file .exe, per esempio (senza apici):`n"~3~Path=C:\...\...exe"
+lOopsZipFileError	Sembra che ~1~ sia stato eseguito direttamente da un archivio .ZIP .`n`nE' necessario dapprima estrarre il file ~1~ .EXE dall'archivio .ZIP in una cartella di tua scelta prima di eseguirlo.`n`n~1~ verrà chiuso.
+lOptionsAlt	Alt
+lOptionsArrDescriptions1	Scegli il tasto del MOUSE e la combinazione di modificatori da usare per aprire il menù popup in Windows Explorer o nelle caselle di dialogo. Per default, è il tasto centrale del mouse senza nessun tasto modificatore.
+lOptionsArrDescriptions2	Scegli il tasto del MOUSE e la combinazione di modificatori da usare per aprire il menù popup in QUALUNQUE finestra e spostarti alla cartella selezionata in una NUOVA finestra di Windows Explorer. Per default, è il tasto centrale del mouse tenendo premuto lo Shift.
+lOptionsArrDescriptions3	Scegli la scorciatoia da TASTIERA per aprire il menù popup nella finestra attiva di Windows Explorer o casella di dialogo attiva. Per default, è la combinazione Win+K (la lettera "K" tenendo premuto il tasto Windows).
+lOptionsArrDescriptions4	Scegli la scorciatoia da TASTIERA per aprire il menù popup in QUALUNQUE finestra e spostarti alla cartella selezionata in una NUOVA finestra di Windows Explorer. Per default, è la combinazione Shift+Win+K (la lettera "K" tenendo premuti i tasti Shift e Windows contemporaneamente).
+lOptionsArrDescriptions5	Scegli la scorciatoia o la combinazione di tasti del mouse per aprire il menù "Cartelle Recenti" di FoldersPopup. Per default, è Shift+Windows+R.
+lOptionsArrDescriptions6	Scegli la scorciatoia o la combinazione di tasti del mouse per aprire la casella di dialogo "Impostazioni" di FoldersPopup. Per default, è Shift+Windows+F.
+lOptionsChangeHotkey	Cambia
+lOptionsChangeHotkeyTitle	Cambia scorciatoia - ~1~ ~2~
+lOptionsCheck4Update	Cerca Aggiornamenti
+lOptionsCtrl	Ctrl
+lOptionsDirectoryOpusUseTabs	Usa i tab
+lOptionsDisplayFoldersInExplorerMenu	Cartelle Correnti
+lOptionsDisplayGroupMenu	&Gruppi di Cartelle
+lOptionsDisplayIcons	Mostra &Icone nel Menù
+lOptionsDisplayMenus	Mostra i Menù:
+lOptionsDisplayMenuShortcuts	Mostra scorciatoie &numeriche nei Menù
+lOptionsDisplayRecentFolders	Cartelle R&ecenti
+lOptionsDisplaySpecialFolders	Cartelle S&peciali
+lOptionsGuiTitle	Opzioni - ~1~ ~2~
+lOptionsIconSize	Dimensione delle icone
+lOptionsKeyboard	Tastiera
+lOptionsLanguage	Lingua
+lOptionsLanguageLabels	Inglese|Francese|Tedesco|Olandese|Coreano|Svedese|Italiano
+lOptionsMenuActiveWindow	In alto a sinistra della finestra attiva
+lOptionsMenuFixPosition	In posizione prefissata
+lOptionsMenuNearMouse	Vicino al puntatore del mouse
+lOptionsMenuPositionPrompt	Apri il menù popup:
+lOptionsMouse	Mouse
+lOptionsMouseButtonsText	Tasto Sinistro del Mouse|Tasto Centrale del Mouse|Tasto Destro del Mouse|Tasto Speciale 1 del Mouse|Tasto Speciale 2 del Mouse|Rotellina SU|Rotellina GIU'|Rotellina a Sinistra|Rotellina a Destra|
+lOptionsMouseCheckLButton	Non è possibile assegnare il "Tasto Sinistro del Mouse" da solo, senza modificatore.
+lOptionsMouseNone	Nessuno
+lOptionsNoKeyOrMouseSpecified	Non è stato specificato alcun tasto (per il mouse o tastiera). La scorciatoia preesistente "~1~" non verrà modificata.
+lOptionsOpenMenuOnTaskbar	Apri il menù nella barra delle applicazioni
+lOptionsOtherOptions	Altre Opzioni
+lOptionsPopupFix	&Menu Popup in posizione prefissata
+lOptionsPopupFixPositionX	Posizione X:
+lOptionsPopupFixPositionY	Y:
+lOptionsRecentFolders	Cartelle Recen&ti
+lOptionsRunAtStartup	&Esegui all'avvio
+lOptionsShift	Shift
+lOptionsSpacebar	usa la barra spaziatrice
+lOptionsTabMouseAndKeyboardIntro	Definisci i tasti del mouse e scorciatoie da tastiera per lanciare ~1~.
+lOptionsTheme	Tema
+lOptionsThirdPartyDetail	Seleziona il file del programma (.exe) ~1~ per abilitare l'integrazione di ~1~ .
+lOptionsThirdPartyPrompt	File del programma:
+lOptionsThirdPartyTitle	~1~ utenti
+lOptionsTitles	Mouse - Folders Popup|Mouse - Nuovo Explorer|Keyboard - Folders Popup|Keyboard - Nuovo Explorer|Cartelle Recenti|Finestra Impostazioni
+lOptionsTitlesSub	(menù popup su Explorer e caselle di dialogo)|(menù popup da qualsiasi finestra di programma)|(menù popup su Explorer e caselle di dialogo)|(menù popup da qualsiasi finestra di programma)|(elenco Posti recenti di Windows)|(configurazione e impostazioni dei menù)
+lOptionsTotalCommanderUseTabs	Usa i tab
+lOptionsTrayTip	All'avvio, &Mostra popup dalla barra Strumenti
+lOptionsTriggerFor	Per attivare:
+lOptionsWin	Win
+lPickIconButtonCustom	Personalizzato
+lPickIconButtonDefault	Default
+lPickIconDocumentPrompt	Selezionare un'icona a scelta o usare l'icona di default per questo tipo di documento?
+lPickIconNoLocation	Seleziona dapprima un documento prima di scegliere l'icona da associare.
+lPickIconTitle	Seleziona l'icona per ~1~ - ~2~
+lReloadPrompt	~1~ cambiato in ~2~. Vuoi ricaricare ~3~ in ~2~ ora? Le modifiche non salvate al menù delle cartelle verranno perse.
+lReloadPromptDefaultHotkey	Scorciatoia riportata al valore di default. Questa modifica sarà effettiva solo dopo aver ricaricato ~1~.`n`nVuoi ricaricare ~1~ ora? Le modifiche non salvate al menù delle cartelle verranno perse.
+lTrayTipInstalledDetail	Per mostrare il menù ~1~, premi:`n`n~2~ / ~3~`nin Windows Explorer o nella Casella di dialogo`n`n~4~ / ~5~`nper aprire una nuova finestra di Explorer
+lTrayTipInstalledTitle	~1~ ~2~ è pronto!
+lTrayTipWorkingDetail	Menù in costruzione...
+lTrayTipWorkingDetailFinished	Il menù è stato aggiornato.
+lTrayTipWorkingTitle	~1~ ~2~ in esecuzione...
+lUpdateButtonRemind	Ricordamelo più tardi
+lUpdateError	C'è stato un errore nell'accesso al numero di versione più recente. Ricerca aggiornamenti interrotta.
+lUpdatePrompt	Aggiornare ~1~ dalla v~2~ alla v~3~?
+lUpdateTitle	Aggiornare ~1~?
+lUpdateYouHaveLatest	Hai la versione più recente: ~1~.`n`nVuoi visitare la pagina web ~2~ ugualmente?
+lWindowIsTreeviewText	Mi spiace... A causa di una limitazione di  Windows, questo tipo di casella di dialogo (con vista ad albero) non è attualmente supportata da ~1~.
+lWindowIsTreeviewTitle	Casella di Dialogo con vista ad albero non supportata
+
+return
