@@ -65,6 +65,7 @@ lDialogSubmenuLabel	Sous-menu
 lDialogSubmenuNameEmpty	Le nom du sous-menu est vide. Veuillez indiquer un nom court pour ce dossier.
 lDialogSubmenuParentMenu	Menu contenant ce sous-menu
 lDialogSubmenuShortName	Nom du sous-menu (pour les menus)
+lDialogTabNext	Suite
 lDialogThirdPartyDetected	~1~ a détecté que ~2~ est installé sur votre ordinateur.`n`nVoulez-vous activer l'intégration avec ~2~?
 lDialogURLLabel	Lien (URL)
 lDialogURLShortName	Nom de ce lien (pour les menus)
@@ -129,7 +130,9 @@ lGuiSubmenuDropdownLabel	Menu à modifier:
 lGuiSubmenuLocation	>
 lGuiSubmenuSeparator	>
 lGuiTitle	Paramètres - ~1~ ~2~
-lHelpTabTitles	Premier pas|Ajouter des favoris|Trucs et astuces
+lHelpTabAddingFavorite	Ajouter des favoris
+lHelpTabGettingStarted	Premier pas
+lHelpTabTitlesTipsAndTricks	Trucs et astuces
 lHelpText1	Au lancement de FoldersPopup, une icône attend vos ordres dans la zone de Notifications. Lorsque vous voudrez changer de dossier dans l'Explorateur de fichier Windows ou dans une boîte de dialogue de fichiers, vous n'aurez qu'à appuyer sur le bouton central de la souris ou sur la touche Windows-A pour qu'un menu popup affiche vos dossiers préférés. Cliquez le dossier désiré et FoldersPopup vous y mènera instantanément ! Ou encore ouvrez-y rapidement un document ou une page web.
 lHelpText2	Choisissez "Paramètres" pour ouvrir la boîte de configuration de FoldersPopup où vous pourrez ajouter à votre menu des DOSSIERS, des DOCUMENTS ou des LIENS. Vous pourrez ensuite les effacer, déplacer ou renommer. Vous pourrez aussi ajouter, déplacer, renommer ou effacer des SOUS-MENUS. Choisissez le "Menu à modifier:" dans la liste déroulante. Cliquez sur "Enregistrer" pour sauvegarder vos modifications.
 lHelpText3	Pour ajouter rapidement un DOSSIER à votre menu:`n1) Allez dans un dossier fréquemment utilisé.`n2) Cliquez sur le bouton central de la souris (Windows-A) et choisissez "Ajouter ce dossier".`n3) Attribuez un nom court à ce dossier, cliquez "Ajouter", puis "Enregistrer" dans la fenêtre des paramètres.
@@ -199,7 +202,6 @@ lOptionsDisplayMenus	Afficher les menus:
 lOptionsDisplayMenuShortcuts	Afficher les raccourcis numériques
 lOptionsDisplayRecentFolders	Emplacements récents
 lOptionsDisplaySpecialFolders	Dossiers spéciaux
-lOptionsGuiIntro	Choisisr les boutons de la souris et les raccourcis du clavier déclenchant ~1~.
 lOptionsGuiTitle	Options - ~1~ ~2~
 lOptionsIconSize	Taille des icones de menu
 lOptionsKeyboard	Clavier
@@ -210,6 +212,7 @@ lOptionsMenuFixPosition	À une position fixe
 lOptionsMenuNearMouse	Près du pointeur de la souris
 lOptionsMenuPositionPrompt	Afficher le menu popup:
 lOptionsMouse	Souris
+lOptionsMouseAndKeyboard	Souris et clavier
 lOptionsMouseButtonsText	Bouton de gauche de la souris|Bouton du milieu de la souris|Bouton de droite de la souris|Bouton spécial 1 de la souris|Bouton spécial 2 de la souris|Molette vers le haut|Molette vers le bas|Molette à gauche|Molette à droite|
 lOptionsMouseCheckLButton	Vous ne pouvez pas attribuer le "Bouton de gauche de la souris" sans touche de modification.
 lOptionsMouseNone	Aucun
@@ -223,7 +226,11 @@ lOptionsRecentFolders	Emplacements récents
 lOptionsRunAtStartup	Exécuter au démarrage
 lOptionsShift	Maj
 lOptionsSpacebar	utiliser la barre d'espace
+lOptionsTabFileManagersIntro	Pour les utilisateurs de gestionnaires de fichiers de développeurs tiers
+lOptionsTabMouseAndKeyboardIntro	Choisisr les boutons de la souris et les raccourcis du clavier déclenchant ~1~.
+lOptionsTabOtherOptionsIntro	Adaptez ~1~ à vos préférences!
 lOptionsTheme	Thème
+lOptionsThirdParty	Autres gestionnaires de fichiers
 lOptionsThirdPartyDetail	Pour activer l'intégration avec ~1~, localisez le programme .exe sous votre dossier Program Files.
 lOptionsThirdPartyPrompt	Fichier:
 lOptionsThirdPartyTitle	Utilisateurs de ~1~

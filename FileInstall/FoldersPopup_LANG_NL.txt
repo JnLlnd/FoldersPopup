@@ -54,9 +54,9 @@ lDialogGroupManageIntro	Met "Groepen" kan je jouw werkruimte bewaren en terug op
 lDialogGroupManageManagingTitle	Groepen beheren
 lDialogGroupNew	Een nieuwe groep bewaren
 lDialogGroupRemoveTitle	Verwijder groep - ~1~
+lDialogGroups	Groepen
 lDialogGroupSelect	Selecteer een groep
 lDialogGroupSelectError	Gelieve de groep te selecteren om ~1~.
-lDialogGroups	Groepen
 lDialogIcon	Icoon
 lDialogInvalidHotkey	Met je huidige toetsenbordindeling kan de sneltoets "~1~" niet gebruikt worden als een trigger voor het popup menu.`n`nGelieve het "~2~ Settings" venster te openen vanuit het taakbalkmenu en selecteers "Opties". Gelieve in dit venster een andere sneltoets te kiezen voor "~3~".
 lDialogOpenThisMenu	Open dit menu
@@ -103,6 +103,7 @@ lGuiEditFavorite	Bewerken
 lGuiGroupClosing	Vensters sluiten
 lGuiGroupOf	van
 lGuiGroupSaveAddWindowsLabel	Toevoegen bij bestaande vensters
+lGuiGroupSaved	Groep "~1~" werd bewaard.`n`nSelecteer het menu "~2~" om deze groep te laden.
 lGuiGroupSaveEditPrompt	~1~ deze groep
 lGuiGroupSaveEditTitle	~1~ een groep van vensters - ~2~ ~3~
 lGuiGroupSaveLvHeader	Pad|Toepassing|Toestand van het venster|Links|Boven|Breedte|Hoogte|Zijde
@@ -114,7 +115,6 @@ lGuiGroupSaveRestoreOption	Indien deze groep opgeroepen wordt:
 lGuiGroupSaveSelect	Selecteer de mappen om te bewaren in deze groep
 lGuiGroupSaveSelectExisting	of kies een bestaande groep om te overschrijven:
 lGuiGroupSaveShortName	Verkorte groepsnaam (voor menu)
-lGuiGroupSaved	Groep "~1~" werd bewaard.`n`nSelecteer het menu "~2~" om deze groep te laden.
 lGuiHelp	Hulp
 lGuiLvDialogsHeader	Ondersteunde dialoogvensters`n(deel van de naam volstaat)
 lGuiLvFavoritesHeader	Naam|Locatie
@@ -148,8 +148,8 @@ lMenuDialogNotSupported	Dit type dialoogvenster wordt nog niet ondersteund
 lMenuDocuments	D&ocumenten
 lMenuDownloads	Downloads
 lMenuExitFoldersPopup	Exit ~1~
-lMenuFPMenu	~1~ ~2~
 lMenuFoldersInExplorer	Huidige Mappen
+lMenuFPMenu	~1~ ~2~
 lMenuGroup	&Mapgroepen
 lMenuGroupAdd	toevoegen
 lMenuGroupLoad	Laad een groep
@@ -193,11 +193,10 @@ lOptionsDirectoryOpusUseTabs	Gebruik tabbladen
 lOptionsDisplayFoldersInExplorerMenu	Huidige Mappen
 lOptionsDisplayGroupMenu	Groep van mappen
 lOptionsDisplayIcons	Toon Menu Iconen
-lOptionsDisplayMenuShortcuts	Toon de &Numerieke Menu Sneltoetsen
 lOptionsDisplayMenus	Toon Menus:
+lOptionsDisplayMenuShortcuts	Toon de &Numerieke Menu Sneltoetsen
 lOptionsDisplayRecentFolders	Recente bezochte mappen
 lOptionsDisplaySpecialFolders	S&peciale Mappen
-lOptionsGuiIntro	Definieer de muisknoppen en sneltoetsen die ~1~ zullen triggeren.
 lOptionsGuiTitle	Opties - ~1~ ~2~
 lOptionsIconSize	Menu iconen grootte
 lOptionsKeyboard	Toetsenbord
@@ -221,6 +220,7 @@ lOptionsRecentFolders	R&ecente Mappen
 lOptionsRunAtStartup	&Uitvoeren bij Opstarten
 lOptionsShift	Shift
 lOptionsSpacebar	gebruik de spatiebalk
+lOptionsTabMouseAndKeyboardIntro	Definieer de muisknoppen en sneltoetsen die ~1~ zullen triggeren.
 lOptionsTheme	Thema
 lOptionsThirdPartyDetail	Selecteer het ~1~ programma (.exe) om de ~1~ integratie te activeren.
 lOptionsThirdPartyPrompt	Programma:
@@ -240,10 +240,10 @@ lReloadPrompt	~1~ werd gewijzigd naar ~2~. Wil je ~3~ laden in het ~2~ nu? Niet 
 lReloadPromptDefaultHotkey	Hotkey changed to default value. This change will be effective only after you reload ~1~.`n`nDo you want to reload ~1~ now? Unsaved changes to the folders menu will be lost.
 lReloadPromptDefaultHotkey	Standaard sneltoets werd terug gezet op de standaard waarde. Deze wijziging gaat pas in als je ~1~ opnieuw laadt. Wil je ~1~ nu opnieuw laden? Niet bewaarde wijzigingen aan het menu gaan dan verloren. 
 lTrayTipInstalledDetail	Om het ~1~ menu te tonen, druk:`n`n~2~ / ~3~`nin Windows Verkenner of in een dialoogvenster`n`n~4~ / ~5~`nom een nieuw Verkenner venster te openen
+lTrayTipinstalledTitle	~1~ ~2~ klaar!
 lTrayTipWorkingDetail	Menus aan het opbouwen
 lTrayTipWorkingDetailFinished	Het menu is bijgewerkt.
 lTrayTipWorkingTitle	~1~ ~2~ opbouwen...
-lTrayTipinstalledTitle	~1~ ~2~ klaar!
 lUpdateButtonRemind	Herinner me
 lUpdateError	Een fout trad op bij het controleren van het versienummer. De controle voor een update wordt stopgezet.
 lUpdatePrompt	Update ~1~ van v~2~ naar v~3~?

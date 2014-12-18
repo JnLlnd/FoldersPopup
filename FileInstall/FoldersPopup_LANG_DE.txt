@@ -29,9 +29,9 @@ lDialogFavoriteDoesNotExistTitle	Favorit existiert nicht - ~1~
 lDialogFavoriteLocationEmpty	Dieser Ort ist leer. Bitte wählen Sie einen Ort.
 lDialogFavoriteNameEmpty	Der Name des Favorite ist leer. Bitte wählen Sie einen kurzen Namen.
 lDialogFavoriteNameNoColumnBreak	Der Menüname kann die reservierten Zeichen "~1~" nicht als Spaltentrennzeichen verwenden.
+lDialogFavoriteNameNoPipe	Der Favorit oder Menüname darf das reservierte Zeichen "|" (vertikale Linie) nicht enthalten.
 lDialogFavoriteNameNoSeparator	Das Untermenü darf das reservierte Zeichen "~1~" nicht enthalten.
 lDialogFavoriteNameNotNew	Der Name ~1~ wird bereits in diesem Menü verwendet. Bitte wählen Sie einen anderen Namen.
-lDialogFavoriteNameNoPipe	Der Favorit oder Menüname darf das reservierte Zeichen "|" (vertikale Linie) nicht enthalten.
 lDialogFavoriteParentMenu	Favorite Hauptmenü
 lDialogFavoriteRemovePrompt	Entfernen des Untermenü "~1~"`nund ALL seines Inhalts (Ordner und Untermenüs)?
 lDialogFavoriteRemoveTitle	Entfernen des Favorite - ~1~
@@ -194,11 +194,10 @@ lOptionsDirectoryOpusUseTabs	Verwende Registerkarten
 lOptionsDisplayFoldersInExplorerMenu	Ordner im Explorer
 lOptionsDisplayGroupMenu	Gruppe der Ordnermenüs
 lOptionsDisplayIcons	Zeige Icons im Menü
+lOptionsDisplayMenus	Anzuzeigende Menüs:
 lOptionsDisplayMenuShortcuts	Zeige &numerische Menü-Tastenkürzel
 lOptionsDisplayRecentFolders	Kürzlich verwendete Ordner
 lOptionsDisplaySpecialFolders	S&pezielle Ordner
-lOptionsDisplayMenus	Anzuzeigende Menüs:
-lOptionsGuiIntro	Legen Sie die Maustasten und Tastenkürzel fest, welche ~1~ auslösen.
 lOptionsGuiTitle	Optionen - ~1~ ~2~
 lOptionsIconSize	Symbolgröße im Menü
 lOptionsKeyboard	Tastatur
@@ -222,6 +221,7 @@ lOptionsRecentFolders	Zuletzt verwendete Ordner
 lOptionsRunAtStartup	Beim Sta&rt ausführen
 lOptionsShift	Shift
 lOptionsSpacebar	verwende Leertaste
+lOptionsTabMouseAndKeyboardIntro	Legen Sie die Maustasten und Tastenkürzel fest, welche ~1~ auslösen.
 lOptionsTheme	Thema
 lOptionsThirdPartyDetail	WÃ¤hlen Sie die ~1~ Programmdatei (.exe) um die ~1~ Integration einzuschalten.
 lOptionsThirdPartyPrompt	Programmdatei:

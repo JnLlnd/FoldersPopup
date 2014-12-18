@@ -5441,10 +5441,18 @@ Gui, 2:Color, %strGuiWindowColor%
 Gui, 2:+Owner1
 Gui, 2:Font, s10 w700, Verdana
 Gui, 2:Add, Text, x10 y10 w595 center, % L(lOptionsGuiTitle, strAppName)
-Gui, 2:Font
-Gui, 2:Add, Text, x10 y+10 w595 center, % L(lOptionsGuiIntro, strAppName)
 
-; Build Hotkey Gui lines
+Gui, 2:Font, s8 w600, Verdana
+Gui, 2:Add, Tab2, vintOptionsTab w620 h350 AltSubmit, %A_Space%%lOptionsMouseAndKeyboard% | %lOptionsOtherOptions% | %lOptionsThirdParty%%A_Space%
+
+;---------------------------------------
+; Tab 1: Build Hotkey Gui lines
+
+Gui, 2:Tab, 1
+
+Gui, 2:Font
+Gui, 2:Add, Text, x10 y+10 w595 center, % L(lOptionsTabMouseAndKeyboardIntro, strAppName)
+
 loop, % arrIniKeyNames%0%
 {
 	Gui, 2:Font, s8 w700
@@ -5457,11 +5465,15 @@ loop, % arrIniKeyNames%0%
 	Gui, 2:Add, Text, x15 ys+15, % arrOptionsTitlesSub%A_Index%
 }
 
-Gui, 2:Add, Text, x15 y+15 h2 w595 0x10 ; Horizontal Line > Etched Gray
+Gui, 2:Add, Button, y+20 vbtnNext1 gNextOptionsButtonClicked, %lDialogTabNext%
+GuiCenterButtons(L(lOptionsGuiTitle, strAppName, strAppVersion), 10, 5, 20, , "btnNext1")
 
-Gui, 2:Font, s8 w700
-Gui, 2:Add, Text, x10 y+5 w595 center, %lOptionsOtherOptions%
-Gui, 2:Font
+;---------------------------------------
+; Tab 2: Other options
+
+Gui, 2:Tab, 2
+
+Gui, 2:Add, Text, x10 y+10 w595 center, % L(lOptionsTabOtherOptionsIntro, strAppName)
 
 ; column 1
 Gui, 2:Add, Text, y+10 x15 Section, %lOptionsLanguage%
@@ -5488,37 +5500,7 @@ GuiControl, , blnCheck4Update, %blnCheck4Update%
 Gui, 2:Add, CheckBox, y+10 xs vblnOpenMenuOnTaskbar, %lOptionsOpenMenuOnTaskbar%
 GuiControl, , blnOpenMenuOnTaskbar, %blnOpenMenuOnTaskbar%
 
-; Build Gui footer
-
-Gui, 2:Add, Text, x15 y+15 h2 w595 0x10 ; Horizontal Line > Etched Gray
-
-Gui, 2:Font, s8 w700
-Gui, 2:Add, Text, y+5 xs, % L(lOptionsThirdPartyTitle, "Directory Opus")
-Gui, 2:Font
-Gui, 2:Add, Text, y+5 xs, % L(lOptionsThirdPartyDetail, "Directory Opus")
-Gui, 2:Add, Text, y+10 xs, %lOptionsThirdPartyPrompt%
-Gui, 2:Add, Edit, x+10 yp w300 h20 vstrDirectoryOpusPath, %strDirectoryOpusPath%
-Gui, 2:Add, Button, x+10 yp vbtnSelectDOpusPath gButtonSelectDOpusPath, %lDialogBrowseButton%
-Gui, 2:Add, Checkbox, x+10 yp vblnDirectoryOpusUseTabs, %lOptionsDirectoryOpusUseTabs%
-GuiControl, , blnDirectoryOpusUseTabs, %blnDirectoryOpusUseTabs%
-
-Gui, 2:Font, s8 w700
-Gui, 2:Add, Text, y+15 xs, % L(lOptionsThirdPartyTitle, "Total Commander")
-Gui, 2:Font
-Gui, 2:Add, Text, y+5 xs,  % L(lOptionsThirdPartyDetail, "Total Commander")
-Gui, 2:Add, Text, y+10 xs, %lOptionsThirdPartyPrompt%
-Gui, 2:Add, Edit, x+10 yp w300 h20 vstrTotalCommanderPath, %strTotalCommanderPath%
-Gui, 2:Add, Button, x+10 yp vbtnSelectTCPath gButtonSelectTCPath, %lDialogBrowseButton%
-Gui, 2:Add, Checkbox, x+10 yp vblnTotalCommanderUseTabs, %lOptionsTotalCommanderUseTabs%
-GuiControl, , blnTotalCommanderUseTabs, %blnTotalCommanderUseTabs%
-
-Gui, 2:Add, Button, y+20 vbtnOptionsSave gButtonOptionsSave, %lGuiSave%
-Gui, 2:Add, Button, yp vbtnOptionsCancel gButtonOptionsCancel, %lGuiCancel%
-Gui, 2:Add, Button, yp vbtnOptionsDonate gGuiDonate, %lDonateButton%
-GuiCenterButtons(L(lOptionsGuiTitle, strAppName, strAppVersion), 10, 5, 20, , "btnOptionsSave", "btnOptionsCancel", "btnOptionsDonate")
-
-Gui, 2:Add, Text
-GuiControl, Focus, btnOptionsSave
+Gui, 2:Add, Button, y+20 vbtnNext2 gNextOptionsButtonClicked, %lDialogTabNext%
 
 ; column 2
 Gui, 2:Add, Text, ys x240 Section, %lOptionsIconSize%
@@ -5559,9 +5541,64 @@ Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionX center " . (intPopupMe
 Gui, 2:Add, Text, % "yp x+5 vlblPopupFixPositionY " . (intPopupMenuPosition = 3 ? "" : "hidden"), %lOptionsPopupFixPositionY%
 Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionY center " . (intPopupMenuPosition = 3 ? "" : "hidden"), %arrPopupFixPosition2%
 
+GuiCenterButtons(L(lOptionsGuiTitle, strAppName, strAppVersion), 10, 5, 20, , "btnNext2")
+
+;---------------------------------------
+; Tab 3: File Managers
+
+Gui, 2:Tab, 3
+
+Gui, 2:Add, Text, x10 y+10 w595 center, %lOptionsTabFileManagersIntro%
+
+Gui, 2:Font, s8 w700
+Gui, 2:Add, Text, y+5 x15, % L(lOptionsThirdPartyTitle, "Directory Opus")
+Gui, 2:Font
+Gui, 2:Add, Text, y+5 x15, % L(lOptionsThirdPartyDetail, "Directory Opus")
+Gui, 2:Add, Text, y+10 x15, %lOptionsThirdPartyPrompt%
+Gui, 2:Add, Edit, x+10 yp w300 h20 vstrDirectoryOpusPath, %strDirectoryOpusPath%
+Gui, 2:Add, Button, x+10 yp vbtnSelectDOpusPath gButtonSelectDOpusPath, %lDialogBrowseButton%
+Gui, 2:Add, Checkbox, x+10 yp vblnDirectoryOpusUseTabs, %lOptionsDirectoryOpusUseTabs%
+GuiControl, , blnDirectoryOpusUseTabs, %blnDirectoryOpusUseTabs%
+
+Gui, 2:Font, s8 w700
+Gui, 2:Add, Text, y+15 x15, % L(lOptionsThirdPartyTitle, "Total Commander")
+Gui, 2:Font
+Gui, 2:Add, Text, y+5 x15,  % L(lOptionsThirdPartyDetail, "Total Commander")
+Gui, 2:Add, Text, y+10 x15, %lOptionsThirdPartyPrompt%
+Gui, 2:Add, Edit, x+10 yp w300 h20 vstrTotalCommanderPath, %strTotalCommanderPath%
+Gui, 2:Add, Button, x+10 yp vbtnSelectTCPath gButtonSelectTCPath, %lDialogBrowseButton%
+Gui, 2:Add, Checkbox, x+10 yp vblnTotalCommanderUseTabs, %lOptionsTotalCommanderUseTabs%
+GuiControl, , blnTotalCommanderUseTabs, %blnTotalCommanderUseTabs%
+
+;---------------------------------------
+; Build Gui footer
+
+Gui, 2:Tab
+
+GuiControlGet, arrTabPos, Pos, intOptionsTab
+
+Gui, 2:Add, Button, % "y" . arrTabPosY + arrTabPosH + 10. " vbtnOptionsSave gButtonOptionsSave", %lGuiSave%
+Gui, 2:Add, Button, yp vbtnOptionsCancel gButtonOptionsCancel, %lGuiCancel%
+Gui, 2:Add, Button, yp vbtnOptionsDonate gGuiDonate, %lDonateButton%
+GuiCenterButtons(L(lOptionsGuiTitle, strAppName, strAppVersion), 10, 5, 20, , "btnOptionsSave", "btnOptionsCancel", "btnOptionsDonate")
+
+Gui, 2:Add, Text
+GuiControl, Focus, btnOptionsSave
 
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+NextOptionsButtonClicked:
+;------------------------------------------------------------
+
+Gui, 2:Submit, NoHide
+
+GuiControl, Choose, intOptionsTab, % intOptionsTab + 1
 
 return
 ;------------------------------------------------------------
@@ -6114,19 +6151,19 @@ Gui, 2:Font, s10 w400, Verdana
 Gui, 2:Add, Link, x10 w%intWidth%, %lHelpTextLead%
 
 Gui, 2:Font, s8 w600, Verdana
-Gui, 2:Add, Tab2, vintHelpTab w640 h350 AltSubmit, %lHelpTabTitles%
+Gui, 2:Add, Tab2, vintHelpTab w640 h350 AltSubmit, %A_Space%%lHelpTabGettingStarted% | %lHelpTabAddingFavorite% | %lHelpTabTitlesTipsAndTricks%%A_Space%
 
 Gui, 2:Font, s8 w400, Verdana
 Gui, 2:Tab, 1
 Gui, 2:Add, Link, w%intWidth%, % lHelpText1
 Gui, 2:Add, Link, w%intWidth%, % lHelpText2
-Gui, 2:Add, Button, vbtnNext1 gNextButtonClicked, %lHelpTabNext%
+Gui, 2:Add, Button, vbtnNext1 gNextHelpButtonClicked, %lDialogTabNext%
 GuiCenterButtons(L(lHelpTitle, strAppName, strAppVersion), 10, 5, 20, , "btnNext1")
 
 Gui, 2:Tab, 2
 Gui, 2:Add, Link, w%intWidth%, % lHelpText3
 Gui, 2:Add, Link, w%intWidth%, % lHelpText4
-Gui, 2:Add, Button, vbtnNext2 gNextButtonClicked, %lHelpTabNext%
+Gui, 2:Add, Button, vbtnNext2 gNextHelpButtonClicked, %lDialogTabNext%
 GuiCenterButtons(L(lHelpTitle, strAppName, strAppVersion), 10, 5, 20, , "btnNext2")
 
 Gui, 2:Tab, 3
@@ -6149,7 +6186,7 @@ return
 
 
 ;------------------------------------------------------------
-NextButtonClicked:
+NextHelpButtonClicked:
 ;------------------------------------------------------------
 
 Gui, 2:Submit, NoHide
