@@ -45,6 +45,7 @@ lDialogGroupDeletePrompt	Supprimer le groupe "~1~"?
 lDialogGroupEdit	Modifier
 lDialogGroupEditError	modifier
 lDialogGroupLoad	Restaurer
+lDialogGroupManageAbout	À propos des groupes
 lDialogGroupManageCannotSave	Attention: Il n'y a aucun dossier à enregistrer dans un groupe. Ouvrez au moins une fenêtre de l'Explorateur de fichiers ou de Directory Opus et essayez à nouveau d'enregistrer un groupe.
 lDialogGroupManageCreatingPrompt	Pour créer un groupe, cliquez le bouton "~1~" ou sélectionnez le menu "~2~" à tout moment.
 lDialogGroupManageCreatingTitle	Créer un groupe

@@ -26,6 +26,7 @@ To-do for v4:
 	Version: 4.0.5 (2014-12-16)
 	* addition of Italian language, thanks to Riccardo Leone
 	* redesign the Help and Options windows into three tabs to save height on small screens
+	* change mouse cursor to hand only in Settings window
 	
 	Version: 4.0.4 (2014-12-13)
 	* add a button to select or deselect all Explorer windows in Group Save
@@ -1279,7 +1280,12 @@ WM_MOUSEMOVE(wParam, lParam)
 ;------------------------------------------------
 {
 	Global objCursor
-	
+	Global lGuiFullTitle
+
+	WinGetTitle, strCurrentWindow, A
+	if (strCurrentWindow <> lGuiFullTitle)
+		return
+
 	MouseGetPos, , , , strControl ; Static1, StaticN, Button1, ButtonN
 	StringReplace, strControl, strControl, Static
 
@@ -4075,7 +4081,8 @@ Time2Donate(intStartups, blnDonor)
 BuildGui:
 ;------------------------------------------------------------
 
-Gui, 1:New, , % L(lGuiTitle, strAppName, strAppVersion)
+lGuiFullTitle := L(lGuiTitle, strAppName, strAppVersion)
+Gui, 1:New, , %lGuiFullTitle%
 Gui, Margin, 10, 10
 Gui, 1:Color, %strGuiWindowColor%
 
@@ -4138,7 +4145,7 @@ Gui, 1:Font, s9 w600, Verdana
 Gui, 1:Add, Button, ys+60 Disabled Default vbtnGuiSave gGuiSave, %lGuiSave% ; Button1
 Gui, 1:Add, Button, yp vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur - Button2
 Gui, 1:Font, s6 w400, Verdana
-GuiCenterButtons(L(lGuiTitle, strAppName, strAppVersion), 50, 30, 40, -80, "btnGuiSave", "btnGuiCancel")
+GuiCenterButtons(lGuiFullTitle, 50, 30, 40, -80, "btnGuiSave", "btnGuiCancel")
 
 Gui, 1:Add, Picture, x490 yp+13 gGuiAbout Section, %strTempDir%\about-32.png ; Static26
 Gui, 1:Add, Picture, x540 yp gGuiHelp, %strTempDir%\help-32.png ; Static27
@@ -4332,7 +4339,7 @@ Gui, 2:+OwnDialogs
 Gui, 2:Color, %strGuiWindowColor%
 
 Gui, 2:Font, w600 
-Gui, 2:Add, Text, x10 y10, About Groups
+Gui, 2:Add, Text, x10 y10, %lDialogGroupManageAbout%
 Gui, 2:Font
 
 Gui, 2:Add, Text, x10 y+10 w%intWidth%, %lDialogGroupManageIntro%
