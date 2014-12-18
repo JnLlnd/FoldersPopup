@@ -25,7 +25,7 @@ To-do for v4:
 
 	Version: 4.0.5 (2014-12-16)
 	* addition of Italian language, thanks to Riccardo Leone
-	* redesign the help window into three tabs to save height on small screens
+	* redesign the Help and Options windows into three tabs to save height on small screens
 	
 	Version: 4.0.4 (2014-12-13)
 	* add a button to select or deselect all Explorer windows in Group Save
