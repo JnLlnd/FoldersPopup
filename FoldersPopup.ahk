@@ -27,6 +27,8 @@ To-do for v4:
 	* addition of Italian language, thanks to Riccardo Leone
 	* redesign the Help and Options windows into three tabs to save height on small screens
 	* change mouse cursor to hand only in Settings window
+	* change delays in group load
+	* add diagnostic info for clipboard in group load
 	
 	Version: 4.0.4 (2014-12-13)
 	* add a button to select or deselect all Explorer windows in Group Save
@@ -3245,6 +3247,24 @@ GroupLoad:
 GroupLoadFromManage:
 ;------------------------------------------------------------
 
+blnGroupLoadExplorerError := False
+strGroupLoadDiag := "DateTime`tType`tData`n"
+
+DiagGroupLoad("DIAGNOSTIC FILE", "Copy this in an email and send it to ahk@jeanlalonde.ca with any detail that could help make a diagnostic of the Group Load issue. Thanks.")
+DiagGroupLoad("AppName", strAppName)
+DiagGroupLoad("AppVersion", strAppVersion)
+DiagGroupLoad("A_ScriptFullPath", A_ScriptFullPath)
+DiagGroupLoad("A_WorkingDir", A_WorkingDir)
+DiagGroupLoad("A_AhkVersion", A_AhkVersion)
+DiagGroupLoad("A_OSVersion", A_OSVersion)
+DiagGroupLoad("A_Is64bitOS", A_Is64bitOS)
+DiagGroupLoad("A_Language", A_Language)
+DiagGroupLoad("A_IsAdmin", A_IsAdmin)
+
+FileRead, strDiag, %strIniFile%
+StringReplace, strDiag, strDiag, `", `"`"
+DiagGroupLoad("IniFile", """" . strDiag . """`n")
+
 if (A_ThisLabel = "GroupLoad")
 {
 	if (blnDisplayMenuShortcuts)
@@ -3256,8 +3276,10 @@ if (A_ThisLabel = "GroupLoad")
 }
 else
 	strGroup := "Group-" . strSelectedGroup
+DiagGroupLoad("strGroup", strGroup)
 
 IniRead, blnReplaceWhenRestoringThisGroup, %strIniFile%, %strGroup%, ReplaceWhenRestoringThisGroup, 0 ; false if not found
+DiagGroupLoad("ReplaceWhenRestoringThisGroup", ReplaceWhenRestoringThisGroup)
 
 if (blnReplaceWhenRestoringThisGroup)
 	Gosub, CloseBeforeRestoringGroup
@@ -3272,15 +3294,20 @@ while, intExplorer := WindowOfType("EX") ; returns the index of the first Explor
 	blnGroupLoadError := False
 	if !StrLen(objIniExplorersInGroup[intExplorer].LocationURL) ; for compatibility before v3.9.7
 		objIniExplorersInGroup[intExplorer].LocationURL := objIniExplorersInGroup[intExplorer].Name
+	DiagGroupLoad("objIniExplorersInGroup[intExplorer].LocationURL", objIniExplorersInGroup[intExplorer].LocationURL)
 	
 	Tooltip, %intActualWindowInIni% %lGuiGroupOf% %intTotalWindowsInIni%
+	DiagGroupLoad("objIniExplorersInGroup", intActualWindowInIni . " " . lGuiGroupOf . " " . intTotalWindowsInIni)
 	
 	if (objIniExplorersInGroup[intExplorer].IsSpecialFolder)
 		strExplorerLocationOrClassId := "shell:::" . objClassIdByLocalizedName[objIniExplorersInGroup[intExplorer].Name]
 	else
 		strExplorerLocationOrClassId := objIniExplorersInGroup[intExplorer].Name
-	
+	DiagGroupLoad("strExplorerLocationOrClassId", strExplorerLocationOrClassId)
+	DiagGroupLoad("objIniExplorersInGroup[intExplorer].MinMax", objIniExplorersInGroup[intExplorer].MinMax)
+
 	strExplorerIDsBefore := GetExplorersIDs() ;  get a list of existing Explorer windows before launching this new Explorer
+	DiagGroupLoad("strExplorerIDsBefore", strExplorerIDsBefore)
 	Run, % "explorer.exe """ . strExplorerLocationOrClassId . """",
 		, % (objIniExplorersInGroup[intExplorer].MinMax = -1 ? "Min" : (objIniExplorersInGroup[intExplorer].MinMax = 1 ? "Max" : ""))
 	Loop
@@ -3289,11 +3316,14 @@ while, intExplorer := WindowOfType("EX") ; returns the index of the first Explor
 		{
 			Oops(lDialogGroupLoadErrorLoading, strExplorerLocationOrClassId)
 			blnGroupLoadError := True
+			blnGroupLoadExplorerError := True
 			Break
 		}
-		Sleep, 10
+		Sleep, 100
 		strExplorerIDsAfter := GetExplorersIDs() ;  get an updated list of existing Explorer windows
+		DiagGroupLoad("strExplorerIDsAfter take " . A_Index, strExplorerIDsAfter)
 		strNewWindowId := GetNewExplorer(strExplorerIDsBefore, strExplorerIDsAfter) ; check if we have a new Explorer window
+		DiagGroupLoad("strNewWindowId", strNewWindowId)
 		If StrLen(strNewWindowId)
 			Break ; if we have a new window, WinMove it
 	}
@@ -3301,7 +3331,7 @@ while, intExplorer := WindowOfType("EX") ; returns the index of the first Explor
 	if !(blnGroupLoadError)
 	{
 		WinWait, ahk_id %strNewWindowId%, , 5
-		Sleep, 200
+		Sleep, 300
 		
 		if !(objIniExplorersInGroup[intExplorer].MinMax) ; window normal, not min nor max
 			WinMove, ahk_id %strNewWindowId%,
@@ -3342,14 +3372,14 @@ while, intDOWindow := WindowOfType("DO") ; returns the index of the first DOpus 
 					blnGroupLoadError := True
 					Break
 				}
-				Sleep, 20
+				Sleep, 100
 				strNewWindowId := WinExist("A")		
 			} until (intWinIdBeforeRun <> strNewWindowId)
 
 			if !(blnGroupLoadError)
 			{
 				WinWait, ahk_id %strNewWindowId%, , 5
-				Sleep, 200
+				Sleep, 300
 				
 				if !(objIniExplorersInGroup[intDOWindow].MinMax) ; window normal, not min nor max
 					WinMove, ahk_id %strNewWindowId%,
@@ -3403,6 +3433,17 @@ while, intDOWindow := WindowOfType("DO") ; returns the index of the first DOpus 
 Tooltip ; clear tooltip
 
 objIniExplorersInGroup :=
+
+if (blnGroupLoadExplorerError)
+{
+	MsgBox, 20, %strAppName% Group Load Diagnostic, Following the error you encountered, do you want to copy DIAGNOSTIC info to your clipboard and send it to HELP the developer?
+	IfMsgBox, Yes
+	{
+		Clipboard := strGroupLoadDiag
+		MsgBox, 0, %strAppName% Group Load Diagnostic, Paste your CLIPBOARD in an EMAIL and send it to the address indicated in the first line of the info.`n`nThank you!
+	}
+}
+strGroupLoadDiag := ""
 
 return
 ;------------------------------------------------------------
@@ -6447,6 +6488,18 @@ Diag(strName, strData)
 			Sleep, 20
 	}
 	until !ErrorLevel or (A_Index > 50) ; after 1 second (20ms x 50), we have a problem
+}
+;------------------------------------------------
+
+
+;------------------------------------------------
+DiagGroupLoad(strName, strData)
+;------------------------------------------------
+{
+	global strGroupLoadDiag
+	
+	FormatTime, strNow, %A_Now%, yyyyMMdd@HH:mm:ss
+	strGroupLoadDiag := strGroupLoadDiag . strNow . A_MSec . "`t" . strName . "`t" . strData . "`n"
 }
 ;------------------------------------------------
 
