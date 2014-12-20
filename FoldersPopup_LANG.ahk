@@ -63,6 +63,8 @@ global lDialogGroupSelect := "Select a group"
 global lDialogGroupSelectError := "Please, select the group to ~1~."
 global lDialogIcon := "Icon"
 global lDialogInvalidHotkey := "With your current system keyboard layout, the hotkey ""~1~"" could not be used as a trigger for the popup menu (not a valid key name error).`n`nPlease, open the ""~2~ Settings"" window from the Tray menu and click ""Options"". In this dialog box, choose another shortcut for ""~3~""."
+global lDialogMaximized := "Maximized"
+global lDialogNormal := "Normal"
 global lDialogOpenThisMenu := "Open this menu"
 global lDialogSave := "Save"
 global lDialogSelectItemToEdit := "Please, select the item to edit."
@@ -267,6 +269,5 @@ global lUpdateTitle := "Update ~1~?"
 global lUpdateYouHaveLatest := "You have the latest version: ~1~.`n`nVisit the ~2~ web page anyway?"
 global lWindowIsTreeviewText := "Sorry... Because of a Windows limitation, this type of dialog box (TreeView) is currently not supported by ~1~."
 global lWindowIsTreeviewTitle := "Tree view dialog box not supported"
-
 
 return

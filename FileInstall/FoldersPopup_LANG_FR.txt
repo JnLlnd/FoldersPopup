@@ -58,6 +58,8 @@ lDialogGroupSelect	Sélectionnez un groupe
 lDialogGroupSelectError	Veuillez sélectionner le groupe à ~1~.
 lDialogIcon	Icône
 lDialogInvalidHotkey	Avec votre configuration actuelle de clavier, la touche de raccourci "~1~" ne peut être utilisée comme un déclencheur pour le menu popup.`n`nVeuillez ouvrir la fenêtre "Paramètres de ~2~" dans la zone de notification et cliquez sur "Options". Dans cette boîte de dialogue, choisissez une autre touche de raccourci pour "~3~".
+lDialogMaximized	Maximisé
+lDialogNormal	Normal
 lDialogOpenThisMenu	Ouvrir ce menu
 lDialogSave	Enregistrer
 lDialogSelectItemToEdit	Veuillez sélectionner l'item à modifier.

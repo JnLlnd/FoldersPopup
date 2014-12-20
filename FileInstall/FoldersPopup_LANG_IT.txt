@@ -32,7 +32,7 @@ lDialogFavoriteNameNoColumnBreak	Il nome del sottomenù non può cominciare con ca
 lDialogFavoriteNameNoPipe	Il Preferito o il nome del sottomenù non può includere la "|" (barra verticale).
 lDialogFavoriteNameNoSeparator	Il nome del sottomenù non può includere il carattere riservato "~1~".
 lDialogFavoriteNameNotNew	Il nome "~1~" è già in uso in questo menù. Si prega di scegliere un altro nome.
-lDialogFavoriteParentMenu	Menù padre del Preferito
+lDialogFavoriteParentMenu	Scegli il menù in cui inserirlo
 lDialogFavoriteRemovePrompt	Eliminare il sottomenù "~1~"`ne TUTTO il contenuto (cartelle e sottomenù)?
 lDialogFavoriteRemoveTitle	Elimina il Preferito - ~1~
 lDialogFileLabel	Documento
@@ -67,17 +67,17 @@ lDialogSelectItemToEdit	Per favore, seleziona la voce da modificare.
 lDialogSelectItemToRemove	Per favore, seleziona la voce da eliminare.
 lDialogSubmenuLabel	Sottomenù
 lDialogSubmenuNameEmpty	Il nome del sottomenù non può essere vuoto. Si prega di inserire un nome.
-lDialogSubmenuParentMenu	Menù padre del sottomenù
+lDialogSubmenuParentMenu	Scegli il menù in cui inserirlo
 lDialogSubmenuShortName	Nome breve del sottomenù (voce menu)
 lDialogThirdPartyDetected	~1~ ha riscontrato che ~2~ è installato nel tuo sistema.`n`nVuoi abilitare l'integrazione con ~2~?
 lDialogURLLabel	Link (URL)
-lDialogURLShortName	Nome breve del Link (voce menu)
+lDialogURLShortName	Nome breve del Link (voce menù)
 lDonateButton	Supporta il Freeware!
 lDonateCheckPrompt	Sei soddisfatto di ~1~?`n`n~1~ non solo è GRATUITO ma anche PRIVO di fastidiosi annunci o adware, che non si è mai sicuri che non nascondano spyware o malware.`n`nAl momento, per ~2~ volte ~1~ ti ha aiutato nelle tue attività quotidiane. Che ne diresti adesso di fare un'offerta a titolo di supporto del programma?
 lDonateCheckTitle	~1~ volte! - ~2~
 lDonateMenu	S&upporta il Freeware!
 lDonatePlatformComment1	Nel modo più flessibile, usando il tuo account PayPal o la tua carta di credito.
-lDonatePlatformComment2	Ricevi un invio ufficiale, se hai bisogno che ti venga rimborsato.
+lDonatePlatformComment2	Ricevi un invio ufficiale, se ne hai bisogno per fartelo rimborsare.
 lDonatePlatformName1	Usando Paypal
 lDonatePlatformName2	Usando Share-it
 lDonateReviewNameLeft1	Download.com
@@ -115,7 +115,7 @@ lGuiGroupSaveReplaceGroup	Group "~1~" esiste già. Vuoi sostituirlo?
 lGuiGroupSaveReplaceWindowsLabel	Sostituisci le finestre esistenti
 lGuiGroupSaveRestoreOption	Nel ripristinare questo gruppo:
 lGuiGroupSaveSelect	Seleziona le cartelle da salvare in questo gruppo
-lGuiGroupSaveSelectExisting	o seleziona un gruppo già esistente da sovrascrivere:
+lGuiGroupSaveSelectExisting	o seleziona un Gruppo da sovrascrivere:
 lGuiGroupSaveShortName	Nome breve del gruppo (voce menù)
 lGuiHelp	Aiuto
 lGuiLvDialogsHeader	Caselle di Dialogo supportate`n(sono ammessi anche nomi incompleti) 
@@ -132,10 +132,10 @@ lGuiSubmenuLocation	>
 lGuiSubmenuSeparator	>
 lGuiTitle	Impostazioni - ~1~ ~2~
 lHelpText1	All'avvio, FoldersPopup aggiunge un icona nella barra strumenti e resta in attesa. Quando hai bisogno di cambiare la cartella corrente in Windows Explorer o in una casella di dialogo per file, semplicemente clicca il tasto centrale del mouse o premi Windows-A e, nel menù popup, seleziona la cartella desiderata. FoldersPopup ti trasferirà ad essa istantaneamente! Oppure puoi usarlo per aprire velocemente un documento preferito o una pagina web.
-lHelpText2	Secgli "Impostazioni" per aprire la finestra delle Impostazioni di FoldersPopup dove puoi aggiungere al tuo menù CARTELLE, DOCUMENTI o LINK WEB preferiti. Puoi spostarli, rinominarli o eliminarli. Puoi anche aggiungere, spostare, rinominare o eliminare SOTTOMENU. Scegli "Menù per modifiche:" nella lista a discesa. Clicca "Salva" per salvare le modifiche.
+lHelpText2	Secgli "Impostazioni" per aprire la finestra delle Impostazioni di FoldersPopup dove puoi aggiungere al tuo menù CARTELLE, DOCUMENTI o LINK WEB preferiti. Puoi spostarli, rinominarli o eliminarli. Puoi anche aggiungere, spostare, rinominare o eliminare SOTTOMENU. E' possibile selezionarli poi dalla lista a discesa: "Menù per modifiche". Ricorda di cliccare "Salva" per salvare le modifiche.
 lHelpText3	Per AGGIUNGERE velocemente una nuova CARTELLA preferita al menù popup:`n1) Vai alle cartelle usate di frequente.`n2) Clicca il tasto centrale del mouse (o premi Windows-A) e scegli "Aggiungi questa Cartella".`n3) Assegna alla cartella un nome breve, clicca "Aggiungi", e poi "Salva", nella finestra delle Impostazioni.
 lHelpText4	Per AGGIUNGERE un nuovo DOCUMENTO preferito o un LINK WEB al menù popup:`n1) Apri il menù di FoldersPopup e scegli "Impostazioni" (Shift-Windows-F).`n2) Clicca il tasto "Aggiungi" e scegli l'opzione "Documento" o "Link (URL)".`n3) Dai al Preferito un nome breve, "Sfoglia" fino al documento o inserisci l'URL della pagina web, clicca "Aggiungi", e poi "Salva" nella finestra impostazioni.
-lHelpText5	TRUCCHI E SUGGERIMENTI`n- Dalla barra strumenti, clicca col tasto destro sull'icona di FoldersPopup e seleziona l'opzione "Esegui all'Avvio" per eseguire FoldersPopup automaticamente all'avvio di Windows.`n- Hai bisogno di una nuova finestra di Windows Explorer mentre stai lavorando in un'altra applicazione? Da qualunque finestra, tenendo premuto Shift clicca col tasto destro del mouse (o da tastiera: Shift-Windows-A), o semplicemente clicca sull'icona di FoldersPopup, nella barra strumenti, e seleziona la cartella preferita che vuoi aprire.`n- Seleziona il menù "Cartelle recenti..." (Shift-Windows-R) per mostrare un elenco aggiornato delle cartelle recentemente aperte.`n- Usa "Cartelle Correnti" per aprire una delle cartelle già aperte in Windows Explorer, e "Gruppi di Cartelle" per salvare e richiamare un gruppo di cartelle.`n- Configura i metodi per aprire il menù popup: scegli il tasto del mouse da usare o le combinazioni di tasti in "Impostazioni, Opzioni".`n- Inoltre, in "Opzioni": scegli la lingua preferita, la dimensione delle icone del menù, e i colori delle finestre. Seleziona le opzioni per visualizzare le cartelle recenti, aggiungi i numeri da usare come scorciatoia da tastiera per il menù delle cartelle o fissa una posizione dove aprire il menù popup.`n-Utenti di Directory Opus, per informazioni aggiuntive vedere <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/"> questa pagina</a>.`n-Utenti di Total Commander, per informazioni aggiuntive vedere <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/"> questa pagina</a>.
+lHelpText5	TRUCCHI E SUGGERIMENTI`n- Dalla barra strumenti, clicca col tasto destro sull'icona di FoldersPopup e seleziona l'opzione "Esegui all'Avvio" per eseguire FoldersPopup automaticamente all'avvio di Windows.`n- Hai bisogno di una nuova finestra di Windows Explorer mentre stai lavorando in un'altra applicazione? Da qualunque finestra, tenendo premuto Shift clicca col tasto destro del mouse (o da tastiera: Shift-Windows-A), o semplicemente clicca sull'icona di FoldersPopup, nella barra strumenti, e seleziona la cartella preferita che vuoi aprire.`n- Seleziona il menù "Cartelle recenti..." (Shift-Windows-R) per mostrare un elenco aggiornato delle cartelle recentemente aperte.`n- Usa "Cartelle Correnti" per aprire una delle cartelle già aperte in Windows Explorer, e "Gruppi di Cartelle" per salvare e richiamare un gruppo di cartelle.`n- Configura i metodi per aprire il menù popup: scegli il tasto del mouse da usare o le combinazioni di tasti in "Impostazioni, Opzioni".`n- Inoltre, in "Opzioni": scegli la lingua preferita, la dimensione delle icone del menù, e i colori delle finestre. Seleziona le opzioni per visualizzare le cartelle recenti, aggiungere i numeri da usare come scorciatoia da tastiera per il menù delle cartelle o fissare una posizione dove si aprirà il menù popup.`n-Utenti di Directory Opus, per informazioni aggiuntive vedere <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/"> questa pagina</a>.`n-Utenti di Total Commander, per informazioni aggiuntive vedere <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/"> questa pagina</a>.
 lHelpText6	Il supporto a FoldersPopup è disponibile su <a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
 lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware.
 lHelpTextLead	FoldersPopup ti consente di spostarti come una scheggia tra le cartelle, documenti e pagine web che usi più spesso!
