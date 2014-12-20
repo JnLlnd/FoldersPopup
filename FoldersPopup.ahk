@@ -1,10 +1,8 @@
 /*
 Bugs:
-- "Error loading group window". under Win XP
-- icon issue with multi column menus under Win XP
+
 
 To-do for v4:
-- utiliser les tabs dans Options et Help (EeePc 1024x600)
 - "Ajouter aux fenêtres existantes" par défaut
 - Modifier fenêtre minimisée dans "Gestion des Groupes" "Modifier".
 
@@ -29,6 +27,7 @@ To-do for v4:
 	* change mouse cursor to hand only in Settings window
 	* change delays in group load
 	* add diagnostic info for clipboard in group load
+	* solve icon issue with multi column menus under Win XP, show icons only in first columns
 	
 	Version: 4.0.4 (2014-12-13)
 	* add a button to select or deselect all Explorer windows in Group Save
@@ -1946,6 +1945,7 @@ BuildOneMenu(strMenu)
 	global intIconSize
 	global strMenuBackgroundColor
 	global objMenuColumnBreaks
+	global blnMainIsFirstColumn
 	
 	intShortcut := 0
 	
@@ -1956,6 +1956,7 @@ BuildOneMenu(strMenu)
 	arrThisMenu := arrMenus[strMenu]
 	intMenuItemsCount := 0
 	intMenuArrayItemsCount := 0
+	blnIsFirstColumn := True
 	
 	Loop, % arrThisMenu.MaxIndex()
 	{	
@@ -1978,7 +1979,7 @@ BuildOneMenu(strMenu)
 				Menu, % arrThisMenu[A_Index].MenuName, Add, %strMenuName%, OpenFavorite ; will never be called because disabled
 				Menu, % arrThisMenu[A_Index].MenuName, Disable, %strMenuName%
 			}
-			if (blnDisplayIcons)
+			if (blnDisplayIcons and (A_OSVersion <> "WIN_XP" or blnIsFirstColumn))
 			{
 				ParseIconResource(arrThisMenu[A_Index].IconResource, strThisIconFile, intThisIconIndex, "Submenu")
 
@@ -2001,6 +2002,9 @@ BuildOneMenu(strMenu)
 			
 		else if IsColumnBreak(arrThisMenu[A_Index].FavoriteName)
 		{
+			blnIsFirstColumn := False
+			if (strMenu = lMainMenuName)
+				blnMainIsFirstColumn := False
 			intMenuItemsCount := intMenuItemsCount - 1
 			objMenuColumnBreak := Object()
 			objMenuColumnBreak.MenuName := strMenu
@@ -2014,7 +2018,7 @@ BuildOneMenu(strMenu)
 				. arrThisMenu[A_Index].FavoriteName
 			Menu, % arrThisMenu[A_Index].MenuName, Add, %strMenuName%, OpenFavorite
 
-			if (blnDisplayIcons)
+			if (blnDisplayIcons and (A_OSVersion <> "WIN_XP" or blnIsFirstColumn))
 			{
 				Menu, % arrThisMenu[A_Index].MenuName, UseErrorLevel, on
 				if (arrThisMenu[A_Index].FavoriteType = "F") ; this is a folder
@@ -2072,6 +2076,7 @@ AddMenuIcon(strMenuName, ByRef strMenuItemName, strLabel, strIconValue)
 	global blnDisplayIcons
 	global objIconsFile
 	global objIconsIndex
+	global blnMainIsFirstColumn
 
 	if !StrLen(strMenuItemName)
 		return
@@ -2081,7 +2086,8 @@ AddMenuIcon(strMenuName, ByRef strMenuItemName, strLabel, strIconValue)
 		strMenuItemName := SubStr(strMenuItemName, 1, 256) . "..." ; minus one for the luck ;-)
 	
 	Menu, %strMenuName%, Add, %strMenuItemName%, %strLabel%
-	if (blnDisplayIcons)
+	if (blnDisplayIcons) and ((A_OSVersion <> "WIN_XP") or blnMainIsFirstColumn or (strMenuName <> lMainMenuName))
+		; under Win_XP, display icons in main menu only when in first column (for other menus, this fuction is not called)
 	{
 		Menu, %strMenuName%, UseErrorLevel, on
 		Menu, %strMenuName%, Icon, %strMenuItemName%, % objIconsFile[strIconValue], % objIconsIndex[strIconValue], %intIconSize%
@@ -3042,7 +3048,7 @@ if (A_ThisLabel = "GuiGroupEditFromManage")
 	for intIndex, objIniExplorerInGroup in objIniExplorersInGroup
 		LV_Add("Check", objIniExplorerInGroup.Name
 			, (objIniExplorerInGroup.WindowType = "DO" ? "Directory Opus" : (objIniExplorerInGroup.WindowType = "TC" ? "Total Commander" : "Windows Explorer"))
-			, (objIniExplorerInGroup.MinMax = -1 ? "Minimized" : (objIniExplorerInGroup.MinMax = "1" ? "Maximized" : "Normal"))
+			, (objIniExplorerInGroup.MinMax = -1 ? "Minimized" : (objIniExplorerInGroup.MinMax = "1" ? lDialogMaximized : lDialogNormal))
 			, (objIniExplorerInGroup.MinMax = 0 ? objIniExplorerInGroup.Left : "-")
 			, (objIniExplorerInGroup.MinMax = 0 ? objIniExplorerInGroup.Top : "-")
 			, (objIniExplorerInGroup.MinMax = 0 ? objIniExplorerInGroup.Width : "-")
