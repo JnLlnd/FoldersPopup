@@ -61,6 +61,7 @@ lDialogGroupSelect	Seleziona un Gruppo
 lDialogGroupSelectError	Per favore, seleziona il Gruppo da ~1~.
 lDialogIcon	Icona
 lDialogInvalidHotkey	Con il tuo attuale layout di tastiera di sistema, non è stato possibile usare l'hotkey "~1~" per aprire il popup menù (errore: tasto scelto non valido).`n`nPer favore, apri la finestra "~2~ Impostazioni" dal menù dell'icona nella barra strumenti e clicca: "Opzioni". In questa casella di dialogo, scegli un altro shortcut per "~3~".
+lDialogNormal	Normale
 lDialogOpenThisMenu	Apri questo menù
 lDialogSave	Salva
 lDialogSelectItemToEdit	Per favore, seleziona la voce da modificare.
@@ -106,6 +107,7 @@ lGuiGroupClosing	Chiusura delle finestre
 lGuiGroupOf	di
 lGuiGroupSaveAddWindowsLabel	Aggiungi a finestre esistenti
 lGuiGroupSaved	Gruppo "~1~" salvato.`n`nClicca il menù "~2~" per aprire questo gruppo.
+lGuiGroupSaveDeselectAll	Deseleziona Tutti
 lGuiGroupSaveEditPrompt	~1~ questo gruppo
 lGuiGroupSaveEditTitle	~1~ gruppo di finestre - ~2~ ~3~
 lGuiGroupSaveLvHeader	Percorso|Applicazione|Stato della Finestra|Sinistra|Alto|Larghezza|Altezza|Lato
@@ -115,6 +117,7 @@ lGuiGroupSaveReplaceGroup	Group "~1~" esiste già. Vuoi sostituirlo?
 lGuiGroupSaveReplaceWindowsLabel	Sostituisci le finestre esistenti
 lGuiGroupSaveRestoreOption	Nel ripristinare questo gruppo:
 lGuiGroupSaveSelect	Seleziona le cartelle da salvare in questo gruppo
+lGuiGroupSaveSelectAll	Seleziona Tutti
 lGuiGroupSaveSelectExisting	o seleziona un Gruppo da sovrascrivere:
 lGuiGroupSaveShortName	Nome breve del gruppo (voce menù)
 lGuiHelp	Aiuto
@@ -254,5 +257,3 @@ lUpdateTitle	Aggiornare ~1~?
 lUpdateYouHaveLatest	Hai la versione più recente: ~1~.`n`nVuoi visitare la pagina web ~2~ ugualmente?
 lWindowIsTreeviewText	Mi spiace... A causa di una limitazione di  Windows, questo tipo di casella di dialogo (con vista ad albero) non è attualmente supportata da ~1~.
 lWindowIsTreeviewTitle	Casella di Dialogo con vista ad albero non supportata
-
-return
