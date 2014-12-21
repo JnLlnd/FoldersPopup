@@ -221,7 +221,7 @@ lOptionsMouseCheckLButton	Vous ne pouvez pas attribuer le "Bouton de gauche de l
 lOptionsMouseNone	Aucun
 lOptionsNoKeyOrMouseSpecified	Aucune touche du clavier ou bouton de la souris n'a été sélectionné. La sélection actuelle ~1~ est inchangée.
 lOptionsOpenMenuOnTaskbar	Ouvrir le menu sur la barre des tâches
-lOptionsOtherOptions	Autres options
+lOptionsOtherOptions	Général
 lOptionsPopupFix	Menu popup à une position fixe
 lOptionsPopupFixPositionX	Position X:
 lOptionsPopupFixPositionY	Y:

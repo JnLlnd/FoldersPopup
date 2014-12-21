@@ -3,8 +3,6 @@ Bugs:
 
 
 To-do for v4:
-- "Ajouter aux fenêtres existantes" par défaut
-- Modifier fenêtre minimisée dans "Gestion des Groupes" "Modifier".
 
 */
 ;===============================================
@@ -21,13 +19,15 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.0.5 (2014-12-16)
+	Version: 4.1 (2014-12-20)
 	* addition of Italian language, thanks to Riccardo Leone
 	* redesign the Help and Options windows into three tabs to save height on small screens
 	* change mouse cursor to hand only in Settings window
 	* change delays in group load
 	* add diagnostic info for clipboard in group load
 	* solve icon issue with multi column menus under Win XP, show icons only in first columns
+	* change default to "add to existing windows" when creating a new group of folders
+	* add BETA support for file manager connector FPConnect (from Roland Toth)
 	
 	Version: 4.0.4 (2014-12-13)
 	* add a button to select or deselect all Explorer windows in Group Save
@@ -549,7 +549,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.0.5
+;@Ahk2Exe-SetVersion 4.1
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -594,7 +594,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.0.5" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.1" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -924,6 +924,13 @@ if (blnUseTotalCommander)
 else
 	if (strTotalCommanderPath <> "NO")
 		Gosub, CheckTotalCommander
+
+IniRead, strFPConnectPath, %strIniFile%, Global, FPConnectPath, %A_Space% ; empty string if not found
+IniRead, blnFPConnectUseTabs, %strIniFile%, Global, FPConnectUseTabs, 1 ; use tabs by default
+if StrLen(strFPConnectPath)
+	blnUseFPConnect := FileExist(strFPConnectPath)
+else
+	blnUseFPConnect := False
 
 IniRead, strTheme, %strIniFile%, Global, Theme
 if (strTheme = "ERROR") ; if Theme not found, we have a v1 or v2 ini file - add the themes to the ini file
@@ -2510,6 +2517,7 @@ CanOpenFavorite(strMouseOrKeyboard, ByRef strWinId, ByRef strClass, ByRef strCon
 	
 	global blnUseDirectoryOpus
 	global blnUseTotalCommander
+	global blnUseFPConnect
 	
 	if (strMouseOrKeyboard = "PopupMenuMouse")
 		MouseGetPos, , , strWinId, strControlID
@@ -2522,8 +2530,9 @@ CanOpenFavorite(strMouseOrKeyboard, ByRef strWinId, ByRef strClass, ByRef strCon
 
 	blnCanOpenFavorite := WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or WindowIsConsole(strClass)
 		or WindowIsDialog(strClass, strWinId) or WindowIsFreeCommander(strClass)
-		or (WindowIsTotalCommander(strClass) and blnUseTotalCommander)
 		or (WindowIsDirectoryOpus(strClass) and blnUseDirectoryOpus)
+		or (WindowIsTotalCommander(strClass) and blnUseTotalCommander)
+		or (WindowIsFPConnect(strClass) and blnUseFPConnect)
 
 	if (blnDiagMode)
 	{
@@ -2632,6 +2641,15 @@ WindowIsTotalCommander(strClass)
 ;------------------------------------------------------------
 {
 	return InStr(strClass, "TTOTAL_CMD")
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+WindowIsFPConnect(strClass)
+;------------------------------------------------------------
+{
+	return strClass = "Window" ; (title: Double Commander 0.5.11 beta build 5647M; 2014/09/27)
 }
 ;------------------------------------------------------------
 
@@ -2789,6 +2807,10 @@ if (blnUseDirectoryOpus)
 else if (blnUseTotalCommander)
 	
 	NewTotalCommander(strLocation, strTargetWinId, strTargetControl)
+	
+else if (blnUseFPConnect)
+	
+	NewFPConnect(strLocation, strTargetWinId, strTargetControl)
 	
 else
 	if (A_OSVersion = "WIN_XP")
@@ -3073,7 +3095,7 @@ else
 			, (objGroupMenuExplorer.Pane ? objGroupMenuExplorer.Pane : "-")
 			, objGroupMenuExplorer.LocationURL, objGroupMenuExplorer.IsSpecialFolder, objGroupMenuExplorer.WindowId, objGroupMenuExplorer.Position, objGroupMenuExplorer.TabId)
 	}
-	blnReplaceWhenRestoringThisGroup := True ; default for new group
+	blnReplaceWhenRestoringThisGroup := False ; default for new group
 }
 
 LV_Modify(1, "Select Focus")
@@ -3093,8 +3115,8 @@ Gui, 3:Add, Button, y+20 vbtnGroupSave gButtonGroupSave, %lGuiSave%
 Gui, 3:Add, Button, yp vbtnGroupSaveCancel gButtonGroupSaveCancel, %lGuiCancel%
 
 Gui, 3:Add, Text, ys x300, %lGuiGroupSaveRestoreOption%
-Gui, 3:Add, Radio, % "x+10 yp section vblnRadioReplaceWindows " . (blnReplaceWhenRestoringThisGroup ? "checked" : ""), %lGuiGroupSaveReplaceWindowsLabel%
-Gui, 3:Add, Radio, % "xs y+5 vblnRadioAddWindows " . (blnReplaceWhenRestoringThisGroup ? "" : "checked"), %lGuiGroupSaveAddWindowsLabel%
+Gui, 3:Add, Radio, % "x+10 yp section vblnRadioAddWindows " . (blnReplaceWhenRestoringThisGroup ? "" : "checked"), %lGuiGroupSaveAddWindowsLabel%
+Gui, 3:Add, Radio, % "xs y+5 vblnRadioReplaceWindows " . (blnReplaceWhenRestoringThisGroup ? "checked" : ""), %lGuiGroupSaveReplaceWindowsLabel%
 
 GuiCenterButtons(strGuiGroupSaveEditTitle, 10, 5, 20, , "btnGroupSave", "btnGroupSaveCancel")
 
@@ -3772,6 +3794,34 @@ NewTotalCommander(strLocation, strWinId, strControl)
 }
 ;------------------------------------------------------------
 
+
+
+;------------------------------------------------------------
+NavigateFPConnect(strLocation, strWinId, strControl)
+;------------------------------------------------------------
+{
+	global strFPConnectPath
+	
+	if (WinExist("A") <> strWinId) ; in case that some window just popped out, and initialy active window lost focus
+	{
+		WinActivate, ahk_id %strWinId% ; we'll activate initialy active window
+		Sleep, 200
+	}
+	Run, %strFPConnectPath% "/L=%strLocation%"
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+NewFPConnect(strLocation, strWinId, strControl)
+;------------------------------------------------------------
+{
+	global strFPConnectPath
+	global strFPConnectNewTabOrWindow
+
+	Run, %strFPConnectPath% %strFPConnect% "/L=%strLocation%"
+}
+;------------------------------------------------------------
 
 
 ;------------------------------------------------------------
@@ -5497,35 +5547,12 @@ Gui, 2:Font, s10 w700, Verdana
 Gui, 2:Add, Text, x10 y10 w595 center, % L(lOptionsGuiTitle, strAppName)
 
 Gui, 2:Font, s8 w600, Verdana
-Gui, 2:Add, Tab2, vintOptionsTab w620 h350 AltSubmit, %A_Space%%lOptionsMouseAndKeyboard% | %lOptionsOtherOptions% | %lOptionsThirdParty%%A_Space%
+Gui, 2:Add, Tab2, vintOptionsTab w620 h350 AltSubmit, %A_Space%%lOptionsOtherOptions% | %lOptionsMouseAndKeyboard% | %lOptionsThirdParty%%A_Space%
 
 ;---------------------------------------
-; Tab 1: Build Hotkey Gui lines
+; Tab 1: General options
 
 Gui, 2:Tab, 1
-
-Gui, 2:Font
-Gui, 2:Add, Text, x10 y+10 w595 center, % L(lOptionsTabMouseAndKeyboardIntro, strAppName)
-
-loop, % arrIniKeyNames%0%
-{
-	Gui, 2:Font, s8 w700
-	Gui, 2:Add, Text, Section x15 y+10, % arrOptionsTitles%A_Index%
-	Gui, 2:Font, s9 w500, Courier New
-	Gui, 2:Add, Text, x260 ys+5 w280 h23 center 0x1000 vlblHotkeyText%A_Index% gButtonOptionsChangeHotkey%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
-	Gui, 2:Font
-	Gui, 2:Add, Button, yp x555 vbtnChangeHotkey%A_Index% gButtonOptionsChangeHotkey%A_Index%, %lOptionsChangeHotkey%
-	Gui, 2:Font, s8 w500
-	Gui, 2:Add, Text, x15 ys+15, % arrOptionsTitlesSub%A_Index%
-}
-
-Gui, 2:Add, Button, y+20 vbtnNext1 gNextOptionsButtonClicked, %lDialogTabNext%
-GuiCenterButtons(L(lOptionsGuiTitle, strAppName, strAppVersion), 10, 5, 20, , "btnNext1")
-
-;---------------------------------------
-; Tab 2: Other options
-
-Gui, 2:Tab, 2
 
 Gui, 2:Add, Text, x10 y+10 w595 center, % L(lOptionsTabOtherOptionsIntro, strAppName)
 
@@ -5553,8 +5580,6 @@ GuiControl, , blnCheck4Update, %blnCheck4Update%
 
 Gui, 2:Add, CheckBox, y+10 xs vblnOpenMenuOnTaskbar, %lOptionsOpenMenuOnTaskbar%
 GuiControl, , blnOpenMenuOnTaskbar, %blnOpenMenuOnTaskbar%
-
-Gui, 2:Add, Button, y+20 vbtnNext2 gNextOptionsButtonClicked, %lDialogTabNext%
 
 ; column 2
 Gui, 2:Add, Text, ys x240 Section, %lOptionsIconSize%
@@ -5595,7 +5620,25 @@ Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionX center " . (intPopupMe
 Gui, 2:Add, Text, % "yp x+5 vlblPopupFixPositionY " . (intPopupMenuPosition = 3 ? "" : "hidden"), %lOptionsPopupFixPositionY%
 Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionY center " . (intPopupMenuPosition = 3 ? "" : "hidden"), %arrPopupFixPosition2%
 
-GuiCenterButtons(L(lOptionsGuiTitle, strAppName, strAppVersion), 10, 5, 20, , "btnNext2")
+;---------------------------------------
+; Tab 2: Build Hotkey Gui lines
+
+Gui, 2:Tab, 2
+
+Gui, 2:Font
+Gui, 2:Add, Text, x10 y+10 w595 center, % L(lOptionsTabMouseAndKeyboardIntro, strAppName)
+
+loop, % arrIniKeyNames%0%
+{
+	Gui, 2:Font, s8 w700
+	Gui, 2:Add, Text, Section x15 y+10, % arrOptionsTitles%A_Index%
+	Gui, 2:Font, s9 w500, Courier New
+	Gui, 2:Add, Text, x260 ys+5 w280 h23 center 0x1000 vlblHotkeyText%A_Index% gButtonOptionsChangeHotkey%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
+	Gui, 2:Font
+	Gui, 2:Add, Button, yp x555 vbtnChangeHotkey%A_Index% gButtonOptionsChangeHotkey%A_Index%, %lOptionsChangeHotkey%
+	Gui, 2:Font, s8 w500
+	Gui, 2:Add, Text, x15 ys+15, % arrOptionsTitlesSub%A_Index%
+}
 
 ;---------------------------------------
 ; Tab 3: File Managers
@@ -5607,7 +5650,7 @@ Gui, 2:Add, Text, x10 y+10 w595 center, %lOptionsTabFileManagersIntro%
 Gui, 2:Font, s8 w700
 Gui, 2:Add, Text, y+5 x15, % L(lOptionsThirdPartyTitle, "Directory Opus")
 Gui, 2:Font
-Gui, 2:Add, Text, y+5 x15, % L(lOptionsThirdPartyDetail, "Directory Opus")
+Gui, 2:Add, Link, y+5 x15, % L(lOptionsThirdPartyDetail, "Directory Opus") . " (<a href=""http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/"">Directory Opus " . lGuiHelp . "</a>)"
 Gui, 2:Add, Text, y+10 x15, %lOptionsThirdPartyPrompt%
 Gui, 2:Add, Edit, x+10 yp w300 h20 vstrDirectoryOpusPath, %strDirectoryOpusPath%
 Gui, 2:Add, Button, x+10 yp vbtnSelectDOpusPath gButtonSelectDOpusPath, %lDialogBrowseButton%
@@ -5617,12 +5660,22 @@ GuiControl, , blnDirectoryOpusUseTabs, %blnDirectoryOpusUseTabs%
 Gui, 2:Font, s8 w700
 Gui, 2:Add, Text, y+15 x15, % L(lOptionsThirdPartyTitle, "Total Commander")
 Gui, 2:Font
-Gui, 2:Add, Text, y+5 x15,  % L(lOptionsThirdPartyDetail, "Total Commander")
+Gui, 2:Add, Link, y+5 x15,  % L(lOptionsThirdPartyDetail, "Total Commander") . " (<a href=""http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/"">Total Commander " . lGuiHelp . "</a>)"
 Gui, 2:Add, Text, y+10 x15, %lOptionsThirdPartyPrompt%
 Gui, 2:Add, Edit, x+10 yp w300 h20 vstrTotalCommanderPath, %strTotalCommanderPath%
 Gui, 2:Add, Button, x+10 yp vbtnSelectTCPath gButtonSelectTCPath, %lDialogBrowseButton%
 Gui, 2:Add, Checkbox, x+10 yp vblnTotalCommanderUseTabs, %lOptionsTotalCommanderUseTabs%
 GuiControl, , blnTotalCommanderUseTabs, %blnTotalCommanderUseTabs%
+
+Gui, 2:Font, s8 w700
+Gui, 2:Add, Text, y+15 x15, % "Other file managers users (using FPConnect - BETA TEST)"
+Gui, 2:Font
+Gui, 2:Add, Link, y+5 x15, % "Select the FPConnect program file (.exe) to enable other file managers integration. (<a href=""https://github.com/rolandtoth/FPconnect"">FPConnect " . lGuiHelp . "</a>)"
+Gui, 2:Add, Text, y+10 x15, %lOptionsThirdPartyPrompt%
+Gui, 2:Add, Edit, x+10 yp w300 h20 vstrFPConnectPath, %strFPConnectPath%
+Gui, 2:Add, Button, x+10 yp vbtnSelectFPCPath gButtonSelectFPCPath, %lDialogBrowseButton%
+; Gui, 2:Add, Checkbox, x+10 yp vblnFPConnectUseTabs, %lOptionsFPConnectUseTabs%
+GuiControl, , blnFPConnectUseTabs, %blnFPConnectUseTabs%
 
 ;---------------------------------------
 ; Build Gui footer
@@ -5631,7 +5684,7 @@ Gui, 2:Tab
 
 GuiControlGet, arrTabPos, Pos, intOptionsTab
 
-Gui, 2:Add, Button, % "y" . arrTabPosY + arrTabPosH + 10. " vbtnOptionsSave gButtonOptionsSave", %lGuiSave%
+Gui, 2:Add, Button, % "y" . arrTabPosY + arrTabPosH + 10. " vbtnOptionsSave gButtonOptionsSave Default", %lGuiSave%
 Gui, 2:Add, Button, yp vbtnOptionsCancel gButtonOptionsCancel, %lGuiCancel%
 Gui, 2:Add, Button, yp vbtnOptionsDonate gGuiDonate, %lDonateButton%
 GuiCenterButtons(L(lOptionsGuiTitle, strAppName, strAppVersion), 10, 5, 20, , "btnOptionsSave", "btnOptionsCancel", "btnOptionsDonate")
@@ -5641,18 +5694,6 @@ GuiControl, Focus, btnOptionsSave
 
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-NextOptionsButtonClicked:
-;------------------------------------------------------------
-
-Gui, 2:Submit, NoHide
-
-GuiControl, Choose, intOptionsTab, % intOptionsTab + 1
 
 return
 ;------------------------------------------------------------
@@ -5719,6 +5760,26 @@ if !(StrLen(strNewTCLocation))
 	return
 
 GuiControl, 2:, strTotalCommanderPath, %strNewTCLocation%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ButtonSelectFPCPath:
+;------------------------------------------------------------
+
+if StrLen(strFPConnectPath) and (strFPConnectPath <> "NO")
+	strCurrentFPCLocation := strFPConnectPath
+else
+	strCurrentFPCLocation := ""
+
+FileSelectFile, strNewFPCLocation, 3, %strCurrentFPCLocation%, %lDialogAddFolderSelect%
+
+if !(StrLen(strNewFPCLocation))
+	return
+
+GuiControl, 2:, strFPConnectPath, %strNewFPCLocation%
 
 return
 ;------------------------------------------------------------
@@ -5804,6 +5865,16 @@ if (blnTotalCommanderUseTabs)
 	strTotalCommanderNewTabOrWindow := "/O /T" ; open new folder in a new tab
 else
 	strTotalCommanderNewTabOrWindow := "/N" ; open new folder in a new window (TC instance)
+
+IniWrite, %strFPConnectPath%, %strIniFile%, Global, FPConnectPath
+IniWrite, %blnFPConnectUseTabs%, %strIniFile%, Global, FPConnectUseTabs
+blnUseFPConnect := StrLen(strFPConnectPath)
+if (blnUseFPConnect)
+	blnUseFPConnect := FileExist(strFPConnectPath)
+if (blnFPConnectUseTabs)
+	strFPConnectNewTabOrWindow := "" ; ???
+else
+	strFPConnectNewTabOrWindow := "" ; ???
 
 ; if language or theme changed, offer to restart the app
 if (strLanguageCodePrev <> strLanguageCode) or (strThemePrev <> strTheme)

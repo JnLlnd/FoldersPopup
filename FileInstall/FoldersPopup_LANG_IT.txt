@@ -216,7 +216,7 @@ lOptionsMouseCheckLButton	Non è possibile assegnare il "Tasto Sinistro del Mouse
 lOptionsMouseNone	Nessuno
 lOptionsNoKeyOrMouseSpecified	Non è stato specificato alcun tasto (per il mouse o tastiera). La scorciatoia preesistente "~1~" non verrà modificata.
 lOptionsOpenMenuOnTaskbar	Apri il menù nella barra delle applicazioni
-lOptionsOtherOptions	Altre Opzioni
+lOptionsOtherOptions	Generale
 lOptionsPopupFix	&Menu Popup in posizione prefissata
 lOptionsPopupFixPositionX	Posizione X:
 lOptionsPopupFixPositionY	Y:
