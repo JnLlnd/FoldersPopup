@@ -13,6 +13,21 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### Version: 4.1 (2014-12-20)
+* addition of Italian language, thanks to Riccardo Leone
+* redesign the Help and Options windows into three tabs to save height on small screens
+* change mouse cursor to hand only in Settings window
+* change delays in group load
+* add diagnostic info for clipboard in group load
+* solve icon issue with multi column menus under Win XP, show icons only in first columns
+* change default to "add to existing windows" when creating a new group of folders
+* add BETA support for file manager connector FPConnect (from Roland Toth)
+	
+### Version: 4.0.4 (2014-12-13)
+* add a button to select or deselect all Explorer windows in Group Save
+* support column click in Group Save to sort on column content
+* fix bug in Explorer collection causing the Save Group button and menu to be disabled
+
 ### Version: 4.0.3 (2014-12-13)
 * more robust group load and window move and resize
 * fix a bug in Explorer collections in case ComObjCreate returns an invalid handle
