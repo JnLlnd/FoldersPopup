@@ -3817,9 +3817,8 @@ NewFPConnect(strLocation, strWinId, strControl)
 ;------------------------------------------------------------
 {
 	global strFPConnectPath
-	global strFPConnectNewTabOrWindow
 
-	Run, %strFPConnectPath% %strFPConnect% "/L=%strLocation%"
+	Run, %strFPConnectPath% "/L=%strLocation%"
 }
 ;------------------------------------------------------------
 
