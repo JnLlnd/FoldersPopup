@@ -5554,6 +5554,7 @@ Gui, 2:Add, Tab2, vintOptionsTab w620 h350 AltSubmit, %A_Space%%lOptionsOtherOpt
 
 Gui, 2:Tab, 1
 
+Gui, 2:Font
 Gui, 2:Add, Text, x10 y+10 w595 center, % L(lOptionsTabOtherOptionsIntro, strAppName)
 
 ; column 1
