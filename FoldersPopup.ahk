@@ -1129,7 +1129,6 @@ return
 InitSpecialFolders:
 ;------------------------------------------------------------
 
-; ####
 ; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774096%28v=vs.85%29.aspx (shell constants)
 ; http://www.sevenforums.com/tutorials/4941-shell-command.html ("shell:MyComputerFolder")
 
@@ -4151,10 +4150,10 @@ Gui, 1:Add, DropDownList, xm+30 yp w480 vdrpMenusList gGuiMenusListChanged
 
 ; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
 Gui, 1:Add, ListView
-	, xm+30 w480 h240 Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFavoritesList gGuiFavoritesListEvent
+	, xm+30 w1480 h240 Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFavoritesList gGuiFavoritesListEvent
 	, %lGuiLvFavoritesHeader%|Hidden Menu|Hidden Submenu|Hidden FavoriteType|Hidden IconResource
-Loop, 4
-	LV_ModifyCol(A_Index + 2, 0) ; hide 3rd-6th columns
+; Loop, 4
+;	LV_ModifyCol(A_Index + 2, 0) ; hide 3rd-6th columns
 
 Gui, 1:Add, Text, Section x+0 yp
 
@@ -5190,6 +5189,8 @@ if (blnRadioFile and !StrLen(strFavoriteLocation))
 	Oops(lPickIconNoLocation)
 	return
 }
+if InStr(strCurrentIconResource, "%")
+	strCurrentIconResource := EnvVars(strCurrentIconResource)
 
 ; Source: http://ahkscript.org/boards/viewtopic.php?f=5&t=5108#p29970
 VarSetCapacity(strThisIconFile, 1024) ; must be placed before strNewIconFile is initialized because VarSetCapacity erase its content
