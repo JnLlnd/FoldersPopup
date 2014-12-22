@@ -1,6 +1,5 @@
 /*
 Bugs:
-- edit special fav, change icon do not default on the correct icon
 - special folders does not work in .Navigate
 - special folder My Documents does not navigate with SendInput
 - special folders not supported in CMD
@@ -5064,21 +5063,28 @@ RadioButtonsChanged:
 ;------------------------------------------------------------
 Gui, 2:Submit, NoHide
 
+GuiControlGet, blnEditMode, Visible, blnRadioFolder ; if radio buttons visible, we are in edit mode
+if (blnEditMode = "") ; if control is just not visible
+	blnEditMode := 1
+
+if (!blnEditMode) and StrLen(strFavoriteLocation) ; in add mode keep only folder name if we have a file name, else empty it
+{
+	SplitPath, strFavoriteLocation, , strFolderNameOnly, strFilenameExtension
+	if StrLen(strFilenameExtension)
+		GuiControl, 2:, strFavoriteLocation, %strFolderNameOnly%
+	else
+		GuiControl, 2:, strFavoriteLocation
+}
+
 if (blnRadioFolder)
 {
 	GuiControl, 2:, lblShortName, %lDialogFolderShortName%
 	GuiControl, 2:, lblFolder, %lDialogFolderLabel%
-	if StrLen(strFavoriteLocation) ; keep only folder name
-	{
-		SplitPath, strFavoriteLocation, , strFolderNameOnly, strFilenameExtension
-		if StrLen(strFilenameExtension)
-			GuiControl, 2:, strFavoriteLocation, %strFolderNameOnly%
-	}
 }
 else if (blnRadioSpecial)
-	
+{
 	GuiControl, 2:, lblShortName, %lDialogSpecialLabel%
-
+}
 else if (blnRadioFile)
 {
 	GuiControl, 2:, lblShortName, %lDialogFileShortName%
@@ -5092,7 +5098,6 @@ else if (blnRadioURL)
 else ; blnRadioSubmenu
 {
 	GuiControl, 2:, lblShortName, %lDialogSubmenuShortName%
-	GuiControl, 2:, strFavoriteLocation ; empty control
 }
 
 GuiControl, % "2:" . (blnRadioSpecial ? "Hide" : "Show"), strFavoriteShortName
@@ -5102,7 +5107,7 @@ GuiControl, % "2:" . (blnRadioSubmenu or blnRadioSpecial ? "Hide" : "Show"), str
 GuiControl, % "2:" . (blnRadioSubmenu or blnRadioSpecial or blnRadioURL ? "Hide" : "Show"), btnSelectFolderLocation
 
 Gosub, GuiFavoriteIconDefault
-if (!blnRadioSpecial)
+if (!blnEditMode)
 	strCurrentIconResource := strDefaultIconResource
 Gosub, GuiFavoriteIconDisplay
 
@@ -5197,9 +5202,11 @@ VarSetCapacity(strThisIconFile, 1024) ; must be placed before strNewIconFile is 
 ParseIconResource(strCurrentIconResource, strThisIconFile, intThisIconIndex)
 
 WinGet, hWnd, ID, A
-intThisIconIndex := intThisIconIndex - 1
+if (intThisIconIndex >= 0) ; adjust index for positive index only (not for negative index)
+	intThisIconIndex := intThisIconIndex - 1
 DllCall("shell32\PickIconDlg", "Uint", hWnd, "str", strThisIconFile, "Uint", 260, "intP", intThisIconIndex)
-intThisIconIndex := intThisIconIndex + 1
+if (intThisIconIndex >= 0) ; adjust index for positive index only (not for negative index)
+	intThisIconIndex := intThisIconIndex + 1
 
 if StrLen(strThisIconFile)
 	strCurrentIconResource := strThisIconFile . "," . intThisIconIndex
