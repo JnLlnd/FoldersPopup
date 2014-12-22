@@ -5198,7 +5198,7 @@ Gui, 2:+OwnDialogs
 
 if (blnRadioFile and !StrLen(strFavoriteLocation))
 {
-	Oops(lPicIconNoLocation)
+	Oops(lPickIconNoLocation)
 	return
 }
 
