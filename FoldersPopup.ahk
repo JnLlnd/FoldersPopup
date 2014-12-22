@@ -1,6 +1,9 @@
 /*
 Bugs:
-
+- edit special fav, change icon do not default on the correct icon
+- special folders does not work in .Navigate
+- special folder My Documents does not navigate with SendInput
+- special folders not supported in CMD
 
 To-do for v4:
 
@@ -18,6 +21,10 @@ To-do for v4:
 	or Rexx version Folder Menu
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
+
+	Version: 4.1.8 BETA (2014-12-??)
+	* refactor InitSpecialFolders with ClassID and exceptions for unavailable ClassID
+	* add icons for My Music, My Video and Templates
 
 	Version: 4.1 (2014-12-20)
 	* addition of Italian language, thanks to Riccardo Leone
@@ -549,7 +556,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.1
+;@Ahk2Exe-SetVersion 4.1.8 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -594,8 +601,8 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.1" ; "major.minor.bugs" or "major.minor.beta.release"
-global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
+global strCurrentVersion := "4.1.8" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
 global blnDiagMode := False
@@ -756,40 +763,40 @@ StringSplit, arrMouseButtons, strMouseButtons, |
 strIconsMenus := "lMenuDesktop|lMenuDocuments|lMenuPictures|lMenuMyComputer|lMenuNetworkNeighborhood|lMenuControlPanel|lMenuRecycleBin"
 	. "|menuRecentFolders|menuGroupDialog|menuGroupExplorer|lMenuSpecialFolders|lMenuGroup|lMenuFoldersInExplorer"
 	. "|lMenuRecentFolders|lMenuSettings|lMenuAddThisFolder|lDonateMenu|Submenu|Network|UnknownDocument|Folder"
-	. "|menuGroupSave|menuGroupLoad|lMenuDownloads"
+	. "|menuGroupSave|menuGroupLoad|lMenuDownloads|Templates|MyMusic|MyVideo"
 
 if (A_OSVersion = "WIN_XP")
 {
 	strIconsFile := "shell32|shell32|shell32|shell32|shell32|shell32|shell32"
 				. "|shell32|shell32|shell32|shell32|shell32|shell32"
 				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
-				. "|shell32|shell32|shell32"
+				. "|shell32|shell32|shell32|shell32|shell32|shell32"
 	strIconsIndex := "35|127|118|16|19|22|33"
 				. "|4|147|4|4|147|147"
 				. "|214|166|111|161|85|10|1|4"
-				. "|7|7|156"
+				. "|7|7|156|55|117|116"
 }
 else if (A_OSVersion = "WIN_VISTA")
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres"
 				. "|imageres|imageres|shell32|shell32|shell32|imageres|shell32|imageres"
-				. "|shell32|shell32|shell32"
+				. "|shell32|shell32|shell32|shell32|shell32|shell32"
 	strIconsIndex := "105|85|67|104|114|22|49"
 				. "|112|174|3|3|251|174"
 				. "|112|109|88|161|85|28|1|3"
-				. "|259|259|123"
+				. "|259|259|123|55|117|116"
 }
 else
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres|shell32|imageres"
-				. "|shell32|shell32|shell32"
+				. "|shell32|shell32|shell32|shell32|shell32|shell32"
 	strIconsIndex := "106|189|68|105|115|23|50"
 				. "|113|176|203|203|99|176"
 				. "|113|110|217|208|298|29|1|4"
-				. "|297|46|123"
+				. "|297|46|123|55|117|116"
 }
 
 StringSplit, arrIconsFile, strIconsFile, |
@@ -1122,9 +1129,16 @@ return
 InitSpecialFolders:
 ;------------------------------------------------------------
 
+; ####
+; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774096%28v=vs.85%29.aspx (shell constants)
+; http://www.sevenforums.com/tutorials/4941-shell-command.html ("shell:MyComputerFolder")
+
+
 global objClassIdByLocalizedName := Object()
 global objLocalizedNameByClassId := Object()
+global objIconByClassId := Object()
 
+/*
 ; do not process special folders where pExplorer has a folder in .LocationURL
 ; InitClassId("{450d8fba-ad25-11d0-98a8-0800361b1103}") ;	My Documents / Mes documents
 ; InitClassId("{4336a54d-038b-4685-ab02-99bb52d3fb8b}") ; Public Folder / Public
@@ -1150,18 +1164,109 @@ InitClassId("{2227a280-3aea-1069-a2de-08002b30309d}") ;	Printers / Imprimantes
 ; these can only be open with "explorer.exe shell:::{CLSID}"
 InitClassId("{22877a6d-37a1-461a-91b0-dbda5aaebc99}") ;	Recent Places / Emplacements récents
 InitClassId("{992CFFA0-F557-101A-88EC-00DD010CCC48}") ;	Network Connections / Connexions réseau
+*/
+
+; available under Win XP and +
+
+InitClassId("{208D2C60-3AEA-1069-A2D7-08002B30309D}", "Network (WorkGroup)") ; Réseau
+InitClassId("{20D04FE0-3AEA-1069-A2D8-08002B30309D}", "Computer") ; Ordinateur
+InitClassId("{450D8FBA-AD25-11D0-98A8-0800361B1103}", "Documents") ; Mes documents
+InitClassId("{645FF040-5081-101B-9F08-00AA002F954E}", "Recycle Bin") ; Corbeille
+InitClassId("{2227A280-3AEA-1069-A2DE-08002B30309D}", "Printers and Faxes") ; Imprimantes
+InitClassId("{7007ACC7-3202-11D1-AAD2-00805FC1270E}", "Network Connections") ; Connexions réseau
+InitClassId("{7be9d83c-a729-4d97-b5a7-1b7313c39e0a}", "Programs Folder") ; 
+InitClassId("{D20EA4E1-3957-11d2-A40B-0C5020524153}", "Administrative Tools") ; Outils d’administration
+InitClassId("{AFDB1F70-2A4C-11d2-9039-00C04F8EEB3E}", "Offline Files Folder") ; 
+
+; available under Win XP and +
+if (A_OSVersion = "WIN_XP")
+	InitClassId("{48e7caab-b918-4e58-a94d-505519c795dc}", "Start Menu") ; Menu Démarrer
+
+; available under Win Vista + (tested on Win7 - test under Vista and Win 8)
+if (A_OSVersion <> "WIN_XP")
+{
+	InitClassId("{21EC2020-3AEA-1069-A2DD-08002B30309D}", "Control Panel (Icons view)") ; Tous les Panneaux de configuration
+	InitClassId("{26EE0668-A00A-44D7-9371-BEB064C98683}", "Control Panel (Category view)") ; Panneau de configuration
+	InitClassId("{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}", "Network") ; Réseau
+	InitClassId("{3080F90D-D7AD-11D9-BD98-0000947B0257}", "Show Desktop") ; Afficher le Bureau
+	InitClassId("{4336a54d-038b-4685-ab02-99bb52d3fb8b}", "Public Folder") ; Public
+	InitClassId("{BB06C0E4-D293-4f75-8A90-CB05B6477EEE}", "System") ; Système
+	InitClassId("{031E4825-7B94-4dc3-B131-E946B44C8DD5}", "Libraries") ; Bibliothèques
+	InitClassId("{22877a6d-37a1-461a-91b0-dbda5aaebc99}", "Recent Places") ; Emplacements récents
+	InitClassId("{323CA680-C24D-4099-B94D-446DD2D7249E}", "Favorites") ; Favoris
+	InitClassId("{2559a1f7-21d7-11d4-bdaf-00c04f60b9f0}", "Set Program Access and Defaults") ; Définir les paramètres par défaut de l’accès aux programmes et de l’ordinateur
+	InitClassId("{2965e715-eb66-4719-b53f-1672673bbefa}", "Results Folder") ; 
+	InitClassId("{2E9E59C0-B437-4981-A647-9C34B9B90891}", "Sync Setup Folder") ; 
+	InitClassId("{6DFD7C5C-2451-11d3-A299-00C04F8EF6AF}", "Folder Options") ; Options des dossiers
+	InitClassId("{78F3955E-3B90-4184-BD14-5397C15F1EFC}", "Performance Information and Tools") ; Informations et outils de performance
+	InitClassId("{B4FB3F98-C1EA-428d-A78A-D1F5659CBA93}", "HomeGroup") ; Groupe résidentiel
+	InitClassId("{B98A2BEA-7D42-4558-8BD1-832F41BAC6FD}", "Backup and Restore") ; Sauvegarder et restaurer
+	InitClassId("{ED7BA470-8E54-465E-825C-99712043E01C}", "Control Panel (All Tasks)") ; Toutes les tâches
+	InitClassId("{1f3427c8-5c10-4210-aa03-2ee45287d668}", "User Pinned") ; 
+	InitClassId("{2559a1f0-21d7-11d4-bdaf-00c04f60b9f0}", "Search Files") ; Rechercher
+	InitClassId("{3080F90E-D7AD-11D9-BD98-0000947B0257}", "Flip 3D") ; 
+	InitClassId("{35786D3C-B075-49b9-88DD-029876E11C01}", "Portable Devices") ; Appareils mobiles
+	InitClassId("{59031a47-3f72-44a7-89c5-5595fe6b30ee}", "User Folder") ; 
+	InitClassId("{ED228FDF-9EA8-4870-83b1-96b02CFE0D52}", "Games Explorer") ; Jeux
+}
+
+; Exceptions to CLSID:
+
+InitClassIdException(A_DesktopCommon, "Common Desktop", "lMenuDesktop")
+
+InitClassIdException(A_Temp, "Temporary Files", "Folder")
+
+RegRead, strExceptionPath, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, {374DE290-123F-4565-9164-39C4925E467B}
+InitClassIdException(strExceptionPath, lMenuDownloads, "lMenuDownloads")
+
+RegRead, strExceptionPath, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Music
+InitClassIdException(strExceptionPath, lMenuMyMusic, "MyMusic")
+
+RegRead, strExceptionPath, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Video
+InitClassIdException(strExceptionPath, lMenuMyVideo, "MyVideo")
+
+RegRead, strExceptionPath, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, Templates
+InitClassIdException(strExceptionPath, lMenuTemplates, "Templates")
+
+strSpecialFoldersList := ""
+for strSpecialFolderName in objClassIdByLocalizedName
+	strSpecialFoldersList := strSpecialFoldersList . strSpecialFolderName . "|"
+StringTrimRight, strSpecialFoldersList, strSpecialFoldersList, 1
 
 return
 ;------------------------------------------------------------
 
 
 ;------------------------------------------------------------
-InitClassId(strClassId)
+InitClassIdException(strPath, strName, strIconMenu)
+; Exceptions to CLSID:
+; how to detect exception: first char of ClassId is not "{"
+; instead of CLSID we use the path
+; instead of the localized name, we use the localized name from the FP language files
+; instead of the icon resource, we use the strIconsMenus name (see InitSystemArrays:)
+;------------------------------------------------------------
+{
+    objClassIdByLocalizedName.Insert(strName, strPath)
+    objLocalizedNameByClassId.Insert(strPath, strName)
+	objIconByClassId.Insert(strPath, strIconMenu)
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+InitClassId(strClassId, strFallbackName)
 ;------------------------------------------------------------
 {
     strLocalizedName := GetLocalizedNameForClassId(strClassId)
+	If !StrLen(strLocalizedName)
+			strLocalizedName := strFallbackName
+			
     objClassIdByLocalizedName.Insert(strLocalizedName, strClassId)
     objLocalizedNameByClassId.Insert(strClassId, strLocalizedName)
+	
+	objIconByClassId.Insert(strClassId, GetIconForClassId(strClassId))
+	if !StrLen(objIconByClassId[strClassId])
+		objIconByClassId[strClassId] := "%SystemRoot%\System32\shell32.dll,4"
 }
 ;------------------------------------------------------------
 
@@ -1201,6 +1306,16 @@ GetLocalizedNameForClassId(strClassId)
     */
     
     return strTranslatedName
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GetIconForClassId(strClassId)
+;------------------------------------------------------------
+{
+	RegRead, strDefaultIcon, HKEY_CLASSES_ROOT, CLSID\%strClassId%\DefaultIcon
+    return strDefaultIcon
 }
 ;------------------------------------------------------------
 
@@ -2295,175 +2410,6 @@ return
 
 
 ;------------------------------------------------------------
-XPopupMenuMouse: ; default MButton
-XPopupMenuKeyboard: ; default #a
-; REPLACED BY MERGE COMMAND ABOVE
-;------------------------------------------------------------
-
-if !(blnMenuReady)
-	return
-
-If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass, strTargetControl)
-{
-	StringReplace, strThisHotkey, A_ThisHotkey, $ ; remove $ from hotkey
-	if (A_ThisLabel = "PopupMenuMouse")
-	{
-		SplitModifiersFromKey(strThisHotkey, strThisHotkeyModifiers, strThisHotkeyKey)
-		SendInput, %strThisHotkeyModifiers%{%strThisHotkeyKey%} ; for example {MButton} or +{LButton}
-	}
-	else
-	{
-		StringLower, strThisHotkey, strThisHotkey
-		SendInput, %strThisHotkey% ; for example #a
-	}
-	return
-}
-
-blnMouse := InStr(A_ThisLabel, "Mouse")
-blnNewWindow := false ; used in SetMenuPosition and BuildFoldersInExplorerMenu
-Gosub, SetMenuPosition ; sets strTargetWinId or activate the window strTargetWinId set by CanOpenFavorite
-
-if (A_ThisLabel = "PopupMenuMouse") and (WindowIsDirectoryOpus(strTargetClass) or WindowIsTotalCommander(strTargetClass))
-{
-	Click ; to make sure the DOpus lister or TC pane under the mouse become active
-	Sleep, 20
-}
-
-; Can't find how to navigate a dialog box to My Computer or Network Neighborhood... is this is feasible?
-if (blnDisplaySpecialFolders)
-{
-	Menu, menuSpecialFolders
-		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
-		or WindowIsDialog(strTargetClass, strTargetWinId) ? "Disable" : "Enable"
-		, %lMenuMyComputer%
-	Menu, menuSpecialFolders
-		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
-		or WindowIsDialog(strTargetClass, strTargetWinId) ? "Disable" : "Enable"
-		, %lMenuNetworkNeighborhood%
-
-	; There is no point to navigate a dialog box or console to Control Panel or Recycle Bin, unknown for FreeCommander
-	Menu, menuSpecialFolders
-		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
-		or WindowIsDialog(strTargetClass, strTargetWinId) ? "Disable" : "Enable"
-		, %lMenuControlPanel%
-	Menu, menuSpecialFolders
-		, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
-		or WindowIsDialog(strTargetClass, strTargetWinId) ? "Disable" : "Enable"
-		, %lMenuRecycleBin%
-}
-
-if (blnDisplayFoldersInExplorerMenu)
-	Gosub, BuildFoldersInExplorerMenu
-
-if (blnDisplayFoldersInExplorerMenu)
-	Menu, %lMainMenuName%
-		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Folders in Explorer menu if no Explorer
-		, %lMenuFoldersInExplorer%
-
-if (blnDisplayGroupMenu)
-	Menu, menuGroups
-		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Save group menu if no Explorer
-		, %lMenuGroupSave%
-
-if (WindowIsAnExplorer(strTargetClass) or WindowIsDesktop(strTargetClass) or WindowIsConsole(strTargetClass)
-	or WindowIsFreeCommander(strTargetClass) or WindowIsTotalCommander(strTargetClass)
-	or WindowIsDirectoryOpus(strTargetClass) or WindowIsDialog(strTargetClass, strTargetWinId))
-{
-	; Enable Add This Folder only if the mouse is over an Explorer (tested on WIN_XP and WIN_7) or a dialog box (works on WIN_7, not on WIN_XP)
-	; Other tests shown that WIN_8 behaves like WIN_7. So, I assume WIN_8 to work. If someone could confirm (until I can test it myself)?
-	if (blnDiagMode)
-		Diag("ShowMenu", "Favorites Menu " 
-			. (WindowIsAnExplorer(strTargetClass)  or WindowIsFreeCommander(strTargetClass)
-			or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
-			or (WindowIsDialog(strTargetClass, strTargetWinId) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT")
-			. " Add this folder")
-	Menu, %lMainMenuName%
-		, % WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass)
-		or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
-		or (WindowIsDialog(strTargetClass, strTargetWinId) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
-		, %lMenuAddThisFolder%...
-		
-	Gosub, InsertColumnBreaks
-
-	Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; at mouse pointer if option 1, 20x20 offset of active window if option 2 and fix location if option 3
-}
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-XPopupMenuNewWindowMouse: ; default +MButton::
-XPopupMenuNewWindowKeyboard: ; default +#a
-; REPLACED BY MERGE COMMAND ABOVE
-;------------------------------------------------------------
-
-if !(blnMenuReady)
-	return
-
-blnMouse := InStr(A_ThisLabel, "Mouse")
-blnNewWindow := true ; used in SetMenuPosition and BuildFoldersInExplorerMenu
-Gosub, SetMenuPosition ; sets strTargetWinId
-
-WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
-if (A_ThisLabel = "PopupMenuNewWindowMouse") and (WindowIsDirectoryOpus(strTargetClass) or WindowIsTotalCommander(strTargetClass))
-{
-	Click ; to make sure the TC pane under the mouse become active before creating a new tab
-	Sleep, 20
-}
-
-if (blnDiagMode)
-{
-	Diag("MouseOrKeyboard", A_ThisLabel)
-	WinGetTitle strDiag, % "ahk_id " . strTargetWinId
-	Diag("WinTitle", strDiag)
-	Diag("WinId", strTargetWinId)
-	Diag("Class", strTargetClass)
-	Diag("ShowMenu", "Favorites Menu " . (WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass) 
-	or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
-		or (WindowIsDialog(strTargetClass, strTargetWinId) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "WITH" : "WITHOUT") . " Add this folder")
-}
-
-if (blnDisplaySpecialFolders)
-{
-	; In case it was disabled while in a dialog box
-	Menu, menuSpecialFolders, Enable, %lMenuMyComputer%
-	Menu, menuSpecialFolders, Enable, %lMenuNetworkNeighborhood%
-	Menu, menuSpecialFolders, Enable, %lMenuControlPanel%
-	Menu, menuSpecialFolders, Enable, %lMenuRecycleBin%
-}
-
-if (blnDisplayFoldersInExplorerMenu)
-	Gosub, BuildFoldersInExplorerMenu
-
-if (blnDisplayFoldersInExplorerMenu)
-	Menu, %lMainMenuName%
-		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Folders in Explorer menu if no Explorer
-		, %lMenuFoldersInExplorer%
-
-if (blnDisplayGroupMenu)
-	Menu, menuGroups
-		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Save group menu if no Explorer
-		, %lMenuGroupSave%
-
-; Enable "Add This Folder" only if the target window is an Explorer (tested on WIN_XP and WIN_7)
-; or a dialog box under WIN_7 (does not work under WIN_XP).
-; Other tests shown that WIN_8 behaves like WIN_7.
-Menu, %lMainMenuName%
-	, % WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass)
-	or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
-	or (WindowIsDialog(strTargetClass, strTargetWinId) and InStr("WIN_7|WIN_8", A_OSVersion)) ? "Enable" : "Disable"
-	, %lMenuAddThisFolder%...
-
-Gosub, InsertColumnBreaks
-
-Menu, %lMainMenuName%, Show, %intMenuPosX%, %intMenuPosY% ; at mouse pointer if option 1, 20x20 offset of active window if option 2 and fix location if option 3
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
 SetMenuPosition:
 ;------------------------------------------------------------
 
@@ -2713,7 +2659,7 @@ if (blnDiagMode)
 }
 
 if !FileExist(strLocation)
-	and !((InStr(objLocationUrlByName[A_ThisMenuItem], "::") = 1) or (strFavoriteType = "U"))
+	and !((InStr(objLocationUrlByName[A_ThisMenuItem], "::") = 1) or (strFavoriteType = "U") or (strFavoriteType = "P"))
 	; this favorite does not exist and it is not a special folder or an URL
 	{
 		Gui, 1:+OwnDialogs
@@ -2837,6 +2783,8 @@ GetLocationFor(strMenu, strName)
 		if (strName = arrMenus[strMenu][A_Index].FavoriteName)
 		{
 			strLocation := arrMenus[strMenu][A_Index].FavoriteLocation
+			if SubStr(strLocation, 1, 1) = "{"
+				strLocation := "::" . strLocation
 			break
 		}
 
@@ -3678,6 +3626,7 @@ http://msdn.microsoft.com/en-us/library/windows/desktop/bb774096%28v=vs.85%29.as
 http://msdn.microsoft.com/en-us/library/aa752094
 */
 {
+	; #### DOES NOT SUPPORT CLSID !?! %$?&*?%$
 	if !Regexmatch(varPath, "#.*\\") ; prevent the hash bug in Shell.Application - when a hash in path is followed by a backslash like in "c:\abc#xyz\abc")
 	{
 		intCountMatch := 0
@@ -4958,7 +4907,7 @@ GuiEditFavorite:
 ;------------------------------------------------------------
 
 ; Icon resource in the format "iconfile,index", examnple "shell32.dll,2"
-; strDefaultIconResource -> default icon for the current type of favorite (F, D, U or S)
+; strDefaultIconResource -> default icon for the current type of favorite (F, P, D, U or S)
 ; strSavedIconResource -> actual value in the ListView or in the menu object
 ; strCurrentIconResource -> icon currently displayed in the Add/Edit dialog box
 ; strCurrentIconResource is always equal to strDefaultIconResource or strSavedIconResource
@@ -4984,6 +4933,7 @@ if (A_ThisLabel = "GuiEditFavorite")
 	strCurrentIconResource := strSavedIconResource
 
 	blnRadioFolder := (strFavoriteType = "F")
+	blnRadioSpecial := (strFavoriteType = "P")
 	blnRadioFile := (strFavoriteType = "D")
 	blnRadioURL := (strFavoriteType = "U")
 	blnRadioSubmenu := (strFavoriteType = "S")
@@ -5009,6 +4959,7 @@ else
 	}
 
 	blnRadioFolder := true
+	blnRadioSpecial := false
 	blnRadioFile := false
 	blnRadioURL := false
 	blnRadioSubmenu := false
@@ -5040,14 +4991,19 @@ Gui, Add, Text, x+5 yp vlblRemoveIcon gGuiRemoveIcon, X
 if (A_ThisLabel = "GuiAddFavorite")
 {
 	Gui, 2:Add, Text, x10, %lDialogAdd%:
-	Gui, 2:Add, Radio, x+10 yp vblnRadioFolder checked gRadioButtonsChanged, %lDialogFolderLabel%
-	Gui, 2:Add, Radio, x+10 yp vblnRadioFile gRadioButtonsChanged, %lDialogFileLabel%
-	Gui, 2:Add, Radio, x+10 yp vblnRadioURL gRadioButtonsChanged, %lDialogURLLabel%
-	Gui, 2:Add, Radio, x+10 yp vblnRadioSubmenu gRadioButtonsChanged, %lDialogSubmenuLabel%
+	Gui, 2:Add, Radio, x+10 yp vblnRadioFolder checked gRadioButtonsChanged section, %lDialogFolderLabel%
+	Gui, 2:Add, Radio, xs vblnRadioSpecial gRadioButtonsChanged, %lDialogSpecialLabel%
+	Gui, 2:Add, Radio, xs vblnRadioFile gRadioButtonsChanged, %lDialogFileLabel%
+	Gui, 2:Add, Radio, xs vblnRadioURL gRadioButtonsChanged, %lDialogURLLabel%
+	Gui, 2:Add, Radio, xs vblnRadioSubmenu gRadioButtonsChanged, %lDialogSubmenuLabel%
 }
 
-Gui, 2:Add, Text, x10 y+10 w300 vlblShortName, % (blnRadioSubmenu ? lDialogSubmenuShortName : (blnRadioFile ? lDialogFileShortName : (blnRadioURL ? lDialogURLShortName : lDialogFolderShortName)))
-Gui, 2:Add, Edit, x10 w300 Limit250 vstrFavoriteShortName, % (A_ThisLabel = "GuiEditFavorite" ? strCurrentName : strFavoriteShortName)
+Gui, 2:Add, Text, x10 y+10 w300 vlblShortName, % (blnRadioSubmenu ? lDialogSubmenuShortName : (blnRadioFile ? lDialogFileShortName : (blnRadioURL ? lDialogURLShortName : (blnRadioSpecial ? lDialogSpecialLabel : lDialogFolderShortName))))
+Gui, 2:Add, Edit, x10 w300 Limit250 vstrFavoriteShortName section, % (A_ThisLabel = "GuiEditFavorite" ? strCurrentName : strFavoriteShortName)
+
+Gui, 2:Add, DropDownList, xs ys w300 vdrpSpecialFolder gDropdownSpecialFolderChanged hidden, %strSpecialFoldersList%
+if (A_ThisLabel = "GuiEditFavorite")
+	GuiControl, ChooseString, drpSpecialFolder, %strCurrentName%
 
 if (blnRadioSubmenu)
 	Gui, 2:Add, Button, x+10 yp vbnlEditFolderOpenMenu gGuiOpenThisMenu, %lDialogOpenThisMenu%
@@ -5074,9 +5030,13 @@ else
 
 Gosub, GuiFavoriteIconDefault
 Gosub, GuiFavoriteIconDisplay
+Gosub, RadioButtonsChanged ; to hide unused control when edit a special folder
 
-GuiControl, 2:Focus, strFavoriteShortName
-if (A_ThisLabel = "GuiEditFavorite")
+if (blnRadioSpecial)
+	GuiControl, 2:Focus, drpSpecialFolder
+else
+	GuiControl, 2:Focus, strFavoriteShortName
+if (A_ThisLabel = "GuiEditFavorite") and (!blnRadioSpecial)
 	SendInput, ^a
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
@@ -5116,6 +5076,10 @@ if (blnRadioFolder)
 			GuiControl, 2:, strFavoriteLocation, %strFolderNameOnly%
 	}
 }
+else if (blnRadioSpecial)
+	
+	GuiControl, 2:, lblShortName, %lDialogSpecialLabel%
+
 else if (blnRadioFile)
 {
 	GuiControl, 2:, lblShortName, %lDialogFileShortName%
@@ -5132,12 +5096,15 @@ else ; blnRadioSubmenu
 	GuiControl, 2:, strFavoriteLocation ; empty control
 }
 
-GuiControl, % "2:" . (blnRadioSubmenu ? "Hide" : "Show"), lblFolder
-GuiControl, % "2:" . (blnRadioSubmenu ? "Hide" : "Show"), strFavoriteLocation
-GuiControl, % "2:" . (blnRadioSubmenu or blnRadioURL ? "Hide" : "Show"), btnSelectFolderLocation
+GuiControl, % "2:" . (blnRadioSpecial ? "Hide" : "Show"), strFavoriteShortName
+GuiControl, % "2:" . (blnRadioSpecial ? "Show" : "Hide"), drpSpecialFolder
+GuiControl, % "2:" . (blnRadioSubmenu or blnRadioSpecial ? "Hide" : "Show"), lblFolder
+GuiControl, % "2:" . (blnRadioSubmenu or blnRadioSpecial ? "Hide" : "Show"), strFavoriteLocation
+GuiControl, % "2:" . (blnRadioSubmenu or blnRadioSpecial or blnRadioURL ? "Hide" : "Show"), btnSelectFolderLocation
 
 Gosub, GuiFavoriteIconDefault
-strCurrentIconResource := strDefaultIconResource
+if (!blnRadioSpecial)
+	strCurrentIconResource := strDefaultIconResource
 Gosub, GuiFavoriteIconDisplay
 
 if (blnRadioSubmenu or blnRadioURL)
@@ -5146,6 +5113,28 @@ else
 	GuiControl, 2:+Default, btnSelectFolderLocation
 
 GuiControl, 2:Focus, strFavoriteShortName
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+DropdownSpecialFolderChanged:
+;------------------------------------------------------------
+Gui, 2:Submit, NoHide
+
+strFavoriteShortName := drpSpecialFolder
+GuiControl, , strFavoriteShortName, %strFavoriteShortName% ; also assign values to gui control
+
+strFavoriteLocation := objClassIdByLocalizedName[strFavoriteShortName]
+GuiControl, , strFavoriteLocation, %strFavoriteLocation% ; also assign values to gui control
+
+if (SubStr(strFavoriteLocation, 1, 1) <> "{") ; this is an exception - select the icon resource
+	strCurrentIconResource := objIconsFile[objIconByClassId[strFavoriteLocation]] . "," . objIconsIndex[objIconByClassId[strFavoriteLocation]]
+else
+	strCurrentIconResource := objIconByClassId[strFavoriteLocation]
+
+Gosub, GuiFavoriteIconDisplay
 
 return
 ;------------------------------------------------------------
@@ -5316,7 +5305,10 @@ if  ((blnRadioFolder or blnRadioFile or blnRadioURL) and !StrLen(strFavoriteLoca
 if !FolderNameIsNew(strFavoriteShortName, (strParentMenu = strCurrentMenu ? "" : strParentMenu))
 	if ((strParentMenu <> strCurrentMenu) or (strFavoriteShortName <> strCurrentName)) ; same name is OK in current menu
 	{
-		Oops(lDialogFavoriteNameNotNew, strFavoriteShortName)
+		if (blnRadioSpecial)
+			Oops("There is already a favorite under the name ""~1~"". Please, choose a different name for the existing favorite.", strFavoriteShortName) ; ### language
+		else
+			Oops(lDialogFavoriteNameNotNew, strFavoriteShortName)
 		return
 	}
 
@@ -5346,7 +5338,7 @@ if (blnRadioSubmenu)
 else
 	strNewSubmenuFullName := ""
 
-strFavoriteType := (blnRadioSubmenu ? "S" : (blnRadioURL ? "U" : (blnRadioFile ? "D" : (blnRadioURL ? "U" : "F")))) ; submenu, document, URL or folder
+strFavoriteType := (blnRadioSubmenu ? "S" : (blnRadioURL ? "U" : (blnRadioFile ? "D" : (blnRadioURL ? "U" : (blnRadioSpecial ? "P" : "F"))))) ; submenu, document, URL, folder or sPecial
 
 Gosub, 2GuiClose
 
@@ -5378,7 +5370,7 @@ else ; add menu item to selected menu object
 	objFavorite.FavoriteName := strFavoriteShortName ; display name of this menu item
 	objFavorite.FavoriteLocation := strFavoriteLocation ; path for this menu item
 	objFavorite.SubmenuFullName := strNewSubmenuFullName ; full name of the submenu
-	objFavorite.FavoriteType := strFavoriteType ; "F" folder, "D" document, "U" for URL or "S" submenu
+	objFavorite.FavoriteType := strFavoriteType ; "F" folder, "P" sPecial, "D" document, "U" for URL or "S" submenu
 	objFavorite.IconResource := strCurrentIconResource ; icon resource in format "iconfile,iconindex"
 	arrMenus[objFavorite.MenuName].Insert(1, objFavorite) ; add this menu item to the new menu
 
