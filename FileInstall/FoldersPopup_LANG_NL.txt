@@ -1,5 +1,5 @@
 lAboutText1	~1~ ~2~ (~3~ bits)
-lAboutText2	~1~ wordt ontwikkeld door Jean Lalonde gebruik`nmakend van <a href="http://ahkscript.org/">AutoHotkey</a> programmeertaal.`n`nNederlandse vertaling: Pieter Dejonghe`nDuitse vertaling: Edgar "Fast Edi" Hoffmann`nFranse vertaling: Jean Lalonde`nKorean vertaling: Om Il-Sung`nZweedse vertaling: Åke Engelbrektson`nItalian vertaling: Riccardo Leone`Andere talen: (hulp is welkom)`nnCorrectie Engelse vertaling: (hulp is welkom)`n`nOntwerp icons: <a href="http://www.visualpharm.com">Visual Pharm</a>`nInstaller: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> van jrsoftware.org`nAutoHotkey_L v1.1 bronbestanden: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText2	~1~ wordt ontwikkeld door Jean Lalonde gebruik`nmakend van <a href="http://ahkscript.org/">AutoHotkey</a> programmeertaal.`n`nNederlandse vertaling: Pieter Dejonghe`nDuitse vertaling: Edgar "Fast Edi" Hoffmann`nFranse vertaling: Jean Lalonde`nKorean vertaling: Om Il-Sung`nZweedse vertaling: Åke Engelbrektson`nItaliaanse vertaling: Riccardo Leone`Andere talen: (hulp is welkom)`nnCorrectie Engelse vertaling: (hulp is welkom)`n`nOntwerp icons: <a href="http://www.visualpharm.com">Visual Pharm</a>`nInstaller: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> van jrsoftware.org`nAutoHotkey_L v1.1 bronbestanden: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
 lAboutText4	Ondersteuning via <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	Over... - ~1~ ~2~
@@ -46,6 +46,7 @@ lDialogGroupEdit	Bewerken
 lDialogGroupEditError	bewerken
 lDialogGroupLoad	Laden
 lDialogGroupLoadError	laden
+lDialogGroupManageAbout	Over groepen
 lDialogGroupManageCannotSave	Opgepast: Er is geen geopend venster wat je kan bewaren in een nieuwe groep. Open op zijn minst 1 venster van een Verkenner of Directory Opus en probeer opnieuw. 
 lDialogGroupManageCreatingPrompt	Om een nieuwe groep aan te maken, klik de "~1~" knop of kies het "~2~" menu.
 lDialogGroupManageCreatingTitle	Een groep aanmaken
@@ -59,6 +60,8 @@ lDialogGroupSelect	Selecteer een groep
 lDialogGroupSelectError	Gelieve de groep te selecteren om ~1~.
 lDialogIcon	Icoon
 lDialogInvalidHotkey	Met je huidige toetsenbordindeling kan de sneltoets "~1~" niet gebruikt worden als een trigger voor het popup menu.`n`nGelieve het "~2~ Settings" venster te openen vanuit het taakbalkmenu en selecteers "Opties". Gelieve in dit venster een andere sneltoets te kiezen voor "~3~".
+lDialogMaximized	Gemaximalizeerd
+lDialogNormal	Normaal
 lDialogOpenThisMenu	Open dit menu
 lDialogSave	Bewaren
 lDialogSelectItemToEdit	Gelieve het te bewerken object te selecteren.
@@ -67,6 +70,7 @@ lDialogSubmenuLabel	Submenu
 lDialogSubmenuNameEmpty	De naam van dit submenu is leeg. Kies een naam...
 lDialogSubmenuParentMenu	Submenu hoofd menu
 lDialogSubmenuShortName	Korte naam voor het submenu
+lDialogTabNext	Volgende
 lDialogThirdPartyDetected	~1~ heeft gemerkt dat ~2~ geinstalleerd is op jouw computer.`n`nWil je de ~2~ integratie activeren?
 lDialogURLLabel	URL
 lDialogURLShortName	Korte naam voor de webkoppeling (voor in het menu)
@@ -104,6 +108,7 @@ lGuiGroupClosing	Vensters sluiten
 lGuiGroupOf	van
 lGuiGroupSaveAddWindowsLabel	Toevoegen bij bestaande vensters
 lGuiGroupSaved	Groep "~1~" werd bewaard.`n`nSelecteer het menu "~2~" om deze groep te laden.
+lGuiGroupSaveDeselectAll	Alles deselecteren
 lGuiGroupSaveEditPrompt	~1~ deze groep
 lGuiGroupSaveEditTitle	~1~ een groep van vensters - ~2~ ~3~
 lGuiGroupSaveLvHeader	Pad|Toepassing|Toestand van het venster|Links|Boven|Breedte|Hoogte|Zijde
@@ -113,6 +118,7 @@ lGuiGroupSaveReplaceGroup	Groep "~1~" bestaat. Wil je deze vervangen?
 lGuiGroupSaveReplaceWindowsLabel	Vervang bestaande vensters
 lGuiGroupSaveRestoreOption	Indien deze groep opgeroepen wordt:
 lGuiGroupSaveSelect	Selecteer de mappen om te bewaren in deze groep
+lGuiGroupSaveSelectAll	Alles selecteren
 lGuiGroupSaveSelectExisting	of kies een bestaande groep om te overschrijven:
 lGuiGroupSaveShortName	Verkorte groepsnaam (voor menu)
 lGuiHelp	Hulp
@@ -129,6 +135,9 @@ lGuiSubmenuDropdownLabel	Te wijzigen menu:
 lGuiSubmenuLocation	>
 lGuiSubmenuSeparator	>
 lGuiTitle	Instellingen - ~1~ ~2~
+lHelpTabAddingFavorite	Favoriet toevoegen
+lHelpTabGettingStarted	Er mee beginnen
+lHelpTabTitlesTipsAndTricks	Tips & Tricks
 lHelpText1	Wanner FoldersPopup gestart wordt dan verschijnt er een icoontje in de systeembalk en FoldersPopup wacht dan op taken van jou. Als je naar een andere map wil springen in Windows Verkenner of in een ander bestandsdialoogvenster, druk dan op de middenste muisknop of druk de Windows-A toetsencombinatie. Vervolgens kan je de gewenste map selecteren en FoldersPopup brengt je er direct naar toe! Of gebruik FoldersPopup om snel 1 van jouw favoriete documenten of webpagina's te openen.
 lHelpText2	Kies "Instellingen" om het FoldersPopup instellingsvenster te openen waar je MAPPEN, DOCUMENTEN of WEBKOPPELINGEN kan toevoegen aan jouw menu. Uiteraard kan je deze ook hernoemen, verplaatsen of verwijderen. Je kan ook SUBMENU's toevoegen, die je ook weer kan hernoemen, verplaatsen of verwijderen. Selecteer het submenu dat je wil aanpassen in de "Te wijzigen menu" uitklaplijst (dropdown list). Klik vervolgens op "Bewaren" om jouw wijzigingen te bewaren.
 lHelpText3	Je kan snel nieuwe favoriete MAP toevoegen aan het popup menu:`n1) Ga naar een vaak gebruikte map.`n2) Druk op de middenste muisknop (of druk Windows-A) en kies voor "Voeg deze map toe".`n3) Geef deze map een korte naam, druk "OK" en "Bewaren" in het instellingsvenster.
@@ -201,18 +210,19 @@ lOptionsGuiTitle	Opties - ~1~ ~2~
 lOptionsIconSize	Menu iconen grootte
 lOptionsKeyboard	Toetsenbord
 lOptionsLanguage	Taal
-lOptionsLanguageLabels	Engels|Frans|Duits|Nederlands|Koreaans|Zweeds|Italian
+lOptionsLanguageLabels	Engels|Frans|Duits|Nederlands|Koreaans|Zweeds|Italiaans
 lOptionsMenuActiveWindow	In het actieve venster
 lOptionsMenuFixPosition	Op een vaste positie
 lOptionsMenuNearMouse	In de buurt van de muisaanwijzer
 lOptionsMenuPositionPrompt	Toon het:
 lOptionsMouse	Muis
+lOptionsMouseAndKeyboard	Muis en toetsenbord
 lOptionsMouseButtonsText	Linkermuisknop|Middenste muisknop|Rechtermuisknop|Speciale muisknop 1|Speciale muisknop 2|Muiswiel omhoog|Muiswiel omlaag|Muiswiel links|Muiswiel rechts|
 lOptionsMouseCheckLButton	Je kan de linkermuisknop niet toewijzen zonder een extra speciale toets erbij.
 lOptionsMouseNone	Geen
 lOptionsNoKeyOrMouseSpecified	Geen toets of muisknop werd gespecifieerd. De bestaande "~1~" combinatie blijft ongewijzigd.
 lOptionsOpenMenuOnTaskbar	Open menu via de taakbalk
-lOptionsOtherOptions	Andere Opties
+lOptionsOtherOptions	Algemeen
 lOptionsPopupFix	Popup &Menu op een Vaste Positie
 lOptionsPopupFixPositionX	Positie X:
 lOptionsPopupFixPositionY	Y:
@@ -220,8 +230,11 @@ lOptionsRecentFolders	R&ecente Mappen
 lOptionsRunAtStartup	&Uitvoeren bij Opstarten
 lOptionsShift	Shift
 lOptionsSpacebar	gebruik de spatiebalk
+lOptionsTabFileManagersIntro	Voor de gebruikers van andere programma's voor bestandsbeheer
 lOptionsTabMouseAndKeyboardIntro	Definieer de muisknoppen en sneltoetsen die ~1~ zullen triggeren.
+lOptionsTabOtherOptionsIntro	Laat ~1~ functioneren zoals jij wil!
 lOptionsTheme	Thema
+lOptionsThirdParty	Add-on voor de support van andere programma's voor bestandsbeheer
 lOptionsThirdPartyDetail	Selecteer het ~1~ programma (.exe) om de ~1~ integratie te activeren.
 lOptionsThirdPartyPrompt	Programma:
 lOptionsThirdPartyTitle	~1~ gebruikers
