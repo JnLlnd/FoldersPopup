@@ -1,5 +1,6 @@
 /*
 Bugs:
+- no icon for system sub menus in Win_XP menu
 - special folders does not work in .Navigate
 - special folder My Documents does not navigate with SendInput
 - special folders not supported in CMD
@@ -1128,103 +1129,111 @@ return
 InitSpecialFolders:
 ;------------------------------------------------------------
 
+; NOTES How to call uin Explorer...
+; ... CLSID: shell:::{{20D04FE0-3AEA-1069-A2D8-08002B30309D}}
+; ... ShellConstant: shell:MyComputerFolder
+
 ; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774096%28v=vs.85%29.aspx (shell constants)
 ; http://www.sevenforums.com/tutorials/4941-shell-command.html ("shell:MyComputerFolder")
-
 
 global objClassIdByLocalizedName := Object()
 global objLocalizedNameByClassId := Object()
 global objIconByClassId := Object()
+global objShellConstantByClassId := Object()
 
-/*
-; do not process special folders where pExplorer has a folder in .LocationURL
-; InitClassId("{450d8fba-ad25-11d0-98a8-0800361b1103}") ;	My Documents / Mes documents
-; InitClassId("{4336a54d-038b-4685-ab02-99bb52d3fb8b}") ; Public Folder / Public
-; InitClassId("{59031a47-3f72-44a7-89c5-5595fe6b30ee}") ; (User files) <User name> / <User name>
+;------------------------------------------------------------
+; CLSID available under Win XP and +
 
-; special folders with only localized name in .LocationName actually used in popup menu
-; these can be open with "explorer ::{CLSID}", but also with "explorer.exe shell:::{CLSID}"
-InitClassId("{20d04fe0-3aea-1069-a2d8-08002b30309d}") ; My Computer / Ordinateur
-InitClassId("{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}") ;	Computer and devices / Réseau
-InitClassId("{645ff040-5081-101b-9f08-00aa002f954e}") ;	Recycle Bin / Corbeille
-InitClassId("{26EE0668-A00A-44D7-9371-BEB064C98683}") ;	Control Panel / Panneau de configuration
+InitClassId("{208D2C60-3AEA-1069-A2D7-08002B30309D}", "Network (WorkGroup)", "Network") ; Réseau
+InitClassId("{20D04FE0-3AEA-1069-A2D8-08002B30309D}", "Computer", "MyComputerFolder") ; Ordinateur
+InitClassId("{450D8FBA-AD25-11D0-98A8-0800361B1103}", "Documents", "Personal") ; Mes documents
+InitClassId("{645FF040-5081-101B-9F08-00AA002F954E}", "Recycle Bin", "RecycleBinFolder") ; Corbeille
+InitClassId("{2227A280-3AEA-1069-A2DE-08002B30309D}", "Printers and Faxes", "PrintersFolder") ; Imprimantes
+InitClassId("{7007ACC7-3202-11D1-AAD2-00805FC1270E}", "Network Connections", "ConnectionsFolder") ; Connexions réseau
+InitClassId("{7be9d83c-a729-4d97-b5a7-1b7313c39e0a}", "Programs Folder", "ProgramFiles") ; 
+InitClassId("{D20EA4E1-3957-11d2-A40B-0C5020524153}", "Administrative Tools", "Common Administrative Tools") ; Outils d’administration
+InitClassId("{AFDB1F70-2A4C-11d2-9039-00C04F8EEB3E}", "Offline Files Folder", "") ; ShellConstant unknown
 
-; other special folders with only localized name in .LocationName
-; these can be open with "explorer ::{CLSID}", but also with "explorer.exe shell:::{CLSID}"
-InitClassId("{031E4825-7B94-4dc3-B131-E946B44C8DD5}") ; Libraries / Bibliothèques
-InitClassId("{208d2c60-3aea-1069-a2d7-08002b30309d}") ;	My Network Places / Réseau (WORKGROUP)
-InitClassId("{21EC2020-3AEA-1069-A2DD-08002B30309D}") ;	All Control Panel items / Tous les Panneaux de configuration
-InitClassId("{7007acc7-3202-11d1-aad2-00805fc1270e}") ;	Network Connections / Connexions réseau
-InitClassId("{E7DE9B1A-7533-4556-9484-B26FB486475E}") ;	Network Map / Mappage réseau
-InitClassId("{2227a280-3aea-1069-a2de-08002b30309d}") ;	Printers / Imprimantes
+;------------------------------------------------------------
+; CLSID available under Win Vista + (tested on Win7 - test under Vista and Win 8)
 
-; other special folders with only localized name in .LocationName
-; these can only be open with "explorer.exe shell:::{CLSID}"
-InitClassId("{22877a6d-37a1-461a-91b0-dbda5aaebc99}") ;	Recent Places / Emplacements récents
-InitClassId("{992CFFA0-F557-101A-88EC-00DD010CCC48}") ;	Network Connections / Connexions réseau
-*/
-
-; available under Win XP and +
-
-InitClassId("{208D2C60-3AEA-1069-A2D7-08002B30309D}", "Network (WorkGroup)") ; Réseau
-InitClassId("{20D04FE0-3AEA-1069-A2D8-08002B30309D}", "Computer") ; Ordinateur
-InitClassId("{450D8FBA-AD25-11D0-98A8-0800361B1103}", "Documents") ; Mes documents
-InitClassId("{645FF040-5081-101B-9F08-00AA002F954E}", "Recycle Bin") ; Corbeille
-InitClassId("{2227A280-3AEA-1069-A2DE-08002B30309D}", "Printers and Faxes") ; Imprimantes
-InitClassId("{7007ACC7-3202-11D1-AAD2-00805FC1270E}", "Network Connections") ; Connexions réseau
-InitClassId("{7be9d83c-a729-4d97-b5a7-1b7313c39e0a}", "Programs Folder") ; 
-InitClassId("{D20EA4E1-3957-11d2-A40B-0C5020524153}", "Administrative Tools") ; Outils d’administration
-InitClassId("{AFDB1F70-2A4C-11d2-9039-00C04F8EEB3E}", "Offline Files Folder") ; 
-
-; available under Win XP and +
-if (A_OSVersion = "WIN_XP")
-	InitClassId("{48e7caab-b918-4e58-a94d-505519c795dc}", "Start Menu") ; Menu Démarrer
-
-; available under Win Vista + (tested on Win7 - test under Vista and Win 8)
 if (A_OSVersion <> "WIN_XP")
 {
-	InitClassId("{21EC2020-3AEA-1069-A2DD-08002B30309D}", "Control Panel (Icons view)") ; Tous les Panneaux de configuration
-	InitClassId("{26EE0668-A00A-44D7-9371-BEB064C98683}", "Control Panel (Category view)") ; Panneau de configuration
-	InitClassId("{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}", "Network") ; Réseau
-	InitClassId("{3080F90D-D7AD-11D9-BD98-0000947B0257}", "Show Desktop") ; Afficher le Bureau
-	InitClassId("{4336a54d-038b-4685-ab02-99bb52d3fb8b}", "Public Folder") ; Public
-	InitClassId("{BB06C0E4-D293-4f75-8A90-CB05B6477EEE}", "System") ; Système
-	InitClassId("{031E4825-7B94-4dc3-B131-E946B44C8DD5}", "Libraries") ; Bibliothèques
-	InitClassId("{22877a6d-37a1-461a-91b0-dbda5aaebc99}", "Recent Places") ; Emplacements récents
-	InitClassId("{323CA680-C24D-4099-B94D-446DD2D7249E}", "Favorites") ; Favoris
-	InitClassId("{2559a1f7-21d7-11d4-bdaf-00c04f60b9f0}", "Set Program Access and Defaults") ; Définir les paramètres par défaut de l’accès aux programmes et de l’ordinateur
-	InitClassId("{2965e715-eb66-4719-b53f-1672673bbefa}", "Results Folder") ; 
-	InitClassId("{2E9E59C0-B437-4981-A647-9C34B9B90891}", "Sync Setup Folder") ; 
-	InitClassId("{6DFD7C5C-2451-11d3-A299-00C04F8EF6AF}", "Folder Options") ; Options des dossiers
-	InitClassId("{78F3955E-3B90-4184-BD14-5397C15F1EFC}", "Performance Information and Tools") ; Informations et outils de performance
-	InitClassId("{B4FB3F98-C1EA-428d-A78A-D1F5659CBA93}", "HomeGroup") ; Groupe résidentiel
-	InitClassId("{B98A2BEA-7D42-4558-8BD1-832F41BAC6FD}", "Backup and Restore") ; Sauvegarder et restaurer
-	InitClassId("{ED7BA470-8E54-465E-825C-99712043E01C}", "Control Panel (All Tasks)") ; Toutes les tâches
-	InitClassId("{1f3427c8-5c10-4210-aa03-2ee45287d668}", "User Pinned") ; 
-	InitClassId("{2559a1f0-21d7-11d4-bdaf-00c04f60b9f0}", "Search Files") ; Rechercher
-	InitClassId("{3080F90E-D7AD-11D9-BD98-0000947B0257}", "Flip 3D") ; 
-	InitClassId("{35786D3C-B075-49b9-88DD-029876E11C01}", "Portable Devices") ; Appareils mobiles
-	InitClassId("{59031a47-3f72-44a7-89c5-5595fe6b30ee}", "User Folder") ; 
-	InitClassId("{ED228FDF-9EA8-4870-83b1-96b02CFE0D52}", "Games Explorer") ; Jeux
+	InitClassId("{21EC2020-3AEA-1069-A2DD-08002B30309D}", "Control Panel (Icons view)", "ControlPanelFolder") ; Tous les Panneaux de configuration
+	InitClassId("{26EE0668-A00A-44D7-9371-BEB064C98683}", "Control Panel (Category view)", "!clsid-new") ; Panneau de configuration (open clsid in new window)
+	InitClassId("{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}", "Network", "Network") ; Réseau
+	InitClassId("{3080F90D-D7AD-11D9-BD98-0000947B0257}", "Show Desktop", "!clsid-new") ; Afficher le Bureau (open clsid in new window)
+	InitClassId("{4336a54d-038b-4685-ab02-99bb52d3fb8b}", "Public Folder", "Public") ; Public
+	InitClassId("{BB06C0E4-D293-4f75-8A90-CB05B6477EEE}", "System", "!clsid-new") ; Système (open clsid in new window)
+	InitClassId("{031E4825-7B94-4dc3-B131-E946B44C8DD5}", "Libraries", "Libraries") ; Bibliothèques
+	InitClassId("{22877a6d-37a1-461a-91b0-dbda5aaebc99}", "Recent Places", "!clsid-new") ; Emplacements récents (open clsid in new window)
+	InitClassId("{323CA680-C24D-4099-B94D-446DD2D7249E}", "Favorites", "Favorites") ; Favoris
+	InitClassId("{6DFD7C5C-2451-11d3-A299-00C04F8EF6AF}", "Folder Options", "!clsid-new") ; Options des dossiers (open clsid in new window)
+	InitClassId("{78F3955E-3B90-4184-BD14-5397C15F1EFC}", "Performance Information and Tools", "!clsid-new") ; Informations et outils de performance (open clsid in new window)
+	InitClassId("{B4FB3F98-C1EA-428d-A78A-D1F5659CBA93}", "HomeGroup", "HomeGroupFolder") ; Groupe résidentiel
+	InitClassId("{B98A2BEA-7D42-4558-8BD1-832F41BAC6FD}", "Backup and Restore", "!clsid-new") ; Sauvegarder et restaurer (open clsid in new window)
+	InitClassId("{ED7BA470-8E54-465E-825C-99712043E01C}", "Control Panel (All Tasks)", "!clsid-new") ; Toutes les tâches (open clsid in new window)
+	InitClassId("{1f3427c8-5c10-4210-aa03-2ee45287d668}", "User Pinned", "User Pinned") ; 
+	InitClassId("{3080F90E-D7AD-11D9-BD98-0000947B0257}", "Flip 3D", "!clsid-new") ; (open clsid in new window)
+	InitClassId("{35786D3C-B075-49b9-88DD-029876E11C01}", "Portable Devices", "!clsid-new") ; Appareils mobiles (open clsid in new window)
+	InitClassId("{59031a47-3f72-44a7-89c5-5595fe6b30ee}", "User Folder", "Profile") ; 
+	InitClassId("{ED228FDF-9EA8-4870-83b1-96b02CFE0D52}", "Games Explorer", "Games") ; Jeux
 }
 
-; Exceptions to CLSID:
+;------------------------------------------------------------
+; Exceptions to CLSID (test under Win XP)
 
-InitClassIdException(A_DesktopCommon, "Common Desktop", "lMenuDesktop")
+InitClassIdException(A_Desktop, "Desktop", "lMenuDesktop", "Desktop")
+InitClassIdException(A_DesktopCommon, "Common Desktop", "lMenuDesktop", "Common Desktop")
 
-InitClassIdException(A_Temp, "Temporary Files", "Folder")
+InitClassIdException(A_Temp, "Temporary Files", "Folder", "!clsid-navigate")
 
 RegRead, strExceptionPath, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, {374DE290-123F-4565-9164-39C4925E467B}
-InitClassIdException(strExceptionPath, lMenuDownloads, "lMenuDownloads")
+InitClassIdException(strExceptionPath, lMenuDownloads, "lMenuDownloads", "downloads")
 
 RegRead, strExceptionPath, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Music
-InitClassIdException(strExceptionPath, lMenuMyMusic, "MyMusic")
+InitClassIdException(strExceptionPath, lMenuMyMusic, "MyMusic", "My Music")
 
 RegRead, strExceptionPath, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Video
-InitClassIdException(strExceptionPath, lMenuMyVideo, "MyVideo")
+InitClassIdException(strExceptionPath, lMenuMyVideo, "MyVideo", "My Video")
 
 RegRead, strExceptionPath, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, Templates
-InitClassIdException(strExceptionPath, lMenuTemplates, "Templates")
+InitClassIdException(strExceptionPath, lMenuTemplates, "Templates", "Templates")
+
+InitClassIdException("C:\Users\" . A_UserName . "\AppData\Roaming\Microsoft\Windows\Start Menu", "Start Menu", "Folder", "Start Menu")
+InitClassIdException("C:\ProgramData\Microsoft\Windows\Start Menu", "Common Start Menu", "Folder", "Common Start Menu")
+
+InitClassIdException("C:\Users\" . A_UserName . "\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup", "Startup", "Folder", "Startup")
+InitClassIdException("C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup", "Common Start Menu", "Folder", "Common Startup")
+
+InitClassIdException("C:\Users\" . A_UserName . "\AppData\Roaming\Microsoft\Windows\Recent", "Recent", "menuRecentFolders", "Recent")
+
+InitClassIdException("C:\Users\" . A_UserName . "\AppData\Roaming\", "AppData", "Folder", "AppData")
+InitClassIdException("C:\ProgramData", "Folder", "Common AppData", "Common AppData")
+
+InitClassIdException("C:\Users\" . A_UserName . "\AppData\Local\Microsoft\Windows\Temporary Internet Files", "Cache", "Folder", "Cache")
+
+InitClassIdException("C:\Users\" . A_UserName . "\AppData\Roaming\Microsoft\Windows\Cookies", "Cookies", "Folder", "Cookies")
+
+InitClassIdException("C:\Users\" . A_UserName . "\AppData\Local\Microsoft\Windows\History", "History", "Folder", "History")
+
+InitClassIdException("C:\Users\" . A_UserName . "\Links", "Links", "Folder", "Links")
+
+InitClassIdException("C:\Users\" . A_UserName . "\Pictures", lMenuPictures, "lMenuPictures", "Pictures")
+
+if (A_Is64bitOS)
+	InitClassIdException("C:\Program Files (x86)", "Program Files (x86)", "Folder", "ProgramFilesX86")
+
+InitClassIdException("C:\Users\Public\Libraries", "Public Libraries", "Folder", "PublicLibraries")
+
+InitClassIdException("C:\Users\" . A_UserName . "\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch", "Quick Launch", "Folder", "Quick Launch")
+
+InitClassIdException("C:\Users\" . A_UserName . "\AppData\Roaming\Microsoft\SystemCertificates", "System Certificates", "Folder", "SystemCertificates")
+
+InitClassIdException(A_WinDir, "Folder", "Windows", "Windows")
+
+;------------------------------------------------------------
+; Build folders list for dropdown
 
 strSpecialFoldersList := ""
 for strSpecialFolderName in objClassIdByLocalizedName
@@ -1236,7 +1245,26 @@ return
 
 
 ;------------------------------------------------------------
-InitClassIdException(strPath, strName, strIconMenu)
+InitClassId(strClassId, strFallbackName, strShellConstant)
+;------------------------------------------------------------
+{
+    strLocalizedName := GetLocalizedNameForClassId(strClassId)
+	If !StrLen(strLocalizedName)
+			strLocalizedName := strFallbackName
+			
+    objClassIdByLocalizedName.Insert(strLocalizedName, strClassId)
+    objLocalizedNameByClassId.Insert(strClassId, strLocalizedName)
+	objShellConstantByClassId.Insert(strClassId, strShellConstant)
+
+	objIconByClassId.Insert(strClassId, GetIconForClassId(strClassId))
+	if !StrLen(objIconByClassId[strClassId])
+		objIconByClassId[strClassId] := "%SystemRoot%\System32\shell32.dll,4"
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+InitClassIdException(strPath, strName, strIconMenu, strShellConstant)
 ; Exceptions to CLSID:
 ; how to detect exception: first char of ClassId is not "{"
 ; instead of CLSID we use the path
@@ -1247,24 +1275,7 @@ InitClassIdException(strPath, strName, strIconMenu)
     objClassIdByLocalizedName.Insert(strName, strPath)
     objLocalizedNameByClassId.Insert(strPath, strName)
 	objIconByClassId.Insert(strPath, strIconMenu)
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-InitClassId(strClassId, strFallbackName)
-;------------------------------------------------------------
-{
-    strLocalizedName := GetLocalizedNameForClassId(strClassId)
-	If !StrLen(strLocalizedName)
-			strLocalizedName := strFallbackName
-			
-    objClassIdByLocalizedName.Insert(strLocalizedName, strClassId)
-    objLocalizedNameByClassId.Insert(strClassId, strLocalizedName)
-	
-	objIconByClassId.Insert(strClassId, GetIconForClassId(strClassId))
-	if !StrLen(objIconByClassId[strClassId])
-		objIconByClassId[strClassId] := "%SystemRoot%\System32\shell32.dll,4"
+	objShellConstantByClassId.Insert(strPath, strShellConstant)
 }
 ;------------------------------------------------------------
 
@@ -3624,7 +3635,14 @@ http://msdn.microsoft.com/en-us/library/windows/desktop/bb774096%28v=vs.85%29.as
 http://msdn.microsoft.com/en-us/library/aa752094
 */
 {
-	; #### DOES NOT SUPPORT CLSID !?! %$?&*?%$
+	; ###_D(varPath)
+	if (SubStr(varPath, 1, 2) = "::")
+	{
+		strClsId := SubStr(varPath, 3)
+		varPath := "shell:" . objShellConstantByClassId[strClsId]
+	}
+	; ###_D(varPath)
+
 	if !Regexmatch(varPath, "#.*\\") ; prevent the hash bug in Shell.Application - when a hash in path is followed by a backslash like in "c:\abc#xyz\abc")
 	{
 		intCountMatch := 0
@@ -5314,7 +5332,7 @@ if !FolderNameIsNew(strFavoriteShortName, (strParentMenu = strCurrentMenu ? "" :
 	if ((strParentMenu <> strCurrentMenu) or (strFavoriteShortName <> strCurrentName)) ; same name is OK in current menu
 	{
 		if (blnRadioSpecial)
-			Oops("There is already a favorite under the name ""~1~"". Please, choose a different name for the existing favorite.", strFavoriteShortName) ; ### language
+			Oops(lDialogFavoriteSpecialNameNotNew, strFavoriteShortName)
 		else
 			Oops(lDialogFavoriteNameNotNew, strFavoriteShortName)
 		return

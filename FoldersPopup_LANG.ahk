@@ -34,6 +34,7 @@ global lDialogFavoriteNameNoColumnBreak := "The submenu name cannot start the re
 global lDialogFavoriteNameNoPipe := "The favorite or submenu name cannot include the reserved character ""|"" (vertical bar)."
 global lDialogFavoriteNameNoSeparator := "The submenu name cannot include the reserved character ""~1~""."
 global lDialogFavoriteNameNotNew := "The name ""~1~"" is already used in this menu. Please, choose a new name."
+global lDialogFavoriteSpecialNameNotNew := "There is already a favorite under the name ""~1~"". Please, choose a different name for the existing favorite."
 global lDialogFavoriteParentMenu := "Favorite parent menu"
 global lDialogFavoriteRemovePrompt := "Remove the submenu ""~1~""`nand ALL its content (folders and submenus)?"
 global lDialogFavoriteRemoveTitle := "Remove Favorite - ~1~"
