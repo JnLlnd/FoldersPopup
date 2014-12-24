@@ -763,40 +763,40 @@ StringSplit, arrMouseButtons, strMouseButtons, |
 strIconsMenus := "lMenuDesktop|lMenuDocuments|lMenuPictures|lMenuMyComputer|lMenuNetworkNeighborhood|lMenuControlPanel|lMenuRecycleBin"
 	. "|menuRecentFolders|menuGroupDialog|menuGroupExplorer|lMenuSpecialFolders|lMenuGroup|lMenuFoldersInExplorer"
 	. "|lMenuRecentFolders|lMenuSettings|lMenuAddThisFolder|lDonateMenu|Submenu|Network|UnknownDocument|Folder"
-	. "|menuGroupSave|menuGroupLoad|lMenuDownloads|Templates|MyMusic|MyVideo"
+	. "|menuGroupSave|menuGroupLoad|lMenuDownloads|Templates|MyMusic|MyVideo|History|Favorites|Temporary|Winver"
 
 if (A_OSVersion = "WIN_XP")
 {
 	strIconsFile := "shell32|shell32|shell32|shell32|shell32|shell32|shell32"
 				. "|shell32|shell32|shell32|shell32|shell32|shell32"
 				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
-				. "|shell32|shell32|shell32|shell32|shell32|shell32"
+				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32|winver"
 	strIconsIndex := "35|127|118|16|19|22|33"
 				. "|4|147|4|4|147|147"
 				. "|214|166|111|161|85|10|1|4"
-				. "|7|7|156|55|117|129"
+				. "|7|7|156|55|117|129|21|209|132|1"
 }
 else if (A_OSVersion = "WIN_VISTA")
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres"
-				. "|imageres|imageres|shell32|shell32|shell32|imageres|shell32|imageres"
-				. "|shell32|shell32|shell32|shell32|shell32|imageres"
+				. "|imageres|imageres|shell32|shell32|shell32|imageres|shell32|shell32"
+				. "|shell32|shell32|shell32|shell32|shell32|imageres|shell32|shell32|shell32|winver"
 	strIconsIndex := "105|85|67|104|114|22|49"
 				. "|112|174|3|3|251|174"
 				. "|112|109|88|161|85|28|1|3"
-				. "|259|259|123|55|117|103"
+				. "|259|259|123|55|117|103|240|87|153|1"
 }
 else
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres"
-				. "|imageres|imageres|imageres|imageres|shell32|imageres|shell32|imageres"
-				. "|shell32|shell32|shell32|shell32|shell32|imageres"
+				. "|imageres|imageres|imageres|imageres|shell32|imageres|shell32|shell32"
+				. "|shell32|shell32|imageres|shell32|shell32|imageres|shell32|shell32|shell32|winver"
 	strIconsIndex := "106|189|68|105|115|23|50"
 				. "|113|176|203|203|99|176"
 				. "|113|110|217|208|298|29|1|4"
-				. "|297|46|123|55|117|104"
+				. "|297|46|176|55|117|104|240|87|153|1"
 }
 
 StringSplit, arrIconsFile, strIconsFile, |
@@ -804,7 +804,7 @@ StringSplit, arrIconsIndex, strIconsIndex, |
 
 Loop, Parse, strIconsMenus, |
 {
-	objIconsFile[A_LoopField] := A_WinDir . "\System32\" . arrIconsFile%A_Index% . ".dll"
+	objIconsFile[A_LoopField] := A_WinDir . "\System32\" . arrIconsFile%A_Index% . (arrIconsFile%A_Index% = "winver" ? ".exe" : ".dll")
 	objIconsIndex[A_LoopField] := arrIconsIndex%A_Index%
 }
 ; example: objIconsFile["lMenuPictures"] and objIconsIndex["lMenuPictures"]
@@ -1219,9 +1219,9 @@ InitClassIdException("%APPDATA%\Microsoft\Internet Explorer\Quick Launch", "Quic
 
 InitClassIdException("%APPDATA%\Microsoft\SystemCertificates", "System Certificates", "Folder")
 
-InitClassIdException("%LOCALAPPDATA%\Microsoft\Windows\Temporary Internet Files", "Cache", "Folder")
+InitClassIdException("%LOCALAPPDATA%\Microsoft\Windows\Temporary Internet Files", "Cache", "Temporary")
 
-InitClassIdException("%LOCALAPPDATA%\Microsoft\Windows\History", "History", "Folder")
+InitClassIdException("%LOCALAPPDATA%\Microsoft\Windows\History", "History", "History")
 
 InitClassIdException("%ProgramFiles%", "Program Files", "Folder")
 if (A_Is64bitOS)
@@ -1232,14 +1232,14 @@ InitClassIdException("%PUBLIC%\Libraries", "Public Libraries", "Folder")
 StringReplace, strException, lMenuPictures, &
 InitClassIdException(strPathUser . "\Pictures", strException, "lMenuPictures")
 
-InitClassIdException(strPathUser . "\Favorites", "Favorites (Internet)", "Folder")
+InitClassIdException(strPathUser . "\Favorites", "Favorites (Internet)", "Favorites")
 
 InitClassIdException(A_Desktop, "Desktop", "lMenuDesktop")
 InitClassIdException(A_DesktopCommon, "Common Desktop", "lMenuDesktop")
 
-InitClassIdException(A_Temp, "Temporary Files", "Folder")
+InitClassIdException(A_Temp, "Temporary Files", "Temporary")
 
-InitClassIdException(A_WinDir, "Windows", "Folder")
+InitClassIdException(A_WinDir, "Windows", "Winver")
 
 ;------------------------------------------------------------
 ; Build folders list for dropdown
@@ -2706,7 +2706,6 @@ else if WindowIsAnExplorer(strTargetClass)
 	if (blnDiagMode)
 		Diag("Navigate", "NavigateExplorer")
 	
-	; ###_D(strLocation)
 	if (SubStr(strLocation, 1, 2) = "::")
 	{
 		strClsId := SubStr(strLocation, 3)
@@ -2718,7 +2717,6 @@ else if WindowIsAnExplorer(strTargetClass)
 		else
 			strLocation := "shell:" . objShellConstantByClassId[strClsId]
 	}
-	; ###_D(strLocation)
 	
 	NavigateExplorer(strLocation, strTargetWinId)
 }
@@ -5310,7 +5308,7 @@ GuiFavoriteIconDisplay:
 
 ParseIconResource(strCurrentIconResource, strThisIconFile, intThisIconIndex)
 GuiControl, , picIcon, *icon%intThisIconIndex% %strThisIconFile%
-GuiControl, % (strCurrentIconResource <> strDefaultIconResource ? "Show" : "Hide"), lblRemoveIcon
+GuiControl, % (EnvVars(strCurrentIconResource) <> (strDefaultIconResource) ? "Show" : "Hide"), lblRemoveIcon
 
 return
 ;------------------------------------------------------------
