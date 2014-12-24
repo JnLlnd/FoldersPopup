@@ -32,7 +32,6 @@ lDialogFavoriteNameNoColumnBreak	Le nom du sous-menu ne peut débuter par les car
 lDialogFavoriteNameNoPipe	Le nom du favori ou du sous-menu ne doit pas inclure le caractère réservé "|" (barre verticale).
 lDialogFavoriteNameNoSeparator	Le nom du sous-menu ne doit pas inclure le caractère réservé "~1~".
 lDialogFavoriteNameNotNew	Le nom "~1~" est déjà présent dans ce menu. Veuillez choisir un nouveau nom.
-lDialogFavoriteSpecialNameNotNew	Un favori porte déjà ce nom: "~1~". Veuillez donner un autre nom au favori existant.
 lDialogFavoriteParentMenu	Menu contenant ce favori
 lDialogFavoriteRemovePrompt	Supprimer le sous-menu "~1~"`net TOUT son contenu (dossiers et sous-menus)?
 lDialogFavoriteRemoveTitle	Supprimer un favori - ~1~

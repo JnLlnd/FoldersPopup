@@ -1,10 +1,10 @@
 /*
 Bugs:
-- special folders does not work in .Navigate
-- special folder My Documents does not navigate with SendInput
-- special folders not supported in CMD
 
 To-do for v4:
+- translate special folders names in exceptions
+- choose icons for all special folders
+- select position of new menu in add
 
 */
 ;===============================================
@@ -5036,18 +5036,19 @@ if (A_ThisLabel = "GuiAddFavorite")
 }
 
 Gui, 2:Add, Text, x10 y+10 w300 vlblShortName, % (blnRadioSubmenu ? lDialogSubmenuShortName : (blnRadioFile ? lDialogFileShortName : (blnRadioURL ? lDialogURLShortName : (blnRadioSpecial ? lDialogSpecialLabel : lDialogFolderShortName))))
-Gui, 2:Add, Edit, x10 w300 Limit250 vstrFavoriteShortName section, % (A_ThisLabel = "GuiEditFavorite" ? strCurrentName : strFavoriteShortName)
-
-Gui, 2:Add, DropDownList, xs ys w300 vdrpSpecialFolder gDropdownSpecialFolderChanged hidden, %strSpecialFoldersList%
-if (A_ThisLabel = "GuiEditFavorite")
-	GuiControl, ChooseString, drpSpecialFolder, %strCurrentName%
+Gui, 2:Add, Edit, x10 w300 Limit250 vstrFavoriteShortName, % (A_ThisLabel = "GuiEditFavorite" ? strCurrentName : strFavoriteShortName)
 
 if (blnRadioSubmenu)
 	Gui, 2:Add, Button, x+10 yp vbnlEditFolderOpenMenu gGuiOpenThisMenu, %lDialogOpenThisMenu%
 else
 {
-	Gui, 2:Add, Text, x10 w300 vlblFolder, % (blnRadioFile ? lDialogFileLabel : (blnRadioURL ? lDialogURLLabel : lDialogFolderLabel))
-	Gui, 2:Add, Edit, x10 w300 h20 vstrFavoriteLocation gEditFolderLocationChanged, %strCurrentLocation%
+	Gui, 2:Add, Text, x10 w300 vlblFolder section, % (blnRadioFile ? lDialogFileLabel : (blnRadioURL ? lDialogURLLabel : lDialogFolderLabel))
+	
+	Gui, 2:Add, DropDownList, xs ys w300 vdrpSpecialFolder gDropdownSpecialFolderChanged hidden, %strSpecialFoldersList%
+	if (A_ThisLabel = "GuiEditFavorite")
+		GuiControl, ChooseString, drpSpecialFolder, %strCurrentName%
+
+	Gui, 2:Add, Edit, ys+20 x10 w300 h20 vstrFavoriteLocation gEditFolderLocationChanged, %strCurrentLocation%
 	if !(blnRadioURL)
 		Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation default, %lDialogBrowseButton%
 }
@@ -5106,6 +5107,11 @@ GuiControlGet, blnEditMode, Visible, blnRadioFolder ; if radio buttons visible, 
 if (blnEditMode = "") ; if control is just not visible
 	blnEditMode := 1
 
+GuiControl, % "2:" . (blnRadioSpecial ? "Show" : "Hide"), drpSpecialFolder
+GuiControl, % "2:" . (blnRadioSubmenu or blnRadioSpecial ? "Hide" : "Show"), lblFolder
+GuiControl, % "2:" . (blnRadioSubmenu or blnRadioSpecial ? "Hide" : "Show"), strFavoriteLocation
+GuiControl, % "2:" . (blnRadioSubmenu or blnRadioSpecial or blnRadioURL ? "Hide" : "Show"), btnSelectFolderLocation
+
 if (!blnEditMode) and StrLen(strFavoriteLocation) ; in add mode keep only folder name if we have a file name, else empty it
 {
 	SplitPath, strFavoriteLocation, , strFolderNameOnly, strFilenameExtension
@@ -5123,6 +5129,7 @@ if (blnRadioFolder)
 else if (blnRadioSpecial)
 {
 	GuiControl, 2:, lblShortName, %lDialogSpecialLabel%
+	ControlClick, ComboBox2 ; open drpSpecialFolder dropdown
 }
 else if (blnRadioFile)
 {
@@ -5139,23 +5146,16 @@ else ; blnRadioSubmenu
 	GuiControl, 2:, lblShortName, %lDialogSubmenuShortName%
 }
 
-GuiControl, % "2:" . (blnRadioSpecial ? "Hide" : "Show"), strFavoriteShortName
-GuiControl, % "2:" . (blnRadioSpecial ? "Show" : "Hide"), drpSpecialFolder
-GuiControl, % "2:" . (blnRadioSubmenu or blnRadioSpecial ? "Hide" : "Show"), lblFolder
-GuiControl, % "2:" . (blnRadioSubmenu or blnRadioSpecial ? "Hide" : "Show"), strFavoriteLocation
-GuiControl, % "2:" . (blnRadioSubmenu or blnRadioSpecial or blnRadioURL ? "Hide" : "Show"), btnSelectFolderLocation
-
 Gosub, GuiFavoriteIconDefault
 if (!blnEditMode)
 	strCurrentIconResource := strDefaultIconResource
 Gosub, GuiFavoriteIconDisplay
 
-if (blnRadioSubmenu or blnRadioURL)
-	GuiControl, 2:+Default, btnAddFolderAdd
-else
+if (blnRadioFolder or blnRadioFile)
 	GuiControl, 2:+Default, btnSelectFolderLocation
-
-GuiControl, 2:Focus, strFavoriteShortName
+else
+	GuiControl, 2:+Default, btnAddFolderAdd
+GuiControl, 2:Focus, % (blnRadioSpecial ? "drpSpecialFolder" : "strFavoriteShortName")
 
 return
 ;------------------------------------------------------------
@@ -5352,10 +5352,7 @@ if  ((blnRadioFolder or blnRadioFile or blnRadioURL) and !StrLen(strFavoriteLoca
 if !FolderNameIsNew(strFavoriteShortName, (strParentMenu = strCurrentMenu ? "" : strParentMenu))
 	if ((strParentMenu <> strCurrentMenu) or (strFavoriteShortName <> strCurrentName)) ; same name is OK in current menu
 	{
-		if (blnRadioSpecial)
-			Oops(lDialogFavoriteSpecialNameNotNew, strFavoriteShortName)
-		else
-			Oops(lDialogFavoriteNameNotNew, strFavoriteShortName)
+		Oops(lDialogFavoriteNameNotNew, strFavoriteShortName)
 		return
 	}
 
