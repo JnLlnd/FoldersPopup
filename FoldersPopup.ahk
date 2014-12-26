@@ -1167,8 +1167,8 @@ InitClassId("{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}", "Network", "NetworkPlacesF
 InitClassId("{2227A280-3AEA-1069-A2DE-08002B30309D}", "Printers and Faxes", "PrintersFolder") ; Imprimantes
 InitClassId("{4336a54d-038b-4685-ab02-99bb52d3fb8b}", "Public Folder", "Public") ; Public
 InitClassId("{645FF040-5081-101B-9F08-00AA002F954E}", "Recycle Bin", "RecycleBinFolder") ; Corbeille
-InitClassId("{59031a47-3f72-44a7-89c5-5595fe6b30ee}", "User Folder ####", "Profile")
-InitClassId("{1f3427c8-5c10-4210-aa03-2ee45287d668}", "User Pinned ####", "User Pinned")
+InitClassId("{59031a47-3f72-44a7-89c5-5595fe6b30ee}", lMenuUserFolder, "Profile")
+InitClassId("{1f3427c8-5c10-4210-aa03-2ee45287d668}", lMenuUserPinned, "User Pinned")
 
 ;---------------------
 ; InitClassId(CLSID, Default name, FAKE Shell Command)
@@ -1179,10 +1179,9 @@ InitClassId("{ED7BA470-8E54-465E-825C-99712043E01C}", "Control Panel (All Tasks)
 InitClassId("{323CA680-C24D-4099-B94D-446DD2D7249E}", "Favorites", "!clsid-new") ; Favoris (<> Favorites (Internet))
 InitClassId("{3080F90E-D7AD-11D9-BD98-0000947B0257}", "Flip 3D", "!clsid-new") ; (open clsid in new window)
 InitClassId("{6DFD7C5C-2451-11d3-A299-00C04F8EF6AF}", "Folder Options", "!clsid-new") ; Options des dossiers (open clsid in new window) OK_
-InitClassId("{AFDB1F70-2A4C-11d2-9039-00C04F8EEB3E}", "Offline Files Folder ####", "!clsid-new") ; ShellConstant unknown
 InitClassId("{78F3955E-3B90-4184-BD14-5397C15F1EFC}", "Performance Information and Tools", "!clsid-new") ; Informations et outils de performance (open clsid in new window)
 InitClassId("{35786D3C-B075-49b9-88DD-029876E11C01}", "Portable Devices", "!clsid-new") ; Appareils mobiles (open clsid in new window)
-InitClassId("{7be9d83c-a729-4d97-b5a7-1b7313c39e0a}", "Programs Folder (Start Menu) ####", "!clsid-new") ; (Menu Start/Programs)
+InitClassId("{7be9d83c-a729-4d97-b5a7-1b7313c39e0a}", lMenuProgramsFolderStartMenu, "!clsid-new") ; (Menu Start/Programs)
 InitClassId("{22877a6d-37a1-461a-91b0-dbda5aaebc99}", "Recent Places", "!clsid-new") ; Emplacements récents (open clsid in new window)
 InitClassId("{3080F90D-D7AD-11D9-BD98-0000947B0257}", "Show Desktop", "!clsid-new") ; Afficher le Bureau (open clsid in new window)
 InitClassId("{BB06C0E4-D293-4f75-8A90-CB05B6477EEE}", "System", "!clsid-new") ; Système (open clsid in new window)
@@ -2501,6 +2500,7 @@ CanOpenFavorite(strMouseOrKeyboard, ByRef strWinId, ByRef strClass, ByRef strCon
 		or (WindowIsDirectoryOpus(strClass) and blnUseDirectoryOpus)
 		or (WindowIsTotalCommander(strClass) and blnUseTotalCommander)
 		or (WindowIsFPConnect(strClass) and blnUseFPConnect)
+		or WindowIsFoldersPopup(strClass)
 
 	if (blnDiagMode)
 	{
@@ -2605,6 +2605,15 @@ WindowIsFreeCommander(strClass)
 
 
 ;------------------------------------------------------------
+WindowIsDirectoryOpus(strClass)
+;------------------------------------------------------------
+{
+	return InStr(strClass, "dopus")
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 WindowIsTotalCommander(strClass)
 ;------------------------------------------------------------
 {
@@ -2623,10 +2632,10 @@ WindowIsFPConnect(strClass)
 
 
 ;------------------------------------------------------------
-WindowIsDirectoryOpus(strClass)
+WindowIsFoldersPopup(strClass)
 ;------------------------------------------------------------
 {
-	return InStr(strClass, "dopus")
+	return (strClass = "JeanLalonde.ca")
 }
 ;------------------------------------------------------------
 
@@ -4187,10 +4196,10 @@ Gui, 1:Add, DropDownList, xm+30 yp w480 vdrpMenusList gGuiMenusListChanged
 
 ; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
 Gui, 1:Add, ListView
-	, xm+30 w1480 h240 Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFavoritesList gGuiFavoritesListEvent
+	, xm+30 w480 h240 Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFavoritesList gGuiFavoritesListEvent
 	, %lGuiLvFavoritesHeader%|Hidden Menu|Hidden Submenu|Hidden FavoriteType|Hidden IconResource
-; Loop, 4
-;	LV_ModifyCol(A_Index + 2, 0) ; hide 3rd-6th columns
+Loop, 4
+	LV_ModifyCol(A_Index + 2, 0) ; hide 3rd-6th columns
 
 Gui, 1:Add, Text, Section x+0 yp
 
@@ -5079,8 +5088,8 @@ else
 
 Gosub, GuiFavoriteIconDefault
 Gosub, GuiFavoriteIconDisplay
-Gosub, RadioButtonsChanged ; to hide unused control when edit a special folder
 Gosub, DropdownParentMenuChanged ; to init the content of menu items
+Gosub, RadioButtonsChanged ; to hide unused control when edit a special folder
 
 if (blnRadioSpecial)
 	GuiControl, 2:Focus, drpSpecialFolder
@@ -5163,7 +5172,7 @@ if (blnRadioFolder)
 else if (blnRadioSpecial)
 {
 	GuiControl, 2:, lblShortName, %lDialogSpecialLabel%
-	ControlClick, ComboBox2 ; open drpSpecialFolder dropdown
+	ControlClick, ComboBox3 ; open drpSpecialFolder dropdown
 }
 else if (blnRadioFile)
 {
@@ -5425,12 +5434,13 @@ Gui, 1:Default
 GuiControl, 1:Focus, lvFavoritesList
 Gui, 1:ListView, lvFavoritesList
 
-; #### use intNewItemPos
 if (strParentMenu = strCurrentMenu)
 {
 	if (A_ThisLabel = "GuiAddFavoriteSave")
 	{
-		LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus"
+		; LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus"
+		;	, strFavoriteShortName, strFavoriteLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType, strCurrentIconResource)
+		LV_Insert(intNewItemPos, "Select Focus"
 			, strFavoriteShortName, strFavoriteLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType, strCurrentIconResource)
 		LV_Modify(LV_GetNext(), "Vis")
 	
@@ -5452,7 +5462,7 @@ else ; add menu item to selected menu object
 	objFavorite.SubmenuFullName := strNewSubmenuFullName ; full name of the submenu
 	objFavorite.FavoriteType := strFavoriteType ; "F" folder, "P" sPecial, "D" document, "U" for URL or "S" submenu
 	objFavorite.IconResource := strCurrentIconResource ; icon resource in format "iconfile,iconindex"
-	arrMenus[objFavorite.MenuName].Insert(1, objFavorite) ; add this menu item to the new menu
+	arrMenus[objFavorite.MenuName].Insert(intNewItemPos, objFavorite) ; add this menu item to the new menu
 
 	if (A_ThisLabel = "GuiEditFavoriteSave")
 	{

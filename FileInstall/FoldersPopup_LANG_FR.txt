@@ -183,6 +183,7 @@ lMenuMyVideo	Mes vidéos
 lMenuNetworkNeighborhood	Réseau
 lMenuPictures	Images
 lMenuProgramFiles	Programmes
+lMenuProgramsFolderStartMenu	Dossier Programmes (menu Démarrer)
 lMenuPublicLibraries	Bibliothèques (public)
 lMenuQuickLaunch	Lancement rapide
 lMenuRecentFolders	&Emplacements récents
@@ -204,6 +205,8 @@ lMenuTemplates	Modèles
 lMenuTemplates	Modèles
 lMenuTemporaryFiles	Fichiers temporaires
 lMenuUpdate	Vérifier la mise à jour
+lMenuUserFolder	Dossier de l'utilisateur
+lMenuUserPinned	Épinglé par l'utilisateur
 lNavigateFileError	Une erreur s'est produite lors de l'ouverture du dossier:`n~1~.
 lNavigateSpecialError	Une erreur s'est produite lors de l'ouverture du dossier spécial #~1~.
 lOopsTitle	~1~ (~2~)
