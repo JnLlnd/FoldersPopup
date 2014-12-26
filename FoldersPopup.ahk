@@ -2,8 +2,7 @@
 Bugs:
 
 To-do for v4:
-- translate some default special folders names
-- choose icons for all special folders
+- in add favorite, manage menu change, use psition in save item
 - select position of new menu in add
 
 */
@@ -23,8 +22,10 @@ To-do for v4:
 
 	Version: 4.1.8 BETA (2014-12-??)
 	* refactor InitSpecialFolders with ClassID and exceptions for unavailable ClassID
-	* add icons for My Music, My Video and Templates
+	* add icons and translateble default name for exceptions
 	* fix bug no icon for system menus in main menu under Win_XP
+	* fix delay in group load for slow drives
+	* FR, DE, NL, KO, SV and IT language updates
 
 	Version: 4.1 (2014-12-20)
 	* addition of Italian language, thanks to Riccardo Leone
@@ -5017,7 +5018,7 @@ Gui, 2:+OwnDialogs
 Gui, 2:Color, %strGuiWindowColor%
 
 Gui, 2:Add, Text, % x10 y10 vlblFavoriteParentMenu, % (blnRadioSubmenu ? lDialogSubmenuParentMenu : lDialogFavoriteParentMenu)
-Gui, 2:Add, DropDownList, x10 w300 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
+Gui, 2:Add, DropDownList, x10 w300 vdrpParentMenu gDropdownParentMenuChanged, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
 Gui, 2:Add, Text, yp x+10 section
 Gui, 2:Add, Text, xs y10 w64 center vlblIcon gGuiPickIconDialog, %lDialogIcon%
 Gui, Add, Picture, % "xs+" . ((64-32)/2) . " y+5 w32 h32 vpicIcon gGuiPickIconDialog"
@@ -5025,6 +5026,9 @@ Gui, Add, Text, x+5 yp vlblRemoveIcon gGuiRemoveIcon, X
 
 if (A_ThisLabel = "GuiAddFavorite")
 {
+	Gui, 2:Add, Text, x20 ys+25 vlblFavoriteParentMenuPosition, Insert before this item in the menu ; ### language
+	Gui, 2:Add, DropDownList, x20 w290 vdrpParentMenuItems
+
 	Gui, 2:Add, Text, x10, %lDialogAdd%:
 	Gui, 2:Add, Radio, x+10 yp vblnRadioFolder checked gRadioButtonsChanged section, %lDialogFolderLabel%
 	If WindowsIsVersion7OrMore()
@@ -5068,6 +5072,7 @@ else
 Gosub, GuiFavoriteIconDefault
 Gosub, GuiFavoriteIconDisplay
 Gosub, RadioButtonsChanged ; to hide unused control when edit a special folder
+Gosub, DropdownParentMenuChanged ; to init the content of menu items
 
 if (blnRadioSpecial)
 	GuiControl, 2:Focus, drpSpecialFolder
@@ -5077,6 +5082,31 @@ if (A_ThisLabel = "GuiEditFavorite") and (!blnRadioSpecial)
 	SendInput, ^a
 Gui, 2:Show, AutoSize Center
 Gui, 1:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+DropdownParentMenuChanged:
+;------------------------------------------------------------
+
+Gosub, UpdateDropdownParentMenuItems
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+UpdateDropdownParentMenuItems:
+;------------------------------------------------------------
+
+strDropdownParentMenuItems := ""
+
+Loop, % arrMenus[strCurrentMenu].MaxIndex()
+	strDropdownParentMenuItems := strDropdownParentMenuItems . arrMenus[strCurrentMenu][A_Index].FavoriteName . "|"
+
+GuiControl, , drpParentMenuItems, % strDropdownParentMenuItems . "End of the menu||" ; ### language
 
 return
 ;------------------------------------------------------------
