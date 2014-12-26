@@ -24,15 +24,17 @@ lDialogCancelTitle	Annuler - ~1~ ~2~
 lDialogEdit	Modifier
 lDialogEditDialogPrompt	Entrez le nouveau nom de la boîte de dialogue`n(ou une partie du nom):
 lDialogEditDialogTitle	Modifier Boîte de dialogue - ~1~ ~2~
+lDialogEndOfMenu	fin du menu
 lDialogFavoriteDoesNotExistPrompt	Le favori "~1~" n'existe pas ou n'est pas disponible.`n`nSi ce favori réside sur un lecteur réseau, veuillez essayer à nouveau après l'authentification réseau.`n`nSi un favori est un lien vers une page web, choisissez l'option "Lien (URL)" lorsque vous ajoutez le favori.
 lDialogFavoriteDoesNotExistTitle	Favori introuvable - ~1~
 lDialogFavoriteLocationEmpty	L'emplacement est vide. Veuillez indiquer l'emplacement du dossier.
+lDialogFavoriteMenuPosition	Insérer le nouveau favoris avant cet item
 lDialogFavoriteNameEmpty	Le nom du favori est vide. Veuillez indiquer un nom court pour ce favori.
 lDialogFavoriteNameNoColumnBreak	Le nom du sous-menu ne peut débuter par les caractères réservés "~1~" utilisés comme indicateur de saut de colonne.
 lDialogFavoriteNameNoPipe	Le nom du favori ou du sous-menu ne doit pas inclure le caractère réservé "|" (barre verticale).
 lDialogFavoriteNameNoSeparator	Le nom du sous-menu ne doit pas inclure le caractère réservé "~1~".
 lDialogFavoriteNameNotNew	Le nom "~1~" est déjà présent dans ce menu. Veuillez choisir un nouveau nom.
-lDialogFavoriteParentMenu	Menu contenant ce favori
+lDialogFavoriteParentMenu	Insérer le nouveau favoris dans ce menu
 lDialogFavoriteRemovePrompt	Supprimer le sous-menu "~1~"`net TOUT son contenu (dossiers et sous-menus)?
 lDialogFavoriteRemoveTitle	Supprimer un favori - ~1~
 lDialogFileLabel	Document

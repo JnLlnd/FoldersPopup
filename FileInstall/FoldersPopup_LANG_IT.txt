@@ -148,7 +148,6 @@ lMenuAbout	C&rediti
 lMenuAddThisDialog	&Aggiungi Questa Casella di Dialogo all'elenco supportato
 lMenuAddThisFolder	&Aggiungi Questa Cartella
 lMenuColumnBreak	colonna
-lMenuColumnBreakIndicator	===
 lMenuControlPanel	Pannello di &Controllo
 lMenuDesktop	&Desktop
 lMenuDialogNotSupported	Questa casella di dialogo non è ancora supportata

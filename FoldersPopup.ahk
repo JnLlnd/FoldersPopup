@@ -2,8 +2,7 @@
 Bugs:
 
 To-do for v4:
-- in add favorite, manage menu change, use psition in save item
-- select position of new menu in add
+- save new favorite at selected menu position; 
 
 */
 ;===============================================
@@ -616,6 +615,7 @@ global objIconsFile := Object()
 global objIconsIndex := Object()
 global strHotkeyNoneModifiers := ">^!+#" ; right-control/atl/shift/windows impossible keys combination
 global strHotkeyNoneKey := "9"
+global strColumnBreakIndicator := "==="
 
 if InStr(A_ScriptDir, A_Temp) ; must be positioned after strAppName is created
 ; if the app runs from a zip file, the script directory is created under the system Temp folder
@@ -4568,8 +4568,8 @@ GuiControl, Focus, lvFavoritesList
 Gui, 1:ListView, lvFavoritesList
 ; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
 LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus"
-	, lMenuColumnBreakIndicator . " " lMenuColumnBreak . " " . lMenuColumnBreakIndicator
-	, lMenuColumnBreakIndicator . " " lMenuColumnBreak . " " . lMenuColumnBreakIndicator
+	, strColumnBreakIndicator . " " lMenuColumnBreak . " " . strColumnBreakIndicator
+	, strColumnBreakIndicator . " " lMenuColumnBreak . " " . strColumnBreakIndicator
 	, strCurrentMenu, "", "", "")
 LV_Modify(LV_GetNext(), "Vis")
 LV_ModifyCol(1, "AutoHdr")
@@ -5009,6 +5009,11 @@ else
 	}
 }
 
+if InStr("GuiAddFavorite|GuiAddFromDropFiles", A_ThisLabel)(A_ThisLabel = "GuiAddFavorite")
+	intItemPosition := (LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1)
+else
+	intItemPosition := 0 ; will display lDialogEndOfMenu
+
 intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
 
@@ -5024,11 +5029,14 @@ Gui, 2:Add, Text, xs y10 w64 center vlblIcon gGuiPickIconDialog, %lDialogIcon%
 Gui, Add, Picture, % "xs+" . ((64-32)/2) . " y+5 w32 h32 vpicIcon gGuiPickIconDialog"
 Gui, Add, Text, x+5 yp vlblRemoveIcon gGuiRemoveIcon, X
 
+If (A_ThisLabel <> "GuiEditFavorite")
+{
+	Gui, 2:Add, Text, x20 ys+25 vlblFavoriteParentMenuPosition, %lDialogFavoriteMenuPosition%
+	Gui, 2:Add, DropDownList, x20 w290 vdrpParentMenuItems AltSubmit
+}
+
 if (A_ThisLabel = "GuiAddFavorite")
 {
-	Gui, 2:Add, Text, x20 ys+25 vlblFavoriteParentMenuPosition, Insert before this item in the menu ; ### language
-	Gui, 2:Add, DropDownList, x20 w290 vdrpParentMenuItems
-
 	Gui, 2:Add, Text, x10, %lDialogAdd%:
 	Gui, 2:Add, Radio, x+10 yp vblnRadioFolder checked gRadioButtonsChanged section, %lDialogFolderLabel%
 	If WindowsIsVersion7OrMore()
@@ -5090,23 +5098,20 @@ return
 ;------------------------------------------------------------
 DropdownParentMenuChanged:
 ;------------------------------------------------------------
-
-Gosub, UpdateDropdownParentMenuItems
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-UpdateDropdownParentMenuItems:
-;------------------------------------------------------------
+Gui, 2:Submit, NoHide
 
 strDropdownParentMenuItems := ""
 
-Loop, % arrMenus[strCurrentMenu].MaxIndex()
-	strDropdownParentMenuItems := strDropdownParentMenuItems . arrMenus[strCurrentMenu][A_Index].FavoriteName . "|"
+Loop, % arrMenus[drpParentMenu].MaxIndex()
+	strDropdownParentMenuItems := strDropdownParentMenuItems . arrMenus[drpParentMenu][A_Index].FavoriteName . "|"
 
-GuiControl, , drpParentMenuItems, % strDropdownParentMenuItems . "End of the menu||" ; ### language
+GuiControl, , drpParentMenuItems, % "|" . strDropdownParentMenuItems . strColumnBreakIndicator . " " . lDialogEndOfMenu . " " . strColumnBreakIndicator
+if (intItemPosition)
+	GuiControl, Choose, drpParentMenuItems, %intItemPosition%
+else
+	GuiControl, ChooseString, drpParentMenuItems, % strColumnBreakIndicator . " " . lDialogEndOfMenu . " " . strColumnBreakIndicator
+
+intItemPosition := 0 ; if called again for a new partent menu, will display lDialogEndOfMenu
 
 return
 ;------------------------------------------------------------
@@ -5353,6 +5358,7 @@ Gui, 2:Submit, NoHide
 Gui, 2:+OwnDialogs
 
 GuiControlGet, strParentMenu, , drpParentMenu
+GuiControlGet, intNewItemPos, , drpParentMenuItems
 
 if !StrLen(strFavoriteShortName)
 {
@@ -5368,7 +5374,7 @@ if InStr(strFavoriteShortName, "|")
 
 if IsColumnBreak(strFavoriteShortName)
 {
-	Oops(L(lDialogFavoriteNameNoColumnBreak, lMenuColumnBreakIndicator))
+	Oops(L(lDialogFavoriteNameNoColumnBreak, strColumnBreakIndicator))
 	return
 }
 
@@ -5419,7 +5425,8 @@ Gui, 1:Default
 GuiControl, 1:Focus, lvFavoritesList
 Gui, 1:ListView, lvFavoritesList
 
-if (strParentMenu = strCurrentMenu) ; add as top row to current menu
+; #### use intNewItemPos
+if (strParentMenu = strCurrentMenu)
 {
 	if (A_ThisLabel = "GuiAddFavoriteSave")
 	{
@@ -6841,7 +6848,7 @@ GetOSVersionInfo()
 IsColumnBreak(strMenuName)
 ;------------------------------------------------------------
 {
-	return (SubStr(strMenuName, 1, StrLen(lMenuColumnBreakIndicator)) = lMenuColumnBreakIndicator)
+	return (SubStr(strMenuName, 1, StrLen(strColumnBreakIndicator)) = strColumnBreakIndicator)
 }
 ;------------------------------------------------------------
 
