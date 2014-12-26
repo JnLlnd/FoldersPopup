@@ -2,7 +2,7 @@
 Bugs:
 
 To-do for v4:
-- translate special folders names in exceptions
+- translate some default special folders names
 - choose icons for all special folders
 - select position of new menu in add
 
@@ -1166,8 +1166,8 @@ InitClassId("{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}", "Network", "NetworkPlacesF
 InitClassId("{2227A280-3AEA-1069-A2DE-08002B30309D}", "Printers and Faxes", "PrintersFolder") ; Imprimantes
 InitClassId("{4336a54d-038b-4685-ab02-99bb52d3fb8b}", "Public Folder", "Public") ; Public
 InitClassId("{645FF040-5081-101B-9F08-00AA002F954E}", "Recycle Bin", "RecycleBinFolder") ; Corbeille
-InitClassId("{59031a47-3f72-44a7-89c5-5595fe6b30ee}", "User Folder", "Profile")
-InitClassId("{1f3427c8-5c10-4210-aa03-2ee45287d668}", "User Pinned", "User Pinned")
+InitClassId("{59031a47-3f72-44a7-89c5-5595fe6b30ee}", "User Folder ####", "Profile")
+InitClassId("{1f3427c8-5c10-4210-aa03-2ee45287d668}", "User Pinned ####", "User Pinned")
 
 ;---------------------
 ; InitClassId(CLSID, Default name, FAKE Shell Command)
@@ -1178,10 +1178,10 @@ InitClassId("{ED7BA470-8E54-465E-825C-99712043E01C}", "Control Panel (All Tasks)
 InitClassId("{323CA680-C24D-4099-B94D-446DD2D7249E}", "Favorites", "!clsid-new") ; Favoris (<> Favorites (Internet))
 InitClassId("{3080F90E-D7AD-11D9-BD98-0000947B0257}", "Flip 3D", "!clsid-new") ; (open clsid in new window)
 InitClassId("{6DFD7C5C-2451-11d3-A299-00C04F8EF6AF}", "Folder Options", "!clsid-new") ; Options des dossiers (open clsid in new window) OK_
-InitClassId("{AFDB1F70-2A4C-11d2-9039-00C04F8EEB3E}", "Offline Files Folder", "!clsid-new") ; ShellConstant unknown
+InitClassId("{AFDB1F70-2A4C-11d2-9039-00C04F8EEB3E}", "Offline Files Folder ####", "!clsid-new") ; ShellConstant unknown
 InitClassId("{78F3955E-3B90-4184-BD14-5397C15F1EFC}", "Performance Information and Tools", "!clsid-new") ; Informations et outils de performance (open clsid in new window)
 InitClassId("{35786D3C-B075-49b9-88DD-029876E11C01}", "Portable Devices", "!clsid-new") ; Appareils mobiles (open clsid in new window)
-InitClassId("{7be9d83c-a729-4d97-b5a7-1b7313c39e0a}", "Programs Folder (Start Menu)", "!clsid-new") ; (Menu Start/Programs)
+InitClassId("{7be9d83c-a729-4d97-b5a7-1b7313c39e0a}", "Programs Folder (Start Menu) ####", "!clsid-new") ; (Menu Start/Programs)
 InitClassId("{22877a6d-37a1-461a-91b0-dbda5aaebc99}", "Recent Places", "!clsid-new") ; Emplacements récents (open clsid in new window)
 InitClassId("{3080F90D-D7AD-11D9-BD98-0000947B0257}", "Show Desktop", "!clsid-new") ; Afficher le Bureau (open clsid in new window)
 InitClassId("{BB06C0E4-D293-4f75-8A90-CB05B6477EEE}", "System", "!clsid-new") ; Système (open clsid in new window)
@@ -1202,42 +1202,43 @@ InitClassIdException(strException, lMenuMyVideo, "MyVideo")
 RegRead, strException, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, Templates
 InitClassIdException(strException, lMenuTemplates, "Templates")
 
-InitClassIdException("%APPDATA%\Microsoft\Windows\Start Menu", "Start Menu", "Folder")
-InitClassIdException("%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu", "Common Start Menu", "Folder")
+InitClassIdException("%APPDATA%\Microsoft\Windows\Start Menu", lMenuStartMenu, "Folder")
+InitClassIdException("%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu", lMenuCommonStartMenu, "Folder")
 
-InitClassIdException("%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup", "Startup", "Folder")
-InitClassIdException("%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Startup", "Common Startup Menu", "Folder")
+InitClassIdException("%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup", lMenuStartup, "Folder")
+InitClassIdException("%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Startup", lMenuCommonStartupMenu, "Folder")
 
-InitClassIdException("%APPDATA%", "AppData", "Folder")
-InitClassIdException("%ALLUSERSPROFILE%", "Common AppData", "Folder")
+InitClassIdException("%APPDATA%", lMenuAppData, "Folder")
+InitClassIdException("%ALLUSERSPROFILE%", lMenuCommonAppData, "Folder")
 
-InitClassIdException("%APPDATA%\Microsoft\Windows\Recent", "Recent Items", "menuRecentFolders")
+InitClassIdException("%APPDATA%\Microsoft\Windows\Recent", lMenuRecentItems, "menuRecentFolders")
 
-InitClassIdException("%APPDATA%\Microsoft\Windows\Cookies", "Cookies", "Folder")
+InitClassIdException("%APPDATA%\Microsoft\Windows\Cookies", lMenuCookies, "Folder")
 
-InitClassIdException("%APPDATA%\Microsoft\Internet Explorer\Quick Launch", "Quick Launch", "Folder")
+InitClassIdException("%APPDATA%\Microsoft\Internet Explorer\Quick Launch", lMenuQuickLaunch, "Folder")
 
-InitClassIdException("%APPDATA%\Microsoft\SystemCertificates", "System Certificates", "Folder")
+InitClassIdException("%APPDATA%\Microsoft\SystemCertificates", lMenuSystemCertificates, "Folder")
 
-InitClassIdException("%LOCALAPPDATA%\Microsoft\Windows\Temporary Internet Files", "Cache", "Temporary")
+InitClassIdException("%LOCALAPPDATA%\Microsoft\Windows\Temporary Internet Files", lMenuCache, "Temporary")
 
-InitClassIdException("%LOCALAPPDATA%\Microsoft\Windows\History", "History", "History")
+InitClassIdException("%LOCALAPPDATA%\Microsoft\Windows\History", lMenuHistory, "History")
 
-InitClassIdException("%ProgramFiles%", "Program Files", "Folder")
+InitClassIdException("%ProgramFiles%", lMenuProgramFiles, "Folder")
 if (A_Is64bitOS)
-	InitClassIdException("%ProgramFiles(x86)%", "Program Files (x86)", "Folder")
+	InitClassIdException("%ProgramFiles(x86)%", lMenuProgramFiles . " (x86)", "Folder")
 
-InitClassIdException("%PUBLIC%\Libraries", "Public Libraries", "Folder")
+InitClassIdException("%PUBLIC%\Libraries", lMenuPublicLibraries, "Folder")
 
 StringReplace, strException, lMenuPictures, &
 InitClassIdException(strPathUser . "\Pictures", strException, "lMenuPictures")
 
-InitClassIdException(strPathUser . "\Favorites", "Favorites (Internet)", "Favorites")
+InitClassIdException(strPathUser . "\Favorites", lMenuFavoritesInternet, "Favorites")
 
-InitClassIdException(A_Desktop, "Desktop", "lMenuDesktop")
-InitClassIdException(A_DesktopCommon, "Common Desktop", "lMenuDesktop")
+StringReplace, strException, lMenuDesktop, &
+InitClassIdException(A_Desktop, strException, "lMenuDesktop")
+InitClassIdException(A_DesktopCommon, lMenuCommonDesktop, "lMenuDesktop")
 
-InitClassIdException(A_Temp, "Temporary Files", "Temporary")
+InitClassIdException(A_Temp, lMenuTemporaryFiles, "Temporary")
 
 InitClassIdException(A_WinDir, "Windows", "Winver")
 

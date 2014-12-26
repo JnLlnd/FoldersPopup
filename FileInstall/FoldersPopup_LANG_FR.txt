@@ -149,13 +149,21 @@ lHelpTitle	Aide - ~1~ ~2~
 lMainMenuName	Principal
 lMenuAbout	À propos
 lMenuAddThisFolder	&Ajouter ce dossier au menu
+lMenuAppData	Application Data
+lMenuCache	Cache
 lMenuColumnBreak	colonne
+lMenuCommonAppData	Application Data (commun)
+lMenuCommonDesktop	Bureau (commun)
+lMenuCommonStartMenu	Menu Démarrer (commun)
+lMenuCommonStartupMenu	Démarrage (commun)
 lMenuControlPanel	Panneau de configuration
+lMenuCookies	Cookies
 lMenuDesktop	Bureau
 lMenuDialogNotSupported	Ce type de boîte de dialogue n'est pas encore pris en charge
 lMenuDocuments	Documents
 lMenuDownloads	Téléchargements
 lMenuExitFoldersPopup	Quitter ~1~
+lMenuFavoritesInternet	Favoris (Internet)
 lMenuFoldersInExplorer	Dossiers dans l'Explorateur
 lMenuFPMenu	~2~ ~1~
 lMenuGroup	Groupes de dossiers
@@ -165,13 +173,18 @@ lMenuGroupLoad	Ouvrir un groupe
 lMenuGroupReplace	remplacer
 lMenuGroupSave	Enregistrer les Dossiers dans l'Explorateur dans un groupe
 lMenuHelp	Aide
+lMenuHistory	Historique
 lMenuMenu	Menu
 lMenuMyComputer	Ordinateur
 lMenuMyMusic	Ma musique
 lMenuMyVideo	Mes vidéos
 lMenuNetworkNeighborhood	Réseau
 lMenuPictures	Images
+lMenuProgramFiles	Programmes
+lMenuPublicLibraries	Bibliothèques (public)
+lMenuQuickLaunch	Lancement rapide
 lMenuRecentFolders	&Emplacements récents
+lMenuRecentItems	Documents récents
 lMenuRecycleBin	Corbeille
 lMenuRefreshRecent	Actualisation des dossiers récents en cours
 lMenuReservedShortcuts	DBEPA
@@ -181,8 +194,13 @@ lMenuSeparator	----------------
 lMenuSettings	&Paramètres de ~1~
 lMenuSpecialExplorer	Fenêtre spéciale de l'Explorateur
 lMenuSpecialFolders	&Dossiers spéciaux
+lMenuStartMenu	Menu Démarrer
+lMenuStartup	Démarrage
 lMenuSuspendHotkeys	Suspendre les déclencheurs (Hotkeys)
+lMenuSystemCertificates	Certificats système
 lMenuTemplates	Modèles
+lMenuTemplates	Modèles
+lMenuTemporaryFiles	Fichiers temporaires
 lMenuUpdate	Vérifier la mise à jour
 lNavigateFileError	Une erreur s'est produite lors de l'ouverture du dossier:`n~1~.
 lNavigateSpecialError	Une erreur s'est produite lors de l'ouverture du dossier spécial #~1~.
