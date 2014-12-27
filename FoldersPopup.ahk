@@ -19,8 +19,8 @@ To-do for v4:
 
 
 	Version: 4.1.8.1 BETA (2014-12-2?)
-	* 
-	* add os info to check4update request
+	* removed support for FreeCommander XE (now available via FPconnect)
+	* add version and os info to check4update request
 	
 	Version: 4.1.8 BETA (2014-12-26)
 	* add dropdown list in Add Favorite dialog box to select the position of the new favorite in the menu
@@ -2379,7 +2379,7 @@ if (blnDiagMode)
 	Diag("WinTitle", strDiag)
 	Diag("WinId", strTargetWinId)
 	Diag("Class", strTargetClass)
-	Diag("ShowMenu", "Favorites Menu " . (WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass) 
+	Diag("ShowMenu", "Favorites Menu " . (WindowIsAnExplorer(strTargetClass) ; removed for FPconnect: or WindowIsFreeCommander(strTargetClass) 
 	or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
 		or (WindowIsDialog(strTargetClass, strTargetWinId) and WindowsIsVersion7OrMore()) ? "WITH" : "WITHOUT") . " Add this folder")
 }
@@ -2398,21 +2398,21 @@ if (blnDisplaySpecialFolders)
 	else
 	{
 		Menu, menuSpecialFolders
-			, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+			, % WindowIsConsole(strTargetClass) ; removed for FPconnect: or WindowIsFreeCommander(strTargetClass)
 			or WindowIsDialog(strTargetClass, strTargetWinId) ? "Disable" : "Enable"
 			, %lMenuMyComputer%
 		Menu, menuSpecialFolders
-			, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+			, % WindowIsConsole(strTargetClass)  ; removed for FPconnect: or WindowIsFreeCommander(strTargetClass)
 			or WindowIsDialog(strTargetClass, strTargetWinId) ? "Disable" : "Enable"
 			, %lMenuNetworkNeighborhood%
 	
-		; There is no point to navigate a dialog box or console to Control Panel or Recycle Bin, unknown for FreeCommander
+		; There is no point to navigate a dialog box or console to Control Panel or Recycle Bin
 		Menu, menuSpecialFolders
-			, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+			, % WindowIsConsole(strTargetClass)  ; removed for FPconnect: or WindowIsFreeCommander(strTargetClass)
 			or WindowIsDialog(strTargetClass, strTargetWinId) ? "Disable" : "Enable"
 			, %lMenuControlPanel%
 		Menu, menuSpecialFolders
-			, % WindowIsConsole(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+			, % WindowIsConsole(strTargetClass)  ; removed for FPconnect: or WindowIsFreeCommander(strTargetClass)
 			or WindowIsDialog(strTargetClass, strTargetWinId) ? "Disable" : "Enable"
 			, %lMenuRecycleBin%
 	}
@@ -2430,17 +2430,17 @@ if (blnDisplayGroupMenu)
 		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Save group menu if no Explorer
 		, %lMenuGroupSave%
 
-; Enable "Add This Folder" only if the target window is an Explorer FreeCommander, TotalCommander,
+; Enable "Add This Folder" only if the target window is an Explorer, TotalCommander,
 ; Directory Opus or a dialog box under WIN_7 (does not work under WIN_XP). Tested on WIN_XP and WIN_7.
 ; Other tests shown that WIN_8 behaves like WIN_7.
 if (blnDiagMode)
 	Diag("ShowMenu", "Favorites Menu " 
-		. (WindowIsAnExplorer(strTargetClass)  or WindowIsFreeCommander(strTargetClass)
+		. (WindowIsAnExplorer(strTargetClass) ; removed for FPconnect: or WindowIsFreeCommander(strTargetClass)
 		or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
 		or (WindowIsDialog(strTargetClass, strTargetWinId) and WindowsIsVersion7OrMore()) ? "WITH" : "WITHOUT")
 		. " Add this folder")
 Menu, %lMainMenuName%
-	, % WindowIsAnExplorer(strTargetClass) or WindowIsFreeCommander(strTargetClass)
+	, % WindowIsAnExplorer(strTargetClass) ; removed for FPconnect: or WindowIsFreeCommander(strTargetClass)
 	or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
 	or (WindowIsDialog(strTargetClass, strTargetWinId) and WindowsIsVersion7OrMore()) ? "Enable" : "Disable"
 	, %lMenuAddThisFolder%...
@@ -2519,7 +2519,7 @@ CanOpenFavorite(strMouseOrKeyboard, ByRef strWinId, ByRef strClass, ByRef strCon
 	WinGetClass strClass, % "ahk_id " . strWinId
 
 	blnCanOpenFavorite := WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or WindowIsConsole(strClass)
-		or WindowIsDialog(strClass, strWinId) or WindowIsFreeCommander(strClass)
+		or WindowIsDialog(strClass, strWinId) ; removed for FPconnect: or WindowIsFreeCommander(strClass)
 		or (blnUseDirectoryOpus and WindowIsDirectoryOpus(strClass))
 		or (blnUseTotalCommander and WindowIsTotalCommander(strClass))
 		or (blnUseFPconnect and WindowIsFPconnect(strWinId))
@@ -2618,6 +2618,7 @@ WindowIsTreeview(strWinId)
 ;------------------------------------------------------------
 
 
+/* removed for FPconnect: 
 ;------------------------------------------------------------
 WindowIsFreeCommander(strClass)
 ;------------------------------------------------------------
@@ -2625,6 +2626,7 @@ WindowIsFreeCommander(strClass)
 	return InStr(strClass, "FreeCommanderXE")
 }
 ;------------------------------------------------------------
+*/
 
 
 ;------------------------------------------------------------
@@ -2773,28 +2775,7 @@ else if WindowIsConsole(strTargetClass)
 	
 	NavigateConsole(strLocation, strTargetWinId)
 }
-else if WindowIsDirectoryOpus(strTargetClass)
-{
-	if (blnDiagMode)
-		Diag("Navigate", "DirectoryOpus")
-
-	NavigateDirectoryOpus(strLocation, strTargetWinId)
-}
-else if WindowIsFreeCommander(strTargetClass)
-{
-	if (blnDiagMode)
-		Diag("Navigate", "NavigateFreeCommander")
-	
-	NavigateFreeCommander(strLocation, strTargetWinId, strTargetControl)
-}
-else if WindowIsTotalCommander(strTargetClass)
-{
-	if (blnDiagMode)
-		Diag("Navigate", "NavigateTotalCommander")
-	
-	NavigateTotalCommander(strLocation, strTargetWinId, strTargetControl)
-}
-else if WindowIsFPconnect(strTargetWinId)
+else if WindowIsFPconnect(strTargetWinId) ; must be before other third-party file managers
 {
 	if (blnDiagMode)
 	{
@@ -2802,6 +2783,29 @@ else if WindowIsFPconnect(strTargetWinId)
 		Diag("TargetWinId", strTargetWinId)
 	}
 	NavigateFPconnect(strLocation, strTargetWinId, strTargetClass)
+}
+else if WindowIsDirectoryOpus(strTargetClass)
+{
+	if (blnDiagMode)
+		Diag("Navigate", "DirectoryOpus")
+
+	NavigateDirectoryOpus(strLocation, strTargetWinId)
+}
+/* removed for FPconnect: 
+else if WindowIsFreeCommander(strTargetClass)
+{
+	if (blnDiagMode)
+		Diag("Navigate", "NavigateFreeCommander")
+	
+	NavigateFreeCommander(strLocation, strTargetWinId, strTargetControl)
+}
+*/
+else if WindowIsTotalCommander(strTargetClass)
+{
+	if (blnDiagMode)
+		Diag("Navigate", "NavigateTotalCommander")
+	
+	NavigateTotalCommander(strLocation, strTargetWinId, strTargetControl)
 }
 else if WindowIsDialog(strTargetClass, strTargetWinId)
 {
@@ -3001,7 +3005,7 @@ else if (blnNewSpecialWindow and blnUseTotalCommander) or WindowIsTotalCommander
 			}
 	}
 }
-else ; this is Explorer, Console, FreeCommander or a dialog box
+else ; this is Explorer, Console or a dialog box
 {
 	; ShellSpecialFolderConstants: http://msdn.microsoft.com/en-us/library/windows/desktop/bb774096%28v=vs.85%29.aspx
 	if (A_ThisMenuItem = lMenuDesktop)
@@ -3029,7 +3033,7 @@ else ; this is Explorer, Console, FreeCommander or a dialog box
 	{
 		if WindowIsAnExplorer(strTargetClass)
 			NavigateExplorer(intSpecialFolder, strTargetWinId)
-		else ; this is Console, FreeCommander or a dialog box
+		else ; this is Console or a dialog box
 		{
 			if (intSpecialFolder = 0)
 				strLocation := A_Desktop
@@ -3048,8 +3052,10 @@ else ; this is Explorer, Console, FreeCommander or a dialog box
 				ComObjCreate("Shell.Application").Explore(intSpecialFolder)
 			else if WindowIsConsole(strTargetClass)
 				NavigateConsole(strLocation, strTargetWinId)
+			/* removed for FPconnect: 
 			else if WindowIsFreeCommander(strTargetClass)
 				NavigateFreeCommander(strLocation, strTargetWinId, strTargetControl)
+			*/
 			else
 				NavigateDialog(strLocation, strTargetWinId, strTargetClass)
 		}
@@ -3782,6 +3788,7 @@ NavigateDirectoryOpus(strLocation, strWinId)
 ;------------------------------------------------------------
 
 
+/*
 ;------------------------------------------------------------
 NavigateFreeCommander(strLocation, strWinId, strControl)
 ;------------------------------------------------------------
@@ -3802,6 +3809,7 @@ NavigateFreeCommander(strLocation, strWinId, strControl)
 	SendInput, {Enter}
 }
 ;------------------------------------------------------------
+*/
 
 
 ;------------------------------------------------------------
@@ -4921,6 +4929,7 @@ else
 		SendMessage, 0x433, %cm_CopySrcPathToClip%, , , ahk_class TTOTAL_CMD ; 
 		WinGetTitle, strWindowThisTitle, A ; to check if the window was closed unexpectedly
 	}
+	/* removed for FPconnect: 
 	else if WindowIsFreeCommander(strTargetClass)
 	{
 		if (WinExist("A") <> strTargetWinId) ; in case that some window just popped out, and initialy active window lost focus
@@ -4941,6 +4950,7 @@ else
 			WinGetTitle, strWindowThisTitle, A ; to check if the window was closed unexpectedly
 		} Until (StrLen(ClipBoard))
 	}
+	*/
 	else ; Explorer
 		Loop, %intTries%
 		{
