@@ -206,12 +206,12 @@ lMenuTemplates	Modèles
 lMenuTemporaryFiles	Fichiers temporaires
 lMenuUpdate	Vérifier la mise à jour
 lMenuUserFolder	Dossier de l'utilisateur
-lMenuUserPinned	Épinglé par l'utilisateur
+lMenuUserPinned	Epinglé par l'utilisateur
 lNavigateFileError	Une erreur s'est produite lors de l'ouverture du dossier:`n~1~.
 lNavigateSpecialError	Une erreur s'est produite lors de l'ouverture du dossier spécial #~1~.
 lOopsTitle	~1~ (~2~)
 lOopsWriteProtectedError	Il semble que ~1~ a été lancé depuis un dossier en ÉCRITURE SEULEMENT où il est impossible de créer le fichier de configuration "~1~.ini".`n`nDéplacez le fichier .EXE de ~1~ dans un dossier RÉGULIER de votre choix, puis exécutez l'application à nouveau depuis ce dossier.`n`n~1~ va être fermé.
-lOopsWrongFPConnectAppPathFilename	Chemin ou nom de fichier incorrect pour le paramètre "AppPath" dans le fichier de configuration de FPConnect:`n~1~.`n`nVérifiez le nom et le chemin du fichier .exe pour "AppPath" dans le fichier ini de FCConnect:`n~2~
+lOopsWrongFPconnectAppPathFilename	Chemin ou nom de fichier incorrect pour le paramètre "AppPath" dans le fichier de configuration de FPconnect:`n~1~.`n`nVérifiez le nom et le chemin du fichier .exe pour "AppPath" dans le fichier ini de FCConnect:`n~2~
 lOopsWrongThirdPartyPath	Chemin ou nom de fichier incorrect pour ~1~:`n~2~.`n`nVérifiez le fichier .exe sélectionné pour ~1~ dans les "Options", onglet "~3~".
 lOopsZipFileError	Il semble que ~1~ a été lancé directement depuis un fichier compressé (ZIP).`n`nVous devez extraire le fichier .EXE de ~1~ du fichier ZIP dans un dossier de votre choix, puis exécuter l'application à nouveau depuis ce dossier.`n`n~1~ va être fermé.
 lOptionsAlt	Alt
@@ -263,7 +263,7 @@ lOptionsTabOtherOptionsIntro	Adaptez ~1~ à vos préférences!
 lOptionsTheme	Thème
 lOptionsThirdParty	Autres gestionnaires de fichiers
 lOptionsThirdPartyDetail	Pour activer l'intégration avec ~1~, localisez le programme .exe sous votre dossier Program Files.
-lOptionsThirdPartyDetailFPConnect	Pour activer l'intégration avec d'autres gestionnaires de fichiers, localisez le programme FPConnect.exe.
+lOptionsThirdPartyDetailFPconnect	Pour activer l'intégration avec d'autres gestionnaires de fichiers, localisez le programme FPconnect.exe.
 lOptionsThirdPartyPrompt	Fichier:
 lOptionsThirdPartyTitle	Utilisateurs de ~1~
 lOptionsTitles	Souris - Popup|Souris - Nouvel explorateur|Clavier - Popup|Clavier - Nouvel explorateur|Emplacements récents|Paramètres
