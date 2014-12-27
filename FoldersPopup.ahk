@@ -2,7 +2,6 @@
 Bugs:
 
 To-do for v4:
-- save new favorite at selected menu position; 
 
 */
 ;===============================================
@@ -916,9 +915,14 @@ if !(blnDonor)
 IniRead, strDirectoryOpusPath, %strIniFile%, Global, DirectoryOpusPath, %A_Space% ; empty string if not found
 IniRead, blnDirectoryOpusUseTabs, %strIniFile%, Global, DirectoryOpusUseTabs, 1 ; use tabs by default
 if StrLen(strDirectoryOpusPath)
+{
 	blnUseDirectoryOpus := FileExist(strDirectoryOpusPath)
-if (blnUseDirectoryOpus)
-	Gosub, SetDOpusRt
+	if (blnUseDirectoryOpus)
+		Gosub, SetDOpusRt
+	else
+		if (strDirectoryOpusPath <> "NO")
+			Oops(lOopsWrongThirdPartyPath, "Directory Opus", strDirectoryOpusPath, lOptionsThirdParty)
+}
 else
 	if (strDirectoryOpusPath <> "NO")
 		Gosub, CheckDirectoryOpus
@@ -926,19 +930,31 @@ else
 IniRead, strTotalCommanderPath, %strIniFile%, Global, TotalCommanderPath, %A_Space% ; empty string if not found
 IniRead, blnTotalCommanderUseTabs, %strIniFile%, Global, TotalCommanderUseTabs, 1 ; use tabs by default
 if StrLen(strTotalCommanderPath)
+{
 	blnUseTotalCommander := FileExist(strTotalCommanderPath)
-if (blnUseTotalCommander)
-	Gosub, SetTCCommand
+	if (blnUseTotalCommander)
+		Gosub, SetTCCommand
+	else
+		if (strTotalCommanderPath <> "NO")
+			Oops(lOopsWrongThirdPartyPath, "Total Commander", strTotalCommanderPath, lOptionsThirdParty)
+}
 else
 	if (strTotalCommanderPath <> "NO")
 		Gosub, CheckTotalCommander
 
 IniRead, strFPConnectPath, %strIniFile%, Global, FPConnectPath, %A_Space% ; empty string if not found
-IniRead, blnFPConnectUseTabs, %strIniFile%, Global, FPConnectUseTabs, 1 ; use tabs by default
 if StrLen(strFPConnectPath)
+{
 	blnUseFPConnect := FileExist(strFPConnectPath)
+	if (blnUseFPConnect)
+		Gosub, SetFPConnect
+	else
+		if (strFPConnectPath <> "NO")
+			Oops(lOopsWrongThirdPartyPath, "FPConnect", strFPConnectPath, lOptionsThirdParty)
+}
 else
-	blnUseFPConnect := False
+	if (strFPConnectPath <> "NO")
+		Gosub, CheckFPConnect
 
 IniRead, strTheme, %strIniFile%, Global, Theme
 if (strTheme = "ERROR") ; if Theme not found, we have a v1 or v2 ini file - add the themes to the ini file
@@ -2497,9 +2513,9 @@ CanOpenFavorite(strMouseOrKeyboard, ByRef strWinId, ByRef strClass, ByRef strCon
 
 	blnCanOpenFavorite := WindowIsAnExplorer(strClass) or WindowIsDesktop(strClass) or WindowIsConsole(strClass)
 		or WindowIsDialog(strClass, strWinId) or WindowIsFreeCommander(strClass)
-		or (WindowIsDirectoryOpus(strClass) and blnUseDirectoryOpus)
-		or (WindowIsTotalCommander(strClass) and blnUseTotalCommander)
-		or (WindowIsFPConnect(strClass) and blnUseFPConnect)
+		or (blnUseDirectoryOpus and WindowIsDirectoryOpus(strClass))
+		or (blnUseTotalCommander and WindowIsTotalCommander(strClass))
+		or (blnUseFPConnect and WindowIsFPConnect(strWinId))
 		or WindowIsFoldersPopup(strClass)
 
 	if (blnDiagMode)
@@ -2623,10 +2639,22 @@ WindowIsTotalCommander(strClass)
 
 
 ;------------------------------------------------------------
-WindowIsFPConnect(strClass)
+WindowIsFPConnect(strWinId)
 ;------------------------------------------------------------
 {
-	return strClass = "Window" ; (title: Double Commander 0.5.11 beta build 5647M; 2014/09/27)
+	global strFPConnectAppPathFilename
+	
+    intPID := 0
+    DllCall("GetWindowThreadProcessId", "UInt", strWinId, "UInt *", intPID)
+    hProcess := DllCall("OpenProcess", "UInt", 0x400 | 0x10, "Int", False, "UInt", intPID)
+    intPathLength = 260*2
+    VarSetCapacity(strFCAppFile, intPathLength, 0)
+    DllCall("Psapi.dll\GetModuleFileNameExW", "UInt", hProcess, "Int", 0, "Str", strFCAppFile, "UInt", intPathLength)
+    DllCall("CloseHandle", "UInt", hProcess)
+	
+	SplitPath, strFCAppFile, strFCAppFile
+	return (strFCAppFile = strFPConnectAppPathFilename)
+
 }
 ;------------------------------------------------------------
 
@@ -2758,6 +2786,15 @@ else if WindowIsTotalCommander(strTargetClass)
 		Diag("Navigate", "NavigateTotalCommander")
 	
 	NavigateTotalCommander(strLocation, strTargetWinId, strTargetControl)
+}
+else if WindowIsFPConnect(strTargetWinId)
+{
+	if (blnDiagMode)
+	{
+		Diag("Navigate", "FPConnect")
+		Diag("TargetWinId", strTargetWinId)
+	}
+	NavigateFPConnect(strLocation, strTargetWinId, strTargetClass)
 }
 else if WindowIsDialog(strTargetClass, strTargetWinId)
 {
@@ -3801,7 +3838,7 @@ NavigateFPConnect(strLocation, strWinId, strControl)
 		WinActivate, ahk_id %strWinId% ; we'll activate initialy active window
 		Sleep, 200
 	}
-	Run, %strFPConnectPath% "/L=%strLocation%"
+	Run, %strFPConnectPath% %strLocation%
 }
 ;------------------------------------------------------------
 
@@ -3812,7 +3849,7 @@ NewFPConnect(strLocation, strWinId, strControl)
 {
 	global strFPConnectPath
 
-	Run, %strFPConnectPath% "/L=%strLocation%"
+	Run, %strFPConnectPath% %strLocation% /new
 }
 ;------------------------------------------------------------
 
@@ -5730,9 +5767,9 @@ Gui, 2:Tab, 3
 Gui, 2:Add, Text, x10 y+10 w595 center, %lOptionsTabFileManagersIntro%
 
 Gui, 2:Font, s8 w700
-Gui, 2:Add, Text, y+5 x15, % L(lOptionsThirdPartyTitle, "Directory Opus")
+Gui, 2:Add, Link, y+5 x15, % L(lOptionsThirdPartyTitle, "Directory Opus") . " (<a href=""http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/"">" . lGuiHelp . "</a>)"
 Gui, 2:Font
-Gui, 2:Add, Link, y+5 x15, % L(lOptionsThirdPartyDetail, "Directory Opus") . " (<a href=""http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/"">Directory Opus " . lGuiHelp . "</a>)"
+Gui, 2:Add, Text, y+5 x15, % L(lOptionsThirdPartyDetail, "Directory Opus")
 Gui, 2:Add, Text, y+10 x15, %lOptionsThirdPartyPrompt%
 Gui, 2:Add, Edit, x+10 yp w300 h20 vstrDirectoryOpusPath, %strDirectoryOpusPath%
 Gui, 2:Add, Button, x+10 yp vbtnSelectDOpusPath gButtonSelectDOpusPath, %lDialogBrowseButton%
@@ -5740,9 +5777,9 @@ Gui, 2:Add, Checkbox, x+10 yp vblnDirectoryOpusUseTabs, %lOptionsDirectoryOpusUs
 GuiControl, , blnDirectoryOpusUseTabs, %blnDirectoryOpusUseTabs%
 
 Gui, 2:Font, s8 w700
-Gui, 2:Add, Text, y+15 x15, % L(lOptionsThirdPartyTitle, "Total Commander")
+Gui, 2:Add, Link, y+15 x15, % L(lOptionsThirdPartyTitle, "Total Commander") . " (<a href=""http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/"">" . lGuiHelp . "</a>)"
 Gui, 2:Font
-Gui, 2:Add, Link, y+5 x15,  % L(lOptionsThirdPartyDetail, "Total Commander") . " (<a href=""http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/"">Total Commander " . lGuiHelp . "</a>)"
+Gui, 2:Add, Text, y+5 x15,  % L(lOptionsThirdPartyDetail, "Total Commander")
 Gui, 2:Add, Text, y+10 x15, %lOptionsThirdPartyPrompt%
 Gui, 2:Add, Edit, x+10 yp w300 h20 vstrTotalCommanderPath, %strTotalCommanderPath%
 Gui, 2:Add, Button, x+10 yp vbtnSelectTCPath gButtonSelectTCPath, %lDialogBrowseButton%
@@ -5750,14 +5787,12 @@ Gui, 2:Add, Checkbox, x+10 yp vblnTotalCommanderUseTabs, %lOptionsTotalCommander
 GuiControl, , blnTotalCommanderUseTabs, %blnTotalCommanderUseTabs%
 
 Gui, 2:Font, s8 w700
-Gui, 2:Add, Text, y+15 x15, % "Other file managers users (using FPConnect - BETA TEST)"
+Gui, 2:Add, Link, y+15 x15, % "Other file managers users using FPConnect - BETA TEST (<a href=""https://github.com/rolandtoth/FPconnect"">" . lGuiHelp . "</a>)"
 Gui, 2:Font
-Gui, 2:Add, Link, y+5 x15, % "Select the FPConnect program file (.exe) to enable other file managers integration. (<a href=""https://github.com/rolandtoth/FPconnect"">FPConnect " . lGuiHelp . "</a>)"
+Gui, 2:Add, Text, y+5 x15, % "Select the FPConnect program file (.exe) to enable other file managers integration."
 Gui, 2:Add, Text, y+10 x15, %lOptionsThirdPartyPrompt%
 Gui, 2:Add, Edit, x+10 yp w300 h20 vstrFPConnectPath, %strFPConnectPath%
 Gui, 2:Add, Button, x+10 yp vbtnSelectFPCPath gButtonSelectFPCPath, %lDialogBrowseButton%
-; Gui, 2:Add, Checkbox, x+10 yp vblnFPConnectUseTabs, %lOptionsFPConnectUseTabs%
-GuiControl, , blnFPConnectUseTabs, %blnFPConnectUseTabs%
 
 ;---------------------------------------
 ; Build Gui footer
@@ -5854,7 +5889,7 @@ ButtonSelectFPCPath:
 if StrLen(strFPConnectPath) and (strFPConnectPath <> "NO")
 	strCurrentFPCLocation := strFPConnectPath
 else
-	strCurrentFPCLocation := ""
+	strCurrentFPCLocation := A_ScriptDir . "\FPConnect\FPConnect.exe"
 
 FileSelectFile, strNewFPCLocation, 3, %strCurrentFPCLocation%, %lDialogAddFolderSelect%
 
@@ -5949,14 +5984,13 @@ else
 	strTotalCommanderNewTabOrWindow := "/N" ; open new folder in a new window (TC instance)
 
 IniWrite, %strFPConnectPath%, %strIniFile%, Global, FPConnectPath
-IniWrite, %blnFPConnectUseTabs%, %strIniFile%, Global, FPConnectUseTabs
 blnUseFPConnect := StrLen(strFPConnectPath)
 if (blnUseFPConnect)
+{
 	blnUseFPConnect := FileExist(strFPConnectPath)
-if (blnFPConnectUseTabs)
-	strFPConnectNewTabOrWindow := "" ; ???
-else
-	strFPConnectNewTabOrWindow := "" ; ???
+	if (blnUseFPConnect)
+		Gosub, SetFPConnect
+}
 
 ; if language or theme changed, offer to restart the app
 if (strLanguageCodePrev <> strLanguageCode) or (strThemePrev <> strTheme)
@@ -6452,8 +6486,6 @@ RunDOpusRt(strCommand, strLocation := "", strParam := "")
 
 	if FileExist(strDirectoryOpusRtPath)
 		Run, % """" . strDirectoryOpusRtPath . """ " . strCommand . " """ . strLocation . """" . strParam
-	else
-		Oops(lOopsWrongThirdPartyPath, strAppName, "Directory Opus", "DirectoryOpus", strDirectoryOpusPath)
 }
 ;------------------------------------------------------------
 
@@ -6574,6 +6606,61 @@ objIconsIndex["TotalCommander"] := 1
 
 return
 ;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+CheckFPConnect:
+;------------------------------------------------------------
+
+strCheckFPConnectPath := A_ScriptDir . "\FPConnect\FPConnect.exe"
+
+if FileExist(strCheckFPConnectPath)
+{
+	MsgBox, 52, %strAppName%, % L(lDialogThirdPartyDetected, strAppName, "FPConnect")
+	IfMsgBox, No
+		strFPConnectPath := "NO"
+	else
+	{
+		strFPConnectPath := strCheckFPConnectPath
+		Gosub, SetFPConnect
+		
+		; disable Folders in Explorer and Group menus for FPConnect users
+		blnDisplayFoldersInExplorerMenu := 0
+		IniWrite, %blnDisplayFoldersInExplorerMenu%, %strIniFile%, Global, DisplayFoldersInExplorerMenu
+		blnDisplayGroupMenu := 0
+		IniWrite, %blnDisplayGroupMenu%, %strIniFile%, Global, DisplaySwitchMenu
+	}
+	blnUseFPConnect := (strFPConnectPath <> "NO")
+	IniWrite, %strFPConnectPath%, %strIniFile%, Global, FPConnectPath
+}
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+SetFPConnect:
+;------------------------------------------------------------
+
+StringTrimRight, strFPConnectIniPath, strFPConnectPath, 4
+strFPConnectIniPath := strFPConnectIniPath . ".ini"
+
+IniRead, strFPConnectAppPathFilename, %strFPConnectIniPath%, Options, AppPath, %A_Space% ; empty by default
+blnUseFPConnect := FileExist(strFPConnectAppPathFilename)
+
+if (blnUseFPConnect)
+	SplitPath, strFPConnectAppPathFilename, strFPConnectAppPathFilename
+else
+	Oops(lOopsWrongFPConnectAppPathFilename, strFPConnectPath, strFPConnectIniPath)
+
+return
+;------------------------------------------------------------
+
+
+
+;========================================================================================================================
+; VARIOUS FUNCTIONS
+;========================================================================================================================
 
 
 ;------------------------------------------------------------
