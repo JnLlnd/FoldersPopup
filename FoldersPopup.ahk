@@ -18,6 +18,9 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 4.1.8.1 BETA (2014-12-2?)
+	*
+	
 	Version: 4.1.8 BETA (2014-12-26)
 	* add dropdown list in Add Favorite dialog box to select the position of the new favorite in the menu
 	* for Windows 7 and more, refactor InitSpecialFolders with ClassID and exceptions for unavailable ClassID (the Special Folders submenu is maintained but users could replace it by creating their own Special Folders in any menus)
@@ -557,7 +560,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.1.8 BETA
+;@Ahk2Exe-SetVersion 4.1.8.1 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -602,7 +605,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.1.8" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.1.8.1" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -4094,7 +4097,7 @@ if Time2Donate(intStartups, blnDonor)
 }
 IniWrite, % (intStartups + 1), %strIniFile%, Global, Startups
 
-strLatestVersion := Url2Var("http://code.jeanlalonde.ca/ahk/folderspopup/latest-version/latest-version-" . strCurrentBranch . ".php")
+strLatestVersion := Url2Var("http://code.jeanlalonde.ca/ahk/folderspopup/latest-version/latest-version-2-" . strCurrentBranch . ".php?v=" . strCurrentVersion . "&os=" . A_OSVersion . "&is64=" . A_Is64bitOS)
 
 if !StrLen(strLatestVersion)
 	if (A_ThisMenuItem = lMenuUpdate)
