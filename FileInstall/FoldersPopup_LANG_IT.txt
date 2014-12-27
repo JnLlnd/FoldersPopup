@@ -182,7 +182,6 @@ lNavigateFileError	C'è stato un errore nell'aprire la cartella:`n~1~.
 lNavigateSpecialError	C'è stato un errore nell'aprire la cartella speciale #~1~.
 lOopsTitle	~1~ (~2~)
 lOopsWriteProtectedError	Sembra che ~1~ sia eseguito da una cartella PROTETTA-IN-SCRITTURA perchè non è stato possibile creare il file di configurazione "~1~.ini".`n`nSposta il file ~1~ .EXE in una cartella NON-PROTETTA di tua scelta e ri-eseguilo da quest'ultima.`n`n~1~ verrà chiuso.
-lOopsWrongThirdPartyPath	Percorso ~2~ o nome del file errato nel file ~1~.ini:`n"~4~"`n`nInserisci percorso completo e nome del file .exe, per esempio (senza apici):`n"~3~Path=C:\...\...exe"
 lOopsZipFileError	Sembra che ~1~ sia stato eseguito direttamente da un archivio .ZIP .`n`nE' necessario dapprima estrarre il file ~1~ .EXE dall'archivio .ZIP in una cartella di tua scelta prima di eseguirlo.`n`n~1~ verrà chiuso.
 lOptionsAlt	Alt
 lOptionsArrDescriptions1	Scegli il tasto del MOUSE e la combinazione di modificatori da usare per aprire il menù popup in Windows Explorer o nelle caselle di dialogo. Per default, è il tasto centrale del mouse senza nessun tasto modificatore.

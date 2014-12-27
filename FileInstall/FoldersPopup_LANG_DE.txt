@@ -185,7 +185,6 @@ lNavigateFileError	Beim Öffnen des Ordners `n~1~ trat ein Fehler auf.
 lNavigateSpecialError	Beim Öffnen des Speziellen Ordners #~1~ trat ein Fehler auf.
 lOopsTitle	~1~ (~2~)
 lOopsWriteProtectedError	Es scheint, daß ~1~ aus einem SCHREIBGESCHÜTZTEN ORDNER heraus ausgeführt wird, in dem die Konfigurationsdatei "~1~.ini" nicht erstellt werden kann.`n`nVerschieben Sie die ~1~ .EXE Datei in einen STANDARD Ordner Ihrer Wahl und führen Sie es daraus nochmals aus.`n`n~1~ wird beendet.
-lOopsWrongThirdPartyPath	~2~ Pfad oder Dateiname in der ~1~.ini Konfigurationsdatei falsch:`n"~4~"`n`nGeben Sie den vollen Pfad und Namen der .exe Datei an, z.B. (ohne Anführungszeichen):`n"~3~Path=C:\...\...exe"
 lOopsZipFileError	Es scheint, daß ~1~ direkt aus einer .ZIP Datei ausgeführt wird.`n`nSie müssen zuerst die Datei ~1~ .EXE aus dem Archiv in ein Verzeichnis Ihrer Wahl entpacken und dann ausführen.`n`n~1~ wird beendet.
 lOptionsAlt	Alt
 lOptionsArrDescriptions1	Wählen Sie die MAUStaste und die Kombitasten, welche das FoldersPopup Menü im Windows Explorer oder Dateidialogboxen aufruft. Standardmäßig ist dies die mittlere Maustaste ohne zusätzliche Kombitaste.

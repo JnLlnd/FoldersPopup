@@ -185,7 +185,6 @@ lNavigateFileError	Een fout trad op tijdens het openen van deze map:`n~1~.
 lNavigateSpecialError	Een fout trad op tijdens het openen van de speciale map #~1~.
 lOopsTitle	~1~ (~2~)
 lOopsWriteProtectedError	~1~ werd gestart vanuit een map die tegen schrijven beschermd is en dus kan het configuratiebestand "~1~.ini" niet worden aangemaakt.`n`nVerplaats de ~1~. EXE naar een normale map en start het programma vanuit deze map.`n`n~1~ wordt nu afgesloten.
-lOopsWrongThirdPartyPath	Verkeerde padnaam of bestandsnaam voor ~2~ in het ~1~.ini bestand:`n"~4~"`n`nGeef het volledige pad en naam van het DOpus.exe bestand, bij voorbeeld (zonder de aanhalingstekens uiteraard):`n"~3~Path=C:\...\...exe"
 lOopsZipFileError	Blijkbaar heb je ~1~ direct gestart vanuit een .ZIP bestand.`n`nJe moet het ~1~ .EXE bestand uit het .ZIP bestand uitpakken in een map van jouw keuze vooraleer het te starten.`n`n~1~ wordt nu afgesloten.
 lOptionsAlt	Alt
 lOptionsArrDescriptions1	Kies de combinatie van MUISknop en speciale toetsen (CTRL/ALT/SHIFT/WIN) die het popup menu voor mappen opent in Windows Verkenner of in bestandsdialoogvensters. Standaard is dit de middenste muisknop zonder een speciale toets.
