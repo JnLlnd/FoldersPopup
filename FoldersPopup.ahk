@@ -18,7 +18,10 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.1.8.1 BETA (2014-12-2?)
+	Version: 4.1.8.2 BETA (2014-12-??)
+	* 
+	
+	Version: 4.1.8.1 BETA (2014-12-27)
 	* removed support for FreeCommander XE (now available via FPconnect)
 	* add version and os info to check4update request
 	
@@ -562,7 +565,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.1.8.1 BETA
+;@Ahk2Exe-SetVersion 4.1.8.2 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -607,7 +610,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.1.8.1" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.1.8.2" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
