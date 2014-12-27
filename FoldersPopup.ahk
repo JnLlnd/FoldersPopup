@@ -18,12 +18,14 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.1.8 BETA (2014-12-??)
-	* refactor InitSpecialFolders with ClassID and exceptions for unavailable ClassID
-	* add icons and translateble default name for exceptions
-	* fix bug no icon for system menus in main menu under Win_XP
+	Version: 4.1.8 BETA (2014-12-26)
+	* add dropdown list in Add Favorite dialog box to select the position of the new favorite in the menu
+	* for Windows 7 and more, refactor InitSpecialFolders with ClassID and exceptions for unavailable ClassID (the Special Folders submenu is maintained but users could replace it by creating their own Special Folders in any menus)
+	* add icons and translateble default names for exceptions
+	* fix bug not showing icons for system menus in main menu under Win_XP
 	* fix delay in group load for slow drives
-	* FR, DE, NL, KO, SV and IT language updates
+	* the FP menu can now be open over the FP Settings window with middle-mouse click (or Win-A)
+	* language files updates
 
 	Version: 4.1 (2014-12-20)
 	* addition of Italian language, thanks to Riccardo Leone
@@ -4080,7 +4082,7 @@ Check4Update:
 ;------------------------------------------------------------
 
 strAppLandingPage := " http://code.jeanlalonde.ca/folderspopup/"
-strBetaLandingPage := "http://code.jeanlalonde.ca/folderspopup-v4-ready-for-beta-test-testers-wanted/"
+strBetaLandingPage := "http://code.jeanlalonde.ca/folderspopup-v42-beta-testers-wanted/"
 
 Gui, 1:+OwnDialogs
 
@@ -5789,7 +5791,7 @@ GuiControl, , blnTotalCommanderUseTabs, %blnTotalCommanderUseTabs%
 Gui, 2:Font, s8 w700
 Gui, 2:Add, Link, y+15 x15, % "Other file managers users using FPConnect - BETA TEST (<a href=""https://github.com/rolandtoth/FPconnect"">" . lGuiHelp . "</a>)"
 Gui, 2:Font
-Gui, 2:Add, Text, y+5 x15, % "Select the FPConnect program file (.exe) to enable other file managers integration."
+Gui, 2:Add, Text, y+5 x15, %lOptionsThirdPartyDetailFPConnect%
 Gui, 2:Add, Text, y+10 x15, %lOptionsThirdPartyPrompt%
 Gui, 2:Add, Edit, x+10 yp w300 h20 vstrFPConnectPath, %strFPConnectPath%
 Gui, 2:Add, Button, x+10 yp vbtnSelectFPCPath gButtonSelectFPCPath, %lDialogBrowseButton%

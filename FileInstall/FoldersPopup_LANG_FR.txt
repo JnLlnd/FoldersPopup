@@ -263,6 +263,7 @@ lOptionsTabOtherOptionsIntro	Adaptez ~1~ à vos préférences!
 lOptionsTheme	Thème
 lOptionsThirdParty	Autres gestionnaires de fichiers
 lOptionsThirdPartyDetail	Pour activer l'intégration avec ~1~, localisez le programme .exe sous votre dossier Program Files.
+lOptionsThirdPartyDetailFPConnect	Pour activer l'intégration avec d'autres gestionnaires de fichiers, localisez le programme FPConnect.exe.
 lOptionsThirdPartyPrompt	Fichier:
 lOptionsThirdPartyTitle	Utilisateurs de ~1~
 lOptionsTitles	Souris - Popup|Souris - Nouvel explorateur|Clavier - Popup|Clavier - Nouvel explorateur|Emplacements récents|Paramètres
