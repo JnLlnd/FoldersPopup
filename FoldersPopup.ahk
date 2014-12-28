@@ -1,5 +1,41 @@
 /*
 Bugs:
+- default position in menu not correct after items were removed (if no item selected?)
+- open special folders in DOpus opens empty tab
+
+- Control Panel ::{21EC2020-3AEA-1069-A2DD-08002B30309D} not working in Explorer
+
+Does not open when DOpus active:
+- Show Desktop
+- Favorites
+- User Pinned (Quick Launch includes User Pinned)
+- Informations et outils de performance
+- Options des dossiers
+- Outils d’administration
+- Système
+
+Does not open when TC active:
+- Show Desktop
+- History (no error but no content)
+- Favorites
+- User Pinned (Quick Launch includes User Pinned)
+- Informations et outils de performance
+- Options des dossiers
+- Outils d’administration
+- Système
+
+Does not work from a dialog box:
+- Show Desktop
+- Recycle Bin
+- Recents items
+- History
+- Favorites
+- User Pinned (Quick Launch includes User Pinned)
+- Informations et outils de performance
+- Options des dossiers
+- Outils d’administration
+- Système
+- Tous les Panneaux de configuration
 
 To-do for v4:
 
@@ -19,7 +55,7 @@ To-do for v4:
 
 
 	Version: 4.1.8.2 BETA (2014-12-??)
-	* 
+	* Fix bug when moving a favorite to another submenu
 	
 	Version: 4.1.8.1 BETA (2014-12-27)
 	* removed support for FreeCommander XE (now available via FPconnect)
@@ -5425,6 +5461,8 @@ Gui, 2:+OwnDialogs
 
 GuiControlGet, strParentMenu, , drpParentMenu
 GuiControlGet, intNewItemPos, , drpParentMenuItems
+if !(intNewItemPos)
+	intNewItemPos := 1
 
 if !StrLen(strFavoriteShortName)
 {
@@ -6666,10 +6704,10 @@ StringTrimRight, strFPconnectIniPath, strFPconnectPath, 4
 strFPconnectIniPath := strFPconnectIniPath . ".ini"
 
 IniRead, strFPconnectAppPathFilename, %strFPconnectIniPath%, Options, AppPath, %A_Space% ; empty by default
-blnUseFPconnect := FileExist(strFPconnectAppPathFilename)
+blnUseFPconnect := FileExist(EnvVars(strFPconnectAppPathFilename))
 
 if (blnUseFPconnect)
-	SplitPath, strFPconnectAppPathFilename, strFPconnectAppPathFilename
+	SplitPath, strFPconnectAppPathFilename, EnvVars(strFPconnectAppPathFilename)
 else
 	Oops(lOopsWrongFPconnectAppPathFilename, strFPconnectPath, strFPconnectIniPath)
 
