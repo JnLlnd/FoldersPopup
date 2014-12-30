@@ -167,6 +167,7 @@ lMenuDownloads	Téléchargements
 lMenuExitFoldersPopup	Quitter ~1~
 lMenuFavoritesInternet	Favoris (Internet)
 lMenuFoldersInExplorer	Dossiers dans l'Explorateur
+lMenuFonts	Polices
 lMenuFPMenu	~2~ ~1~
 lMenuGroup	Groupes de dossiers
 lMenuGroupAdd	ajouter
