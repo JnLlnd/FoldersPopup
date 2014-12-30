@@ -1192,11 +1192,8 @@ return
 InitSpecialFolders:
 ;------------------------------------------------------------
 
-; NOTES How to call uin Explorer...
-; ... CLSID: shell:::{{20D04FE0-3AEA-1069-A2D8-08002B30309D}}
-; ... ShellConstant: shell:MyComputerFolder
 
-; Shell Constants
+; Shell numeric Constants
 ; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774096%28v=vs.85%29.aspx
 
 ; Shell Commands:
@@ -1206,29 +1203,74 @@ InitSpecialFolders:
 ; Environment system variables
 ; http://en.wikipedia.org/wiki/Environment_variable#Windows
 
-global objClassIdByLocalizedName := Object()
+global objClassIdOrPathByDefaultName := Object() ; also used by CollectExplorers
+global objSpecialFolders := Object()
+global strSpecialFoldersList
+
+StringReplace, strPathUser, A_AppData, \AppData\Roaming
+
+;---------------------
+; CLSID giving name and icon, Default name, Shell Command)
+; Get localized name, get icon and open new with CLSID, navigate with shell commands
+
+; InitSpecialFolderObject(strClassIdOrPath, strShellConstant, intShellConstant, strDOpusAlias, strTCCommand
+;	, strDefaultName, strDefaultIcon
+;	, strUse4NavigateExplorer, strUse4NewExplorer, strUse4Dialog, strUse4Console, strUse4DOpus, strUse4TC, strUse4FPc)
+
+; 		CLS: Class ID
+;		SCT: Shell Constant Text
+;		SCN: Shell Constant Numeric
+;		DOA: Directory Opus Alias
+;		TCC: Total Commander Commands
+;		NEW: Open in new Explorer anyway
+/*
+InitSpecialFolderObject("", "", , "", ""
+	, "", "" ; Traduction
+	, "", "", "", "", "", "", "")
+
+NOTES
+- Total Commander commands: cm_OpenDesktop (2121), cm_OpenDrives (2122), cm_OpenControls (2123), cm_OpenFonts (2124), cm_OpenNetwork (2125), cm_OpenPrinters (2126), cm_OpenRecycled (2127)
+- DOpus see http://resource.dopus.com/viewtopic.php?f=3&t=23691
+*/
+
+InitSpecialFolderObject("{D20EA4E1-3957-11d2-A40B-0C5020524153}", "Common Administrative Tools", -1, "commonadmintools", ""
+	, "Administrative Tools", "" ; Outils d’administration
+	, "CLS", "CLS", "NEW", "NEW", "DOA", "NEW", "CLS")
+InitSpecialFolderObject("{20D04FE0-3AEA-1069-A2D8-08002B30309D}", "MyComputerFolder", 17, "mycomputer", "2122"
+	, "Computer", "" ; Ordinateur
+	, "SCT", "SCT", "SCT", "NEW", "DOA", "TCC", "CLS") ; for 1,2,3 CLS works, 7 OK for FPc but CLS does not work with DoubleCommander
+InitSpecialFolderObject("{78F3955E-3B90-4184-BD14-5397C15F1EFC}", "", 0, "", ""
+	, "Performance Information and Tools", "" ; Informations et outils de performance
+	, "CLS", "CLS", "NEW", "NEW", "NEW", "NEW", "NEW")
+RegRead, strException, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, {374DE290-123F-4565-9164-39C4925E467B}
+InitSpecialFolderObject(strException, "", 0, "downloads", ""
+	, lMenuDownloads, "lMenuDownloads"
+	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
+
+; ####
+
+/*
 global objLocalizedNameByClassId := Object()
 global objIconByClassId := Object()
 global objShellConstantByClassId := Object()
 
-StringReplace, strPathUser, A_AppData, \AppData\Roaming
 
 ;---------------------
 ; InitClassId(CLSID, Default name, Shell Command)
 ; Get localized name, get icon and open new with CLSID, navigate with shell commands
 
 InitClassId("{D20EA4E1-3957-11d2-A40B-0C5020524153}", "Administrative Tools", "Common Administrative Tools") ; Outils d’administration
-InitClassId("{20D04FE0-3AEA-1069-A2D8-08002B30309D}", "Computer", "MyComputerFolder") ; Ordinateur
-InitClassId("{21EC2020-3AEA-1069-A2DD-08002B30309D}", "Control Panel (Icons view)", "ControlPanelFolder") ; Tous les Panneaux de configuration
-InitClassId("{450D8FBA-AD25-11D0-98A8-0800361B1103}", "Documents", "Personal") ; Mes documents
+InitClassId("{20D04FE0-3AEA-1069-A2D8-08002B30309D}", "Computer", "MyComputerFolder", 17) ; Ordinateur
+InitClassId("{21EC2020-3AEA-1069-A2DD-08002B30309D}", "Control Panel (Icons view)", "ControlPanelFolder", 3) ; Tous les Panneaux de configuration
+InitClassId("{450D8FBA-AD25-11D0-98A8-0800361B1103}", "Documents", "Personal", 5) ; Mes documents
 InitClassId("{ED228FDF-9EA8-4870-83b1-96b02CFE0D52}", "Games Explorer", "Games") ; Jeux
 InitClassId("{B4FB3F98-C1EA-428d-A78A-D1F5659CBA93}", "HomeGroup", "HomeGroupFolder") ; Groupe résidentiel
 InitClassId("{031E4825-7B94-4dc3-B131-E946B44C8DD5}", "Libraries", "Libraries") ; Bibliothèques
 InitClassId("{7007ACC7-3202-11D1-AAD2-00805FC1270E}", "Network Connections", "ConnectionsFolder") ; Connexions réseau
-InitClassId("{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}", "Network", "NetworkPlacesFolder") ; Réseau
+InitClassId("{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}", "Network", "NetworkPlacesFolder", 18) ; Réseau
 InitClassId("{2227A280-3AEA-1069-A2DE-08002B30309D}", "Printers and Faxes", "PrintersFolder") ; Imprimantes
 InitClassId("{4336a54d-038b-4685-ab02-99bb52d3fb8b}", "Public Folder", "Public") ; Public
-InitClassId("{645FF040-5081-101B-9F08-00AA002F954E}", "Recycle Bin", "RecycleBinFolder") ; Corbeille
+InitClassId("{645FF040-5081-101B-9F08-00AA002F954E}", "Recycle Bin", "RecycleBinFolder", 10) ; Corbeille
 InitClassId("{59031a47-3f72-44a7-89c5-5595fe6b30ee}", lMenuUserFolder, "Profile")
 InitClassId("{1f3427c8-5c10-4210-aa03-2ee45287d668}", lMenuUserPinned, "User Pinned")
 
@@ -1292,29 +1334,130 @@ if (A_Is64bitOS)
 InitClassIdException("%PUBLIC%\Libraries", lMenuPublicLibraries, "Folder")
 
 StringReplace, strException, lMenuPictures, &
-InitClassIdException(strPathUser . "\Pictures", strException, "lMenuPictures")
+InitClassIdException(strPathUser . "\Pictures", strException, "lMenuPictures", 39)
 
 InitClassIdException(strPathUser . "\Favorites", lMenuFavoritesInternet, "Favorites")
 
 StringReplace, strException, lMenuDesktop, &
-InitClassIdException(A_Desktop, strException, "lMenuDesktop")
+InitClassIdException(A_Desktop, strException, "lMenuDesktop", 0)
 InitClassIdException(A_DesktopCommon, lMenuCommonDesktop, "lMenuDesktop")
 
 InitClassIdException(A_Temp, lMenuTemporaryFiles, "Temporary")
 
 InitClassIdException(A_WinDir, "Windows", "Winver")
+*/
 
 ;------------------------------------------------------------
 ; Build folders list for dropdown
 
 strSpecialFoldersList := ""
-for strSpecialFolderName in objClassIdByLocalizedName
+for strSpecialFolderName in objClassIdOrPathByDefaultName
 	strSpecialFoldersList := strSpecialFoldersList . strSpecialFolderName . "|"
 StringTrimRight, strSpecialFoldersList, strSpecialFoldersList, 1
 
 return
 ;------------------------------------------------------------
 */
+
+
+;------------------------------------------------------------
+InitSpecialFolderObject(strClassIdOrPath, strShellConstantText, intShellConstantNumeric, strDOpusAlias, strTCCommand
+	, strDefaultName, strDefaultIcon
+	, strUse4NavigateExplorer, strUse4NewExplorer, strUse4Dialog, strUse4Console, strUse4DOpus, strUse4TC, strUse4FPc)
+
+; strClassIdOrPath: CLSID or Path, used as key to access objSpecialFolder objects
+;		CLSID Win_7: http://www.sevenforums.com/tutorials/110919-clsid-key-list-windows-7-a.html
+;		CLSID Win_8: http://www.eightforums.com/tutorials/13591-clsid-key-guid-shortcuts-list-windows-8-a.html
+; 		Environment system variables: http://en.wikipedia.org/wiki/Environment_variable#Windows
+;		HKEY_CLASSES_ROOT Key: http://msdn.microsoft.com/en-us/library/windows/desktop/ms724475(v=vs.85).aspx
+; 		NOTES How to call in Explorer...
+;		... CLSID: shell:::{{20D04FE0-3AEA-1069-A2D8-08002B30309D}}
+;		... ShellConstant: shell:MyComputerFolder
+
+; strShellConstantText: text constant used to navigate using Explorer or Dialog box? What with DOpus and TC?
+;		http://www.sevenforums.com/tutorials/4941-shell-command.html
+;		http://www.eightforums.com/tutorials/6050-shell-commands-windows-8-a.html
+
+; intShellConstantNumeric: numeric ShellSpecialFolderConstants constant 
+;		http://msdn.microsoft.com/en-us/library/windows/desktop/bb774096%28v=vs.85%29.aspx
+
+; strDOpusAlias: Directory Opus constant
+
+; strTCCommand: Total Commander constant
+
+; strDefaultName: name for menu if path is used, fallback name if CLSID is used to access localized name
+
+; strIconMenu: icon in strIconsMenus if path is used, fallback icon (?) if CLSID returns no icon resource
+
+; Constants for "use" flags:
+; 		CLS: Class ID
+;		SCT: Shell Constant Text
+;		SCN: Shell Constant Numeric
+;		DOA: Directory Opus Alias
+;		TCC: Total Commander Commands
+
+; Usage flags:
+; 		strUse4NavigateExplorer
+; 		strUse4NewExplorer
+; 		strUse4Dialog
+; 		strUse4Console
+; 		strUse4DOpus
+; 		strUse4TC
+;		strUse4FPc
+
+; Special Folder Object definition:
+;		ClassIdOrPath: key to access one Special Folder object (example: objSpecialFolders[strClassIdOrPath]
+;		objSpecialFolder.ShellConstantText: text constant used to navigate using Explorer or Dialog box? What with DOpus and TC?
+;		objSpecialFolder.ShellConstantNumeric: numeric ShellSpecialFolderConstants constant 
+;		objSpecialFolder.DOpusAlias: Directory Opus constant
+;		objSpecialFolder.TCCommand: Total Commander constant
+;		objSpecialFolder.DefaultName:
+;		objSpecialFolder.DefaultIcon: icon resource name in the format "file,index"
+;		objSpecialFolder.Use4NavigateExplorer:
+;		objSpecialFolder.Use4NewExplorer:
+;		objSpecialFolder.Use4Dialog:
+;		objSpecialFolder.Use4Console:
+;		objSpecialFolder.Use4DOpus:
+;		objSpecialFolder.Use4TC:
+;		objSpecialFolder.Use4FPc:
+
+;------------------------------------------------------------
+{
+	objOneSpecialFolder := Object()
+	
+	blnIsClsId := (SubStr(strClassIdOrPath, 1, 1) = "{")
+
+	if (blnIsClsId)
+		strThisDefaultName := GetLocalizedNameForClassId(strClassIdOrPath)
+	If !StrLen(strThisDefaultName)
+			strThisDefaultName := strDefaultName
+    objClassIdOrPathByDefaultName.Insert(strThisDefaultName, strClassIdOrPath)
+	objOneSpecialFolder.DefaultName := strDefaultName
+	
+	if (blnIsClsId)
+		strThisDefaultIcon := GetIconForClassId(strClassIdOrPath)
+	if !StrLen(strThisDefaultIcon)
+		strThisDefaultIcon := objIconsFile[strDefaultIcon] . "," . objIconsIndex[strDefaultIcon] 
+	if !StrLen(strThisDefaultIcon)
+		strThisDefaultIcon := "%DefaultRoot%\Default32\shell32.dll,4"
+	objOneSpecialFolder.DefaultIcon := strThisDefaultIcon
+
+	objOneSpecialFolder.ShellConstantText := strShellConstantText
+	objOneSpecialFolder.ShellConstantNumeric := intShellConstantNumeric
+	objOneSpecialFolder.DOpusAlias := strDOpusAlias
+	objOneSpecialFolder.TCCommand := strTCCommand
+	
+	objOneSpecialFolder.Use4NavigateExplorer := strUse4NavigateExplorer
+	objOneSpecialFolder.Use4NewExplorer := strUse4NewExplorer
+	objOneSpecialFolder.Use4Dialog := strUse4Dialog
+	objOneSpecialFolder.Use4Console := strUse4Console
+	objOneSpecialFolder.Use4DOpus := strUse4DOpus
+	objOneSpecialFolder.Use4TC := strUse4TC
+	objOneSpecialFolder.Use4FPc := strUse4FPc
+	
+	objSpecialFolders.Insert(strClassIdOrPath, objOneSpecialFolder)
+}
+;------------------------------------------------------------
 
 
 ;------------------------------------------------------------
@@ -2765,16 +2908,16 @@ if (blnDiagMode)
 	Diag("FavoriteType", strFavoriteType)
 }
 
-if !FileExist(strLocation)
-	and !((InStr(objLocationUrlByName[A_ThisMenuItem], "::") = 1) or (strFavoriteType = "U") or (strFavoriteType = "P"))
-	; this favorite does not exist and it is not a special folder or an URL
-	{
-		Gui, 1:+OwnDialogs
-		MsgBox, 0, % L(lDialogFavoriteDoesNotExistTitle, strAppName)
-			, % L(lDialogFavoriteDoesNotExistPrompt, strLocation)
-			, 30
-		return
-	}
+if !((strFavoriteType = "U") or (strFavoriteType = "P")) ; not URL or Special Folder, this strLocation should exist
+	if !FileExist(strLocation)
+		; this favorite does not exist and it is not a special folder or an URL
+		{
+			Gui, 1:+OwnDialogs
+			MsgBox, 0, % L(lDialogFavoriteDoesNotExistTitle, strAppName)
+				, % L(lDialogFavoriteDoesNotExistPrompt, strLocation)
+				, 30
+			return
+		}
 
 if (strFavoriteType = "D" or strFavoriteType = "U") ; this is a document or an URL
 {
@@ -2785,6 +2928,7 @@ if (strFavoriteType = "D" or strFavoriteType = "U") ; this is a document or an U
 ; else this is a folder
 
 if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
+	or ((strFavoriteType = "P") and objSpecialFolders[strLocation].Use4NavigateExplorer = "NEW")
 	
 	Gosub, OpenFavoriteInNewWindow
 
@@ -2793,26 +2937,44 @@ else if WindowIsAnExplorer(strTargetClass)
 	if (blnDiagMode)
 		Diag("Navigate", "NavigateExplorer")
 	
-	if (SubStr(strLocation, 1, 2) = "::")
-	{
-		strClsId := SubStr(strLocation, 3)
-		if (objShellConstantByClassId[strClsId] = "!clsid-new")
-		{
-			Gosub, OpenFavoriteInNewWindow
-			return ; Exit OpenFavorite 
-		}
+	if (strFavoriteType = "P")
+		if (objSpecialFolders[strLocation].Use4NavigateExplorer = "CLS")
+			if (SubStr(strLocation, 1, 1) = "{")
+				strThisLocation := "shell:::" . strLocation
+			else
+				strThisLocation := strLocation
+		else if (objSpecialFolders[strLocation].Use4NavigateExplorer = "SCT")
+			strThisLocation := "shell:" . objSpecialFolders[strLocation].ShellConstantText
 		else
-			strLocation := "shell:" . objShellConstantByClassId[strClsId]
-	}
+		{
+			return ; ### error message tray
+		}
+	else
+		strThisLocation := strLocation
 	
-	NavigateExplorer(strLocation, strTargetWinId)
+	###_D("Explorer: " . strThisLocation)
+	NavigateExplorer(strThisLocation, strTargetWinId)
 }
 else if WindowIsConsole(strTargetClass)
 {
 	if (blnDiagMode)
 		Diag("Navigate", "NavigateConsole")
 	
-	NavigateConsole(strLocation, strTargetWinId)
+	if (strFavoriteType = "P")
+		if ((objSpecialFolders[strLocation].Use4Console = "CLS") and SubStr(strLocation, 1, 1) <> "{")
+			strThisLocation := strLocation
+		else if (objSpecialFolders[strLocation].Use4Console = "NEW")
+		{
+			Gosub, OpenFavoriteInNewWindow
+			return
+		}
+		else
+			return ; ### error message tray
+	else
+		strThisLocation := strLocation
+
+	###_D("Console: " . strThisLocation)
+	NavigateConsole(strThisLocation, strTargetWinId)
 }
 else if WindowIsFPconnect(strTargetWinId) ; must be before other third-party file managers
 {
@@ -2821,14 +2983,54 @@ else if WindowIsFPconnect(strTargetWinId) ; must be before other third-party fil
 		Diag("Navigate", "FPconnect")
 		Diag("TargetWinId", strTargetWinId)
 	}
-	NavigateFPconnect(strLocation, strTargetWinId, strTargetClass)
+	if (strFavoriteType = "P")
+		if (objSpecialFolders[strLocation].Use4FPc = "CLS")
+			if (SubStr(strLocation, 1, 1) = "{")
+				strThisLocation := "shell:::" . strLocation
+			else
+				strThisLocation := strLocation
+		else if (objSpecialFolders[strLocation].Use4FPc = "NEW")
+		{
+			Gosub, OpenFavoriteInNewWindow
+			return
+		}
+		else
+		{
+			return ; ### error message tray
+		}
+	else
+		strThisLocation := strLocation
+	
+	###_D("FPc: " . strThisLocation)
+	NavigateFPconnect(strThisLocation, strTargetWinId, strTargetClass)
 }
 else if WindowIsDirectoryOpus(strTargetClass)
 {
 	if (blnDiagMode)
 		Diag("Navigate", "DirectoryOpus")
 
-	NavigateDirectoryOpus(strLocation, strTargetWinId)
+	if (strFavoriteType = "P")
+		if (objSpecialFolders[strLocation].Use4DOpus = "DOA")
+			strThisLocation := "/" . objSpecialFolders[strLocation].DOpusAlias
+		else if (objSpecialFolders[strLocation].Use4DOpus = "CLS")
+			if (SubStr(strLocation, 1, 1) = "{")
+				strThisLocation := "shell:::" . strLocation
+			else
+				strThisLocation := strLocation
+		else if (objSpecialFolders[strLocation].Use4DOpus = "NEW")
+		{
+			Gosub, OpenFavoriteInNewWindow
+			return
+		}
+		else
+		{
+			return ; ### error message tray
+		}
+	else
+		strThisLocation := strLocation
+	
+	###_D("DOpus: " . strThisLocation)
+	NavigateDirectoryOpus(strThisLocation, strTargetWinId)
 }
 /* removed for FPconnect: 
 else if WindowIsFreeCommander(strTargetClass)
@@ -2844,7 +3046,31 @@ else if WindowIsTotalCommander(strTargetClass)
 	if (blnDiagMode)
 		Diag("Navigate", "NavigateTotalCommander")
 	
-	NavigateTotalCommander(strLocation, strTargetWinId, strTargetControl)
+	if (strFavoriteType = "P")
+		if (objSpecialFolders[strLocation].Use4TC = "TCC")
+			strThisLocation := objSpecialFolders[strLocation].TCCommand
+		else if (objSpecialFolders[strLocation].Use4TC = "CLS")
+			if (SubStr(strLocation, 1, 1) = "{")
+				strThisLocation := "shell:::" . strLocation
+			else
+				strThisLocation := strLocation
+		else if (objSpecialFolders[strLocation].Use4TC = "NEW")
+		{
+			Gosub, OpenFavoriteInNewWindow
+			return
+		}			
+		else
+		{
+			return ; ### error message tray
+		}
+	else
+		strThisLocation := strLocation
+	
+	###_D("TC: " . strThisLocation)
+	if strThisLocation is not integer 
+		NavigateTotalCommander(strThisLocation, strTargetWinId, strTargetControl)
+	else
+		NavigateTotalCommanderCommand(strThisLocation, strTargetWinId, strTargetControl)
 }
 else if WindowIsDialog(strTargetClass, strTargetWinId)
 {
@@ -2853,7 +3079,29 @@ else if WindowIsDialog(strTargetClass, strTargetWinId)
 		Diag("Navigate", "NavigateDialog")
 		Diag("TargetClass", strTargetClass)
 	}
-	NavigateDialog(strLocation, strTargetWinId, strTargetClass)
+
+	if (strFavoriteType = "P")
+		if (objSpecialFolders[strLocation].Use4Dialog = "CLS")
+			if (SubStr(strLocation, 1, 1) = "{")
+				strThisLocation := "shell:::" . strLocation
+			else
+				strThisLocation := strLocation
+		else if (objSpecialFolders[strLocation].Use4Dialog = "SCT")
+			strThisLocation := "shell:" . objSpecialFolders[strLocation].ShellConstantText
+		else if (objSpecialFolders[strLocation].Use4Dialog = "NEW")
+		{
+			Gosub, OpenFavoriteInNewWindow
+			return
+		}
+		else
+		{
+			return ; ### error message tray
+		}
+	else
+		strThisLocation := strLocation
+	
+	###_D("Dialog: " . strThisLocation)
+	NavigateDialog(strThisLocation, strTargetWinId, strTargetClass)
 }
 else ; we open the folder in a new window
 	Gosub, OpenFavoriteInNewWindow
@@ -2869,8 +3117,10 @@ return
 OpenFavoriteInNewWindow:
 ;------------------------------------------------------------
 
-If (InStr(strLocation, "::") = 1)
-	strLocation := "shell:" . strLocation
+if (strFavoriteType = "P") and (SubStr(strLocation, 1, 1) = "{")
+	strThisLocation := "shell:::" . strLocation
+else
+	strThisLocation := strLocation
 
 if (blnDiagMode)
 {
@@ -2878,29 +3128,88 @@ if (blnDiagMode)
 	Diag("OpenInNewWindowClass", strTargetControl)
 }
 
-if (blnUseDirectoryOpus)
+if (blnUseFPconnect)
+{	
+	if (strFavoriteType = "P")
+		if (objSpecialFolders[strLocation].Use4FPc = "NEW")
+		{
+			###_D("FPc use NEW: " . strThisLocation)
+			Run, Explorer "%strThisLocation%"
+			return
+		}
+		else if (objSpecialFolders[strLocation].Use4FPc <> "CLS")
+		{
+			return ; ### error message tray
+		}
+
+	###_D("New FPc: " . strThisLocation)
+	NewFPconnect(strThisLocation, strTargetWinId, strTargetControl)
+}	
+else if (blnUseDirectoryOpus)
 {
-	RunDOpusRt("/acmd Go ", strLocation, " " . strDirectoryOpusNewTabOrWindow) ; open in a new lister or tab
+	if (strFavoriteType = "P")
+		if (objSpecialFolders[strLocation].Use4DOpus = "DOA")
+			strThisLocation := "/" . objSpecialFolders[strLocation].DOpusAlias
+		else if (objSpecialFolders[strLocation].Use4DOpus = "CLS")
+			if (SubStr(strLocation, 1, 1) = "{")
+				strThisLocation := "shell:::" . strLocation
+			else
+				strThisLocation := strLocation
+		else if (objSpecialFolders[strLocation].Use4DOpus = "NEW")
+		{
+			###_D("DOpus use NEW: " . strThisLocation)
+			Run, Explorer "%strThisLocation%"
+			return
+		}		
+		else
+		{
+			return ; ### error message tray
+		}
+	else
+		strThisLocation := strLocation
+	
+	###_D("New DOpus: " . strThisLocation)
+	RunDOpusRt("/acmd Go ", strThisLocation, " " . strDirectoryOpusNewTabOrWindow) ; open in a new lister or tab
 	WinActivate, ahk_class dopus.lister
 }
 else if (blnUseTotalCommander)
+{	
 	
-	NewTotalCommander(strLocation, strTargetWinId, strTargetControl)
+	if (strFavoriteType = "P")
+		if (objSpecialFolders[strLocation].Use4TC = "TCC")
+			strThisLocation := objSpecialFolders[strLocation].TCCommand
+		else if (objSpecialFolders[strLocation].Use4TC = "CLS")
+			if (SubStr(strLocation, 1, 1) = "{")
+				strThisLocation := "shell:::" . strLocation
+			else
+				strThisLocation := strLocation
+		else if (objSpecialFolders[strLocation].Use4TC = "NEW")
+		{
+			###_D("TC use NEW: " . strThisLocation)
+			Run, Explorer "%strThisLocation%"
+			return
+		}		
+		else
+		{
+			return ; ### error message tray
+		}
+	else
+		strThisLocation := strLocation
 	
-else if (blnUseFPconnect)
-	
-	NewFPconnect(strLocation, strTargetWinId, strTargetControl)
-	
+	###_D("New TC: " . strThisLocation)
+	if strThisLocation is not integer 
+		NewTotalCommander(strThisLocation, strTargetWinId, strTargetControl)
+	else
+		NavigateTotalCommanderCommand(strThisLocation, strTargetWinId, strTargetControl, true)
+}	
 else
 	if (A_OSVersion = "WIN_XP")
-		ComObjCreate("Shell.Application").Explore(strLocation)
+		ComObjCreate("Shell.Application").Explore(strThisLocation)
 	else
-		Run, Explorer "%strLocation%" ; was a bug prior to v3.3.1 because the lack of double-quotes
-; http://msdn.microsoft.com/en-us/library/bb774094
-; ComObjCreate("Shell.Application").Explore(strLocation)
-; ComObjCreate("WScript.Shell").Exec("Explorer.exe /e /select," . strLocation) ; not tested on XP
-; ComObjCreate("Shell.Application").Open(strLocation)
-; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
+	{
+		###_D("NewExplorer:" . strThisLocation)
+		Run, Explorer "%strThisLocation%" ; there was a bug prior to v3.3.1 because the lack of double-quotes
+	}
 
 return
 ;------------------------------------------------------------
@@ -2916,8 +3225,6 @@ GetLocationFor(strMenu, strName)
 		if (strName = arrMenus[strMenu][A_Index].FavoriteName)
 		{
 			strLocation := arrMenus[strMenu][A_Index].FavoriteLocation
-			if SubStr(strLocation, 1, 1) = "{"
-				strLocation := "::" . strLocation
 			break
 		}
 
@@ -3411,7 +3718,7 @@ while, intExplorer := WindowOfType("EX") ; returns the index of the first Explor
 	DiagGroupLoad("objIniExplorersInGroup", intActualWindowInIni . " " . lGuiGroupOf . " " . intTotalWindowsInIni)
 	
 	if (objIniExplorersInGroup[intExplorer].IsSpecialFolder)
-		strExplorerLocationOrClassId := "shell:::" . objClassIdByLocalizedName[objIniExplorersInGroup[intExplorer].Name]
+		strExplorerLocationOrClassId := "shell:::" . objClassIdOrPathByDefaultName[objIniExplorersInGroup[intExplorer].Name]
 	else
 		strExplorerLocationOrClassId := objIniExplorersInGroup[intExplorer].Name
 	DiagGroupLoad("strExplorerLocationOrClassId", strExplorerLocationOrClassId)
@@ -3879,6 +4186,45 @@ NewTotalCommander(strLocation, strWinId, strControl)
 }
 ;------------------------------------------------------------
 
+
+
+;------------------------------------------------------------
+NavigateTotalCommanderCommand(strLocation, strWinId, strControl, blnNewSpecialWindow := false)
+;------------------------------------------------------------
+{
+	global strTotalCommanderPath
+	global strTotalCommanderNewTabOrWindow
+	
+	intTCCommand := strLocation
+	
+	if (intTCCommand = 2123)
+	{
+		Run, Control ; workaround for command 2123 cm_OpenControls not working in my tests with TC v8.51a
+		return
+	}
+	
+	if (blnNewSpecialWindow)
+	{
+		if !WinExist("ahk_class TTOTAL_CMD") ; open a first instance and get PID
+			or InStr(strTotalCommanderNewTabOrWindow, "/N") ; open a new instance and get PID
+			{
+				Run, %strTotalCommanderPath%
+				WinWait, A, , 10
+				Sleep, 200 ; wait additional time to improve SendMessage reliability
+			}
+		if !InStr(strTotalCommanderNewTabOrWindow, "/N") ; open the folder in a new tab
+		{
+			intTCCommandOpenNewTab := 3001 ; cm_OpenNewTab
+			Sleep, 100 ; wait to improve SendMessage reliability
+			SendMessage, 0x433, %intTCCommandOpenNewTab%, , , ahk_class TTOTAL_CMD
+		}
+		Sleep, 100 ; wait to improve SendMessage reliability
+	}
+	SendMessage, 0x433, %intTCCommand%, , , ahk_class TTOTAL_CMD
+	Sleep, 100 ; wait to improve SendMessage reliability
+	WinActivate, ahk_class TTOTAL_CMD
+}
+;------------------------------------------------------------
 
 
 ;------------------------------------------------------------
@@ -5305,13 +5651,10 @@ Gui, 2:Submit, NoHide
 strFavoriteShortName := drpSpecialFolder
 GuiControl, , strFavoriteShortName, %strFavoriteShortName% ; also assign values to gui control
 
-strFavoriteLocation := objClassIdByLocalizedName[strFavoriteShortName]
+strFavoriteLocation := objClassIdOrPathByDefaultName[strFavoriteShortName]
 GuiControl, , strFavoriteLocation, %strFavoriteLocation% ; also assign values to gui control
 
-if (SubStr(strFavoriteLocation, 1, 1) <> "{") ; this is an exception - select the icon resource
-	strCurrentIconResource := objIconsFile[objIconByClassId[strFavoriteLocation]] . "," . objIconsIndex[objIconByClassId[strFavoriteLocation]]
-else
-	strCurrentIconResource := objIconByClassId[strFavoriteLocation]
+strCurrentIconResource := objSpecialFolders[strFavoriteLocation].DefaultIcon
 
 Gosub, GuiFavoriteIconDisplay
 
@@ -6707,7 +7050,10 @@ IniRead, strFPconnectAppPathFilename, %strFPconnectIniPath%, Options, AppPath, %
 blnUseFPconnect := FileExist(EnvVars(strFPconnectAppPathFilename))
 
 if (blnUseFPconnect)
-	SplitPath, strFPconnectAppPathFilename, EnvVars(strFPconnectAppPathFilename)
+{
+	strFPconnectAppPathFilename := EnvVars(strFPconnectAppPathFilename)
+	SplitPath, strFPconnectAppPathFilename, strFPconnectAppPathFilename
+}
 else
 	Oops(lOopsWrongFPconnectAppPathFilename, strFPconnectPath, strFPconnectIniPath)
 
