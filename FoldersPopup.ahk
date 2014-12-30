@@ -1206,7 +1206,7 @@ global objClassIdOrPathByDefaultName := Object() ; also used by CollectExplorers
 global objSpecialFolders := Object()
 global strSpecialFoldersList
 
-; InitSpecialFolderObject(strClassIdOrPath, strShellConstant, intShellConstant, strDOpusAlias, strTCCommand
+; InitSpecialFolderObject(strClassIdOrPath, strShellConstant, intShellConstant, strAHKConstant, strDOpusAlias, strTCCommand
 ;	, strDefaultName, strDefaultIcon
 ;	, strUse4NavigateExplorer, strUse4NewExplorer, strUse4Dialog, strUse4Console, strUse4DOpus, strUse4TC, strUse4FPc)
 
@@ -1226,86 +1226,98 @@ NOTES
 ; CLSID giving localized name and icon, with valid Shell Command
 ; ####
 
-InitSpecialFolderObject("{D20EA4E1-3957-11d2-A40B-0C5020524153}", "Common Administrative Tools", -1, "commonadmintools", ""
+InitSpecialFolderObject("{D20EA4E1-3957-11d2-A40B-0C5020524153}", "Common Administrative Tools", -1, "", "commonadmintools", ""
 	, "Administrative Tools", "" ; Outils d’administration
 	, "CLS", "CLS", "NEW", "NEW", "DOA", "NEW", "CLS")
-InitSpecialFolderObject("{20D04FE0-3AEA-1069-A2D8-08002B30309D}", "MyComputerFolder", 17, "mycomputer", 2122
+	; OK     OK      OK     OK
+InitSpecialFolderObject("{20D04FE0-3AEA-1069-A2D8-08002B30309D}", "MyComputerFolder", 17, "", "mycomputer", 2122
 	, "Computer", "" ; Ordinateur
 	, "SCT", "SCT", "SCT", "NEW", "DOA", "TCC", "CLS") ; for 1,2,3 CLS works, 7 OK for FPc but CLS does not work with DoubleCommander
-InitSpecialFolderObject("{21EC2020-3AEA-1069-A2DD-08002B30309D}", "ControlPanelFolder", 3, "", 2123
+	; OK     OK      OK     OK
+InitSpecialFolderObject("{21EC2020-3AEA-1069-A2DD-08002B30309D}", "ControlPanelFolder", 3, "", "", 2123
 	, "Control Panel (Icons view)", "" ; Tous les Panneaux de configuration
-	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("{450D8FBA-AD25-11D0-98A8-0800361B1103}", "Personal", 5, "", ""
+	, "SCT", "SCT", "NEW", "NEW", "", "", "")
+	; OK     OK      OK     OK
+InitSpecialFolderObject("{450D8FBA-AD25-11D0-98A8-0800361B1103}", "Personal", 5, "A_MyDocuments", "", ""
 	, "Documents", "" ; Mes documents
-	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("{ED228FDF-9EA8-4870-83b1-96b02CFE0D52}", "Games", -1, "", ""
+	, "SCT", "SCT", "AHK", "AHK", "", "", "")
+	; OK     OK      OK     OK
+InitSpecialFolderObject("{ED228FDF-9EA8-4870-83b1-96b02CFE0D52}", "Games", -1, "", "", ""
 	, "Games Explorer", "" ; Jeux
-	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("{B4FB3F98-C1EA-428d-A78A-D1F5659CBA93}", "HomeGroupFolder", -1, "", ""
+	, "SCT", "SCT", "NEW", "NEW", "", "", "")
+	; OK     OK      OK     OK
+InitSpecialFolderObject("{B4FB3F98-C1EA-428d-A78A-D1F5659CBA93}", "HomeGroupFolder", -1, "", "", ""
 	, "HomeGroup", "" ; Groupe résidentiel
-	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("{031E4825-7B94-4dc3-B131-E946B44C8DD5}", "Libraries", -1, "", ""
+	, "SCT", "SCT", "SCT", "NEW", "", "", "")
+	; OK     OK      OK     OK
+InitSpecialFolderObject("{031E4825-7B94-4dc3-B131-E946B44C8DD5}", "Libraries", -1, "", "", ""
 	, "Libraries", "" ; Biblioth
-	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("{7007ACC7-3202-11D1-AAD2-00805FC1270E}", "ConnectionsFolder", -1, "", ""
+	, "SCT", "SCT", "SCT", "NEW", "", "", "")
+	; OK     OK      OK     OK
+InitSpecialFolderObject("{7007ACC7-3202-11D1-AAD2-00805FC1270E}", "ConnectionsFolder", -1, "", "", ""
 	, "Network Connections", "" ; Connexions réseau
-	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}", "NetworkPlacesFolder", 18, "", 2125
+	, "SCT", "SCT", "NEW", "NEW", "", "", "")
+	; OK     OK      OK     OK
+InitSpecialFolderObject("{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}", "NetworkPlacesFolder", 18, "", "", 2125
 	, "Network", "" ; Réseau
-	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("{2227A280-3AEA-1069-A2DE-08002B30309D}", "PrintersFolder", -1, "", 2126
+	, "SCT", "SCT", "SCT", "NEW", "", "", "")
+	; OK     OK      OK     OK
+InitSpecialFolderObject("{2227A280-3AEA-1069-A2DE-08002B30309D}", "PrintersFolder", -1, "", "", 2126
 	, "Printers and Faxes", "" ; Imprimantes
-	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("{4336a54d-038b-4685-ab02-99bb52d3fb8b}", "Public", -1, "", ""
-	, "Public Folder", "" ; Public
-	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("{645FF040-5081-101B-9F08-00AA002F954E}", "RecycleBinFolder", 10, "", 2127
+	, "SCT", "SCT", "NEW", "NEW", "", "", "")
+	; OK     OK      OK     OK
+InitSpecialFolderObject("{645FF040-5081-101B-9F08-00AA002F954E}", "RecycleBinFolder", 0, "", "", 2127
 	, "Recycle Bin", "" ; Corbeille
-	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("{59031a47-3f72-44a7-89c5-5595fe6b30ee}", "Profile", -1, "", ""
+	, "SCT", "SCT", "NEW", "NEW", "", "", "")
+	; OK     OK      OK     OK
+InitSpecialFolderObject("{59031a47-3f72-44a7-89c5-5595fe6b30ee}", "Profile", -1, "", "", ""
 	, lMenuUserFolder, ""
-	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("{1f3427c8-5c10-4210-aa03-2ee45287d668}", "User Pinned", -1, "", ""
+	, "SCT", "SCT", "SCT", "NEW", "", "", "")
+	; OK     OK      OK     OK
+InitSpecialFolderObject("{1f3427c8-5c10-4210-aa03-2ee45287d668}", "User Pinned", -1, "", "", ""
 	, lMenuUserPinned, ""
-	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("{BD84B380-8CA2-1069-AB1D-08000948534}", "Fonts", -1, "", 2124
+	, "SCT", "SCT", "SCT", "NEW", "", "", "")
+	; OK     OK      OK     OK
+InitSpecialFolderObject("{BD84B380-8CA2-1069-AB1D-08000948534}", "Fonts", -1, "", "", 2124
 	, lMenuFonts, "Fonts"
-	, "", "", "", "", "", "", "")
+	, "SCT", "SCT", "NEW", "NEW", "", "", "")
+	; OK     OK      OK     OK
 
 ;---------------------
 ; CLSID giving localized name and icon, no valid Shell Command, must be open in a new Explorer using CLSID - to be tested with DOpus, TC and FPc
 
-InitSpecialFolderObject("{B98A2BEA-7D42-4558-8BD1-832F41BAC6FD}", "", -1, "", ""
+InitSpecialFolderObject("{B98A2BEA-7D42-4558-8BD1-832F41BAC6FD}", "", -1, "", "", ""
 	, "Backup and Restore", "" ; Sauvegarder et restaurer
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("{ED7BA470-8E54-465E-825C-99712043E01C}", "", -1, "", ""
+InitSpecialFolderObject("{ED7BA470-8E54-465E-825C-99712043E01C}", "", -1, "", "", ""
 	, "Control Panel (All Tasks)", "" ; Toutes les tâches
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("{323CA680-C24D-4099-B94D-446DD2D7249E}", "", -1, "", ""
+InitSpecialFolderObject("{323CA680-C24D-4099-B94D-446DD2D7249E}", "", -1, "", "", ""
 	, "Favorites", "" ; Favoris (<> Favorites (Internet))
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("{3080F90E-D7AD-11D9-BD98-0000947B0257}", "", -1, "", ""
+InitSpecialFolderObject("{3080F90E-D7AD-11D9-BD98-0000947B0257}", "", -1, "", "", ""
 	, "Flip 3D", "" ; Pas de traduction
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("{6DFD7C5C-2451-11d3-A299-00C04F8EF6AF}", "", -1, "", ""
+InitSpecialFolderObject("{6DFD7C5C-2451-11d3-A299-00C04F8EF6AF}", "", -1, "", "", ""
 	, "Folder Options", "" ; Options des dossiers
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("{78F3955E-3B90-4184-BD14-5397C15F1EFC}", "", -1, "", ""
+InitSpecialFolderObject("{78F3955E-3B90-4184-BD14-5397C15F1EFC}", "", -1, "", "", ""
 	, "Performance Information and Tools", "" ; Informations et outils de performance
 	, "CLS", "CLS", "NEW", "NEW", "NEW", "NEW", "NEW")
-InitSpecialFolderObject("{35786D3C-B075-49b9-88DD-029876E11C01}", "", -1, "", ""
+InitSpecialFolderObject("{35786D3C-B075-49b9-88DD-029876E11C01}", "", -1, "", "", ""
 	, "Portable Devices", "" ; Appareils mobiles
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("{7be9d83c-a729-4d97-b5a7-1b7313c39e0a}", "", -1, "", ""
+InitSpecialFolderObject("{7be9d83c-a729-4d97-b5a7-1b7313c39e0a}", "", -1, "A_Programs", "", ""
 	, lMenuProgramsFolderStartMenu, "" ; Menu Démarrer / Programmes (Menu Start/Programs)
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("{22877a6d-37a1-461a-91b0-dbda5aaebc99}", "", -1, "", ""
+; ### A_ProgramsCommon The full path and name of the Programs folder in the all-users Start Menu. 
+InitSpecialFolderObject("{22877a6d-37a1-461a-91b0-dbda5aaebc99}", "", -1, "", "", ""
 	, "Recent Places", "" ; Emplacements récents
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("{3080F90D-D7AD-11D9-BD98-0000947B0257}", "", -1, "", ""
+InitSpecialFolderObject("{3080F90D-D7AD-11D9-BD98-0000947B0257}", "", -1, "", "", ""
 	, "Show Desktop", "" ; Afficher le Bureau
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("{BB06C0E4-D293-4f75-8A90-CB05B6477EEE}", "", -1, "", ""
+InitSpecialFolderObject("{BB06C0E4-D293-4f75-8A90-CB05B6477EEE}", "", -1, "", "", ""
 	, "System", "" ; Syst
 	, "", "", "", "", "", "", "")
 
@@ -1313,85 +1325,91 @@ InitSpecialFolderObject("{BB06C0E4-D293-4f75-8A90-CB05B6477EEE}", "", -1, "", ""
 ; Path from registry (no CLSID), localized name and icon provided, no Shell Command - to be tested with DOpus, TC and FPc
 
 RegRead, strException, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, {374DE290-123F-4565-9164-39C4925E467B}
-InitSpecialFolderObject(strException, "", -1, "downloads", ""
+InitSpecialFolderObject(strException, "", -1, "", "downloads", ""
 	, lMenuDownloads, "lMenuDownloads"
 	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 RegRead, strException, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Music
-InitSpecialFolderObject(strException, "", -1, "", ""
+InitSpecialFolderObject(strException, "", -1, "", "", ""
 	, lMenuMyMusic, "MyMusic"
 	, "", "", "", "", "", "", "")
 RegRead, strException, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Video
-InitSpecialFolderObject(strException, "", -1, "", ""
+InitSpecialFolderObject(strException, "", -1, "", "", ""
 	, lMenuMyVideo, "MyVideo"
 	, "", "", "", "", "", "", "")
 RegRead, strException, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, Templates
-InitSpecialFolderObject(strException, "", -1, "", ""
+InitSpecialFolderObject(strException, "", -1, "", "", ""
 	, lMenuTemplates, "Templates"
 	, "", "", "", "", "", "", "")
 
 ;---------------------
 ; Path under %APPDATA% (no CLSID), localized name and icon provided, no Shell Command - to be tested with DOpus, TC and FPc
 
-InitSpecialFolderObject("%APPDATA%\Microsoft\Windows\Start Menu", "", -1, "", ""
+InitSpecialFolderObject("%APPDATA%\Microsoft\Windows\Start Menu", "", -1, "A_StartMenu", "", ""
 	, lMenuStartMenu, "Folder"
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup", "", -1, "", ""
+InitSpecialFolderObject("%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup", "", -1, "A_Startup", "", ""
 	, lMenuStartup, "Folder"
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("%APPDATA%", "", -1, "", ""
+InitSpecialFolderObject("%APPDATA%", "", -1, "A_AppData", "", ""
 	, lMenuAppData, "Folder"
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("%APPDATA%\Microsoft\Windows\Recent", "", -1, "", ""
+InitSpecialFolderObject("%APPDATA%\Microsoft\Windows\Recent", "", -1, "", "", ""
 	, lMenuRecentItems, "menuRecentFolders"
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("%APPDATA%\Microsoft\Windows\Cookies", "", -1, "", ""
+InitSpecialFolderObject("%APPDATA%\Microsoft\Windows\Cookies", "", -1, "", "", ""
 	, lMenuCookies, "Folder"
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("%APPDATA%\Microsoft\Internet Explorer\Quick Launch", "", -1, "", ""
+InitSpecialFolderObject("%APPDATA%\Microsoft\Internet Explorer\Quick Launch", "", -1, "", "", ""
 	, lMenuQuickLaunch, ""
 	, "", "", "", "", "", "", "Folder")
-InitSpecialFolderObject("%APPDATA%\Microsoft\SystemCertificates", "", -1, "", ""
+InitSpecialFolderObject("%APPDATA%\Microsoft\SystemCertificates", "", -1, "", "", ""
 	, lMenuSystemCertificates, "Folder"
 	, "", "", "", "", "", "", "")
 
 ;---------------------
 ; Path under other environment variables (no CLSID), localized name and icon provided, no Shell Command - to be tested with DOpus, TC and FPc
 
-InitSpecialFolderObject("%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu", "", -1, "", ""
+InitSpecialFolderObject("%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu", "", -1, "A_StartMenuCommon", "", ""
 	, lMenuCommonStartMenu, "Folder"
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Startup", "", -1, "", ""
+InitSpecialFolderObject("%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Startup", "", -1, "A_StartupCommon", "", ""
 	, lMenuCommonStartupMenu, "Folder"
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("%ALLUSERSPROFILE%", "", -1, "", ""
+InitSpecialFolderObject("%ALLUSERSPROFILE%", "", -1, "A_AppDataCommon", "", ""
 	, lMenuCommonAppData, "Folder"
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("%LOCALAPPDATA%\Microsoft\Windows\Temporary Internet Files", "", -1, "", ""
+InitSpecialFolderObject("%LOCALAPPDATA%\Microsoft\Windows\Temporary Internet Files", "", -1, "", "", ""
 	, lMenuCache, "Temporary"
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("%LOCALAPPDATA%\Microsoft\Windows\History", "", -1, "", ""
+InitSpecialFolderObject("%LOCALAPPDATA%\Microsoft\Windows\History", "", -1, "", "", ""
 	, lMenuHistory, "History"
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject("%ProgramFiles%", "", -1, "", ""
+InitSpecialFolderObject("%ProgramFiles%", "", -1, "A_ProgramFiles", "", ""
 	, lMenuProgramFiles, "Folder"
 	, "", "", "", "", "", "", "")
 if (A_Is64bitOS)
-	InitSpecialFolderObject("%ProgramFiles(x86)%", "", -1, "", ""
+	InitSpecialFolderObject("%ProgramFiles(x86)%", "", -1, "", "", ""
 		, lMenuProgramFiles . " (x86)", "Folder"
 		, "", "", "", "", "", "", "")
-InitSpecialFolderObject("%PUBLIC%\Libraries", "", -1, "", ""
+InitSpecialFolderObject("%PUBLIC%\Libraries", "", -1, "", "", ""
 	, lMenuPublicLibraries, "Folder"
 	, "", "", "", "", "", "", "")
 
 ;---------------------
-; Path under the User folder (no CLSID), localized name and icon provided, no Shell Command - to be tested with DOpus, TC and FPc
+; Path under the Users folder (no CLSID), localized name and icon provided, no Shell Command - to be tested with DOpus, TC and FPc
 
-StringReplace, strPathUser, A_AppData, \AppData\Roaming
+StringReplace, strPathUsername, A_AppData, \AppData\Roaming
+StringReplace, strPathUsers, strPathUsername, \%A_UserName%
+
+InitSpecialFolderObject(strPathUsers . "\Public", "Public", -1, "", "", ""
+	, "Public Folder", "" ; Public
+	, "SCT", "SCT", "SCT", "CLS", "", "", "")
+	; OK     OK      OK     OK
 StringReplace, strException, lMenuPictures, &
-InitSpecialFolderObject(strPathUser . "\Pictures", "", 39, "", ""
+InitSpecialFolderObject(strPathUsername . "\Pictures", "", 39, "", "", ""
 	, strException, "lMenuPictures"
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject(strPathUser . "\Favorites", "", -1, "", ""
+InitSpecialFolderObject(strPathUsername . "\Favorites", "", -1, "", "", ""
 	, lMenuFavoritesInternet, "Favorites"
 	, "", "", "", "", "", "", "")
 
@@ -1399,16 +1417,16 @@ InitSpecialFolderObject(strPathUser . "\Favorites", "", -1, "", ""
 ; Path using AHK constants (no CLSID), localized name and icon provided, no Shell Command - to be tested with DOpus, TC and FPc
 
 StringReplace, strException, lMenuDesktop, &
-InitSpecialFolderObject(A_Desktop, "", 0, "", 2121
+InitSpecialFolderObject(A_Desktop, "", 0, "A_Desktop", "", 2121
 	, strException, "lMenuDesktop"
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject(A_DesktopCommon, "", -1, "", ""
+InitSpecialFolderObject(A_DesktopCommon, "", -1, "A_DesktopCommon", "", ""
 	, lMenuCommonDesktop, "lMenuDesktop"
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject(A_Temp, "", -1, "", ""
+InitSpecialFolderObject(A_Temp, "", -1, "", "A_Temp", ""
 	, lMenuTemporaryFiles, "Temporary"
 	, "", "", "", "", "", "", "")
-InitSpecialFolderObject(A_WinDir, "", -1, "", ""
+InitSpecialFolderObject(A_WinDir, "", -1, "A_WinDir", "", ""
 	, "Windows", "Winver"
 	, "", "", "", "", "", "", "")
 
@@ -1425,7 +1443,7 @@ return
 
 
 ;------------------------------------------------------------
-InitSpecialFolderObject(strClassIdOrPath, strShellConstantText, intShellConstantNumeric, strDOpusAlias, strTCCommand
+InitSpecialFolderObject(strClassIdOrPath, strShellConstantText, intShellConstantNumeric, strAHKConstant, strDOpusAlias, strTCCommand
 	, strDefaultName, strDefaultIcon
 	, strUse4NavigateExplorer, strUse4NewExplorer, strUse4Dialog, strUse4Console, strUse4DOpus, strUse4TC, strUse4FPc)
 
@@ -1444,6 +1462,8 @@ InitSpecialFolderObject(strClassIdOrPath, strShellConstantText, intShellConstant
 
 ; intShellConstantNumeric: numeric ShellSpecialFolderConstants constant 
 ;		http://msdn.microsoft.com/en-us/library/windows/desktop/bb774096%28v=vs.85%29.aspx
+
+; strAHKConstant: AutoHotkey constant
 
 ; strDOpusAlias: Directory Opus constant
 
@@ -1473,6 +1493,7 @@ InitSpecialFolderObject(strClassIdOrPath, strShellConstantText, intShellConstant
 ;		ClassIdOrPath: key to access one Special Folder object (example: objSpecialFolders[strClassIdOrPath]
 ;		objSpecialFolder.ShellConstantText: text constant used to navigate using Explorer or Dialog box? What with DOpus and TC?
 ;		objSpecialFolder.ShellConstantNumeric: numeric ShellSpecialFolderConstants constant 
+;		objSpecialFolder.AHKConstant: AutoHotkey constant
 ;		objSpecialFolder.DOpusAlias: Directory Opus constant
 ;		objSpecialFolder.TCCommand: Total Commander constant
 ;		objSpecialFolder.DefaultName:
@@ -1508,6 +1529,7 @@ InitSpecialFolderObject(strClassIdOrPath, strShellConstantText, intShellConstant
 
 	objOneSpecialFolder.ShellConstantText := strShellConstantText
 	objOneSpecialFolder.ShellConstantNumeric := intShellConstantNumeric
+	objOneSpecialFolder.AHKConstant := strAHKConstant
 	objOneSpecialFolder.DOpusAlias := strDOpusAlias
 	objOneSpecialFolder.TCCommand := strTCCommand
 	
@@ -3027,6 +3049,11 @@ else if WindowIsConsole(strTargetClass)
 	if (strFavoriteType = "P")
 		if ((objSpecialFolders[strLocation].Use4Console = "CLS") and SubStr(strLocation, 1, 1) <> "{")
 			strThisLocation := strLocation
+		else if (objSpecialFolders[strLocation].Use4Dialog = "AHK")
+		{
+			strThisLocation := objSpecialFolders[strLocation].AHKConstant
+			strThisLocation := %strThisLocation%
+		}
 		else if (objSpecialFolders[strLocation].Use4Console = "NEW")
 		{
 			Gosub, OpenFavoriteInNewWindow
@@ -3152,6 +3179,11 @@ else if WindowIsDialog(strTargetClass, strTargetWinId)
 				strThisLocation := strLocation
 		else if (objSpecialFolders[strLocation].Use4Dialog = "SCT")
 			strThisLocation := "shell:" . objSpecialFolders[strLocation].ShellConstantText
+		else if (objSpecialFolders[strLocation].Use4Dialog = "AHK")
+		{
+			strThisLocation := objSpecialFolders[strLocation].AHKConstant
+			strThisLocation := %strThisLocation%
+		}
 		else if (objSpecialFolders[strLocation].Use4Dialog = "NEW")
 		{
 			Gosub, OpenFavoriteInNewWindow
@@ -3181,9 +3213,13 @@ return
 OpenFavoriteInNewWindow:
 ;------------------------------------------------------------
 
-if (strFavoriteType = "P") and (SubStr(strLocation, 1, 1) = "{")
-	strThisLocation := "shell:::" . strLocation
-else
+strThisLocation := ""
+if (strFavoriteType = "P")
+	if (objSpecialFolders[strLocation].Use4NewExplorer = "SCT")
+		strThisLocation := "shell:" . objSpecialFolders[strLocation].ShellConstantText
+	else if (SubStr(strLocation, 1, 1) = "{")
+		strThisLocation := "shell:::" . strLocation
+if !StrLen(strThisLocation)
 	strThisLocation := strLocation
 
 if (blnDiagMode)
