@@ -1224,67 +1224,67 @@ NOTES
 
 ;---------------------
 ; CLSID giving localized name and icon, with valid Shell Command
-; ####
 
 InitSpecialFolderObject("{D20EA4E1-3957-11d2-A40B-0C5020524153}", "Common Administrative Tools", -1, "", "commonadmintools", ""
 	, "Administrative Tools", "" ; Outils d’administration
 	, "CLS", "CLS", "NEW", "NEW", "DOA", "NEW", "CLS")
-	; OK     OK      OK     OK
+	; OK     OK      OK     OK    OK      OK
 InitSpecialFolderObject("{20D04FE0-3AEA-1069-A2D8-08002B30309D}", "MyComputerFolder", 17, "", "mycomputer", 2122
 	, "Computer", "" ; Ordinateur
 	, "SCT", "SCT", "SCT", "NEW", "DOA", "TCC", "CLS") ; for 1,2,3 CLS works, 7 OK for FPc but CLS does not work with DoubleCommander
-	; OK     OK      OK     OK
-InitSpecialFolderObject("{21EC2020-3AEA-1069-A2DD-08002B30309D}", "ControlPanelFolder", 3, "", "", 2123
+	; OK     OK      OK     OK    OK      OK
+InitSpecialFolderObject("{21EC2020-3AEA-1069-A2DD-08002B30309D}", "ControlPanelFolder", 3, "", "controls", 2123
 	, "Control Panel (Icons view)", "" ; Tous les Panneaux de configuration
-	, "SCT", "SCT", "NEW", "NEW", "", "", "")
-	; OK     OK      OK     OK
-InitSpecialFolderObject("{450D8FBA-AD25-11D0-98A8-0800361B1103}", "Personal", 5, "A_MyDocuments", "", ""
+	, "SCT", "SCT", "NEW", "NEW", "DOA", "NEW", "CLS")
+	; OK     OK      OK     OK    OK  NO-use NEW
+InitSpecialFolderObject("{450D8FBA-AD25-11D0-98A8-0800361B1103}", "Personal", 5, "A_MyDocuments", "mydocuments", ""
 	, "Documents", "" ; Mes documents
-	, "SCT", "SCT", "AHK", "AHK", "", "", "")
-	; OK     OK      OK     OK
+	, "SCT", "SCT", "AHK", "AHK", "DOA", "AHK", "AHK")
+	; OK     OK      OK     OK    OK      OK
 InitSpecialFolderObject("{ED228FDF-9EA8-4870-83b1-96b02CFE0D52}", "Games", -1, "", "", ""
 	, "Games Explorer", "" ; Jeux
-	, "SCT", "SCT", "NEW", "NEW", "", "", "")
-	; OK     OK      OK     OK
+	, "SCT", "SCT", "NEW", "NEW", "NEW", "NEW", "CLS")
+	; OK     OK      OK     OK    OK      OK
 InitSpecialFolderObject("{B4FB3F98-C1EA-428d-A78A-D1F5659CBA93}", "HomeGroupFolder", -1, "", "", ""
 	, "HomeGroup", "" ; Groupe résidentiel
-	, "SCT", "SCT", "SCT", "NEW", "", "", "")
-	; OK     OK      OK     OK
-InitSpecialFolderObject("{031E4825-7B94-4dc3-B131-E946B44C8DD5}", "Libraries", -1, "", "", ""
+	, "SCT", "SCT", "SCT", "NEW", "NEW", "NEW", "CLS")
+	; OK     OK      OK     OK    OK     OK
+InitSpecialFolderObject("{031E4825-7B94-4dc3-B131-E946B44C8DD5}", "Libraries", -1, "", "libraries", ""
 	, "Libraries", "" ; Biblioth
-	, "SCT", "SCT", "SCT", "NEW", "", "", "")
-	; OK     OK      OK     OK
+	, "SCT", "SCT", "SCT", "NEW", "DOA", "NEW", "CLS")
+	; OK     OK      OK     OK     OK      OK
 InitSpecialFolderObject("{7007ACC7-3202-11D1-AAD2-00805FC1270E}", "ConnectionsFolder", -1, "", "", ""
 	, "Network Connections", "" ; Connexions réseau
-	, "SCT", "SCT", "NEW", "NEW", "", "", "")
-	; OK     OK      OK     OK
-InitSpecialFolderObject("{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}", "NetworkPlacesFolder", 18, "", "", 2125
+	, "SCT", "SCT", "NEW", "NEW", "NEW", "NEW", "CLS")
+	; OK     OK      OK     OK     OK      OK
+InitSpecialFolderObject("{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}", "NetworkPlacesFolder", 18, "", "network", 2125
 	, "Network", "" ; Réseau
-	, "SCT", "SCT", "SCT", "NEW", "", "", "")
-	; OK     OK      OK     OK
-InitSpecialFolderObject("{2227A280-3AEA-1069-A2DE-08002B30309D}", "PrintersFolder", -1, "", "", 2126
+	, "SCT", "SCT", "SCT", "NEW", "DOA", "TCC", "CLS")
+	; OK     OK      OK     OK    OK      OK
+InitSpecialFolderObject("{2227A280-3AEA-1069-A2DE-08002B30309D}", "PrintersFolder", -1, "", "printers", 2126
 	, "Printers and Faxes", "" ; Imprimantes
-	, "SCT", "SCT", "NEW", "NEW", "", "", "")
-	; OK     OK      OK     OK
-InitSpecialFolderObject("{645FF040-5081-101B-9F08-00AA002F954E}", "RecycleBinFolder", 0, "", "", 2127
+	, "SCT", "SCT", "NEW", "NEW", "DOA", "TCC", "CLS")
+	; OK     OK      OK     OK    OK      OK
+InitSpecialFolderObject("{645FF040-5081-101B-9F08-00AA002F954E}", "RecycleBinFolder", 0, "", "trash", 2127
 	, "Recycle Bin", "" ; Corbeille
-	, "SCT", "SCT", "NEW", "NEW", "", "", "")
-	; OK     OK      OK     OK
-InitSpecialFolderObject("{59031a47-3f72-44a7-89c5-5595fe6b30ee}", "Profile", -1, "", "", ""
+	, "SCT", "SCT", "NEW", "NEW", "DOA", "TCC", "CLS")
+	; OK     OK      OK     OK    OK      OK
+InitSpecialFolderObject("{59031a47-3f72-44a7-89c5-5595fe6b30ee}", "Profile", -1, "", "profile", ""
 	, lMenuUserFolder, ""
-	, "SCT", "SCT", "SCT", "NEW", "", "", "")
-	; OK     OK      OK     OK
+	, "SCT", "SCT", "SCT", "NEW", "DOA", "NEW", "CLS")
+	; OK     OK      OK     OK    OK      OK
 InitSpecialFolderObject("{1f3427c8-5c10-4210-aa03-2ee45287d668}", "User Pinned", -1, "", "", ""
 	, lMenuUserPinned, ""
-	, "SCT", "SCT", "SCT", "NEW", "", "", "")
-	; OK     OK      OK     OK
-InitSpecialFolderObject("{BD84B380-8CA2-1069-AB1D-08000948534}", "Fonts", -1, "", "", 2124
+	, "SCT", "SCT", "SCT", "NEW", "NEW", "NEW", "CLS")
+	; OK     OK      OK     OK    OK      OK
+InitSpecialFolderObject("{BD84B380-8CA2-1069-AB1D-08000948534}", "Fonts", -1, "", "fonts", 2124
 	, lMenuFonts, "Fonts"
-	, "SCT", "SCT", "NEW", "NEW", "", "", "")
-	; OK     OK      OK     OK
+	, "SCT", "SCT", "NEW", "NEW", "DOA", "TCC", "CLS")
+	; OK     OK      OK     OK    OK      OK
 
 ;---------------------
 ; CLSID giving localized name and icon, no valid Shell Command, must be open in a new Explorer using CLSID - to be tested with DOpus, TC and FPc
+; ####
 
 InitSpecialFolderObject("{B98A2BEA-7D42-4558-8BD1-832F41BAC6FD}", "", -1, "", "", ""
 	, "Backup and Restore", "" ; Sauvegarder et restaurer
@@ -1401,10 +1401,10 @@ InitSpecialFolderObject("%PUBLIC%\Libraries", "", -1, "", "", ""
 StringReplace, strPathUsername, A_AppData, \AppData\Roaming
 StringReplace, strPathUsers, strPathUsername, \%A_UserName%
 
-InitSpecialFolderObject(strPathUsers . "\Public", "Public", -1, "", "", ""
+InitSpecialFolderObject(strPathUsers . "\Public", "Public", -1, "", "common", ""
 	, "Public Folder", "" ; Public
-	, "SCT", "SCT", "SCT", "CLS", "", "", "")
-	; OK     OK      OK     OK
+	, "SCT", "SCT", "SCT", "CLS", "DOA", "CLS", "CLS")
+	; OK     OK      OK     OK    OK      OK
 StringReplace, strException, lMenuPictures, &
 InitSpecialFolderObject(strPathUsername . "\Pictures", "", 39, "", "", ""
 	, strException, "lMenuPictures"
@@ -3080,6 +3080,11 @@ else if WindowIsFPconnect(strTargetWinId) ; must be before other third-party fil
 				strThisLocation := "shell:::" . strLocation
 			else
 				strThisLocation := strLocation
+		else if (objSpecialFolders[strLocation].Use4FPc = "AHK")
+		{
+			strThisLocation := objSpecialFolders[strLocation].AHKConstant
+			strThisLocation := %strThisLocation%
+		}
 		else if (objSpecialFolders[strLocation].Use4FPc = "NEW")
 		{
 			Gosub, OpenFavoriteInNewWindow
@@ -3108,6 +3113,11 @@ else if WindowIsDirectoryOpus(strTargetClass)
 				strThisLocation := "shell:::" . strLocation
 			else
 				strThisLocation := strLocation
+		else if (objSpecialFolders[strLocation].Use4DOpus = "AHK")
+		{
+			strThisLocation := objSpecialFolders[strLocation].AHKConstant
+			strThisLocation := %strThisLocation%
+		}
 		else if (objSpecialFolders[strLocation].Use4DOpus = "NEW")
 		{
 			Gosub, OpenFavoriteInNewWindow
@@ -3145,6 +3155,11 @@ else if WindowIsTotalCommander(strTargetClass)
 				strThisLocation := "shell:::" . strLocation
 			else
 				strThisLocation := strLocation
+		else if (objSpecialFolders[strLocation].Use4TC = "AHK")
+		{
+			strThisLocation := objSpecialFolders[strLocation].AHKConstant
+			strThisLocation := %strThisLocation%
+		}
 		else if (objSpecialFolders[strLocation].Use4TC = "NEW")
 		{
 			Gosub, OpenFavoriteInNewWindow
@@ -3237,6 +3252,11 @@ if (blnUseFPconnect)
 			Run, Explorer "%strThisLocation%"
 			return
 		}
+		else if (objSpecialFolders[strLocation].Use4FPc = "AHK")
+		{
+			strThisLocation := objSpecialFolders[strLocation].AHKConstant
+			strThisLocation := %strThisLocation%
+		}
 		else if (objSpecialFolders[strLocation].Use4FPc <> "CLS")
 		{
 			return ; ### error message tray
@@ -3255,6 +3275,11 @@ else if (blnUseDirectoryOpus)
 				strThisLocation := "shell:::" . strLocation
 			else
 				strThisLocation := strLocation
+		else if (objSpecialFolders[strLocation].Use4DOpus = "AHK")
+		{
+			strThisLocation := objSpecialFolders[strLocation].AHKConstant
+			strThisLocation := %strThisLocation%
+		}
 		else if (objSpecialFolders[strLocation].Use4DOpus = "NEW")
 		{
 			###_D("DOpus use NEW: " . strThisLocation)
@@ -3283,6 +3308,11 @@ else if (blnUseTotalCommander)
 				strThisLocation := "shell:::" . strLocation
 			else
 				strThisLocation := strLocation
+		else if (objSpecialFolders[strLocation].Use4TC = "AHK")
+		{
+			strThisLocation := objSpecialFolders[strLocation].AHKConstant
+			strThisLocation := %strThisLocation%
+		}
 		else if (objSpecialFolders[strLocation].Use4TC = "NEW")
 		{
 			###_D("TC use NEW: " . strThisLocation)
@@ -3307,7 +3337,7 @@ else
 		ComObjCreate("Shell.Application").Explore(strThisLocation)
 	else
 	{
-		###_D("NewExplorer:" . strThisLocation)
+		###_D("New Explorer: " . strThisLocation)
 		Run, Explorer "%strThisLocation%" ; there was a bug prior to v3.3.1 because the lack of double-quotes
 	}
 
@@ -4296,12 +4326,6 @@ NavigateTotalCommanderCommand(strLocation, strWinId, strControl, blnNewSpecialWi
 	global strTotalCommanderNewTabOrWindow
 	
 	intTCCommand := strLocation
-	
-	if (intTCCommand = 2123)
-	{
-		Run, Control ; workaround for command 2123 cm_OpenControls not working in my tests with TC v8.51a
-		return
-	}
 	
 	if (blnNewSpecialWindow)
 	{
