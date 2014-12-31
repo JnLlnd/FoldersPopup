@@ -4569,7 +4569,7 @@ Check4Update:
 ;------------------------------------------------------------
 
 strAppLandingPage := " http://code.jeanlalonde.ca/folderspopup/"
-strBetaLandingPage := "http://code.jeanlalonde.ca/folderspopup-v42-beta-testers-wanted/"
+strBetaLandingPage := "http://code.jeanlalonde.ca/folderspopup-v42-beta-tests/"
 
 Gui, 1:+OwnDialogs
 
