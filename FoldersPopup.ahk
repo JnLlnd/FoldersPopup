@@ -1,7 +1,5 @@
 /*
 Bugs:
-- default position in menu not correct after items were removed (if no item selected?)
-- when change to submenmu using add, the delete button in new submenu deletes items in the previous menu
 
 To-do for v4:
 
@@ -19,6 +17,10 @@ To-do for v4:
 	or Rexx version Folder Menu
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
+
+	Version: 4.1.8.3 BETA (2014-12-31)
+	* fix bug default position in menu not correct after last items in menu was removed
+	* fix bug when change to submenmu using edit button, the delete button in new submenu deleted items in the previous menu
 
 	Version: 4.1.8.2 BETA (2014-12-31)
 	* complete refactor of special folders using CLSID, Shell commands, Shell constants, AHK constants, DOpus alias or TC commands, and supporting NavigateExplorer, NewExplorer, Dialog, Console, DOpus, TC and FPc
