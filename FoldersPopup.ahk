@@ -18,6 +18,8 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 4.1.8.4 BETA ()
+	
 	Version: 4.1.8.3 BETA (2014-12-31)
 	* fix bug default position in menu not correct after last items in menu was removed
 	* fix bug when change to submenmu using edit button, the delete button in new submenu deleted items in the previous menu
@@ -574,7 +576,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.1.8.3 BETA
+;@Ahk2Exe-SetVersion 4.1.8.4 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -619,7 +621,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.1.8.3" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.1.8.4" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -1208,7 +1210,7 @@ InitSpecialFolderObject("{20D04FE0-3AEA-1069-A2D8-08002B30309D}", "MyComputerFol
 	; OK     OK      OK     OK    OK      OK
 InitSpecialFolderObject("{21EC2020-3AEA-1069-A2DD-08002B30309D}", "ControlPanelFolder", 3, "", "controls", 2123
 	, "Control Panel (Icons view)", "" ; Tous les Panneaux de configuration
-	, "SCT", "SCT", "NEW", "NEW", "DOA", "NEW", "NEW")
+	, "SCT", "SCT", "NEW", "NEW", "DOA", "CLS", "NEW")
 	; OK     OK      OK     OK    OK  NO-use NEW
 InitSpecialFolderObject("{450D8FBA-AD25-11D0-98A8-0800361B1103}", "Personal", 5, "A_MyDocuments", "mydocuments", ""
 	, "Documents", "" ; Mes documents
@@ -1216,19 +1218,19 @@ InitSpecialFolderObject("{450D8FBA-AD25-11D0-98A8-0800361B1103}", "Personal", 5,
 	; OK     OK      OK     OK    OK      OK
 InitSpecialFolderObject("{ED228FDF-9EA8-4870-83b1-96b02CFE0D52}", "Games", -1, "", "", ""
 	, "Games Explorer", "" ; Jeux
-	, "SCT", "SCT", "NEW", "NEW", "NEW", "NEW", "NEW")
+	, "SCT", "SCT", "NEW", "NEW", "NEW", "CLS", "NEW")
 	; OK     OK      OK     OK    OK      OK
 InitSpecialFolderObject("{B4FB3F98-C1EA-428d-A78A-D1F5659CBA93}", "HomeGroupFolder", -1, "", "", ""
 	, "HomeGroup", "" ; Groupe résidentiel
-	, "SCT", "SCT", "SCT", "NEW", "NEW", "NEW", "NEW")
+	, "SCT", "SCT", "SCT", "NEW", "NEW", "CLS", "NEW")
 	; OK     OK      OK     OK    OK     OK
 InitSpecialFolderObject("{031E4825-7B94-4dc3-B131-E946B44C8DD5}", "Libraries", -1, "", "libraries", ""
 	, "Libraries", "" ; Bibliothèque
-	, "SCT", "SCT", "SCT", "NEW", "DOA", "NEW", "NEW")
+	, "SCT", "SCT", "SCT", "NEW", "DOA", "CLS", "NEW")
 	; OK     OK      OK     OK     OK      OK
 InitSpecialFolderObject("{7007ACC7-3202-11D1-AAD2-00805FC1270E}", "ConnectionsFolder", -1, "", "", ""
 	, "Network Connections", "" ; Connexions réseau
-	, "SCT", "SCT", "NEW", "NEW", "NEW", "NEW", "NEW")
+	, "SCT", "SCT", "NEW", "NEW", "NEW", "CLS", "NEW")
 	; OK     OK      OK     OK     OK      OK
 InitSpecialFolderObject("{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}", "NetworkPlacesFolder", 18, "", "network", 2125
 	, "Network", "" ; Réseau
@@ -1244,7 +1246,7 @@ InitSpecialFolderObject("{645FF040-5081-101B-9F08-00AA002F954E}", "RecycleBinFol
 	; OK     OK      OK     OK    OK      OK
 InitSpecialFolderObject("{59031a47-3f72-44a7-89c5-5595fe6b30ee}", "Profile", -1, "", "profile", ""
 	, lMenuUserFolder, "" ; Dossier de l'utilisateur
-	, "SCT", "SCT", "SCT", "NEW", "DOA", "NEW", "NEW")
+	, "SCT", "SCT", "SCT", "NEW", "DOA", "CLS", "NEW")
 	; OK     OK      OK     OK    OK      OK
 InitSpecialFolderObject("{1f3427c8-5c10-4210-aa03-2ee45287d668}", "User Pinned", -1, "", "", ""
 	, lMenuUserPinned, "" ; Epinglé par l'utilisateur
@@ -3127,7 +3129,7 @@ else if WindowIsTotalCommander(strTargetClass)
 			strThisLocation := objSpecialFolders[strLocation].TCCommand
 		else if (objSpecialFolders[strLocation].Use4TC = "CLS")
 			if (SubStr(strLocation, 1, 1) = "{")
-				strThisLocation := "shell:::" . strLocation
+				strThisLocation := "::" . strLocation
 			else
 				strThisLocation := strLocation
 		else if (objSpecialFolders[strLocation].Use4TC = "AHK")
@@ -3277,7 +3279,7 @@ else if (blnUseTotalCommander)
 			strThisLocation := objSpecialFolders[strLocation].TCCommand
 		else if (objSpecialFolders[strLocation].Use4TC = "CLS")
 			if (SubStr(strLocation, 1, 1) = "{")
-				strThisLocation := "shell:::" . strLocation
+				strThisLocation := "::" . strLocation
 			else
 				strThisLocation := strLocation
 		else if (objSpecialFolders[strLocation].Use4TC = "AHK")
@@ -4296,11 +4298,11 @@ NavigateTotalCommanderCommand(strLocation, strWinId, strControl, blnNewSpecialWi
 	{
 		if !WinExist("ahk_class TTOTAL_CMD") ; open a first instance and get PID
 			or InStr(strTotalCommanderNewTabOrWindow, "/N") ; open a new instance and get PID
-			{
-				Run, %strTotalCommanderPath%
-				WinWait, A, , 10
-				Sleep, 200 ; wait additional time to improve SendMessage reliability
-			}
+		{
+			Run, %strTotalCommanderPath%
+			WinWait, A, , 10
+			Sleep, 200 ; wait additional time to improve SendMessage reliability
+		}
 		if !InStr(strTotalCommanderNewTabOrWindow, "/N") ; open the folder in a new tab
 		{
 			intTCCommandOpenNewTab := 3001 ; cm_OpenNewTab
