@@ -4581,10 +4581,12 @@ if Time2Donate(intStartups, blnDonor)
 }
 IniWrite, % (intStartups + 1), %strIniFile%, Global, Startups
 
-strLatestVersion := Url2Var("http://code.jeanlalonde.ca/ahk/folderspopup/latest-version/latest-version-2-" . strCurrentBranch . ".php?v=" . strCurrentVersion 
-	. "&os=" . A_OSVersion 
-	. "&is64=" . A_Is64bitOS 
-	. "&setup=" . (FileExist(A_WorkingDir . "\_do_not_remove_or_rename.txt") ? 1 : 0) + (2 * (blnDonor ? 1 : 0)))
+blnSetup := (FileExist(A_ScriptDir . "\_do_not_remove_or_rename.txt") = "" ? 0 : 1)
+strLatestVersion := Url2Var("http://code.jeanlalonde.ca/ahk/folderspopup/latest-version/latest-version-2-" . strCurrentBranch . ".php"
+	. "?v=" . strCurrentVersion
+	. "&os=" . A_OSVersion
+	. "&is64=" . A_Is64bitOS
+	. "&setup=" . (blnSetup) + (2 * (blnDonor ? 1 : 0)))
 
 if !StrLen(strLatestVersion)
 	if (A_ThisMenuItem = lMenuUpdate)
