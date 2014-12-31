@@ -1,6 +1,7 @@
 /*
 Bugs:
 - default position in menu not correct after items were removed (if no item selected?)
+- when change to submenmu using add, the delete button in new submenu deletes items in the previous menu
 
 To-do for v4:
 
@@ -571,7 +572,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.1.8.2 BETA
+;@Ahk2Exe-SetVersion 4.1.8.3 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -616,7 +617,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.1.8.2" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.1.8.3" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -4578,7 +4579,10 @@ if Time2Donate(intStartups, blnDonor)
 }
 IniWrite, % (intStartups + 1), %strIniFile%, Global, Startups
 
-strLatestVersion := Url2Var("http://code.jeanlalonde.ca/ahk/folderspopup/latest-version/latest-version-2-" . strCurrentBranch . ".php?v=" . strCurrentVersion . "&os=" . A_OSVersion . "&is64=" . A_Is64bitOS)
+strLatestVersion := Url2Var("http://code.jeanlalonde.ca/ahk/folderspopup/latest-version/latest-version-2-" . strCurrentBranch . ".php?v=" . strCurrentVersion 
+	. "&os=" . A_OSVersion 
+	. "&is64=" . A_Is64bitOS 
+	. "&setup=" . (FileExist(A_WorkingDir . "\_do_not_remove_or_rename.txt") ? 1 : 0) + (2 * (blnDonor ? 1 : 0)))
 
 if !StrLen(strLatestVersion)
 	if (A_ThisMenuItem = lMenuUpdate)
@@ -5543,7 +5547,7 @@ else
 	}
 }
 
-if InStr("GuiAddFavorite|GuiAddFromDropFiles", A_ThisLabel)(A_ThisLabel = "GuiAddFavorite")
+if InStr("GuiAddFavorite|GuiAddFromDropFiles", A_ThisLabel)
 	intItemPosition := (LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1)
 else
 	intItemPosition := 0 ; will display lDialogEndOfMenu
@@ -6101,6 +6105,8 @@ if (strFavoriteType = "S") ; this is a submneu
 
 LV_Delete(intItemToRemove)
 LV_Modify(intItemToRemove, "Select Focus")
+if !LV_GetNext() ; if last item was deleted, select the new last item
+	LV_Modify(LV_GetCount(), "Select Focus")
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
 
@@ -6109,6 +6115,8 @@ if (strFavoriteType = "S")
 	Gosub, SaveCurrentListviewToMenuObject ; save current LV before update the dropdown menu
 	GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
 }
+
+Gosub, SaveCurrentListviewToMenuObject
 
 GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lGuiCancel%
