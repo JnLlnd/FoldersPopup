@@ -1,41 +1,6 @@
 /*
 Bugs:
 - default position in menu not correct after items were removed (if no item selected?)
-- open special folders in DOpus opens empty tab
-
-- Control Panel ::{21EC2020-3AEA-1069-A2DD-08002B30309D} not working in Explorer
-
-Does not open when DOpus active:
-- Show Desktop
-- Favorites
-- User Pinned (Quick Launch includes User Pinned)
-- Informations et outils de performance
-- Options des dossiers
-- Outils d’administration
-- Système
-
-Does not open when TC active:
-- Show Desktop
-- History (no error but no content)
-- Favorites
-- User Pinned (Quick Launch includes User Pinned)
-- Informations et outils de performance
-- Options des dossiers
-- Outils d’administration
-- Système
-
-Does not work from a dialog box:
-- Show Desktop
-- Recycle Bin
-- Recents items
-- History
-- Favorites
-- User Pinned (Quick Launch includes User Pinned)
-- Informations et outils de performance
-- Options des dossiers
-- Outils d’administration
-- Système
-- Tous les Panneaux de configuration
 
 To-do for v4:
 
@@ -54,8 +19,13 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.1.8.2 BETA (2014-12-??)
-	* Fix bug when moving a favorite to another submenu
+	Version: 4.1.8.2 BETA (2014-12-31)
+	* complete refactor of special folders using CLSID, Shell commands, Shell constants, AHK constants, DOpus alias or TC commands, and supporting NavigateExplorer, NewExplorer, Dialog, Console, DOpus, TC and FPc
+	* adaptation of OpenFavorite and navigate/new window functions to the refactored special folders
+	* error message when a special folder cuold not be open
+	* add support for FPconnect TargetPath filename
+	* support environment variables in FPc paths
+	* fix bug when moving a favorite to another submenu
 	
 	Version: 4.1.8.1 BETA (2014-12-27)
 	* removed support for FreeCommander XE (now available via FPconnect)
@@ -2920,6 +2890,7 @@ WindowIsFPconnect(strWinId)
 ;------------------------------------------------------------
 {
 	global strFPconnectAppPathFilename
+	global strFPconnectTargetPathFilename
 	
     intPID := 0
     DllCall("GetWindowThreadProcessId", "UInt", strWinId, "UInt *", intPID)
@@ -2930,8 +2901,7 @@ WindowIsFPconnect(strWinId)
     DllCall("CloseHandle", "UInt", hProcess)
 	
 	SplitPath, strFCAppFile, strFCAppFile
-	return (strFCAppFile = strFPconnectAppPathFilename)
-
+	return (strFCAppFile = strFPconnectAppPathFilename) or (strFCAppFile = strFPconnectTargetPathFilename)
 }
 ;------------------------------------------------------------
 
@@ -7165,10 +7135,14 @@ strFPconnectIniPath := strFPconnectIniPath . ".ini"
 IniRead, strFPconnectAppPathFilename, %strFPconnectIniPath%, Options, AppPath, %A_Space% ; empty by default
 blnUseFPconnect := FileExist(EnvVars(strFPconnectAppPathFilename))
 
+IniRead, strFPconnectTargetPathFilename, %strFPconnectIniPath%, Options, TargetPath, %A_Space% ; empty by default
+
 if (blnUseFPconnect)
 {
 	strFPconnectAppPathFilename := EnvVars(strFPconnectAppPathFilename)
 	SplitPath, strFPconnectAppPathFilename, strFPconnectAppPathFilename
+	strFPconnectTargetPathFilename := EnvVars(strFPconnectTargetPathFilename)
+	SplitPath, strFPconnectTargetPathFilename, strFPconnectTargetPathFilename
 }
 else
 	Oops(lOopsWrongFPconnectAppPathFilename, strFPconnectPath, strFPconnectIniPath)
