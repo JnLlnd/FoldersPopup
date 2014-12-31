@@ -1250,7 +1250,7 @@ InitSpecialFolderObject("{B4FB3F98-C1EA-428d-A78A-D1F5659CBA93}", "HomeGroupFold
 	, "SCT", "SCT", "SCT", "NEW", "NEW", "NEW", "NEW")
 	; OK     OK      OK     OK    OK     OK
 InitSpecialFolderObject("{031E4825-7B94-4dc3-B131-E946B44C8DD5}", "Libraries", -1, "", "libraries", ""
-	, "Libraries", "" ; Biblioth
+	, "Libraries", "" ; Bibliothèque
 	, "SCT", "SCT", "SCT", "NEW", "DOA", "NEW", "NEW")
 	; OK     OK      OK     OK     OK      OK
 InitSpecialFolderObject("{7007ACC7-3202-11D1-AAD2-00805FC1270E}", "ConnectionsFolder", -1, "", "", ""
@@ -1270,11 +1270,11 @@ InitSpecialFolderObject("{645FF040-5081-101B-9F08-00AA002F954E}", "RecycleBinFol
 	, "SCT", "SCT", "NEW", "NEW", "DOA", "TCC", "NEW")
 	; OK     OK      OK     OK    OK      OK
 InitSpecialFolderObject("{59031a47-3f72-44a7-89c5-5595fe6b30ee}", "Profile", -1, "", "profile", ""
-	, lMenuUserFolder, ""
+	, lMenuUserFolder, "" ; Dossier de l'utilisateur
 	, "SCT", "SCT", "SCT", "NEW", "DOA", "NEW", "NEW")
 	; OK     OK      OK     OK    OK      OK
 InitSpecialFolderObject("{1f3427c8-5c10-4210-aa03-2ee45287d668}", "User Pinned", -1, "", "", ""
-	, lMenuUserPinned, ""
+	, lMenuUserPinned, "" ; Epinglé par l'utilisateur
 	, "SCT", "SCT", "SCT", "NEW", "NEW", "NEW", "NEW")
 	; OK     OK      OK     OK    OK      OK
 InitSpecialFolderObject("{BD84B380-8CA2-1069-AB1D-08000948534}", "Fonts", -1, "", "fonts", 2124
@@ -1284,7 +1284,6 @@ InitSpecialFolderObject("{BD84B380-8CA2-1069-AB1D-08000948534}", "Fonts", -1, ""
 
 ;---------------------
 ; CLSID giving localized name and icon, no valid Shell Command, must be open in a new Explorer using CLSID - to be tested with DOpus, TC and FPc
-; ####
 
 InitSpecialFolderObject("{B98A2BEA-7D42-4558-8BD1-832F41BAC6FD}", "", -1, "", "", ""
 	, "Backup and Restore", "" ; Sauvegarder et restaurer
@@ -1307,9 +1306,6 @@ InitSpecialFolderObject("{78F3955E-3B90-4184-BD14-5397C15F1EFC}", "", -1, "", ""
 InitSpecialFolderObject("{35786D3C-B075-49b9-88DD-029876E11C01}", "", -1, "", "", ""
 	, "Portable Devices", "" ; Appareils mobiles
 	, "CLS", "CLS", "NEW", "NEW", "NEW", "NEW", "NEW")
-InitSpecialFolderObject("{7be9d83c-a729-4d97-b5a7-1b7313c39e0a}", "", -1, "A_Programs", "programs", ""
-	, lMenuProgramsFolderStartMenu, "" ; Menu Démarrer / Programmes (Menu Start/Programs)
-	, "CLS", "CLS", "NEW", "AHK", "DOA", "AHK", "AHK")
 InitSpecialFolderObject("{7be9d83c-a729-4d97-b5a7-1b7313c39e0a}", "", -1, "A_Programs", "programs", ""
 	, lMenuProgramsFolderStartMenu, "" ; Menu Démarrer / Programmes (Menu Start/Programs)
 	, "CLS", "CLS", "NEW", "AHK", "DOA", "AHK", "AHK")
@@ -3037,12 +3033,12 @@ else if WindowIsAnExplorer(strTargetClass)
 			strThisLocation := "shell:" . objSpecialFolders[strLocation].ShellConstantText
 		else
 		{
-			return ; ### error message tray
+			Oops(lOopsCouldNotOpenSpecialFolder, "Explorer", strLocation)
+			return
 		}
 	else
 		strThisLocation := strLocation
 	
-	###_D("Explorer: " . strThisLocation)
 	NavigateExplorer(EnvVars(strThisLocation), strTargetWinId)
 }
 else if WindowIsConsole(strTargetClass)
@@ -3064,11 +3060,13 @@ else if WindowIsConsole(strTargetClass)
 			return
 		}
 		else
-			return ; ### error message tray
+		{
+			Oops(lOopsCouldNotOpenSpecialFolder, "Console (CMD)", strLocation)
+			return
+		}
 	else
 		strThisLocation := strLocation
 
-	###_D("Console: " . strThisLocation)
 	NavigateConsole(EnvVars(strThisLocation), strTargetWinId)
 }
 else if WindowIsFPconnect(strTargetWinId) ; must be before other third-party file managers
@@ -3096,12 +3094,12 @@ else if WindowIsFPconnect(strTargetWinId) ; must be before other third-party fil
 		}
 		else
 		{
-			return ; ### error message tray
+			Oops(lOopsCouldNotOpenSpecialFolder, "FPconnect", strLocation)
+			return
 		}
 	else
 		strThisLocation := strLocation
 	
-	###_D("FPc: " . strThisLocation)
 	NavigateFPconnect(EnvVars(strThisLocation), strTargetWinId, strTargetClass)
 }
 else if WindowIsDirectoryOpus(strTargetClass)
@@ -3129,12 +3127,12 @@ else if WindowIsDirectoryOpus(strTargetClass)
 		}
 		else
 		{
-			return ; ### error message tray
+			Oops(lOopsCouldNotOpenSpecialFolder, "Directory Opus", strLocation)
+			return
 		}
 	else
 		strThisLocation := strLocation
 	
-	###_D("DOpus: " . strThisLocation)
 	NavigateDirectoryOpus(EnvVars(strThisLocation), strTargetWinId)
 }
 /* removed for FPconnect: 
@@ -3171,12 +3169,12 @@ else if WindowIsTotalCommander(strTargetClass)
 		}			
 		else
 		{
-			return ; ### error message tray
+			Oops(lOopsCouldNotOpenSpecialFolder, "Total Commander", strLocation)
+			return
 		}
 	else
 		strThisLocation := strLocation
 	
-	###_D("TC: " . strThisLocation)
 	if strThisLocation is not integer 
 		NavigateTotalCommander(EnvVars(strThisLocation), strTargetWinId, strTargetControl)
 	else
@@ -3210,12 +3208,12 @@ else if WindowIsDialog(strTargetClass, strTargetWinId)
 		}
 		else
 		{
-			return ; ### error message tray
+			Oops(lOopsCouldNotOpenSpecialFolder, lOopsDialogBox, strLocation)
+			return
 		}
 	else
 		strThisLocation := strLocation
 	
-	###_D("Dialog: " . strThisLocation)
 	NavigateDialog(EnvVars(strThisLocation), strTargetWinId, strTargetClass)
 }
 else ; we open the folder in a new window
@@ -3252,7 +3250,6 @@ if (blnUseFPconnect)
 	if (strFavoriteType = "P")
 		if (objSpecialFolders[strLocation].Use4FPc = "NEW")
 		{
-			###_D("FPc use NEW: " . strThisLocation)
 			Run, Explorer "%strThisLocation%"
 			return
 		}
@@ -3263,10 +3260,10 @@ if (blnUseFPconnect)
 		}
 		else if (objSpecialFolders[strLocation].Use4FPc <> "CLS")
 		{
-			return ; ### error message tray
+			Oops(lOopsCouldNotOpenSpecialFolder, "FPconnect", strLocation)
+			return
 		}
 
-	###_D("New FPc: " . strThisLocation)
 	NewFPconnect(strThisLocation, strTargetWinId, strTargetControl)
 }	
 else if (blnUseDirectoryOpus)
@@ -3286,24 +3283,22 @@ else if (blnUseDirectoryOpus)
 		}
 		else if (objSpecialFolders[strLocation].Use4DOpus = "NEW")
 		{
-			###_D("DOpus use NEW: " . strThisLocation)
 			Run, Explorer "%strThisLocation%"
 			return
 		}		
 		else
 		{
-			return ; ### error message tray
+			Oops(lOopsCouldNotOpenSpecialFolder, "Directory Opus", strLocation)
+			return
 		}
 	else
 		strThisLocation := strLocation
 	
-	###_D("New DOpus: " . strThisLocation)
 	RunDOpusRt("/acmd Go ", strThisLocation, " " . strDirectoryOpusNewTabOrWindow) ; open in a new lister or tab
 	WinActivate, ahk_class dopus.lister
 }
 else if (blnUseTotalCommander)
 {	
-	
 	if (strFavoriteType = "P")
 		if (objSpecialFolders[strLocation].Use4TC = "TCC")
 			strThisLocation := objSpecialFolders[strLocation].TCCommand
@@ -3319,18 +3314,17 @@ else if (blnUseTotalCommander)
 		}
 		else if (objSpecialFolders[strLocation].Use4TC = "NEW")
 		{
-			###_D("TC use NEW: " . strThisLocation)
 			Run, Explorer "%strThisLocation%"
 			return
 		}		
 		else
 		{
-			return ; ### error message tray
+			Oops(lOopsCouldNotOpenSpecialFolder, "Total Commander", strLocation)
+			return
 		}
 	else
 		strThisLocation := strLocation
 	
-	###_D("New TC: " . strThisLocation)
 	if strThisLocation is not integer 
 		NewTotalCommander(strThisLocation, strTargetWinId, strTargetControl)
 	else
@@ -3340,10 +3334,7 @@ else
 	if (A_OSVersion = "WIN_XP")
 		ComObjCreate("Shell.Application").Explore(strThisLocation)
 	else
-	{
-		###_D("New Explorer: " . strThisLocation)
 		Run, Explorer "%strThisLocation%" ; there was a bug prior to v3.3.1 because the lack of double-quotes
-	}
 
 return
 ;------------------------------------------------------------

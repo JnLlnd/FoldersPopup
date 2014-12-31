@@ -210,6 +210,8 @@ lMenuUserFolder	Dossier de l'utilisateur
 lMenuUserPinned	Epinglé par l'utilisateur
 lNavigateFileError	Une erreur s'est produite lors de l'ouverture du dossier:`n~1~.
 lNavigateSpecialError	Une erreur s'est produite lors de l'ouverture du dossier spécial #~1~.
+lOopsCouldNotOpenSpecialFolder	~1~ ne peut ouvrir le dossier spécial: "~2~".
+lOopsDialogBox	La boîte de dialogue
 lOopsTitle	~1~ (~2~)
 lOopsWriteProtectedError	Il semble que ~1~ a été lancé depuis un dossier en ÉCRITURE SEULEMENT où il est impossible de créer le fichier de configuration "~1~.ini".`n`nDéplacez le fichier .EXE de ~1~ dans un dossier RÉGULIER de votre choix, puis exécutez l'application à nouveau depuis ce dossier.`n`n~1~ va être fermé.
 lOopsWrongFPconnectAppPathFilename	Chemin ou nom de fichier incorrect pour le paramètre "AppPath" dans le fichier de configuration de FPconnect:`n~1~.`n`nVérifiez le nom et le chemin du fichier .exe pour "AppPath" dans le fichier ini de FCConnect:`n~2~
