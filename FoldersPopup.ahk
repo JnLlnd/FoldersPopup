@@ -2,6 +2,7 @@
 Bugs:
 
 To-do for v4:
+- support multiple select in Gui(-Multi )
 
 */
 ;===============================================
@@ -19,7 +20,13 @@ To-do for v4:
 
 
 	Version: 4.1.8.4 BETA ()
-	
+	* add hotkeys to Gui to move favorites (Ctrl-Down/Up), edit favorite (Enter), open submenu (Ctrl-Right) and return to parent menu (Ctrl-Left)
+	* add hotkey help in main Gui
+	* special folder Performance Information and Tool only on Win7 (not available on Win8+)
+	* add support for six special folders in TC with use of :: instead of shell:::
+	* fix bug special folder Images with Total Commander
+	* fix bug in manage groups, Select a group was sorted with list of groups
+
 	Version: 4.1.8.3 BETA (2014-12-31)
 	* fix bug default position in menu not correct after last items in menu was removed
 	* fix bug when change to submenmu using edit button, the delete button in new submenu deleted items in the previous menu
@@ -705,8 +712,9 @@ OnMessage(0x404, "AHK_NOTIFYICON")
 ; Create a mutex to allow Inno Setup to detect if FP is running before uninstall or update
 DllCall("CreateMutex", "uint", 0, "int", false, "str", strAppName . "Mutex")
 
+
 ; ### only when debugging Gui
-; Gosub, GuiShow
+Gosub, GuiShow
 ; Gosub, GuiOptions
 ; Gosub, GuiAddFavorite
 ; Gosub, GuiAddFromPopup
@@ -721,6 +729,38 @@ DllCall("CreateMutex", "uint", 0, "int", false, "str", strAppName . "Mutex")
 return
 
 #Include %A_ScriptDir%\FoldersPopup_LANG.ahk
+
+; Gui Hotkeys
+#If WinActive(lGuiFullTitle)
+
+^Up::
+Gosub, GuiMoveFavoriteUp
+return
+
+^Down::
+Gosub, GuiMoveFavoriteDown
+return
+
+^Right::
+Gosub, HotkeyChangeMenu
+return
+
+^Left::
+Gosub, GuiGotoUpMenu
+return
+
+Enter::
+Gosub, GuiEditFavorite
+return
+
+#If
+; End of Gui Hotkeys
+
+
+;========================================================================================================================
+; END OF INITIALIZATION
+;========================================================================================================================
+
 
 
 ;-----------------------------------------------------------
@@ -1275,9 +1315,10 @@ InitSpecialFolderObject("{3080F90E-D7AD-11D9-BD98-0000947B0257}", "", -1, "", ""
 InitSpecialFolderObject("{6DFD7C5C-2451-11d3-A299-00C04F8EF6AF}", "", -1, "", "", ""
 	, "Folder Options", "" ; Options des dossiers
 	, "CLS", "CLS", "NEW", "NEW", "NEW", "NEW", "NEW")
-InitSpecialFolderObject("{78F3955E-3B90-4184-BD14-5397C15F1EFC}", "", -1, "", "", ""
-	, "Performance Information and Tools", "" ; Informations et outils de performance
-	, "CLS", "CLS", "NEW", "NEW", "NEW", "NEW", "NEW")
+if (A_OSVersion = "WIN_7") ; Performance Information and Tool not available on Win8+
+	InitSpecialFolderObject("{78F3955E-3B90-4184-BD14-5397C15F1EFC}", "", -1, "", "", ""
+		, "Performance Information and Tools", "" ; Informations et outils de performance
+		, "CLS", "CLS", "NEW", "NEW", "NEW", "NEW", "NEW")
 InitSpecialFolderObject("{35786D3C-B075-49b9-88DD-029876E11C01}", "", -1, "", "", ""
 	, "Portable Devices", "" ; Appareils mobiles
 	, "CLS", "CLS", "NEW", "NEW", "NEW", "NEW", "NEW")
@@ -1381,7 +1422,7 @@ InitSpecialFolderObject(strPathUsers . "\Public", "Public", -1, "", "common", ""
 StringReplace, strException, lMenuPictures, &
 InitSpecialFolderObject(strPathUsername . "\Pictures", "", 39, "", "mypictures", ""
 	, strException, "lMenuPictures"
-	, "CLS", "CLS", "CLS", "CLS", "DOA", "TCC", "CLS")
+	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 InitSpecialFolderObject(strPathUsername . "\Favorites", "", -1, "", "", ""
 	, lMenuFavoritesInternet, "Favorites"
 	, "CLS", "CLS", "CLS", "CLS", "CLS", "CLS", "CLS")
@@ -3595,7 +3636,7 @@ Gui, 3:Add, Text, x10 y+10 w250, %lGuiGroupSaveShortName%
 Gui, 3:Add, Edit, x10 y+5 w250 Limit248 vstrGroupSaveName gGuiGroupSaveNameChanged section, % (A_ThisLabel = "GuiGroupEditFromManage" ? strGroupToEdit : "") ; maximum length of ini section name is 255 ("Group-" is prepended)
 
 Gui, 3:Add, Text, x10 y+5 w250, %lGuiGroupSaveSelectExisting%
-Gui, 3:Add, DropDownList, x10 y+5 w250 vdrpGroupsOverwriteList gGuiGroupSaveOverwriteListChanged Sort, %lGuiGroupSaveNewGroup%|%strGroups%
+Gui, 3:Add, DropDownList, x10 y+5 w250 vdrpGroupsOverwriteList gGuiGroupSaveOverwriteListChanged, %lGuiGroupSaveNewGroup%|%strGroups%
 GuiControl, ChooseString, drpGroupsOverwriteList, %lGuiGroupSaveNewGroup%
 
 Gui, 3:Add, Button, y+20 vbtnGroupSave gButtonGroupSave, %lGuiSave%
@@ -3697,6 +3738,7 @@ if GroupExists(strGroupSaveName)
 else
 {
 	strGroups := strGroups . (StrLen(strGroups) ? "|" : "") . strGroupSaveName
+	Sort, strGroups, D|
 	IniWrite, %strGroups%, %strIniFile%, Global, Groups
 }
 
@@ -4689,7 +4731,7 @@ return
 Time2Donate(intStartups, blnDonor)
 ;------------------------------------------------------------
 {
-	return !Mod(intStartups, 25) and (intStartups > 50) and !(blnDonor)
+	return !Mod(intStartups, 20) and (intStartups > 40) and !(blnDonor)
 }
 ;------------------------------------------------------------
 
@@ -4756,12 +4798,13 @@ Gui, 1:Add, Picture, xs+10 gGuiRemoveFavorite, %strTempDir%\delete_property-48.p
 Gui, 1:Add, Text, xs y+0 w68 center gGuiRemoveFavorite, %lGuiRemoveFavorite% ; Static20
 
 Gui, 1:Add, Picture, xs+10 y+30 gGuiGroupsManage, %strTempDir%\channel_mosaic-48.png ; Static21
-Gui, 1:Add, Text, xs y+5 w68 center gGuiGroupsManage, %lDialogGroups% ; Static21
+Gui, 1:Add, Text, xs y+5 w68 center gGuiGroupsManage, %lDialogGroups% ; Static22
 
-Gui, 1:Add, Text, Section x185 ys+250
+Gui, 1:Add, Text, Section x185 ys+245 ; Static23
 
-Gui, 1:Font, s8 w600 italic, Verdana
-Gui, 1:Add, Text, xm yp w520 center, %lGuiDropFilesIncentive%
+Gui, 1:Font, s8 w400 italic, Verdana
+Gui, 1:Add, Text, xm+30 yp w480, %lGuiDropFilesIncentive% ; Static24
+Gui, 1:Add, Link, xm+30 y+0 gGuiHotkeysHelpClicked, <a>%lGuiKotkeysHelp%</a> ; center option not working SysLink1
 
 Gui, 1:Add, Text, xm y+60
 Gui, 1:Font, s9 w600, Verdana
@@ -4786,6 +4829,18 @@ Gui, 1:Add, Text, xs-20 ys+35 w68 center gGuiAbout, %lGuiAbout% ; Static29
 Gui, 1:Add, Text, xs+40 ys+35 w52 center gGuiHelp, %lGuiHelp% ; Static30
 if !(blnDonor)
 	Gui, 1:Add, Text, xm+10 ys+35 w52 center gGuiDonate, %lGuiDonate% ; Static31
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiHotkeysHelpClicked:
+;------------------------------------------------------------
+Gui, 1:+OwnDialogs
+
+MsgBox, 0, %strAppName% - %lGuiKotkeysHelp%
+	, % L(lGuiHotkeysHelpText, strLocation)
 
 return
 ;------------------------------------------------------------
@@ -4895,10 +4950,28 @@ return
 
 
 ;------------------------------------------------------------
+HotkeyChangeMenu:
+;------------------------------------------------------------
+Gui, 1:ListView, lvFavoritesList
+
+intRowToEdit := LV_GetNext()
+LV_GetText(strCurrentName, intRowToEdit, 1)
+LV_GetText(strCurrentSubmenuFullName, intRowToEdit, 4)
+LV_GetText(strFavoriteType, intRowToEdit, 5)
+
+if (strFavoriteType = "S")
+	Gosub, OpenMenuFromGuiHotkey
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 GuiMenusListChanged:
 GuiGotoUpMenu:
 GuiGotoPreviousMenu:
 OpenMenuFromEditForm:
+OpenMenuFromGuiHotkey:
 ;------------------------------------------------------------
 
 if (A_ThisLabel = "GuiMenusListChanged")
@@ -4926,7 +4999,7 @@ else if (A_ThisLabel = "GuiGotoPreviousMenu")
 	strCurrentMenu := arrSubmenuStack[1] ; pull the top menu from the left arrow stack
 	arrSubmenuStack.Remove(1) ; remove the top menu from the left arrow stack
 }
-else if (A_ThisLabel = "OpenMenuFromEditForm")
+else if (A_ThisLabel = "OpenMenuFromEditForm") or (A_ThisLabel = "OpenMenuFromGuiHotkey")
 {
 	arrSubmenuStack.Insert(1, strSavedMenu) ; push the current menu to the left arrow stack
 	strCurrentMenu := strCurrentSubmenuFullName
@@ -4984,7 +5057,7 @@ Gui, 2:Font, w600
 Gui, 2:Add, Text, x10 y+20, %lDialogGroupManageManagingTitle%
 Gui, 2:Font
 
-Gui, 2:Add, DropDownList, x10 y+10 w%intWidth% vdrpGroupsList Sort, %lDialogGroupSelect%||%strGroups%
+Gui, 2:Add, DropDownList, x10 y+10 w%intWidth% vdrpGroupsList, %lDialogGroupSelect%||%strGroups%
 
 Gui, 2:Add, Button, x10 y+10 vbtnGroupManageLoad  gGuiGroupManageLoad, %lDialogGroupLoad%
 Gui, 2:Add, Button, x10 yp vbtnGroupManageEdit gGuiGroupManageEdit, %lDialogGroupEdit%
@@ -7195,12 +7268,6 @@ GetFirstNotModifier(strHotkey)
 	return intPos
 }
 ;------------------------------------------------------------
-
-
-
-;========================================================================================================================
-; GENERAL
-;========================================================================================================================
 
 
 ;------------------------------------------------
