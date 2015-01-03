@@ -1,8 +1,8 @@
 /*
 Bugs:
 
+
 To-do for v4:
-- add moved favorites to end of destination menu
 
 
 */
@@ -30,6 +30,12 @@ To-do for v4:
 	* add Select All (Ctrl-A) to gui shortcuts
 	* allow multiple select of favorites to move them; adapt gui Edit button to Move if multiple selection
 	* multiple uses of adapted guiaddfavoritesave to move favorites
+	* add moved favorites at end of destination menu
+	* arrows move multiple favorites
+	* gui shortcuts move to submenu, move up/down or remove multiple favorites
+	* add shortcuts Del to delete one or multiple favorites, and Ctrl-N to add a new favorite
+	* add separator and column break not allowed if multiple favorites selected
+	* save button always default in add/edit favorite
 
 	Version: 4.1.8.3 BETA (2014-12-31)
 	* fix bug default position in menu not correct after last items in menu was removed
@@ -718,7 +724,7 @@ DllCall("CreateMutex", "uint", 0, "int", false, "str", strAppName . "Mutex")
 
 
 ; ### only when debugging Gui
-Gosub, GuiShow
+; Gosub, GuiShow
 ; Gosub, GuiOptions
 ; Gosub, GuiAddFavorite
 ; Gosub, GuiAddFromPopup
@@ -738,11 +744,17 @@ return
 #If WinActive(lGuiFullTitle)
 
 ^Up::
-Gosub, GuiMoveFavoriteUp
+if (LV_GetCount("Selected") > 1)
+	Gosub, GuiMoveMultipleFavoritesUp
+else
+	Gosub, GuiMoveFavoriteUp
 return
 
 ^Down::
-Gosub, GuiMoveFavoriteDown
+if (LV_GetCount("Selected") > 1)
+	Gosub, GuiMoveMultipleFavoritesDown
+else
+	Gosub, GuiMoveFavoriteDown
 return
 
 ^Right::
@@ -759,11 +771,22 @@ return
 LV_Modify(0, "Select")
 return
 
+^N::
+Gosub, GuiAddFavorite
+return
+
 Enter::
 if (LV_GetCount("Selected") > 1)
-	Gosub, GuiMoveFavorites
+	Gosub, GuiMoveMultipleFavorites
 else
 	Gosub, GuiEditFavorite
+return
+
+Del::
+if (LV_GetCount("Selected") > 1)
+	Gosub, GuiRemoveMultipleFavorites
+else
+	Gosub, GuiRemoveFavorite
 return
 
 #If
@@ -4783,15 +4806,15 @@ Gui, 1:Add, DropDownList, xm+30 yp w480 vdrpMenusList gGuiMenusListChanged
 
 ; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
 Gui, 1:Add, ListView
-	, xm+30 w1480 h240 Count32 AltSubmit NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFavoritesList gGuiFavoritesListEvent
+	, xm+30 w480 h240 Count32 AltSubmit NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFavoritesList gGuiFavoritesListEvents
 	, %lGuiLvFavoritesHeader%|Hidden Menu|Hidden Submenu|Hidden FavoriteType|Hidden IconResource
-; ### Loop, 4
-; 	LV_ModifyCol(A_Index + 2, 0) ; hide 3rd-6th columns
+Loop, 4
+ 	LV_ModifyCol(A_Index + 2, 0) ; hide 3rd-6th columns
 
 Gui, 1:Add, Text, Section x+0 yp
 
-Gui, 1:Add, Picture, xm ys+25 gGuiMoveFavoriteUp, %strTempDir%\up_circular-26.png ; 9
-Gui, 1:Add, Picture, xm ys+55 gGuiMoveFavoriteDown, %strTempDir%\down_circular-26.png ; Static10
+Gui, 1:Add, Picture, xm ys+25 vpicMoveFavoriteUp gGuiMoveFavoriteUp, %strTempDir%\up_circular-26.png ; 9
+Gui, 1:Add, Picture, xm ys+55 vpicMoveFavoriteDown gGuiMoveFavoriteDown, %strTempDir%\down_circular-26.png ; Static10
 Gui, 1:Add, Picture, xm ys+85 gGuiAddSeparator, %strTempDir%\separator-26.png ; Static11
 Gui, 1:Add, Picture, xm ys+115 gGuiAddColumnBreak, %strTempDir%\column-26.png ; Static12
 Gui, 1:Add, Picture, xm+1 ys+205 gGuiSortFavorites, %strTempDir%\generic_sorting2-26-grey.png ; Static13
@@ -4800,17 +4823,17 @@ Gui, 1:Add, Text, Section xs ys
 
 Gui, 1:Font, s8 w400, Arial ; button legend
 
-Gui, 1:Add, Picture, xs+10 ys+7 gGuiAddFavorite, %strTempDir%\add_property-48.png ; Static15
-Gui, 1:Add, Text, xs y+0 w68 center gGuiAddFavorite, %lGuiAddFavorite% ; Static16
+Gui, 1:Add, Picture, xs+20 ys+7 gGuiAddFavorite, %strTempDir%\add_property-48.png ; Static15
+Gui, 1:Add, Text, xs+5 y+0 w78 center gGuiAddFavorite, %lGuiAddFavorite% ; Static16
 
-Gui, 1:Add, Picture, xs+10 vpicEditFavorite gGuiEditFavorite, %strTempDir%\edit_property-48.png ; Static17
-Gui, 1:Add, Text, xs y+0 w68 center vlblEditFavorite gGuiEditFavorite, %lGuiEditFavorite% ; Static18
+Gui, 1:Add, Picture, xs+20 vpicEditFavorite gGuiEditFavorite, %strTempDir%\edit_property-48.png ; Static17
+Gui, 1:Add, Text, xs+5 y+0 w78 center vlblEditFavorite gGuiEditFavorite, %lGuiEditFavorite% ; Static18
 
-Gui, 1:Add, Picture, xs+10 gGuiRemoveFavorite, %strTempDir%\delete_property-48.png ; Static19
-Gui, 1:Add, Text, xs y+0 w68 center gGuiRemoveFavorite, %lGuiRemoveFavorite% ; Static20
+Gui, 1:Add, Picture, xs+20 vpicRemoveFavorite gGuiRemoveFavorite, %strTempDir%\delete_property-48.png ; Static19
+Gui, 1:Add, Text, xs+5 y+0 w78 center vlblRemoveFavorite gGuiRemoveFavorite, %lGuiRemoveFavorite% ; Static20
 
-Gui, 1:Add, Picture, xs+10 y+30 gGuiGroupsManage, %strTempDir%\channel_mosaic-48.png ; Static21
-Gui, 1:Add, Text, xs y+5 w68 center gGuiGroupsManage, %lDialogGroups% ; Static22
+Gui, 1:Add, Picture, xs+20 y+30 gGuiGroupsManage, %strTempDir%\channel_mosaic-48.png ; Static21
+Gui, 1:Add, Text, xs+5 y+5 w78 center gGuiGroupsManage, %lDialogGroups% ; Static22
 
 Gui, 1:Add, Text, Section x185 ys+245 ; Static23
 
@@ -4950,7 +4973,7 @@ BuildMenuTreeDropDown(strMenu, strDefaultMenu, strSkipSubmenu := "")
 
 
 ;------------------------------------------------------------
-GuiFavoritesListEvent:
+GuiFavoritesListEvents:
 ;------------------------------------------------------------
 Gui, 1:ListView, lvFavoritesList
 
@@ -4962,14 +4985,24 @@ else if (A_GuiEvent = "I")
 	if (intFavoriteSelected > 1)
 	{
 		GuiControl, , lblEditFavorite, % lGuiMove . " (" . intFavoriteSelected . ")"
-		GuiControl, +gGuiMoveFavorites, lblEditFavorite
-		GuiControl, +gGuiMoveFavorites, picEditFavorite
+		GuiControl, +gGuiMoveMultipleFavorites, lblEditFavorite
+		GuiControl, +gGuiMoveMultipleFavorites, picEditFavorite
+		GuiControl, , lblRemoveFavorite, % lGuiRemoveFavorite . " (" . intFavoriteSelected . ")"
+		GuiControl, +gGuiRemoveMultipleFavorites, lblRemoveFavorite
+		GuiControl, +gGuiRemoveMultipleFavorites, picRemoveFavorite
+		GuiControl, +gGuiMoveMultipleFavoritesUp, picMoveFavoriteUp
+		GuiControl, +gGuiMoveMultipleFavoritesDown, picMoveFavoriteDown
 	}
 	else
 	{
 		GuiControl, , lblEditFavorite, %lGuiEditFavorite%
 		GuiControl, +gGuiEditFavorite, lblEditFavorite
 		GuiControl, +gGuiEditFavorite, picEditFavorite
+		GuiControl, , lblRemoveFavorite, %lGuiRemoveFavorite%
+		GuiControl, +gGuiRemoveFavorite, lblRemoveFavorite
+		GuiControl, +gGuiRemoveFavorite, picRemoveFavorite
+		GuiControl, +gGuiMoveFavoriteUp, picMoveFavoriteUp
+		GuiControl, +gGuiMoveFavoriteDown, picMoveFavoriteDown
 	}
 }
 
@@ -5191,7 +5224,13 @@ GuiAddSeparator:
 
 GuiControl, Focus, lvFavoritesList
 Gui, 1:ListView, lvFavoritesList
-LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus", lMenuSeparator, lMenuSeparator . lMenuSeparator, strCurrentMenu, "", "", "")
+
+if (LV_GetCount("Selected") > 1)
+	return
+
+intInsertPosition := LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1
+LV_Modify(0, "-Select")
+LV_Insert(intInsertPosition, "Select Focus", lMenuSeparator, lMenuSeparator . lMenuSeparator, strCurrentMenu, "", "", "")
 LV_Modify(LV_GetNext(), "Vis")
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
@@ -5209,8 +5248,14 @@ GuiAddColumnBreak:
 
 GuiControl, Focus, lvFavoritesList
 Gui, 1:ListView, lvFavoritesList
+
+if (LV_GetCount("Selected") > 1)
+	return
+
+intInsertPosition := LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1
+LV_Modify(0, "-Select")
 ; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
-LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus"
+LV_Insert(intInsertPosition, "Select Focus"
 	, strColumnBreakIndicator . " " lMenuColumnBreak . " " . strColumnBreakIndicator
 	, strColumnBreakIndicator . " " lMenuColumnBreak . " " . strColumnBreakIndicator
 	, strCurrentMenu, "", "", "")
@@ -5240,24 +5285,90 @@ return
 
 
 ;------------------------------------------------------------
-GuiMoveFavoriteUp:
-GuiMoveFavoriteDown:
+GuiMoveMultipleFavoritesUp:
+GuiMoveMultipleFavoritesDown:
 ;------------------------------------------------------------
 
 GuiControl, Focus, lvFavoritesList
 Gui, 1:ListView, lvFavoritesList
-intSelectedRow := LV_GetNext()
-if (intSelectedRow = (A_ThisLabel = "GuiMoveFavoriteUp" ? 1 : LV_GetCount()))
+
+blnAbortGroupMove := false
+Loop
+{
+	if (A_ThisLabel = "GuiMoveMultipleFavoritesUp")
+		Gosub, GetFirstSelected
+	else
+		Gosub, GetLastSelected
+	
+	; ###_D("intRowToProcess: " . intRowToProcess . "`nblnAbortGroupMove: " . blnAbortGroupMove)
+	if (!intRowToProcess) or (blnAbortGroupMove)
+		break
+	
+	if (A_ThisLabel = "GuiMoveMultipleFavoritesUp")
+	{
+		intSelectedRow := intRowToProcess
+		Gosub, GuiMoveOneFavoriteUp
+	}
+	else
+	{
+		intSelectedRow := intRowToProcess
+		Gosub, GuiMoveOneFavoriteDown
+	}
+}
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GetFirstSelected:
+GetLastSelected:
+;------------------------------------------------------------
+
+intRowToProcess := 0
+if (A_ThisLabel = "GetFirstSelected")
+	intRowToProcess := LV_GetNext(intRowToProcess) ; start from first selected
+else
+	loop
+		intRowToProcess := LV_GetNext(intRowToProcess) ; start with last selected
+	until !LV_GetNext(intRowToProcess)
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiMoveFavoriteUp:
+GuiMoveFavoriteDown:
+GuiMoveOneFavoriteUp:
+GuiMoveOneFavoriteDown:
+;------------------------------------------------------------
+
+if !InStr(A_ThisLabel, "One")
+{
+	GuiControl, Focus, lvFavoritesList
+	Gui, 1:ListView, lvFavoritesList
+	intSelectedRow := LV_GetNext()
+}
+if (intSelectedRow = (InStr(A_ThisLabel, "Up") ? 1 : LV_GetCount()))
+{
+	if InStr(A_ThisLabel, "One")
+		blnAbortGroupMove := true
 	return
+}
 
 Loop, 6
 	LV_GetText(arrThis%A_Index%, intSelectedRow, A_Index)
 
 Loop, 6
-	LV_GetText(arrOther%A_Index%, intSelectedRow + (A_ThisLabel = "GuiMoveFavoriteUp" ? -1 : 1), A_Index)
+	LV_GetText(arrOther%A_Index%, intSelectedRow + (InStr(A_ThisLabel, "Up") ? -1 : 1), A_Index)
 
+LV_Modify(intSelectedRow, "-Select")
 LV_Modify(intSelectedRow, "", arrOther1, arrOther2, arrOther3, arrOther4, arrOther5, arrOther6)
-LV_Modify(intSelectedRow + (A_ThisLabel = "GuiMoveFavoriteUp" ? -1 : 1), "Select Focus Vis", arrThis1, arrThis2, arrThis3, arrThis4, arrThis5, arrThis6)
+LV_Modify(intSelectedRow + (InStr(A_ThisLabel, "Up") ? -1 : 1), , arrThis1, arrThis2, arrThis3, arrThis4, arrThis5, arrThis6)
+
+if !InStr(A_ThisLabel, "One")
+	LV_Modify(intSelectedRow + (InStr(A_ThisLabel, "Up") ? -1 : 1), "Select Focus Vis")
 
 GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lGuiCancel%
@@ -5706,18 +5817,18 @@ else
 
 	Gui, 2:Add, Edit, ys+20 x10 w300 h20 vstrFavoriteLocation gEditFolderLocationChanged, %strCurrentLocation%
 	if !(blnRadioURL)
-		Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation default, %lDialogBrowseButton%
+		Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation, %lDialogBrowseButton%
 }
 
 if (A_ThisLabel = "GuiEditFavorite")
 {
-	Gui, 2:Add, Button, y+20 vbtnEditFolderSave gGuiEditFavoriteSave, %lDialogSave%
+	Gui, 2:Add, Button, y+20 vbtnEditFolderSave gGuiEditFavoriteSave default, %lDialogSave%
 	Gui, 2:Add, Button, yp vbtnEditFolderCancel gGuiEditFavoriteCancel, %lGuiCancel%
 	GuiCenterButtons(L(lDialogAddEditFavoriteTitle, lDialogEdit, strAppName, strAppVersion), 10, 5, 20, , "btnEditFolderSave", "btnEditFolderCancel")
 }
 else
 {
-	Gui, 2:Add, Button, y+20 vbtnAddFolderAdd gGuiAddFavoriteSave, %lDialogAdd%
+	Gui, 2:Add, Button, y+20 vbtnAddFolderAdd gGuiAddFavoriteSave default, %lDialogAdd%
 	Gui, 2:Add, Button, yp vbtnAddFolderCancel gGuiAddFavoriteCancel, %lGuiCancel%
 	GuiCenterButtons(L(lDialogAddEditFavoriteTitle, lDialogAdd, strAppName, strAppVersion), 10, 5, 20, , "btnAddFolderAdd", "btnAddFolderCancel")
 }
@@ -5741,14 +5852,14 @@ return
 
 
 ;------------------------------------------------------------
-GuiMoveFavorites:
+GuiMoveMultipleFavorites:
 ;------------------------------------------------------------
 
 Gui, 2:New, , % L(lDialogMoveFavoritesTitle, strAppName, strAppVersion)
 Gui, 2:Add, Text, % x10 y10 vlblFavoriteParentMenu, % L(lDialogFavoritesParentMenuMove, intFavoriteSelected)
 Gui, 2:Add, DropDownList, x10 w300 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
 
-Gui, 2:Add, Button, y+20 vbtnMoveFavoritesSave gGuiMoveFavoritesSave, %lGuiMove%
+Gui, 2:Add, Button, y+20 vbtnMoveFavoritesSave gGuiMoveMultipleFavoritesSave, %lGuiMove%
 Gui, 2:Add, Button, yp vbtnMoveFavoritesCancel gGuiEditFavoriteCancel, %lGuiCancel%
 GuiCenterButtons(L(lDialogMoveFavoritesTitle, strAppName, strAppVersion), 10, 5, 20, , "btnMoveFavoritesSave", "btnMoveFavoritesCancel")
 
@@ -6013,7 +6124,7 @@ return
 
 
 ;------------------------------------------------------------
-GuiMoveFavoritesSave:
+GuiMoveMultipleFavoritesSave:
 ;------------------------------------------------------------
 Gui, 2:Submit, NoHide
 Gui, 2:+OwnDialogs
@@ -6031,7 +6142,7 @@ Loop
 	intRowToEdit := LV_GetNext(intRowToEdit)
 	if (!intRowToEdit)
         break
-	; intNewItemPos := intRowToEdit ??? ###
+	intNewItemPos := arrMenus[strParentMenu].MaxIndex() + 1 ; add favorite at end of destination menu
 	LV_GetText(strFavoriteShortName, intRowToEdit, 1)
 	LV_GetText(strFavoriteLocation, intRowToEdit, 2)
 	LV_GetText(strCurrentSubmenuFullName, intRowToEdit, 4)
@@ -6282,7 +6393,27 @@ return
 
 
 ;------------------------------------------------------------
+GuiRemoveMultipleFavorites:
+;------------------------------------------------------------
+
+GuiControl, Focus, lvFavoritesList
+Gui, 1:ListView, lvFavoritesList
+
+MsgBox, 52, %strAppName%, % L(lDialogRemoveMultipleFavorites, LV_GetCount("Selected"))
+IfMsgBox, No
+	return
+
+Loop
+	Gosub, GuiRemoveOneFavorite
+until !LV_GetNext()
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 GuiRemoveFavorite:
+GuiRemoveOneFavorite:
 ;------------------------------------------------------------
 
 GuiControl, Focus, lvFavoritesList
@@ -6305,9 +6436,12 @@ if (strFavoriteType = "S") ; this is a submneu
 }
 
 LV_Delete(intItemToRemove)
-LV_Modify(intItemToRemove, "Select Focus")
-if !LV_GetNext() ; if last item was deleted, select the new last item
-	LV_Modify(LV_GetCount(), "Select Focus")
+if (A_ThisLabel = "GuiRemoveFavorite")
+{
+	LV_Modify(intItemToRemove, "Select Focus")
+	if !LV_GetNext() ; if last item was deleted, select the new last item
+		LV_Modify(LV_GetCount(), "Select Focus")
+}
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
 

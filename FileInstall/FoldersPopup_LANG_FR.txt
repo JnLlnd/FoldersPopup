@@ -66,6 +66,7 @@ lDialogMenuNotMoveUnderItself	Le menu "~1~" ne peut être déplacé sous lui-même.
 lDialogMoveFavoritesTitle	Déplacer des favoris - ~1~ ~2~
 lDialogNormal	Normal
 lDialogOpenThisMenu	Ouvrir ce menu
+lDialogRemoveMultipleFavorites	Voulez-vous vraiement supprimer ~1~ favoris ou sous-menus?
 lDialogSave	Enregistrer
 lDialogSelectItemToEdit	Veuillez sélectionner l'item à modifier.
 lDialogSelectItemToRemove	Veuillez sélectionner l'item à supprimer.
@@ -127,7 +128,7 @@ lGuiGroupSaveSelectExisting	ou choisissez un groupe à remplacer:
 lGuiGroupSaveShortName	Nom du groupe (pour les menus)
 lGuiHelp	Aide
 lGuiKotkeysHelp	Aide sur les raccourcis des favoris
-lGuiHotkeysHelpText	Flèche Bas: Sélectioner le prochain favoris`nFlèche Haut: Sélectioner le favoris précédent`nEntrée: Modifier un favoris`n`nCtrl-Bas: Déplacer un favoris vers le bas`nCtrl-Haut: Déplacer un favoris vers le haut`n`nCtrl-Droite: Ouvrir un sous-menu`nCtrl-Gauche: Ouvrir le sous-menu contenant ce menu`n`nCtrl-A: Sélectionner tout
+lGuiHotkeysHelpText	Flèche Bas: Sélectioner le prochain favoris`nFlèche Haut: Sélectioner le favoris précédent`nEntrée: Modifier un favoris`n`nCtrl-Bas: Déplacer un favoris vers le bas`nCtrl-Haut: Déplacer un favoris vers le haut`n`nCtrl-Droite: Ouvrir un sous-menu`nCtrl-Gauche: Ouvrir le sous-menu contenant ce menu`n`nCtrl-N: Ajouter un nouveau favoris`nCtrl-A: Sélectionner tout
 lGuiLvDialogsHeader	Boîtes de dialogue prises en charge`n(une partie du nom suffit)
 lGuiLvFavoritesHeader	Nom|Emplacement
 lGuiMove	Déplacer
