@@ -102,7 +102,6 @@ lGuiAddFavorite	Toevoegen
 lGuiCancel	&Annuleren
 lGuiClose	&Sluiten
 lGuiDonate	Steun
-lGuiDropFilesIncentive	Je kan je favoriete mappen naar dit venster slepen en neerzetten
 lGuiEditFavorite	Bewerken
 lGuiGroupClosing	Vensters sluiten
 lGuiGroupOf	van

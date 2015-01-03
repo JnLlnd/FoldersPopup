@@ -20,22 +20,19 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.1.8.4 BETA ()
-	* add hotkeys to Gui to move favorites (Ctrl-Down/Up), edit favorite (Enter), open submenu (Ctrl-Right), return to parent menu (Ctrl-Left) and Select All (Ctrl-A)
-	* add shortcuts help in main Gui
-	* special folder Performance Information and Tool only on Win7 (not available on Win8+)
+	Version: 4.1.8.4 BETA (2015-01-03)
+	* add hotkeys to Gui to move favorites (Ctrl-Down/Up), edit favorite (Enter), open submenu (Ctrl-Right), return to parent menu (Ctrl-Left), Select All (Ctrl-A), Add new (Ctrl-N) and Remove (Del)
+	* add shortcuts help in main Gui, new layout for drag & drop help
+	* allow multiple select of favorites to move or delete them; adapt gui Edit and Remove buttons if multiple selection
+	* add separator and column break not allowed if multiple favorites selected
+	* looped uses of adapted guiaddfavoritesave to move favorites
+	* add moved favorites at end of destination menu
+	* arrows move multiple favorites
+	* in add/edit favorite, save default button 
+	* special folder Performance Information and Tool only on Win7 (not available on Win8 and more)
 	* add support for six special folders in TC with use of :: instead of shell:::
 	* fix bug special folder Images with Total Commander
 	* fix bug in manage groups, Select a group was sorted with list of groups
-	* add Select All (Ctrl-A) to gui shortcuts
-	* allow multiple select of favorites to move them; adapt gui Edit button to Move if multiple selection
-	* multiple uses of adapted guiaddfavoritesave to move favorites
-	* add moved favorites at end of destination menu
-	* arrows move multiple favorites
-	* gui shortcuts move to submenu, move up/down or remove multiple favorites
-	* add shortcuts Del to delete one or multiple favorites, and Ctrl-N to add a new favorite
-	* add separator and column break not allowed if multiple favorites selected
-	* save button always default in add/edit favorite
 
 	Version: 4.1.8.3 BETA (2014-12-31)
 	* fix bug default position in menu not correct after last items in menu was removed
@@ -1775,7 +1772,7 @@ WM_MOUSEMOVE(wParam, lParam)
 	MouseGetPos, , , , strControl ; Static1, StaticN, Button1, ButtonN
 	StringReplace, strControl, strControl, Static
 
-	If InStr(".3.4.6.7.9.10.11.12.13.15.16.17.18.19.20.21.22.26.27.28.29.30.31.Button1.Button2.", "." . strControl . ".")
+	If InStr(".3.4.6.7.9.10.11.12.13.15.16.17.18.19.20.21.22.25.26.27.28.29.30.Button1.Button2.", "." . strControl . ".")
 		DllCall("SetCursor", "UInt", objCursor)
 
 	return
@@ -4792,7 +4789,7 @@ intWidth := 460
 Gui, 1:Font, s12 w700 c%strTextColor%, Verdana
 Gui, 1:Add, Text, xm ym h25, %strAppName% %strAppVersion%
 Gui, 1:Font, s9 w400, Verdana
-Gui, 1:Add, Text, xm y+1 w517, %lAppTagline%
+Gui, 1:Add, Text, xm y+1 w527, %lAppTagline%
 
 Gui, 1:Add, Picture, x+10 ym Section gGuiOptions, %strTempDir%\settings-32.png ; Static3
 Gui, 1:Font, s8 w400, Arial ; button legend
@@ -4838,8 +4835,8 @@ Gui, 1:Add, Text, xs+5 y+5 w78 center gGuiGroupsManage, %lDialogGroups% ; Static
 Gui, 1:Add, Text, Section x185 ys+245 ; Static23
 
 Gui, 1:Font, s8 w400 italic, Verdana
-Gui, 1:Add, Text, xm+30 yp w480, %lGuiDropFilesIncentive% ; Static24
-Gui, 1:Add, Link, xm+30 y+0 gGuiHotkeysHelpClicked, <a>%lGuiKotkeysHelp%</a> ; center option not working SysLink1
+Gui, 1:Add, Link, xm+30 yp w240 gGuiHotkeysHelpClicked, <a>%lGuiKotkeysHelp%</a> ; center option not working SysLink1
+Gui, 1:Add, Link, xm+270 yp w240 gGuiDropFilesHelpClicked right, <a>%lGuiDropFilesHelp%</a>
 
 Gui, 1:Add, Text, xm y+60
 Gui, 1:Font, s9 w600, Verdana
@@ -4848,22 +4845,22 @@ Gui, 1:Add, Button, yp vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until chang
 Gui, 1:Font, s6 w400, Verdana
 GuiCenterButtons(lGuiFullTitle, 50, 30, 40, -80, "btnGuiSave", "btnGuiCancel")
 
-Gui, 1:Add, Picture, x490 yp+13 gGuiAbout Section, %strTempDir%\about-32.png ; Static26
-Gui, 1:Add, Picture, x540 yp gGuiHelp, %strTempDir%\help-32.png ; Static27
+Gui, 1:Add, Picture, x490 yp+13 gGuiAbout Section, %strTempDir%\about-32.png ; Static25
+Gui, 1:Add, Picture, x550 yp gGuiHelp, %strTempDir%\help-32.png ; Static26
 if !(blnDonor)
 {
 	strDonateButtons := "thumbs_up|solutions|handshake|conference|gift"
 	StringSplit, arrDonateButtons, strDonateButtons, |
 	Random, intDonateButton, 1, 5
 
-	Gui, 1:Add, Picture, xm+20 yp gGuiDonate, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png" ; Static28
+	Gui, 1:Add, Picture, xm+20 yp gGuiDonate, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png" ; Static27
 }
 
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs-20 ys+35 w68 center gGuiAbout, %lGuiAbout% ; Static29
-Gui, 1:Add, Text, xs+40 ys+35 w52 center gGuiHelp, %lGuiHelp% ; Static30
+Gui, 1:Add, Text, xs-20 ys+35 w68 center gGuiAbout, %lGuiAbout% ; Static28
+Gui, 1:Add, Text, xs+50 ys+35 w52 center gGuiHelp, %lGuiHelp% ; Static29
 if !(blnDonor)
-	Gui, 1:Add, Text, xm+10 ys+35 w52 center gGuiDonate, %lGuiDonate% ; Static31
+	Gui, 1:Add, Text, xm+10 ys+35 w52 center gGuiDonate, %lGuiDonate% ; Static30
 
 return
 ;------------------------------------------------------------
@@ -4875,7 +4872,19 @@ GuiHotkeysHelpClicked:
 Gui, 1:+OwnDialogs
 
 MsgBox, 0, %strAppName% - %lGuiKotkeysHelp%
-	, % L(lGuiHotkeysHelpText, strLocation)
+	, %lGuiHotkeysHelpText%
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiDropFilesHelpClicked:
+;------------------------------------------------------------
+Gui, 1:+OwnDialogs
+
+MsgBox, 0, %strAppName% - %lGuiDropFilesHelp%
+	, % L(lGuiDropFilesIncentive, strAppName, lDialogFolderLabel, lDialogFileLabel)
 
 return
 ;------------------------------------------------------------

@@ -101,7 +101,6 @@ lGuiAddFavorite	Aggiungi
 lGuiCancel	&Annulla
 lGuiClose	&Chiudi
 lGuiDonate	Supporto
-lGuiDropFilesIncentive	Puoi trascinare i tuoi Preferiti su questa finestra
 lGuiEditFavorite	Modifica
 lGuiGroupClosing	Chiusura delle finestre
 lGuiGroupOf	di

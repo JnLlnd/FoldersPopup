@@ -102,7 +102,6 @@ lGuiAddFavorite	Hinzufügen
 lGuiCancel	&Abbrechen
 lGuiClose	&Schliessen
 lGuiDonate	Unterstützen
-lGuiDropFilesIncentive	Sie können Ihre Favoriten in dieses Fenster ziehen
 lGuiEditFavorite	Bearbeiten
 lGuiGroupClosing	Schliesse Fenster
 lGuiGroupOf	von
