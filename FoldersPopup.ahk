@@ -2,7 +2,8 @@
 Bugs:
 
 To-do for v4:
-- support multiple select in Gui(-Multi )
+- add moved favorites to end of destination menu
+
 
 */
 ;===============================================
@@ -20,12 +21,15 @@ To-do for v4:
 
 
 	Version: 4.1.8.4 BETA ()
-	* add hotkeys to Gui to move favorites (Ctrl-Down/Up), edit favorite (Enter), open submenu (Ctrl-Right) and return to parent menu (Ctrl-Left)
-	* add hotkey help in main Gui
+	* add hotkeys to Gui to move favorites (Ctrl-Down/Up), edit favorite (Enter), open submenu (Ctrl-Right), return to parent menu (Ctrl-Left) and Select All (Ctrl-A)
+	* add shortcuts help in main Gui
 	* special folder Performance Information and Tool only on Win7 (not available on Win8+)
 	* add support for six special folders in TC with use of :: instead of shell:::
 	* fix bug special folder Images with Total Commander
 	* fix bug in manage groups, Select a group was sorted with list of groups
+	* add Select All (Ctrl-A) to gui shortcuts
+	* allow multiple select of favorites to move them; adapt gui Edit button to Move if multiple selection
+	* multiple uses of adapted guiaddfavoritesave to move favorites
 
 	Version: 4.1.8.3 BETA (2014-12-31)
 	* fix bug default position in menu not correct after last items in menu was removed
@@ -746,11 +750,20 @@ Gosub, HotkeyChangeMenu
 return
 
 ^Left::
-Gosub, GuiGotoUpMenu
+GuiControlGet, blnUpMenuVisible, Visible, picUpMenu
+if (blnUpMenuVisible)
+	Gosub, GuiGotoUpMenu
+return
+
+^A::
+LV_Modify(0, "Select")
 return
 
 Enter::
-Gosub, GuiEditFavorite
+if (LV_GetCount("Selected") > 1)
+	Gosub, GuiMoveFavorites
+else
+	Gosub, GuiEditFavorite
 return
 
 #If
@@ -4758,7 +4771,6 @@ Gui, 1:Add, Text, xm ym h25, %strAppName% %strAppVersion%
 Gui, 1:Font, s9 w400, Verdana
 Gui, 1:Add, Text, xm y+1 w517, %lAppTagline%
 
-
 Gui, 1:Add, Picture, x+10 ym Section gGuiOptions, %strTempDir%\settings-32.png ; Static3
 Gui, 1:Font, s8 w400, Arial ; button legend
 Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiOptions, %lGuiOptions% ; Static4
@@ -4771,10 +4783,10 @@ Gui, 1:Add, DropDownList, xm+30 yp w480 vdrpMenusList gGuiMenusListChanged
 
 ; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
 Gui, 1:Add, ListView
-	, xm+30 w480 h240 Count32 -Multi NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFavoritesList gGuiFavoritesListEvent
+	, xm+30 w1480 h240 Count32 AltSubmit NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFavoritesList gGuiFavoritesListEvent
 	, %lGuiLvFavoritesHeader%|Hidden Menu|Hidden Submenu|Hidden FavoriteType|Hidden IconResource
-Loop, 4
-	LV_ModifyCol(A_Index + 2, 0) ; hide 3rd-6th columns
+; ### Loop, 4
+; 	LV_ModifyCol(A_Index + 2, 0) ; hide 3rd-6th columns
 
 Gui, 1:Add, Text, Section x+0 yp
 
@@ -4791,8 +4803,8 @@ Gui, 1:Font, s8 w400, Arial ; button legend
 Gui, 1:Add, Picture, xs+10 ys+7 gGuiAddFavorite, %strTempDir%\add_property-48.png ; Static15
 Gui, 1:Add, Text, xs y+0 w68 center gGuiAddFavorite, %lGuiAddFavorite% ; Static16
 
-Gui, 1:Add, Picture, xs+10 gGuiEditFavorite, %strTempDir%\edit_property-48.png ; Static17
-Gui, 1:Add, Text, xs y+0 w68 center gGuiEditFavorite, %lGuiEditFavorite% ; Static18
+Gui, 1:Add, Picture, xs+10 vpicEditFavorite gGuiEditFavorite, %strTempDir%\edit_property-48.png ; Static17
+Gui, 1:Add, Text, xs y+0 w68 center vlblEditFavorite gGuiEditFavorite, %lGuiEditFavorite% ; Static18
 
 Gui, 1:Add, Picture, xs+10 gGuiRemoveFavorite, %strTempDir%\delete_property-48.png ; Static19
 Gui, 1:Add, Text, xs y+0 w68 center gGuiRemoveFavorite, %lGuiRemoveFavorite% ; Static20
@@ -4944,6 +4956,22 @@ Gui, 1:ListView, lvFavoritesList
 
 if (A_GuiEvent = "DoubleClick")
 	gosub, GuiEditFavorite
+else if (A_GuiEvent = "I")
+{
+	intFavoriteSelected := LV_GetCount("Selected")
+	if (intFavoriteSelected > 1)
+	{
+		GuiControl, , lblEditFavorite, % lGuiMove . " (" . intFavoriteSelected . ")"
+		GuiControl, +gGuiMoveFavorites, lblEditFavorite
+		GuiControl, +gGuiMoveFavorites, picEditFavorite
+	}
+	else
+	{
+		GuiControl, , lblEditFavorite, %lGuiEditFavorite%
+		GuiControl, +gGuiEditFavorite, lblEditFavorite
+		GuiControl, +gGuiEditFavorite, picEditFavorite
+	}
+}
 
 return
 ;------------------------------------------------------------
@@ -5713,6 +5741,26 @@ return
 
 
 ;------------------------------------------------------------
+GuiMoveFavorites:
+;------------------------------------------------------------
+
+Gui, 2:New, , % L(lDialogMoveFavoritesTitle, strAppName, strAppVersion)
+Gui, 2:Add, Text, % x10 y10 vlblFavoriteParentMenu, % L(lDialogFavoritesParentMenuMove, intFavoriteSelected)
+Gui, 2:Add, DropDownList, x10 w300 vdrpParentMenu, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
+
+Gui, 2:Add, Button, y+20 vbtnMoveFavoritesSave gGuiMoveFavoritesSave, %lGuiMove%
+Gui, 2:Add, Button, yp vbtnMoveFavoritesCancel gGuiEditFavoriteCancel, %lGuiCancel%
+GuiCenterButtons(L(lDialogMoveFavoritesTitle, strAppName, strAppVersion), 10, 5, 20, , "btnMoveFavoritesSave", "btnMoveFavoritesCancel")
+
+GuiControl, 2:Focus, drpParentMenu
+Gui, 2:Show, AutoSize Center
+Gui, 1:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 DropdownParentMenuChanged:
 ;------------------------------------------------------------
 Gui, 2:Submit, NoHide
@@ -5965,14 +6013,71 @@ return
 
 
 ;------------------------------------------------------------
-GuiAddFavoriteSave:
-GuiEditFavoriteSave:
+GuiMoveFavoritesSave:
 ;------------------------------------------------------------
 Gui, 2:Submit, NoHide
 Gui, 2:+OwnDialogs
 
 GuiControlGet, strParentMenu, , drpParentMenu
-GuiControlGet, intNewItemPos, , drpParentMenuItems
+if (strParentMenu = strCurrentMenu)
+	return
+
+Gui, 1:Default
+Gui, ListView, lvFavoritesList
+intRowToEdit := 0
+
+Loop
+{
+	intRowToEdit := LV_GetNext(intRowToEdit)
+	if (!intRowToEdit)
+        break
+	; intNewItemPos := intRowToEdit ??? ###
+	LV_GetText(strFavoriteShortName, intRowToEdit, 1)
+	LV_GetText(strFavoriteLocation, intRowToEdit, 2)
+	LV_GetText(strCurrentSubmenuFullName, intRowToEdit, 4)
+	LV_GetText(strFavoriteType, intRowToEdit, 5)
+	LV_GetText(strCurrentIconResource, intRowToEdit, 6)
+
+	blnRadioFolder := (strFavoriteType = "F")
+	blnRadioSpecial := (strFavoriteType = "P")
+	blnRadioFile := (strFavoriteType = "D")
+	blnRadioURL := (strFavoriteType = "U")
+	blnRadioSubmenu := (strFavoriteType = "S")
+
+	/*
+	###_D(""
+		. "strCurrentMenu: " . strCurrentMenu . "`n"
+		. "strParentMenu: " . strParentMenu . "`n`n"
+		. "intRowToEdit: " . intRowToEdit . "`n"
+		. "strFavoriteShortName: " . strFavoriteShortName . "`n"
+		. "strFavoriteLocation: " . strFavoriteLocation . "`n"
+		. "strFavoriteType: " . strFavoriteType . "`n"
+		. "strCurrentIconResource: " . strCurrentIconResource . "`n"
+		. "")
+	*/
+	Gosub, GuiMoveOneFavoriteSave
+	intRowToEdit := intRowToEdit - 1 ; because we deleted the previous item
+}
+
+Gosub, GuiEditFavoriteCancel
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiAddFavoriteSave:
+GuiEditFavoriteSave:
+GuiMoveOneFavoriteSave:
+;------------------------------------------------------------
+Gui, 2:Submit, NoHide
+Gui, 2:+OwnDialogs
+
+if (A_ThisLabel <> "GuiMoveOneFavoriteSave")
+{
+	GuiControlGet, strParentMenu, , drpParentMenu
+	GuiControlGet, intNewItemPos, , drpParentMenuItems
+}
 if !(intNewItemPos)
 	intNewItemPos := 1
 
@@ -6001,9 +6106,12 @@ if  ((blnRadioFolder or blnRadioFile or blnRadioURL) and !StrLen(strFavoriteLoca
 }
 
 if !FolderNameIsNew(strFavoriteShortName, (strParentMenu = strCurrentMenu ? "" : strParentMenu))
+	and (strFavoriteShortName <> lMenuSeparator) and (!IsColumnBreak(strFavoriteShortName)) ; same name OK for separators
 	if ((strParentMenu <> strCurrentMenu) or (strFavoriteShortName <> strCurrentName)) ; same name is OK in current menu
 	{
 		Oops(lDialogFavoriteNameNotNew, strFavoriteShortName)
+		if (A_ThisLabel = "GuiMoveOneFavoriteSave")
+			intRowToEdit := intRowToEdit + 1
 		return
 	}
 
@@ -6012,6 +6120,21 @@ if (blnRadioSubmenu)
 	if InStr(strFavoriteShortName, lGuiSubmenuSeparator)
 	{
 		Oops(L(lDialogFavoriteNameNoSeparator, lGuiSubmenuSeparator))
+		return
+	}
+	if ((A_ThisLabel = "GuiMoveOneFavoriteSave") and InStr(strParentMenu, strCurrentMenu . lGuiSubmenuSeparator . strFavoriteShortName) <> 0)
+	{
+		Oops(lDialogMenuNotMoveUnderItself "Menu ""~1~"" cannot be moved under itself", strFavoriteShortName)
+		/*
+		###_D(""
+			. "strCurrentMenu: " . strCurrentMenu . "`n"
+			. "strFavoriteShortName: " . strFavoriteShortName . "`n"
+			. "strParentMenu: " . strParentMenu . "`n`n"
+			. "strNewSubmenuFullName: " . strNewSubmenuFullName . "`n"
+			. "InStr(strParentMenu, strCurrentMenu . lGuiSubmenuSeparator . strFavoriteShortName): " . InStr(strParentMenu, strCurrentMenu . lGuiSubmenuSeparator . strFavoriteShortName)
+			. "")
+		*/
+		intRowToEdit := intRowToEdit + 1
 		return
 	}
 	
@@ -6024,9 +6147,10 @@ if (blnRadioSubmenu)
 		arrNewMenu := Object() ; array of folders of the new menu
 		arrMenus.Insert(strNewSubmenuFullName, arrNewMenu)
 	}
-	else ; GuiEditFavoriteSave
+	else ; GuiEditFavoriteSave or GuiMoveOneFavoriteSave
 	{
 		strFavoriteLocation := lGuiSubmenuLocation
+		; ###_D("Update: " . strCurrentSubmenuFullName . " / " . strNewSubmenuFullName)
 		UpdateMenuNameInSubmenus(strCurrentSubmenuFullName, strNewSubmenuFullName) ; change names in arrMenus and arrMenu objects
 	}
 }
@@ -6045,8 +6169,7 @@ if (strParentMenu = strCurrentMenu)
 {
 	if (A_ThisLabel = "GuiAddFavoriteSave")
 	{
-		; LV_Insert(LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1, "Select Focus"
-		;	, strFavoriteShortName, strFavoriteLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType, strCurrentIconResource)
+		LV_Modify(0, "-Select")
 		LV_Insert(intNewItemPos, "Select Focus"
 			, strFavoriteShortName, strFavoriteLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType, strCurrentIconResource)
 		LV_Modify(LV_GetNext(), "Vis")
@@ -6054,7 +6177,7 @@ if (strParentMenu = strCurrentMenu)
 		Gosub, SaveCurrentListviewToMenuObject ; save current LV tbefore update the dropdown menu
 		GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
 	}
-	else ; GuiEditFavoriteSave
+	else ; GuiEditFavoriteSave or GuiMoveOneFavoriteSave
 	{
 		LV_Modify(intRowToEdit, "Select Focus"
 			, strFavoriteShortName, strFavoriteLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType, strCurrentIconResource)
@@ -6071,11 +6194,10 @@ else ; add menu item to selected menu object
 	objFavorite.IconResource := strCurrentIconResource ; icon resource in format "iconfile,iconindex"
 	arrMenus[objFavorite.MenuName].Insert(intNewItemPos, objFavorite) ; add this menu item to the new menu
 
-	if (A_ThisLabel = "GuiEditFavoriteSave")
-	{
+	if (A_ThisLabel = "GuiEditFavoriteSave") or (A_ThisLabel = "GuiMoveOneFavoriteSave")
 		LV_Delete(intRowToEdit)
+	if (A_ThisLabel = "GuiEditFavoriteSave")
 		LV_Modify(intRowToEdit, "Select Focus")
-	}
 }
 
 GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
@@ -6083,7 +6205,7 @@ GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCu
 LV_ModifyCol(1, "AutoHdr")
 LV_ModifyCol(2, "AutoHdr")
 
-if (A_ThisLabel = "GuiEditFavoriteSave")
+if (A_ThisLabel = "GuiEditFavoriteSave") or (A_ThisLabel = "GuiMoveOneFavoriteSave")
 {
 	Gosub, SaveCurrentListviewToMenuObject ; save current LV tbefore update the dropdown menu
 	GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
