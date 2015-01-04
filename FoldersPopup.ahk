@@ -20,6 +20,11 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 4.1.8.5 BETA (2015-01-??)
+	* prevent double-click on Up/Down arrows buttons to overwrite the clipboard
+	* fix a bug when moving multiple favorites with Up/Down or Ctrl-Up/Ctrl-Down, selection is now kept
+
+	
 	Version: 4.1.8.4 BETA (2015-01-03)
 	* add hotkeys to Gui to move favorites (Ctrl-Down/Up), edit favorite (Enter), open submenu (Ctrl-Right), return to parent menu (Ctrl-Left), Select All (Ctrl-A), Add new (Ctrl-N) and Remove (Del)
 	* add shortcuts help in main Gui, new layout for drag & drop help
@@ -590,7 +595,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.1.8.4 BETA
+;@Ahk2Exe-SetVersion 4.1.8.5 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -635,7 +640,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.1.8.4" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.1.8.5" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -736,6 +741,13 @@ DllCall("CreateMutex", "uint", 0, "int", false, "str", strAppName . "Mutex")
 return
 
 #Include %A_ScriptDir%\FoldersPopup_LANG.ahk
+
+; prevent double-click on some static control to overwrite the clipboard
+; see http://www.autohotkey.com/board/topic/94962-doubleclick-on-gui-pictures-puts-their-path-in-your-clipboard/
+OnClipboardChange:
+If A_EventInfo
+  ClipboardAllBK := ClipboardAll
+return
 
 ; Gui Hotkeys
 #If WinActive(lGuiFullTitle)
@@ -5302,12 +5314,22 @@ GuiControl, Focus, lvFavoritesList
 Gui, 1:ListView, lvFavoritesList
 
 blnAbortGroupMove := false
+strSelected := ""
+intRowToProcess := 0
+loop
+{
+	intRowToProcess := LV_GetNext(intRowToProcess)
+	strSelected := strSelected . intRowToProcess . "|"
+}
+until !LV_GetNext(intRowToProcess)
+StringTrimRight, strSelected, strSelected, 1
+
 Loop
 {
 	if (A_ThisLabel = "GuiMoveMultipleFavoritesUp")
-		Gosub, GetFirstSelected
+		Gosub, GetFirstSelected ; will re-init intRowToProcess
 	else
-		Gosub, GetLastSelected
+		Gosub, GetLastSelected ; will re-init intRowToProcess
 	
 	; ###_D("intRowToProcess: " . intRowToProcess . "`nblnAbortGroupMove: " . blnAbortGroupMove)
 	if (!intRowToProcess) or (blnAbortGroupMove)
@@ -5324,6 +5346,12 @@ Loop
 		Gosub, GuiMoveOneFavoriteDown
 	}
 }
+
+if (!blnAbortGroupMove)
+	Loop, Parse, strSelected, |
+		LV_Modify(A_LoopField  + (A_ThisLabel = "GuiMoveMultipleFavoritesUp" ? -1 : 1), "Select")
+LV_Modify(LV_GetNext(0), "Focus") ; give focus to the first selected row
+
 
 return
 ;------------------------------------------------------------
@@ -5352,6 +5380,9 @@ GuiMoveFavoriteDown:
 GuiMoveOneFavoriteUp:
 GuiMoveOneFavoriteDown:
 ;------------------------------------------------------------
+
+If (A_GuiEvent="DoubleClick")
+  Clipboard := ClipboardAllBK
 
 if !InStr(A_ThisLabel, "One")
 {
