@@ -1,7 +1,6 @@
 /*
 Bugs:
 
-
 To-do for v4:
 
 
@@ -20,10 +19,14 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.1.8.5 BETA (2015-01-??)
+	Version: 4.1.8.6 BETA (2015-01-??)
+	* fix bug & not being kept in menu names
+	* fix bug in add favorite when changing favorite type, default icon not being properly set and location not being properly reset
+	* Korean language updates
+	
+	Version: 4.1.8.5 BETA (2015-01-04)
 	* prevent double-click on Up/Down arrows buttons to overwrite the clipboard
 	* fix a bug when moving multiple favorites with Up/Down or Ctrl-Up/Ctrl-Down, selection is now kept
-
 	
 	Version: 4.1.8.4 BETA (2015-01-03)
 	* add hotkeys to Gui to move favorites (Ctrl-Down/Up), edit favorite (Enter), open submenu (Ctrl-Right), return to parent menu (Ctrl-Left), Select All (Ctrl-A), Add new (Ctrl-N) and Remove (Del)
@@ -595,7 +598,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.1.8.5 BETA
+;@Ahk2Exe-SetVersion 4.1.8.6 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -640,7 +643,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.1.8.5" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.1.8.6" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -2462,6 +2465,7 @@ BuildOneMenu(strMenu)
 		{
 			strSubMenuFullName := arrThisMenu[A_Index].SubmenuFullName
 			strSubMenuDisplayName := arrThisMenu[A_Index].FavoriteName
+			StringReplace, strSubMenuDisplayName, strSubMenuDisplayName, &, &&
 			strSubMenuParent := arrThisMenu[A_Index].MenuName
 			
 			BuildOneMenu(strSubMenuFullName) ; recursive call
@@ -2509,8 +2513,10 @@ BuildOneMenu(strMenu)
 		}
 		else ; this is a favorite (folder, document or URL)
 		{
+			strSubMenuDisplayName := arrThisMenu[A_Index].FavoriteName
+			StringReplace, strSubMenuDisplayName, strSubMenuDisplayName, &, &&
 			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = lMainMenuName)) . " " : "")
-				. arrThisMenu[A_Index].FavoriteName
+				. strSubMenuDisplayName
 			Menu, % arrThisMenu[A_Index].MenuName, Add, %strMenuName%, OpenFavorite
 
 			if (blnDisplayIcons and (A_OSVersion <> "WIN_XP" or blnIsFirstColumn))
@@ -3044,6 +3050,7 @@ else ; this is a favorite
 		StringTrimLeft, strThisMenu, A_ThisMenuItem, 3 ; remove "&1 " from menu item
 	else
 		strThisMenu := A_ThisMenuItem
+	StringReplace, strThisMenu, strThisMenu, &&, &
 	strLocation := GetLocationFor(A_ThisMenu, strThisMenu)
 	strFavoriteType := GetFavoriteTypeFor(A_ThisMenu, strThisMenu)
 }
@@ -5953,16 +5960,16 @@ RadioButtonsChanged:
 ;------------------------------------------------------------
 Gui, 2:Submit, NoHide
 
-GuiControlGet, blnEditMode, Visible, blnRadioFolder ; if radio buttons visible, we are in edit mode
-if (blnEditMode = "") ; if control is just not visible
-	blnEditMode := 1
+GuiControlGet, blnAddMode, Visible, blnRadioFolder ; if radio buttons visible, we are in add mode
+if (blnAddMode = "") ; if control is just not visible, we are in edit mode
+	blnAddMode := 0
 
 GuiControl, % "2:" . (blnRadioSpecial ? "Show" : "Hide"), drpSpecialFolder
 GuiControl, % "2:" . (blnRadioSubmenu or blnRadioSpecial ? "Hide" : "Show"), lblFolder
 GuiControl, % "2:" . (blnRadioSubmenu or blnRadioSpecial ? "Hide" : "Show"), strFavoriteLocation
 GuiControl, % "2:" . (blnRadioSubmenu or blnRadioSpecial or blnRadioURL ? "Hide" : "Show"), btnSelectFolderLocation
 
-if (!blnEditMode) and StrLen(strFavoriteLocation) ; in add mode keep only folder name if we have a file name, else empty it
+if (blnAddMode) and StrLen(strFavoriteLocation) ; in add mode keep only folder name if we have a file name, else empty it
 {
 	SplitPath, strFavoriteLocation, , strFolderNameOnly, strFilenameExtension
 	if StrLen(strFilenameExtension)
@@ -5997,7 +6004,7 @@ else ; blnRadioSubmenu
 }
 
 Gosub, GuiFavoriteIconDefault
-if (!blnEditMode)
+if (blnAddMode)
 	strCurrentIconResource := strDefaultIconResource
 Gosub, GuiFavoriteIconDisplay
 
