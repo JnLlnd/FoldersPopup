@@ -18,7 +18,7 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.1.8.6 BETA (2015-01-??)
+	Version: 4.1.8.6 BETA (2015-01-06)
 	* improve performance when moving large number of favorite from one submenu to another
 	* fix bug & not being kept in menu names
 	* fix bug in add favorite when changing favorite type, default icon not being properly set and location not being properly reset
