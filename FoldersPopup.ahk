@@ -3,7 +3,6 @@ Bugs:
 
 To-do for v4:
 
-
 */
 ;===============================================
 /*
@@ -20,8 +19,10 @@ To-do for v4:
 
 
 	Version: 4.1.8.6 BETA (2015-01-??)
+	* improve performance when moving large number of favorite from one submenu to another
 	* fix bug & not being kept in menu names
 	* fix bug in add favorite when changing favorite type, default icon not being properly set and location not being properly reset
+	* fix bug when moving out all favorite from a submenu, menu item is now grayed out
 	* Korean language updates
 	
 	Version: 4.1.8.5 BETA (2015-01-04)
@@ -2478,6 +2479,7 @@ BuildOneMenu(strMenu)
 				Menu, % arrThisMenu[A_Index].MenuName, Add, %strMenuName%, OpenFavorite ; will never be called because disabled
 				Menu, % arrThisMenu[A_Index].MenuName, Disable, %strMenuName%
 			}
+			Menu, % arrThisMenu[A_Index].MenuName, % (arrMenus[strSubMenuFullName].MaxIndex() ? "Enable" : "Disable"), %strMenuName% ; disable menu if empty
 			if (blnDisplayIcons and (A_OSVersion <> "WIN_XP" or blnIsFirstColumn))
 			{
 				ParseIconResource(arrThisMenu[A_Index].IconResource, strThisIconFile, intThisIconIndex, "Submenu")
@@ -6217,6 +6219,7 @@ Loop
 	intRowToEdit := intRowToEdit - 1 ; because we deleted the previous item
 }
 
+Gosub, BuildMainMenuWithStatus ; update menus
 Gosub, GuiEditFavoriteCancel
 
 return
@@ -6369,7 +6372,8 @@ if (A_ThisLabel = "GuiEditFavoriteSave") or (A_ThisLabel = "GuiMoveOneFavoriteSa
 	GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
 }
 
-Gosub, BuildMainMenuWithStatus ; update menus
+if (A_ThisLabel <> "GuiMoveOneFavoriteSave")
+	Gosub, BuildMainMenuWithStatus ; update menus
 
 GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lDialogCancelButton%
