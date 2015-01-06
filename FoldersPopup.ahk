@@ -5340,7 +5340,6 @@ Loop
 	else
 		Gosub, GetLastSelected ; will re-init intRowToProcess
 	
-	; ###_D("intRowToProcess: " . intRowToProcess . "`nblnAbortGroupMove: " . blnAbortGroupMove)
 	if (!intRowToProcess) or (blnAbortGroupMove)
 		break
 	
@@ -6204,17 +6203,6 @@ Loop
 	blnRadioURL := (strFavoriteType = "U")
 	blnRadioSubmenu := (strFavoriteType = "S")
 
-	/*
-	###_D(""
-		. "strCurrentMenu: " . strCurrentMenu . "`n"
-		. "strParentMenu: " . strParentMenu . "`n`n"
-		. "intRowToEdit: " . intRowToEdit . "`n"
-		. "strFavoriteShortName: " . strFavoriteShortName . "`n"
-		. "strFavoriteLocation: " . strFavoriteLocation . "`n"
-		. "strFavoriteType: " . strFavoriteType . "`n"
-		. "strCurrentIconResource: " . strCurrentIconResource . "`n"
-		. "")
-	*/
 	Gosub, GuiMoveOneFavoriteSave
 	intRowToEdit := intRowToEdit - 1 ; because we deleted the previous item
 }
@@ -6286,15 +6274,6 @@ if (blnRadioSubmenu)
 	if ((A_ThisLabel = "GuiMoveOneFavoriteSave") and InStr(strParentMenu, strCurrentMenu . lGuiSubmenuSeparator . strFavoriteShortName) <> 0)
 	{
 		Oops(lDialogMenuNotMoveUnderItself "Menu ""~1~"" cannot be moved under itself", strFavoriteShortName)
-		/*
-		###_D(""
-			. "strCurrentMenu: " . strCurrentMenu . "`n"
-			. "strFavoriteShortName: " . strFavoriteShortName . "`n"
-			. "strParentMenu: " . strParentMenu . "`n`n"
-			. "strNewSubmenuFullName: " . strNewSubmenuFullName . "`n"
-			. "InStr(strParentMenu, strCurrentMenu . lGuiSubmenuSeparator . strFavoriteShortName): " . InStr(strParentMenu, strCurrentMenu . lGuiSubmenuSeparator . strFavoriteShortName)
-			. "")
-		*/
 		intRowToEdit := intRowToEdit + 1
 		return
 	}
@@ -6311,7 +6290,6 @@ if (blnRadioSubmenu)
 	else ; GuiEditFavoriteSave or GuiMoveOneFavoriteSave
 	{
 		strFavoriteLocation := lGuiSubmenuLocation
-		; ###_D("Update: " . strCurrentSubmenuFullName . " / " . strNewSubmenuFullName)
 		UpdateMenuNameInSubmenus(strCurrentSubmenuFullName, strNewSubmenuFullName) ; change names in arrMenus and arrMenu objects
 	}
 }
