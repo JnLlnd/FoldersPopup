@@ -2,7 +2,6 @@
 Bugs:
 
 To-do for v4.2:
-- what if "My System Folders" menu exist befor FP created it
 - add SV translation
 
 */
@@ -21,8 +20,9 @@ To-do for v4.2:
 
 
 	Version: 4.1.8.7 BETA (2015-01-??)
-	* add the new customizable My System Folders menu as last item in the user's main menu
-	* add a bln value in ini file to track that the new My System Folders was created
+	* add the new customizable My Special Folders menu as last item in the user's main menu
+	* add a bln value in ini file to track that the new My Special Folders was created
+	* protection if user already has a My Special Folders menu before FP creates it
 	* stop building the old Special Folders menu
 	* remove old open special folders code for Explorer, DOpus, TC, etc.
 	* remove option to display special folders menu
@@ -1184,28 +1184,32 @@ AddToIniMySystemFoldersMenu:
 
 global strDownloadPath
 
+strInstance := ""
 Loop
 {
 	IniRead, strIniLine, %strIniFile%, Folders, Folder%A_Index% ; keep "Folders" label instead of "Favorite" for backward compatibility
+	if InStr(strIniLine, lMenuMySystemMenu . strInstance)
+		strInstance := strInstance . "+"
 	if (strIniLine = "ERROR")
 	{
 		intNextFolderNumber := A_Index
 		Break
 	}
 }
+strMySystemMenu := lMenuMySystemMenu . strInstance
 
 AddToIniOneSystemFolderMenu(intNextFolderNumber + 0, lMenuSeparator, lMenuSeparator . lMenuSeparator, , , "F")
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 1, lMenuMySystemMenu, lGuiSubmenuSeparator, , lGuiSubmenuSeparator . lMenuMySystemMenu, "S")
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 2, lMenuDesktop, A_Desktop, lGuiSubmenuSeparator . lMenuMySystemMenu)
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 3, , "{450D8FBA-AD25-11D0-98A8-0800361B1103}", lGuiSubmenuSeparator . lMenuMySystemMenu)
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 4, , strPathUsername . "\Pictures", lGuiSubmenuSeparator . lMenuMySystemMenu)
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 5, , strDownloadPath, lGuiSubmenuSeparator . lMenuMySystemMenu)
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 6, lMenuSeparator, lMenuSeparator . lMenuSeparator, lGuiSubmenuSeparator . lMenuMySystemMenu, , "F")
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 7, , "{20D04FE0-3AEA-1069-A2D8-08002B30309D}", lGuiSubmenuSeparator . lMenuMySystemMenu)
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 8, , "{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}", lGuiSubmenuSeparator . lMenuMySystemMenu)
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 9, lMenuSeparator, lMenuSeparator . lMenuSeparator, lGuiSubmenuSeparator . lMenuMySystemMenu, , "F")
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 10, , "{21EC2020-3AEA-1069-A2DD-08002B30309D}", lGuiSubmenuSeparator . lMenuMySystemMenu)
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 11, , "{645FF040-5081-101B-9F08-00AA002F954E}", lGuiSubmenuSeparator . lMenuMySystemMenu)
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 1, strMySystemMenu, lGuiSubmenuSeparator, , lGuiSubmenuSeparator . strMySystemMenu, "S")
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 2, lMenuDesktop, A_Desktop, lGuiSubmenuSeparator . strMySystemMenu)
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 3, , "{450D8FBA-AD25-11D0-98A8-0800361B1103}", lGuiSubmenuSeparator . strMySystemMenu)
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 4, , strPathUsername . "\Pictures", lGuiSubmenuSeparator . strMySystemMenu)
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 5, , strDownloadPath, lGuiSubmenuSeparator . strMySystemMenu)
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 6, lMenuSeparator, lMenuSeparator . lMenuSeparator, lGuiSubmenuSeparator . strMySystemMenu, , "F")
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 7, , "{20D04FE0-3AEA-1069-A2D8-08002B30309D}", lGuiSubmenuSeparator . strMySystemMenu)
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 8, , "{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}", lGuiSubmenuSeparator . strMySystemMenu)
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 9, lMenuSeparator, lMenuSeparator . lMenuSeparator, lGuiSubmenuSeparator . strMySystemMenu, , "F")
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 10, , "{21EC2020-3AEA-1069-A2DD-08002B30309D}", lGuiSubmenuSeparator . strMySystemMenu)
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 11, , "{645FF040-5081-101B-9F08-00AA002F954E}", lGuiSubmenuSeparator . strMySystemMenu)
 
 IniWrite, 1, %strIniFile%, Global, MySystemFoldersBuilt
 

@@ -188,6 +188,7 @@ lMenuHistory	Historique
 lMenuMenu	Menu
 lMenuMyComputer	Ordinateur
 lMenuMyMusic	Ma musique
+lMenuMySystemMenu	Mes dossiers spéciaux
 lMenuMyVideo	Mes vidéos
 lMenuNetworkNeighborhood	Réseau
 lMenuPictures	Images
