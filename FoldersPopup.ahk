@@ -1,6 +1,5 @@
 /*
 Bugs:
-- quand on bouge avec les flèches, le dropdown de add favorite n'est pas mis à jour
 
 To-do for v4.2:
 - what if "My System Folders" menu exist befor FP created it
@@ -28,6 +27,7 @@ To-do for v4.2:
 	* remove old open special folders code for Explorer, DOpus, TC, etc.
 	* remove option to display special folders menu
 	* remove & in special folders menu names in language files
+	* fix bug when moving up/down or removing favorite, the items list in add favorite is now updated
 	
 	Version: 4.1.8.6 BETA (2015-01-06)
 	* improve performance when moving large number of favorite from one submenu to another
@@ -5582,6 +5582,8 @@ if (A_ThisLabel = "GuiEditFavorite")
 }
 else
 {
+	Gosub, SaveCurrentListviewToMenuObject ; update menu object from LV, for items dropdown list
+	
 	intRowToEdit := 0 ;  used when saving to flag to insert a new row
 	strCurrentName := "" ; make sure it is empty
 	strCurrentSubmenuFullName := "" ;  make sure it is empty
