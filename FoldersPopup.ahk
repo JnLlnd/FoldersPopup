@@ -26,6 +26,9 @@ To-do for v4.2:
 	* stop building the old Special Folders menu
 	* remove old open special folders code for Explorer, DOpus, TC, etc.
 	* remove option to display special folders menu
+	* in Settings, Ctrl-Left is now as clicking on on the left arrow (instead of the up arrow) beside the menu dropdown list
+	* in Settings, remember the last menu position when returning to a previously displayed menu
+	* refactor of code around navigation to previous menu (arrows left of the Menu to edit in Settings)
 	* remove & in special folders menu names in language files
 	* fix bug when moving up/down or removing favorite, the items list in add favorite is now updated
 	
@@ -665,6 +668,7 @@ global strIniFile := A_WorkingDir . "\" . strAppName . ".ini"
 global strIniBackupFile := A_WorkingDir . "\" . strAppName . "-backup.ini"
 global blnMenuReady := false
 global arrSubmenuStack := Object()
+global arrSubmenuStackPosition := Object()
 global objIconsFile := Object()
 global objIconsIndex := Object()
 global strHotkeyNoneModifiers := ">^!+#" ; right-control/atl/shift/windows impossible keys combination
@@ -787,7 +791,7 @@ return
 ^Left::
 GuiControlGet, blnUpMenuVisible, Visible, picUpMenu
 if (blnUpMenuVisible)
-	Gosub, GuiGotoUpMenu
+	Gosub, GuiGotoPreviousMenu
 return
 
 ^A::
@@ -4868,6 +4872,8 @@ OpenMenuFromEditForm:
 OpenMenuFromGuiHotkey:
 ;------------------------------------------------------------
 
+intCurrentLastPosition := 0
+
 if (A_ThisLabel = "GuiMenusListChanged")
 {
 	GuiControlGet, strNewDropdownMenu, , drpMenusList
@@ -4875,38 +4881,40 @@ if (A_ThisLabel = "GuiMenusListChanged")
 		return
 }
 
-Gosub, SaveCurrentListviewToMenuObject ; save current LV before changing strCurrentMenu
+Gosub, SaveCurrentListviewToMenuObject ; save current LV
 
-strSavedMenu := strCurrentMenu
-if (A_ThisLabel = "GuiMenusListChanged")
-{
-	arrSubmenuStack.Insert(1, strSavedMenu) ; push the current menu to the left arrow stack
-	strCurrentMenu := strNewDropdownMenu
-}
-else if (A_ThisLabel = "GuiGotoUpMenu")
-{
-	arrSubmenuStack.Insert(1, strSavedMenu) ; push the current menu to the left arrow stack
-	strCurrentMenu := SubStr(strCurrentMenu, 1, InStr(strCurrentMenu, lGuiSubmenuSeparator, , 0) - 1) 
-}
-else if (A_ThisLabel = "GuiGotoPreviousMenu")
+if (A_ThisLabel = "GuiGotoPreviousMenu")
 {
 	strCurrentMenu := arrSubmenuStack[1] ; pull the top menu from the left arrow stack
 	arrSubmenuStack.Remove(1) ; remove the top menu from the left arrow stack
-}
-else if (A_ThisLabel = "OpenMenuFromEditForm") or (A_ThisLabel = "OpenMenuFromGuiHotkey")
-{
-	arrSubmenuStack.Insert(1, strSavedMenu) ; push the current menu to the left arrow stack
-	strCurrentMenu := strCurrentSubmenuFullName
+
+	intCurrentLastPosition := arrSubmenuStackPosition[1] ; pull the focus position in top menu from the left arrow stack
+	arrSubmenuStackPosition.Remove(1) ; remove the top position from the left arrow stack
 }
 else
-	return ; should not occur
+{
+	arrSubmenuStack.Insert(1, strCurrentMenu) ; push the current menu to the left arrow stack
+	
+	if (A_ThisLabel = "GuiMenusListChanged")
+		strCurrentMenu := strNewDropdownMenu
+	else if (A_ThisLabel = "GuiGotoUpMenu")
+		strCurrentMenu := SubStr(strCurrentMenu, 1, InStr(strCurrentMenu, lGuiSubmenuSeparator, , 0) - 1) 
+	else if (A_ThisLabel = "OpenMenuFromEditForm") or (A_ThisLabel = "OpenMenuFromGuiHotkey")
+		strCurrentMenu := strCurrentSubmenuFullName
 
-strPreviousMenu := strSavedMenu
+	arrSubmenuStackPosition.Insert(1, LV_GetNext("Focused"))
+}
 
 GuiControl, % (arrSubmenuStack.MaxIndex() ? "Show" : "Hide"), picPreviousMenu
 GuiControl, % (strCurrentMenu <> lMainMenuName ? "Show" : "Hide"), picUpMenu
 
 Gosub, LoadOneMenuToGui
+
+if (intCurrentLastPosition) ; we went to a previous menu
+{
+	LV_Modify(0, "-Select")
+	LV_Modify(intCurrentLastPosition, "Select Focus Vis")
+}
 
 return
 ;------------------------------------------------------------
