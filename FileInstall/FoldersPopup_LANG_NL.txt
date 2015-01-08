@@ -153,7 +153,7 @@ lMenuColumnBreak	kolom
 lMenuControlPanel	&Configuratiescherm
 lMenuDesktop	Bureaublad
 lMenuDialogNotSupported	Dit type dialoogvenster wordt nog niet ondersteund
-lMenuDocuments	D&ocumenten
+lMenuDocuments	Documenten
 lMenuDownloads	Downloads
 lMenuExitFoldersPopup	Exit ~1~
 lMenuFoldersInExplorer	Huidige Mappen

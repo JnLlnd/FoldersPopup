@@ -151,9 +151,9 @@ lMenuAbout	Ü&ber
 lMenuAddThisFolder	&Diesen Ordner hinzufügen
 lMenuColumnBreak	Spalte
 lMenuControlPanel	&Systemsteuerung
-lMenuDesktop	&Desktop
+lMenuDesktop	Desktop
 lMenuDialogNotSupported	Diese Dialogbox wird momentan noch nicht unterstützt
-lMenuDocuments	D&okumente
+lMenuDocuments	Dokumente
 lMenuDownloads	Downloads
 lMenuExitFoldersPopup	Beenden ~1~
 lMenuFoldersInExplorer	Ordner im Explorer
@@ -167,7 +167,7 @@ lMenuHelp	Hilfe
 lMenuMenu	Menü
 lMenuMyComputer	&Mein Computer
 lMenuNetworkNeighborhood	&Netzwerkumgebung
-lMenuPictures	&Bilder
+lMenuPictures	Bilder
 lMenuRecentFolders	&Kürzlich verwendete Ordner
 lMenuRecycleBin	&Papierkorb
 lMenuRefreshRecent	Menü der kürzlich verwendeten Ordner wird aktualisiert

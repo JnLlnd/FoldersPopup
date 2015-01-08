@@ -148,9 +148,9 @@ lMenuAddThisDialog	&Aggiungi Questa Casella di Dialogo all'elenco supportato
 lMenuAddThisFolder	&Aggiungi Questa Cartella
 lMenuColumnBreak	colonna
 lMenuControlPanel	Pannello di &Controllo
-lMenuDesktop	&Desktop
+lMenuDesktop	Desktop
 lMenuDialogNotSupported	Questa casella di dialogo non è ancora supportata
-lMenuDocuments	D&ocumenti
+lMenuDocuments	Documenti
 lMenuDownloads	Download
 lMenuExitFoldersPopup	Esci ~1~
 lMenuFoldersInExplorer	Cartelle &Correnti
@@ -164,7 +164,7 @@ lMenuHelp	Aiuto
 lMenuMenu	Menù
 lMenuMyComputer	&Mio Computer
 lMenuNetworkNeighborhood	Rete di Wi&ndows
-lMenuPictures	&Immagini
+lMenuPictures	Immagini
 lMenuRecentFolders	Cartelle &Recenti
 lMenuRecycleBin	&Cestino
 lMenuRefreshRecent	Aggiorna Menù delle Cartelle Recenti
