@@ -18,7 +18,7 @@ To-do for v4.2:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.1.8.7 BETA (2015-01-??)
+	Version: 4.1.8.7 BETA (2015-01-08)
 	* add the new customizable My Special Folders menu as last item in the user's main menu
 	* add a bln value in ini file to track that the new My Special Folders was created
 	* protection if user already has a My Special Folders menu before FP creates it
