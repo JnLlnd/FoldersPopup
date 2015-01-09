@@ -2,7 +2,6 @@
 Bugs:
 
 To-do for v4.2:
-- add SV translation
 
 */
 ;===============================================
@@ -31,7 +30,9 @@ To-do for v4.2:
 	* refactor of code around navigation to previous menu (arrows left of the Menu to edit in Settings)
 	* remove & in special folders menu names in language files
 	* fix bug when moving up/down or removing favorite, the items list in add favorite is now updated
-	
+	* fix error message bug when moving folder under itself
+	* swedish translation update
+
 	Version: 4.1.8.6 BETA (2015-01-06)
 	* improve performance when moving large number of favorite from one submenu to another
 	* fix bug & not being kept in menu names
@@ -6089,7 +6090,7 @@ if (blnRadioSubmenu)
 	}
 	if ((A_ThisLabel = "GuiMoveOneFavoriteSave") and InStr(strParentMenu, strCurrentMenu . lGuiSubmenuSeparator . strFavoriteShortName) <> 0)
 	{
-		Oops(lDialogMenuNotMoveUnderItself "Menu ""~1~"" cannot be moved under itself", strFavoriteShortName)
+		Oops(lDialogMenuNotMoveUnderItself, strFavoriteShortName)
 		intRowToEdit := intRowToEdit + 1
 		return
 	}
