@@ -22,6 +22,7 @@ To-do for v4:
 	* Italian translation update
 	* Korean translation update
 	* Swedish translation fix
+	* Added the FP ico file to the portable package
 	
 	Version: 4.1.9.1 BETA (2015-01-10)
 	* re-enabled the Special Folders menu in Windows XP
