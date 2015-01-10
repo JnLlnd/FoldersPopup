@@ -18,7 +18,15 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.1.9.1 BETA (2015-01-??)
+	Version: 4.1.9.2 BETA (2015-01-10)
+	* Italian translation update
+	* Korean translation update
+	* Swedish translation fix
+	
+	Version: 4.1.9.1 BETA (2015-01-10)
+	* re-enabled the Special Folders menu in Windows XP
+	
+	Version: 4.1.8.7 BETA (2015-01-08)
 	* add the new customizable My Special Folders menu as last item in the user's main menu (except for XP)
 	* add a bln value in ini file to track that the new My Special Folders was created (except for XP)
 	* protection if user already has a My Special Folders menu before FP creates it

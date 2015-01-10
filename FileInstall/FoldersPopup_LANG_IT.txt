@@ -24,9 +24,11 @@ lDialogCancelTitle	Annulla - ~1~ ~2~
 lDialogEdit	Modifica
 lDialogEditDialogPrompt	Inserisci il nome della nuova Casella di Dialogo`n(o parte del nome):
 lDialogEditDialogTitle	Modifica la Casella di Dialogo - ~1~ ~2~
+lDialogEndOfMenu	fine del menù
 lDialogFavoriteDoesNotExistPrompt	Il Preferito "~1~" non esiste oppure non è disponibile.`n`nSe questo Preferito si trova su un disco di rete, si prega di riprovare dopo l'autenticazione di rete.`n`nSe il Preferito è un link ad una pagina web, seleziona l'opzione "Link (URL)" quando aggiungi il Preferito.
 lDialogFavoriteDoesNotExistTitle	Il Preferito non esiste - ~1~
 lDialogFavoriteLocationEmpty	La destinazione è vuota. Si prega di riprovare: scegli una destinazione non vuota.
+lDialogFavoriteMenuPosition	Inserisci il nuovo Preferito prima di questo elemento
 lDialogFavoriteNameEmpty	Il nome del Preferito non può essere vuoto. Per favore, scegli un nome.
 lDialogFavoriteNameNoColumnBreak	Il nome del sottomenù non può cominciare con caratteri "~1~", riservati ad uso di indicatori di colonna.
 lDialogFavoriteNameNoPipe	Il Preferito o il nome del sottomenù non può includere la "|" (barra verticale).
@@ -35,6 +37,7 @@ lDialogFavoriteNameNotNew	Il nome "~1~" è già in uso in questo menù. Si prega di
 lDialogFavoriteParentMenu	Scegli il menù in cui inserirlo
 lDialogFavoriteRemovePrompt	Eliminare il sottomenù "~1~"`ne TUTTO il contenuto (cartelle e sottomenù)?
 lDialogFavoriteRemoveTitle	Elimina il Preferito - ~1~
+lDialogFavoritesParentMenuMove	Sposta i preferiti di ~1~ in questo menù.
 lDialogFileLabel	Documento
 lDialogFileShortName	Nome breve del Documento (voce menù)
 lDialogFolderLabel	Cartella
@@ -61,11 +64,15 @@ lDialogGroupSelect	Seleziona un Gruppo
 lDialogGroupSelectError	Per favore, seleziona il Gruppo da ~1~.
 lDialogIcon	Icona
 lDialogInvalidHotkey	Con il tuo attuale layout di tastiera di sistema, non è stato possibile usare l'hotkey "~1~" per aprire il popup menù (errore: tasto scelto non valido).`n`nPer favore, apri la finestra "~2~ Impostazioni" dal menù dell'icona nell'area notifiche e clicca: "Opzioni". In questa casella di dialogo, scegli un altro shortcut per "~3~".
+lDialogMenuNotMoveUnderItself	Il menù "~1~" non può essere posizionato sotto se stesso.
+lDialogMoveFavoritesTitle	Sposta i Preferiti - ~1~ ~2~
 lDialogNormal	Normale
 lDialogOpenThisMenu	Apri questo menù
+lDialogRemoveMultipleFavorites	Vuoi davvero eliminare ~1~ preferiti / sottomenù?
 lDialogSave	Salva
 lDialogSelectItemToEdit	Per favore, seleziona la voce da modificare.
 lDialogSelectItemToRemove	Per favore, seleziona la voce da eliminare.
+lDialogSpecialLabel	Special Folder
 lDialogSubmenuLabel	Sottomenù
 lDialogSubmenuNameEmpty	Il nome del sottomenù non può essere vuoto. Si prega di inserire un nome.
 lDialogSubmenuParentMenu	Scegli il menù in cui inserirlo
@@ -101,6 +108,8 @@ lGuiAddFavorite	Aggiungi
 lGuiCancel	&Annulla
 lGuiClose	&Chiudi
 lGuiDonate	Supporto
+lGuiDropFilesHelp	Aiuto Drag & Drop
+lGuiDropFilesIncentive	Puoi trascinare i seguenti tipi di preferiti`nsulla finestra ~1~:`n`n- ~2~`n- ~3~
 lGuiEditFavorite	Modifica
 lGuiGroupClosing	Chiusura delle finestre
 lGuiGroupOf	di
@@ -120,8 +129,11 @@ lGuiGroupSaveSelectAll	Seleziona Tutti
 lGuiGroupSaveSelectExisting	o seleziona un Gruppo da sovrascrivere:
 lGuiGroupSaveShortName	Nome breve del gruppo (voce menù)
 lGuiHelp	Aiuto
+lGuiHotkeysHelpText	Giù: Seleziona il Preferito successivo`nSu: Seleziona il Preferito precedente`nCtrl-N: Aggiungi un nuovo Preferito`nInvio: Modifica il Preferito`n`nShift-Up/Down: Seleziona Preferiti contigui`nCtrl-Click: Seleziona Preferiti non contigui`nCtrl-A: Seleziona tutti i Preferiti`n`nCtrl-Down: Sposta in giù il Preferito(i)`nCtrl-Up: Sposta in sù il Preferito(i)`nDel: Elimina il Preferito(i)`n`nCtrl-Right: Apri il sottomenù`nCtrl-Left: Apri il sottomenù superiore
+lGuiKotkeysHelp	Preferiti Collegamenti Aiuto
 lGuiLvDialogsHeader	Caselle di Dialogo supportate`n(sono ammessi anche nomi incompleti) 
 lGuiLvFavoritesHeader	Nome|Destinazione
+lGuiMove	Sposta
 lGuiMoveFavoriteDown	Sposta S&otto
 lGuiMoveFavoriteUp	Sposta &Sopra
 lGuiOptions	Opzioni
@@ -146,14 +158,23 @@ lMainMenuName	Principale
 lMenuAbout	C&rediti
 lMenuAddThisDialog	&Aggiungi Questa Casella di Dialogo all'elenco supportato
 lMenuAddThisFolder	&Aggiungi Questa Cartella
+lMenuAppData	Dati Applicazioni
+lMenuCache	Cache
 lMenuColumnBreak	colonna
+lMenuCommonAppData	Dati Applicazioni (pubblica)
+lMenuCommonDesktop	Desktop pubblico
+lMenuCommonStartMenu	Menù Avvio (pubblico)
+lMenuCommonStartupMenu	Menù Esecuzione Automatica (pubblico)
 lMenuControlPanel	Pannello di &Controllo
+lMenuCookies	Cookies
 lMenuDesktop	Desktop
 lMenuDialogNotSupported	Questa casella di dialogo non è ancora supportata
 lMenuDocuments	Documenti
 lMenuDownloads	Download
 lMenuExitFoldersPopup	Esci ~1~
+lMenuFavoritesInternet	Preferiti (Internet)
 lMenuFoldersInExplorer	Cartelle &Correnti
+lMenuFonts	Font di caratteri
 lMenuFPMenu	~1~ ~2~
 lMenuGroup	&Gruppi di Cartelle
 lMenuGroupAdd	aggiungi
@@ -161,11 +182,20 @@ lMenuGroupLoad	Apri un gruppo
 lMenuGroupReplace	sostituisci
 lMenuGroupSave	Salva le Cartelle correnti come Gruppo
 lMenuHelp	Aiuto
+lMenuHistory	Cronologia
 lMenuMenu	Menù
 lMenuMyComputer	&Mio Computer
+lMenuMyMusic	Musica
+lMenuMySystemMenu	Le mie Cartelle Speciali
+lMenuMyVideo	Video
 lMenuNetworkNeighborhood	Rete di Wi&ndows
 lMenuPictures	Immagini
+lMenuProgramFiles	Programmi
+lMenuProgramsFolderStartMenu	Programmi (Menù Avvio)
+lMenuPublicLibraries	Raccolte Pubbliche
+lMenuQuickLaunch	Avvio veloce
 lMenuRecentFolders	Cartelle &Recenti
+lMenuRecentItems	Oggetti Recenti
 lMenuRecycleBin	&Cestino
 lMenuRefreshRecent	Aggiorna Menù delle Cartelle Recenti
 lMenuReservedShortcuts	SGRFA
@@ -175,12 +205,23 @@ lMenuSeparator	----------------
 lMenuSettings	&Impostazioni di ~1~
 lMenuSpecialExplorer	Finestra Speciale di Explorer
 lMenuSpecialFolders	Cartelle &Speciali
+lMenuStartMenu	Menù Avvio
+lMenuStartup	Esecuzione Automatica
 lMenuSuspendHotkeys	Sospendi Scorciatoie
+lMenuSystemCertificates	Certificati di Sistema
+lMenuTemplates	Modelli
+lMenuTemporaryFiles	File temporanei
 lMenuUpdate	Cerca &Aggiornamenti
+lMenuUserFolder	Cartella Utente
+lMenuUserPinned	Collegamenti evidenziati dall'utente
 lNavigateFileError	C'è stato un errore nell'aprire la cartella:`n~1~.
 lNavigateSpecialError	C'è stato un errore nell'aprire la cartella speciale #~1~.
+lOopsCouldNotOpenSpecialFolder	~1~ non è riuscito ad aprire la Cartella Speciale: "~2~".
+lOopsDialogBox	La casella di dialogo
 lOopsTitle	~1~ (~2~)
 lOopsWriteProtectedError	Sembra che ~1~ sia eseguito da una cartella PROTETTA-IN-SCRITTURA perchè non è stato possibile creare il file di configurazione "~1~.ini".`n`nSposta il file ~1~ .EXE in una cartella NON-PROTETTA di tua scelta e ri-eseguilo da quest'ultima.`n`n~1~ verrà chiuso.
+lOopsWrongFPconnectAppPathFilename	Nome del file o percorso sbagliato nel parametro "AppPath" nella configurazione di  FPconnect:`n~1~.`n`nControlla il percorso del file .exe in "AppPath" nel file .ini di FCConnect:`n~2~
+lOopsWrongThirdPartyPath	Nome del file o percorso sbagliato per ~1~:`n~2~.`n`nControlla il file .exe selezionato per ~1~ nelle "Opzioni", tab "~3~".
 lOopsZipFileError	Sembra che ~1~ sia stato eseguito direttamente da un archivio .ZIP .`n`nE' necessario dapprima estrarre il file ~1~ .EXE dall'archivio .ZIP in una cartella di tua scelta prima di eseguirlo.`n`n~1~ verrà chiuso.
 lOptionsAlt	Alt
 lOptionsArrDescriptions1	Scegli il tasto del MOUSE e la combinazione di modificatori da usare per aprire il menù popup in Windows Explorer o nelle caselle di dialogo. Per default, è il tasto centrale del mouse senza nessun tasto modificatore.
@@ -227,8 +268,10 @@ lOptionsSpacebar	usa la barra spaziatrice
 lOptionsTabMouseAndKeyboardIntro	Definisci i tasti del mouse e scorciatoie da tastiera per lanciare ~1~.
 lOptionsTheme	Tema
 lOptionsThirdPartyDetail	Seleziona il file del programma (.exe) ~1~ per abilitare l'integrazione di ~1~ .
+lOptionsThirdPartyDetailFPconnect	Seleziona il file di programma (.exe) di FPconnect per abilitare l'integrazione di altri file manager.
 lOptionsThirdPartyPrompt	File del programma:
 lOptionsThirdPartyTitle	~1~ utenti
+lOptionsThirdPartyTitleFPconnect	Utenti di altri file manager che usano FPconnect
 lOptionsTitles	Mouse - Folders Popup|Mouse - Nuovo Explorer|Keyboard - Folders Popup|Keyboard - Nuovo Explorer|Cartelle Recenti|Finestra Impostazioni
 lOptionsTitlesSub	(menù popup su Explorer e caselle di dialogo)|(menù popup da qualsiasi finestra di programma)|(menù popup su Explorer e caselle di dialogo)|(menù popup da qualsiasi finestra di programma)|(elenco Posti recenti di Windows)|(configurazione e impostazioni dei menù)
 lOptionsTotalCommanderUseTabs	Usa i tab
