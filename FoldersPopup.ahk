@@ -1,7 +1,7 @@
 /*
 Bugs:
 
-To-do for v4.2:
+To-do for v4:
 
 */
 ;===============================================
@@ -17,23 +17,6 @@ To-do for v4.2:
 	or Rexx version Folder Menu
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
-
-	Version: 4.1.9 BETA (2015-01-??)
-	
-	Version: 4.1.8.7 BETA (2015-01-08)
-	* add the new customizable My Special Folders menu as last item in the user's main menu
-	* add a bln value in ini file to track that the new My Special Folders was created
-	* protection if user already has a My Special Folders menu before FP creates it
-	* stop building the old Special Folders menu
-	* remove old open special folders code for Explorer, DOpus, TC, etc.
-	* remove option to display special folders menu
-	* in Settings, Ctrl-Left is now as clicking on on the left arrow (instead of the up arrow) beside the menu dropdown list
-	* in Settings, remember the last menu position when returning to a previously displayed menu
-	* refactor of code around navigation to previous menu (arrows left of the Menu to edit in Settings)
-	* remove & in special folders menu names in language files
-	* fix bug when moving up/down or removing favorite, the items list in add favorite is now updated
-	* fix error message bug when moving folder under itself
-	* swedish translation update
 
 	Version: 4.1.8.6 BETA (2015-01-06)
 	* improve performance when moving large number of favorite from one submenu to another
@@ -616,7 +599,7 @@ To-do for v4.2:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.1.9 BETA
+;@Ahk2Exe-SetVersion 4.1.8.6 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -661,7 +644,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.1.9" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.1.8.6" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -671,7 +654,6 @@ global strIniFile := A_WorkingDir . "\" . strAppName . ".ini"
 global strIniBackupFile := A_WorkingDir . "\" . strAppName . "-backup.ini"
 global blnMenuReady := false
 global arrSubmenuStack := Object()
-global arrSubmenuStackPosition := Object()
 global objIconsFile := Object()
 global objIconsIndex := Object()
 global strHotkeyNoneModifiers := ">^!+#" ; right-control/atl/shift/windows impossible keys combination
@@ -704,8 +686,9 @@ if (blnDiagMode)
 	Gosub, InitDiagMode
 Gosub, LoadTheme
 
-; build even if blnDisplayFoldersInExplorerMenu or blnDisplayGroupMenu are false because they could become true
+; build even if blnDisplaySpecialFolders or blnDisplaySwitchMenu are false because they could become true
 ; no need to build Recent folders menu at startup since this menu is refreshed on demand
+Gosub, BuildSpecialFoldersMenu
 Gosub, BuildFoldersInExplorerMenu ; need to be initialized here - will be updated at each call to popup menu
 Gosub, BuildGroupMenu
 Gosub, BuildMainMenu
@@ -794,7 +777,7 @@ return
 ^Left::
 GuiControlGet, blnUpMenuVisible, Visible, picUpMenu
 if (blnUpMenuVisible)
-	Gosub, GuiGotoPreviousMenu
+	Gosub, GuiGotoUpMenu
 return
 
 ^A::
@@ -1018,6 +1001,7 @@ if (blnPopupFix >= 0)
 IniRead, blnDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip, 1
 IniRead, blnDisplayIcons, %strIniFile%, Global, DisplayIcons, 1
 blnDisplayIcons := (blnDisplayIcons and OSVersionIsWorkstation())
+IniRead, blnDisplaySpecialFolders, %strIniFile%, Global, DisplaySpecialFolders, 1
 IniRead, blnDisplayRecentFolders, %strIniFile%, Global, DisplayRecentFolders, 1
 IniRead, blnDisplayFoldersInExplorerMenu, %strIniFile%, Global, DisplayFoldersInExplorerMenu, 1
 IniRead, blnDisplayGroupMenu, %strIniFile%, Global, DisplaySwitchMenu, 1 ; keep "Switch" in label instead of "Group" for backward compatibility
@@ -1127,11 +1111,7 @@ if (strTheme = "ERROR") ; if Theme not found, we have a v1 or v2 ini file - add 
 }
 else
 	IniRead, strAvailableThemes, %strIniFile%, Global, AvailableThemes
-
-IniRead, blnMySystemFoldersBuilt, %strIniFile%, Global, MySystemFoldersBuilt, 0 ; default false
-if !(blnMySystemFoldersBuilt)
-	Gosub, AddToIniMySystemFoldersMenu ; modify the ini file Folders section before reading it
-
+	
 Loop
 {
 	IniRead, strIniLine, %strIniFile%, Folders, Folder%A_Index% ; keep "Folders" label instead of "Favorite" for backward compatibility
@@ -1178,65 +1158,6 @@ IfNotExist, %strIniFile%
 }
 
 return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-AddToIniMySystemFoldersMenu:
-;------------------------------------------------------------
-
-global strDownloadPath
-
-strInstance := ""
-Loop
-{
-	IniRead, strIniLine, %strIniFile%, Folders, Folder%A_Index% ; keep "Folders" label instead of "Favorite" for backward compatibility
-	if InStr(strIniLine, lMenuMySystemMenu . strInstance)
-		strInstance := strInstance . "+"
-	if (strIniLine = "ERROR")
-	{
-		intNextFolderNumber := A_Index
-		Break
-	}
-}
-strMySystemMenu := lMenuMySystemMenu . strInstance
-
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 0, lMenuSeparator, lMenuSeparator . lMenuSeparator, , , "F")
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 1, strMySystemMenu, lGuiSubmenuSeparator, , lGuiSubmenuSeparator . strMySystemMenu, "S")
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 2, lMenuDesktop, A_Desktop, lGuiSubmenuSeparator . strMySystemMenu)
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 3, , "{450D8FBA-AD25-11D0-98A8-0800361B1103}", lGuiSubmenuSeparator . strMySystemMenu)
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 4, , strPathUsername . "\Pictures", lGuiSubmenuSeparator . strMySystemMenu)
-if (A_OSVersion <> "WIN_XP")
-	AddToIniOneSystemFolderMenu(intNextFolderNumber + 5, , strDownloadPath, lGuiSubmenuSeparator . strMySystemMenu)
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 6, lMenuSeparator, lMenuSeparator . lMenuSeparator, lGuiSubmenuSeparator . strMySystemMenu, , "F")
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 7, , "{20D04FE0-3AEA-1069-A2D8-08002B30309D}", lGuiSubmenuSeparator . strMySystemMenu)
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 8, , "{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}", lGuiSubmenuSeparator . strMySystemMenu)
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 9, lMenuSeparator, lMenuSeparator . lMenuSeparator, lGuiSubmenuSeparator . strMySystemMenu, , "F")
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 10, , "{21EC2020-3AEA-1069-A2DD-08002B30309D}", lGuiSubmenuSeparator . strMySystemMenu)
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 11, , "{645FF040-5081-101B-9F08-00AA002F954E}", lGuiSubmenuSeparator . strMySystemMenu)
-
-IniWrite, 1, %strIniFile%, Global, MySystemFoldersBuilt
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-AddToIniOneSystemFolderMenu(intNumber, strSpecialFolderName := "", strSpecialFolderLocation := "", strMenuName := "", strSubmenuFullName := "", strFavoriteType := "P")
-; 0 Folder number, 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
-;------------------------------------------------------------
-{
-	if (strFavoriteType = "S")
-		strIconResource := objIconsFile["lMenuSpecialFolders"] . "," . objIconsIndex["lMenuSpecialFolders"]
-	else
-		strIconResource := objSpecialFolders[strSpecialFolderLocation].DefaultIcon
-	if !StrLen(strSpecialFolderName)
-		strSpecialFolderName := objSpecialFolders[strSpecialFolderLocation].DefaultName
-
-	strNewIniLine := strSpecialFolderName . "|" . strSpecialFolderLocation . "|" . strMenuName . "|" . strSubmenuFullName . "|" . strFavoriteType . "|" . strIconResource
-	
-	IniWrite, %strNewIniLine%, %strIniFile%, Folders, Folder%intNumber% ; keep "Folders" label instead of "Favorite" for backward compatibility
-}
 ;------------------------------------------------------------
 
 
@@ -1374,15 +1295,15 @@ InitSpecialFolderObject("{D20EA4E1-3957-11d2-A40B-0C5020524153}", "Common Admini
 	; OK     OK      OK     OK    OK      OK
 InitSpecialFolderObject("{20D04FE0-3AEA-1069-A2D8-08002B30309D}", "MyComputerFolder", 17, "", "mycomputer", 2122
 	, "Computer", "" ; Ordinateur
-	, "SCT", "SCT", "SCT", "NEW", "DOA", "TCC", "NEW", "SCN") ; WIN_XP / for 1,2,3 CLS works, 7 OK for FPc but CLS does not work with DoubleCommander
+	, "SCT", "SCT", "SCT", "NEW", "DOA", "TCC", "NEW") ; for 1,2,3 CLS works, 7 OK for FPc but CLS does not work with DoubleCommander
 	; OK     OK      OK     OK    OK      OK
 InitSpecialFolderObject("{21EC2020-3AEA-1069-A2DD-08002B30309D}", "ControlPanelFolder", 3, "", "controls", 2123
 	, "Control Panel (Icons view)", "" ; Tous les Panneaux de configuration
-	, "SCT", "SCT", "NEW", "NEW", "DOA", "CLS", "NEW", "SCN") ; WIN_XP
+	, "SCT", "SCT", "NEW", "NEW", "DOA", "CLS", "NEW")
 	; OK     OK      OK     OK    OK  NO-use NEW
 InitSpecialFolderObject("{450D8FBA-AD25-11D0-98A8-0800361B1103}", "Personal", 5, "A_MyDocuments", "mydocuments", ""
 	, "Documents", "" ; Mes documents
-	, "SCT", "SCT", "AHK", "AHK", "DOA", "AHK", "AHK", "AHK") ; WIN_XP
+	, "SCT", "SCT", "AHK", "AHK", "DOA", "AHK", "AHK")
 	; OK     OK      OK     OK    OK      OK
 InitSpecialFolderObject("{ED228FDF-9EA8-4870-83b1-96b02CFE0D52}", "Games", -1, "", "", ""
 	, "Games Explorer", "" ; Jeux
@@ -1402,15 +1323,15 @@ InitSpecialFolderObject("{7007ACC7-3202-11D1-AAD2-00805FC1270E}", "ConnectionsFo
 	; OK     OK      OK     OK     OK      OK
 InitSpecialFolderObject("{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}", "NetworkPlacesFolder", 18, "", "network", 2125
 	, "Network", "" ; Réseau
-	, "SCT", "SCT", "SCT", "NEW", "DOA", "TCC", "NEW", "SCN") ; WIN_XP
+	, "SCT", "SCT", "SCT", "NEW", "DOA", "TCC", "NEW")
 	; OK     OK      OK     OK    OK      OK
 InitSpecialFolderObject("{2227A280-3AEA-1069-A2DE-08002B30309D}", "PrintersFolder", -1, "", "printers", 2126
 	, "Printers and Faxes", "" ; Imprimantes
 	, "SCT", "SCT", "NEW", "NEW", "DOA", "TCC", "NEW")
 	; OK     OK      OK     OK    OK      OK
-InitSpecialFolderObject("{645FF040-5081-101B-9F08-00AA002F954E}", "RecycleBinFolder", 10, "", "trash", 2127
+InitSpecialFolderObject("{645FF040-5081-101B-9F08-00AA002F954E}", "RecycleBinFolder", 0, "", "trash", 2127
 	, "Recycle Bin", "" ; Corbeille
-	, "SCT", "SCT", "NEW", "NEW", "DOA", "TCC", "NEW", "SCN") ; WIN_XP
+	, "SCT", "SCT", "NEW", "NEW", "DOA", "TCC", "NEW")
 	; OK     OK      OK     OK    OK      OK
 InitSpecialFolderObject("{59031a47-3f72-44a7-89c5-5595fe6b30ee}", "Profile", -1, "", "profile", ""
 	, lMenuUserFolder, "" ; Dossier de l'utilisateur
@@ -1466,76 +1387,76 @@ InitSpecialFolderObject("{BB06C0E4-D293-4f75-8A90-CB05B6477EEE}", "", -1, "", ""
 ;---------------------
 ; Path from registry (no CLSID), localized name and icon provided, no Shell Command - to be tested with DOpus, TC and FPc
 
-RegRead, strDownloadPath, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, {374DE290-123F-4565-9164-39C4925E467B}
-InitSpecialFolderObject(strDownloadPath, "", -1, "", "downloads", ""
+RegRead, strException, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, {374DE290-123F-4565-9164-39C4925E467B}
+InitSpecialFolderObject(strException, "", -1, "", "downloads", ""
 	, lMenuDownloads, "lMenuDownloads"
 	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 RegRead, strException, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Music
 InitSpecialFolderObject(strException, "", -1, "", "mymusic", ""
 	, lMenuMyMusic, "MyMusic"
-	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS", "CLS") ; WIN_X)
+	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 RegRead, strException, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Video
 InitSpecialFolderObject(strException, "", -1, "", "myvideos", ""
 	, lMenuMyVideo, "MyVideo"
-	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS", "CLS") ; WIN_X)
+	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 RegRead, strException, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, Templates
 InitSpecialFolderObject(strException, "", -1, "", "templates", ""
 	, lMenuTemplates, "Templates"
-	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS", "CLS") ; WIN_X)
+	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 
 ;---------------------
 ; Path under %APPDATA% (no CLSID), localized name and icon provided, no Shell Command - to be tested with DOpus, TC and FPc
 
 InitSpecialFolderObject("%APPDATA%\Microsoft\Windows\Start Menu", "", -1, "A_StartMenu", "start", ""
 	, lMenuStartMenu, "Folder"
-	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS", "CLS") ; WIN_X)
+	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 InitSpecialFolderObject("%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup", "", -1, "A_Startup", "startup", ""
 	, lMenuStartup, "Folder"
-	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS", "CLS") ; WIN_X)
+	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 InitSpecialFolderObject("%APPDATA%", "", -1, "A_AppData", "appdata", ""
 	, lMenuAppData, "Folder"
-	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS", "CLS") ; WIN_X)
+	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 InitSpecialFolderObject("%APPDATA%\Microsoft\Windows\Recent", "", -1, "", "recent", ""
 	, lMenuRecentItems, "menuRecentFolders"
-	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS", "CLS") ; WIN_X)
+	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 InitSpecialFolderObject("%APPDATA%\Microsoft\Windows\Cookies", "", -1, "", "cookies", ""
 	, lMenuCookies, "Folder"
-	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS", "CLS") ; WIN_X)
+	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 InitSpecialFolderObject("%APPDATA%\Microsoft\Internet Explorer\Quick Launch", "", -1, "", "", ""
 	, lMenuQuickLaunch, "Folder"
-	, "CLS", "CLS", "CLS", "CLS", "CLS", "CLS", "CLS", "CLS") ; WIN_X
+	, "CLS", "CLS", "CLS", "CLS", "CLS", "CLS", "CLS")
 InitSpecialFolderObject("%APPDATA%\Microsoft\SystemCertificates", "", -1, "", "", ""
 	, lMenuSystemCertificates, "Folder"
-	, "CLS", "CLS", "CLS", "CLS", "CLS", "CLS", "CLS", "CLS") ; WIN_X)
+	, "CLS", "CLS", "CLS", "CLS", "CLS", "CLS", "CLS")
 
 ;---------------------
 ; Path under other environment variables (no CLSID), localized name and icon provided, no Shell Command - to be tested with DOpus, TC and FPc
 
 InitSpecialFolderObject("%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu", "", -1, "A_StartMenuCommon", "commonstartmenu", ""
 	, lMenuCommonStartMenu, "Folder"
-	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS", "CLS") ; WIN_XP
+	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 InitSpecialFolderObject("%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Startup", "", -1, "A_StartupCommon", "commonstartup", ""
 	, lMenuCommonStartupMenu, "Folder"
-	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS", "CLS") ; WIN_XP
+	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 InitSpecialFolderObject("%ALLUSERSPROFILE%", "", -1, "A_AppDataCommon", "commonappdata", ""
 	, lMenuCommonAppData, "Folder"
-	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS", "CLS") ; WIN_XP
+	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 InitSpecialFolderObject("%LOCALAPPDATA%\Microsoft\Windows\Temporary Internet Files", "", -1, "", "", ""
 	, lMenuCache, "Temporary"
-	, "CLS", "CLS", "CLS", "CLS", "CLS", "CLS", "CLS", "CLS") ; WIN_XP
+	, "CLS", "CLS", "CLS", "CLS", "CLS", "CLS", "CLS")
 InitSpecialFolderObject("%LOCALAPPDATA%\Microsoft\Windows\History", "", -1, "", "history", ""
 	, lMenuHistory, "History"
-	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS", "CLS") ; WIN_XP
+	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 InitSpecialFolderObject("%ProgramFiles%", "", -1, "A_ProgramFiles", "programfiles", ""
 	, lMenuProgramFiles, "Folder"
-	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS", "CLS") ; WIN_XP
+	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 if (A_Is64bitOS)
 	InitSpecialFolderObject("%ProgramFiles(x86)%", "", -1, "", "programfilesx86", ""
 		, lMenuProgramFiles . " (x86)", "Folder"
 		, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 InitSpecialFolderObject("%PUBLIC%\Libraries", "", -1, "", "", ""
 	, lMenuPublicLibraries, "Folder"
-	, "CLS", "CLS", "CLS", "CLS", "CLS", "CLS", "CLS", "CLS") ; WIN_XP
+	, "CLS", "CLS", "CLS", "CLS", "CLS", "CLS", "CLS")
 
 ;---------------------
 ; Path under the Users folder (no CLSID), localized name and icon provided, no Shell Command - to be tested with DOpus, TC and FPc
@@ -1545,30 +1466,32 @@ StringReplace, strPathUsers, strPathUsername, \%A_UserName%
 
 InitSpecialFolderObject(strPathUsers . "\Public", "Public", -1, "", "common", ""
 	, "Public Folder", "" ; Public
-	, "SCT", "SCT", "SCT", "CLS", "DOA", "CLS", "CLS", "CLS") ; WIN_XP
+	, "SCT", "SCT", "SCT", "CLS", "DOA", "CLS", "CLS")
 	; OK     OK      OK     OK    OK      OK
+StringReplace, strException, lMenuPictures, &
 InitSpecialFolderObject(strPathUsername . "\Pictures", "", 39, "", "mypictures", ""
-	, lMenuPictures, "lMenuPictures"
-	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS", "CLS") ; WIN_XP
+	, strException, "lMenuPictures"
+	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 InitSpecialFolderObject(strPathUsername . "\Favorites", "", -1, "", "", ""
 	, lMenuFavoritesInternet, "Favorites"
-	, "CLS", "CLS", "CLS", "CLS", "CLS", "CLS", "CLS", "CLS") ; WIN_XP
+	, "CLS", "CLS", "CLS", "CLS", "CLS", "CLS", "CLS")
 
 ;---------------------
 ; Path using AHK constants (no CLSID), localized name and icon provided, no Shell Command - to be tested with DOpus, TC and FPc
 
+StringReplace, strException, lMenuDesktop, &
 InitSpecialFolderObject(A_Desktop, "", 0, "A_Desktop", "desktop", 2121
-	, lMenuDesktop, "lMenuDesktop"
-	, "CLS", "CLS", "CLS", "CLS", "DOA", "TCC", "CLS", "CLS") ; WIN_XP
+	, strException, "lMenuDesktop"
+	, "CLS", "CLS", "CLS", "CLS", "DOA", "TCC", "CLS")
 InitSpecialFolderObject(A_DesktopCommon, "", -1, "A_DesktopCommon", "commondesktopdir", ""
 	, lMenuCommonDesktop, "lMenuDesktop"
-	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS", "CLS") ; WIN_XP
+	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 InitSpecialFolderObject(A_Temp, "", -1, "A_Temp", "temp", ""
 	, lMenuTemporaryFiles, "Temporary"
-	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS", "CLS") ; WIN_XP
+	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 InitSpecialFolderObject(A_WinDir, "", -1, "A_WinDir", "windows", ""
 	, "Windows", "Winver"
-	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS", "CLS") ; WIN_XP
+	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 
 ;------------------------------------------------------------
 ; Build folders list for dropdown
@@ -1585,7 +1508,7 @@ return
 ;------------------------------------------------------------
 InitSpecialFolderObject(strClassIdOrPath, strShellConstantText, intShellConstantNumeric, strAHKConstant, strDOpusAlias, strTCCommand
 	, strDefaultName, strDefaultIcon
-	, strUse4NavigateExplorer, strUse4NewExplorer, strUse4Dialog, strUse4Console, strUse4DOpus, strUse4TC, strUse4FPc, strAdapt4WinXP := "NO")
+	, strUse4NavigateExplorer, strUse4NewExplorer, strUse4Dialog, strUse4Console, strUse4DOpus, strUse4TC, strUse4FPc)
 
 ; strClassIdOrPath: CLSID or Path, used as key to access objSpecialFolder objects
 ;		CLSID Win_7: http://www.sevenforums.com/tutorials/110919-clsid-key-list-windows-7-a.html
@@ -1650,15 +1573,6 @@ InitSpecialFolderObject(strClassIdOrPath, strShellConstantText, intShellConstant
 
 ;------------------------------------------------------------
 {
-	if (A_OSVersion = "WIN_XP")
-		if (strAdapt4WinXP = "NO")
-			return
-		else
-		{
-			strUse4NavigateExplorer := strAdapt4WinXP
-			strUse4NewExplorer := strAdapt4WinXP
-		}
-	
 	objOneSpecialFolder := Object()
 	
 	blnIsClsId := (SubStr(strClassIdOrPath, 1, 1) = "{")
@@ -1957,6 +1871,60 @@ Menu, Tray, Add, % L(lMenuExitFoldersPopup, strAppName), ExitFoldersPopup
 Menu, Tray, Default, % L(lMenuSettings, strAppName)
 Menu, Tray, Color, %strMenuBackgroundColor%
 Menu, Tray, Tip, % strAppName . " " . strAppVersion . " (" . str32or64 . "-bit)`n" . (blnDonor ? lDonateThankyou : lDonateButton)
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+BuildSpecialFoldersMenu:
+;------------------------------------------------------------
+
+/*
+Additions
+
+/common
+A_DesktopCommon en enlevant le dernier dossier
+
+/downloads
+RegRead, str, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, {374DE290-123F-4565-9164-39C4925E467B}
+
+/mymusic
+A_Desktop et remplacer Desktop par Music
+RegRead, str, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Music
+
+/myvideo
+A_Desktop et remplacer Desktop par Video
+RegRead, str, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Video
+
+/recent
+RegRead, str, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, Recent
+
+/temp
+A_Temp
+
+/favorites
+RegRead, str, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, Favorites
+
+/templates
+RegRead, str, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, Templates
+*/
+
+Menu, menuSpecialFolders, Add
+Menu, menuSpecialFolders, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
+Menu, menuSpecialFolders, Color, %strMenuBackgroundColor%
+
+AddMenuIcon("menuSpecialFolders", lMenuDesktop, "OpenSpecialFolder", "lMenuDesktop")
+AddMenuIcon("menuSpecialFolders", lMenuDocuments, "OpenSpecialFolder", "lMenuDocuments")
+AddMenuIcon("menuSpecialFolders", lMenuPictures, "OpenSpecialFolder", "lMenuPictures")
+if (A_OSVersion <> "WIN_XP")
+	AddMenuIcon("menuSpecialFolders", lMenuDownloads, "OpenSpecialFolder", "lMenuDownloads")
+Menu, menuSpecialFolders, Add
+AddMenuIcon("menuSpecialFolders", lMenuMyComputer, "OpenSpecialFolder", "lMenuMyComputer")
+AddMenuIcon("menuSpecialFolders", lMenuNetworkNeighborhood, "OpenSpecialFolder", "lMenuNetworkNeighborhood")
+Menu, menuSpecialFolders, Add
+AddMenuIcon("menuSpecialFolders", lMenuControlPanel, "OpenSpecialFolder", "lMenuControlPanel")
+AddMenuIcon("menuSpecialFolders", lMenuRecycleBin, "OpenSpecialFolder", "lMenuRecycleBin")
 
 return
 ;------------------------------------------------------------
@@ -2427,6 +2395,9 @@ if !IsColumnBreak(arrMenus[lMainMenuName][arrMenus[lMainMenuName].MaxIndex()].Fa
 ; column break not allowed if first item is a separator
 	Menu, %lMainMenuName%, Add
 
+if (blnDisplaySpecialFolders)
+	AddMenuIcon(lMainMenuName, lMenuSpecialFolders, ":menuSpecialFolders", "lMenuSpecialFolders")
+
 if (blnDisplayFoldersInExplorerMenu)
 {
 	AddMenuIcon(lMainMenuName, lMenuFoldersInExplorer, ":menuFoldersInExplorer", "lMenuFoldersInExplorer")
@@ -2442,7 +2413,7 @@ if (blnDisplayGroupMenu)
 if (blnDisplayRecentFolders)
 	AddMenuIcon(lMainMenuName, lMenuRecentFolders . "...", "RefreshRecentFolders", "lMenuRecentFolders")
 
-if (blnDisplayRecentFolders or blnDisplayFoldersInExplorerMenu or blnDisplayGroupMenu)
+if (blnDisplaySpecialFolders or blnDisplayRecentFolders or blnDisplayFoldersInExplorerMenu or blnDisplayGroupMenu)
 	Menu, %lMainMenuName%, Add
 
 AddMenuIcon(lMainMenuName, L(lMenuSettings, strAppName) . "...", "GuiShow", "lMenuSettings")
@@ -2751,6 +2722,37 @@ if (blnDiagMode)
 }
 
 ; Enable when adapted to use ::ClassID location
+
+if (blnDisplaySpecialFolders)
+	if (blnNewWindow)
+	{
+		; In case it was disabled while in a dialog box
+		Menu, menuSpecialFolders, Enable, %lMenuMyComputer%
+		Menu, menuSpecialFolders, Enable, %lMenuNetworkNeighborhood%
+		Menu, menuSpecialFolders, Enable, %lMenuControlPanel%
+		Menu, menuSpecialFolders, Enable, %lMenuRecycleBin%
+	}
+	else
+	{
+		Menu, menuSpecialFolders
+			, % WindowIsConsole(strTargetClass) ; removed for FPconnect: or WindowIsFreeCommander(strTargetClass)
+			or WindowIsDialog(strTargetClass, strTargetWinId) ? "Disable" : "Enable"
+			, %lMenuMyComputer%
+		Menu, menuSpecialFolders
+			, % WindowIsConsole(strTargetClass)  ; removed for FPconnect: or WindowIsFreeCommander(strTargetClass)
+			or WindowIsDialog(strTargetClass, strTargetWinId) ? "Disable" : "Enable"
+			, %lMenuNetworkNeighborhood%
+	
+		; There is no point to navigate a dialog box or console to Control Panel or Recycle Bin
+		Menu, menuSpecialFolders
+			, % WindowIsConsole(strTargetClass)  ; removed for FPconnect: or WindowIsFreeCommander(strTargetClass)
+			or WindowIsDialog(strTargetClass, strTargetWinId) ? "Disable" : "Enable"
+			, %lMenuControlPanel%
+		Menu, menuSpecialFolders
+			, % WindowIsConsole(strTargetClass)  ; removed for FPconnect: or WindowIsFreeCommander(strTargetClass)
+			or WindowIsDialog(strTargetClass, strTargetWinId) ? "Disable" : "Enable"
+			, %lMenuRecycleBin%
+	}
 
 if (blnDisplayFoldersInExplorerMenu)
 	Gosub, BuildFoldersInExplorerMenu
@@ -3099,8 +3101,6 @@ else if WindowIsAnExplorer(strTargetClass)
 				strThisLocation := strLocation
 		else if (objSpecialFolders[strLocation].Use4NavigateExplorer = "SCT")
 			strThisLocation := "shell:" . objSpecialFolders[strLocation].ShellConstantText
-		else if (objSpecialFolders[strLocation].Use4NavigateExplorer = "SCN")
-			strThisLocation := objSpecialFolders[strLocation].ShellConstantNumeric
 		else
 		{
 			Oops(lOopsCouldNotOpenSpecialFolder, "Explorer", strLocation)
@@ -3438,6 +3438,180 @@ GetFavoriteTypeFor(strMenu, strName)
 		if (strName = arrMenus[strMenu][A_Index].FavoriteName)
 			return arrMenus[strMenu][A_Index].FavoriteType
 }
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+OpenSpecialFolder:
+;------------------------------------------------------------
+
+if (blnDiagMode)
+{
+	Diag("A_ThisHotkey", A_ThisHotkey)
+	Diag("Navigate", "SpecialFolder")
+}
+
+strLocation := ""
+blnNewSpecialWindow := InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass) or WindowIsTray(strTargetClass)
+
+if (blnNewSpecialWindow and blnUseDirectoryOpus) or WindowIsDirectoryOpus(strTargetClass)
+{
+	if (A_ThisMenuItem = lMenuDesktop)
+		strDOpusAlias := "desktop"
+	else if (A_ThisMenuItem = lMenuControlPanel)
+		strDOpusAlias := "controls"
+	else if (A_ThisMenuItem = lMenuDocuments)
+		strDOpusAlias := "mydocuments"
+	else if (A_ThisMenuItem = lMenuRecycleBin)
+		strDOpusAlias := "trash"
+	else if (A_ThisMenuItem = lMenuMyComputer)
+		strDOpusAlias := "mycomputer"
+	else if (A_ThisMenuItem = lMenuNetworkNeighborhood)
+		strDOpusAlias := "network"
+	else if (A_ThisMenuItem = lMenuPictures)
+		strDOpusAlias := "mypictures"
+	else if (A_ThisMenuItem = lMenuDownloads)
+		strDOpusAlias := "downloads"
+	
+	if (blnNewSpecialWindow)
+	{
+		RunDOpusRt("/acmd Go ", "/" . strDOpusAlias, " " . strDirectoryOpusNewTabOrWindow) ; open special folder in a new lister or tab
+		WinActivate, ahk_class dopus.lister
+	}
+	else
+		NavigateDirectoryOpus("/" . strDOpusAlias, strTargetWinId)
+}
+else if (blnNewSpecialWindow and blnUseTotalCommander) or WindowIsTotalCommander(strTargetClass)
+{
+	intTCCommand := 0
+	if (A_ThisMenuItem = lMenuDesktop)
+		intTCCommand := 2121 ; cm_OpenDesktop
+	else if (A_ThisMenuItem = lMenuControlPanel)
+		intTCCommand := 2123 ; cm_OpenControls
+	else if (A_ThisMenuItem = lMenuDocuments)
+		strLocation := A_MyDocuments
+	else if (A_ThisMenuItem = lMenuRecycleBin)
+		intTCCommand := 2127 ; cm_OpenRecycled
+	else if (A_ThisMenuItem = lMenuMyComputer)
+		intTCCommand := 2122 ; cm_OpenDrives
+	else if (A_ThisMenuItem = lMenuNetworkNeighborhood)
+		intTCCommand := 2125 ; cm_OpenNetwork
+	else if (A_ThisMenuItem = lMenuPictures)
+		RegRead, strLocation, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Pictures
+	else if (A_ThisMenuItem = lMenuDownloads)
+		RegRead, strLocation, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, {374DE290-123F-4565-9164-39C4925E467B}
+	
+	if (intTCCommand = 2123)
+		Run, Control ; workaround for command 2123 cm_OpenControls not working in my tests with TC v8.51a
+	else
+	{
+		if (intTCCommand)
+			if (blnNewSpecialWindow)
+			{
+				if !WinExist("ahk_class TTOTAL_CMD") ; open a first instance and get PID
+					or InStr(strTotalCommanderNewTabOrWindow, "/N") ; open a new instance and get PID
+					{
+						Run, %strTotalCommanderPath%
+						WinWait, A, , 10
+						Sleep, 200 ; wait additional time to improve SendMessage reliability
+					}
+				if !InStr(strTotalCommanderNewTabOrWindow, "/N") ; open the folder in a new tab
+				{
+					intTCCommandOpenNewTab := 3001 ; cm_OpenNewTab
+					Sleep, 100 ; wait to improve SendMessage reliability
+					SendMessage, 0x433, %intTCCommandOpenNewTab%, , , ahk_class TTOTAL_CMD
+				}
+				Sleep, 100 ; wait to reduce risk SendMessage not working
+				SendMessage, 0x433, %intTCCommand%, , , ahk_class TTOTAL_CMD
+				Sleep, 100 ; wait to improve SendMessage reliability
+				WinActivate, ahk_class TTOTAL_CMD
+			}
+			else
+			{
+				Sleep, 100 ; wait to improve SendMessage reliability
+				SendMessage, 0x433, %intTCCommand%, , , ahk_class TTOTAL_CMD
+				Sleep, 100 ; wait to improve SendMessage reliability
+				WinActivate, ahk_class TTOTAL_CMD
+			}
+		else ; with strLocation
+			if (blnNewSpecialWindow)
+				NewTotalCommander(strLocation, strTargetWinId, strTargetControl)
+			else
+			{
+				NavigateTotalCommander(strLocation, strTargetWinId, strTargetControl)
+				WinActivate, ahk_class TTOTAL_CMD
+			}
+	}
+}
+else ; this is Explorer, Console or a dialog box
+{
+	; ShellSpecialFolderConstants: http://msdn.microsoft.com/en-us/library/windows/desktop/bb774096%28v=vs.85%29.aspx
+	if (A_ThisMenuItem = lMenuDesktop)
+		intSpecialFolder := 0
+	else if (A_ThisMenuItem = lMenuControlPanel)
+		intSpecialFolder := 3
+	else if (A_ThisMenuItem = lMenuDocuments)
+		intSpecialFolder := 5
+	else if (A_ThisMenuItem = lMenuRecycleBin)
+		intSpecialFolder := 10
+	else if (A_ThisMenuItem = lMenuMyComputer)
+		intSpecialFolder := 17
+	else if (A_ThisMenuItem = lMenuNetworkNeighborhood)
+		intSpecialFolder := 18
+	else if (A_ThisMenuItem = lMenuPictures)
+		intSpecialFolder := 39
+	else if (A_ThisMenuItem = lMenuDownloads)
+		; intSpecialFolder contains a sting here - this is awkward, I know, but it works and I will rework all OpenSpecialFolder very soon...
+		RegRead, intSpecialFolder, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, {374DE290-123F-4565-9164-39C4925E467B}
+
+	if (blnNewSpecialWindow)
+		ComObjCreate("Shell.Application").Explore(intSpecialFolder)
+		; http://msdn.microsoft.com/en-us/library/windows/desktop/bb774073%28v=vs.85%29.aspx
+	else
+	{
+		if WindowIsAnExplorer(strTargetClass)
+			NavigateExplorer(intSpecialFolder, strTargetWinId)
+		else ; this is Console or a dialog box
+		{
+			if (intSpecialFolder = 0)
+				strLocation := A_Desktop
+			else if (intSpecialFolder = 5)
+				strLocation := A_MyDocuments
+			else if (intSpecialFolder = 39)
+				RegRead, strLocation, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Pictures
+			else if (A_ThisMenuItem = lMenuDownloads)
+				strLocation := intSpecialFolder ; still awkward, of course...
+			else
+				; We cannot open the special folders lMenuMyComputer, lMenuNetworkNeighborhood, lMenuControlPanel and lMenuRecycleBin
+				; in the current window. Need to open an Explorer with ComObjCreate
+				blnNewSpecialWindow := true
+			
+			if (blnNewSpecialWindow)
+				ComObjCreate("Shell.Application").Explore(intSpecialFolder)
+			else if WindowIsConsole(strTargetClass)
+				NavigateConsole(strLocation, strTargetWinId)
+			/* removed for FPconnect: 
+			else if WindowIsFreeCommander(strTargetClass)
+				NavigateFreeCommander(strLocation, strTargetWinId, strTargetControl)
+			*/
+			else
+				NavigateDialog(strLocation, strTargetWinId, strTargetClass)
+		}
+	}
+}
+
+if (blnDiagMode)
+{
+	Diag("A_ThisHotkey", A_ThisHotkey)
+	Diag("Navigate", "SpecialFolder")
+	Diag("SpecialFolderWindows", intSpecialFolder)
+	Diag("SpecialFolderDOpus", strDOpusAlias)
+	Diag("SpecialFolderTCCommand", intTCCommand)
+	Diag("SpecialFolderLocation", strLocation)
+	Diag("SpecialFolderNewWindow", blnNewSpecialWindow)
+}
+
+return
 ;------------------------------------------------------------
 
 
@@ -4087,7 +4261,6 @@ http://msdn.microsoft.com/en-us/library/windows/desktop/bb774096%28v=vs.85%29.as
 http://msdn.microsoft.com/en-us/library/aa752094
 */
 {
-	###_D(varPath)
 	if !Regexmatch(varPath, "#.*\\") ; prevent the hash bug in Shell.Application - when a hash in path is followed by a backslash like in "c:\abc#xyz\abc")
 	{
 		intCountMatch := 0
@@ -4096,7 +4269,6 @@ http://msdn.microsoft.com/en-us/library/aa752094
 			if (pExplorer.hwnd = strWinId)
 				if varPath is integer ; ShellSpecialFolderConstant
 				{
-					###_D("! " . varPath)
 					intCountMatch := intCountMatch + 1
 					try pExplorer.Navigate2(varPath)
 					catch, objErr
@@ -4512,9 +4684,7 @@ strLatestVersion := Url2Var("http://code.jeanlalonde.ca/ahk/folderspopup/latest-
 	. "?v=" . strCurrentVersion
 	. "&os=" . A_OSVersion
 	. "&is64=" . A_Is64bitOS
-	. "&setup=" . (blnSetup) + (2 * (blnDonor ? 1 : 0))
-	. "&lsys=" . A_Language
-	. "&lfp=" . strLanguageCode)
+	. "&setup=" . (blnSetup) + (2 * (blnDonor ? 1 : 0)))
 
 if !StrLen(strLatestVersion)
 	if (A_ThisMenuItem = lMenuUpdate)
@@ -4895,8 +5065,6 @@ OpenMenuFromEditForm:
 OpenMenuFromGuiHotkey:
 ;------------------------------------------------------------
 
-intCurrentLastPosition := 0
-
 if (A_ThisLabel = "GuiMenusListChanged")
 {
 	GuiControlGet, strNewDropdownMenu, , drpMenusList
@@ -4904,40 +5072,38 @@ if (A_ThisLabel = "GuiMenusListChanged")
 		return
 }
 
-Gosub, SaveCurrentListviewToMenuObject ; save current LV
+Gosub, SaveCurrentListviewToMenuObject ; save current LV before changing strCurrentMenu
 
-if (A_ThisLabel = "GuiGotoPreviousMenu")
+strSavedMenu := strCurrentMenu
+if (A_ThisLabel = "GuiMenusListChanged")
+{
+	arrSubmenuStack.Insert(1, strSavedMenu) ; push the current menu to the left arrow stack
+	strCurrentMenu := strNewDropdownMenu
+}
+else if (A_ThisLabel = "GuiGotoUpMenu")
+{
+	arrSubmenuStack.Insert(1, strSavedMenu) ; push the current menu to the left arrow stack
+	strCurrentMenu := SubStr(strCurrentMenu, 1, InStr(strCurrentMenu, lGuiSubmenuSeparator, , 0) - 1) 
+}
+else if (A_ThisLabel = "GuiGotoPreviousMenu")
 {
 	strCurrentMenu := arrSubmenuStack[1] ; pull the top menu from the left arrow stack
 	arrSubmenuStack.Remove(1) ; remove the top menu from the left arrow stack
-
-	intCurrentLastPosition := arrSubmenuStackPosition[1] ; pull the focus position in top menu from the left arrow stack
-	arrSubmenuStackPosition.Remove(1) ; remove the top position from the left arrow stack
+}
+else if (A_ThisLabel = "OpenMenuFromEditForm") or (A_ThisLabel = "OpenMenuFromGuiHotkey")
+{
+	arrSubmenuStack.Insert(1, strSavedMenu) ; push the current menu to the left arrow stack
+	strCurrentMenu := strCurrentSubmenuFullName
 }
 else
-{
-	arrSubmenuStack.Insert(1, strCurrentMenu) ; push the current menu to the left arrow stack
-	
-	if (A_ThisLabel = "GuiMenusListChanged")
-		strCurrentMenu := strNewDropdownMenu
-	else if (A_ThisLabel = "GuiGotoUpMenu")
-		strCurrentMenu := SubStr(strCurrentMenu, 1, InStr(strCurrentMenu, lGuiSubmenuSeparator, , 0) - 1) 
-	else if (A_ThisLabel = "OpenMenuFromEditForm") or (A_ThisLabel = "OpenMenuFromGuiHotkey")
-		strCurrentMenu := strCurrentSubmenuFullName
+	return ; should not occur
 
-	arrSubmenuStackPosition.Insert(1, LV_GetNext("Focused"))
-}
+strPreviousMenu := strSavedMenu
 
 GuiControl, % (arrSubmenuStack.MaxIndex() ? "Show" : "Hide"), picPreviousMenu
 GuiControl, % (strCurrentMenu <> lMainMenuName ? "Show" : "Hide"), picUpMenu
 
 Gosub, LoadOneMenuToGui
-
-if (intCurrentLastPosition) ; we went to a previous menu
-{
-	LV_Modify(0, "-Select")
-	LV_Modify(intCurrentLastPosition, "Select Focus Vis")
-}
 
 return
 ;------------------------------------------------------------
@@ -5339,6 +5505,7 @@ if (blnSaveEnabled)
 		Gosub, RestoreBackupMenuObjects
 		
 		; restore popup menu
+		Gosub, BuildSpecialFoldersMenu
 		Gosub, BuildFoldersInExplorerMenu
 		Gosub, BuildMainMenu ; need to be initialized here - will be updated at each call to popup menu
 
@@ -5613,8 +5780,6 @@ if (A_ThisLabel = "GuiEditFavorite")
 }
 else
 {
-	Gosub, SaveCurrentListviewToMenuObject ; update menu object from LV, for items dropdown list
-	
 	intRowToEdit := 0 ;  used when saving to flag to insert a new row
 	strCurrentName := "" ; make sure it is empty
 	strCurrentSubmenuFullName := "" ;  make sure it is empty
@@ -6108,7 +6273,7 @@ if (blnRadioSubmenu)
 	}
 	if ((A_ThisLabel = "GuiMoveOneFavoriteSave") and InStr(strParentMenu, strCurrentMenu . lGuiSubmenuSeparator . strFavoriteShortName) <> 0)
 	{
-		Oops(lDialogMenuNotMoveUnderItself, strFavoriteShortName)
+		Oops(lDialogMenuNotMoveUnderItself "Menu ""~1~"" cannot be moved under itself", strFavoriteShortName)
 		intRowToEdit := intRowToEdit + 1
 		return
 	}
@@ -6401,6 +6566,9 @@ GuiControl, ChooseString, drpIconSize, %intIconSize%
 
 Gui, 2:Add, Text, y+7 x240, %lOptionsDisplayMenus%
 
+Gui, 2:Add, CheckBox, y+10 xs vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
+GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
+
 Gui, 2:Add, CheckBox, y+10 xs vblnDisplayFoldersInExplorerMenu, %lOptionsDisplayFoldersInExplorerMenu%
 GuiControl, , blnDisplayFoldersInExplorerMenu, %blnDisplayFoldersInExplorerMenu%
 
@@ -6608,6 +6776,7 @@ Menu, Tray, % blnOptionsRunAtStartup ? "Check" : "Uncheck", %lMenuRunAtStartup%
 
 IniWrite, %blnDisplayTrayTip%, %strIniFile%, Global, DisplayTrayTip
 IniWrite, %blnDisplayIcons%, %strIniFile%, Global, DisplayIcons
+IniWrite, %blnDisplaySpecialFolders%, %strIniFile%, Global, DisplaySpecialFolders
 IniWrite, %blnDisplayRecentFolders%, %strIniFile%, Global, DisplayRecentFolders
 IniWrite, %intRecentFolders%, %strIniFile%, Global, RecentFolders
 IniWrite, %blnDisplayFoldersInExplorerMenu%, %strIniFile%, Global, DisplayFoldersInExplorerMenu
@@ -6693,7 +6862,8 @@ if (strLanguageCodePrev <> strLanguageCode) or (strThemePrev <> strTheme)
 	}
 }	
 
-; else rebuild Current folders and Group menus
+; else rebuild special and Group menus
+Gosub, BuildSpecialFoldersMenu
 Gosub, BuildFoldersInExplorerMenu
 Gosub, BuildGroupMenu
 
