@@ -18,6 +18,20 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 4.1.9.1 BETA (2015-01-??)
+	* add the new customizable My Special Folders menu as last item in the user's main menu (except for XP)
+	* add a bln value in ini file to track that the new My Special Folders was created (except for XP)
+	* protection if user already has a My Special Folders menu before FP creates it
+	* stop building the old Special Folders menu (except for XP)
+	* remove option to display special folders menu (except for XP)
+	* in Settings, Ctrl-Left is now as clicking on on the left arrow (instead of the up arrow) beside the menu dropdown list
+	* in Settings, remember the last menu position when returning to a previously displayed menu
+	* refactor of code around navigation to previous menu (arrows left of the Menu to edit in Settings)
+	* remove & in special folders menu names in language files
+	* fix bug when moving up/down or removing favorite, the items list in add favorite is now updated
+	* fix error message bug when moving folder under itself
+	* swedish translation update
+	
 	Version: 4.1.8.6 BETA (2015-01-06)
 	* improve performance when moving large number of favorite from one submenu to another
 	* fix bug & not being kept in menu names
@@ -599,7 +613,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.1.8.6 BETA
+;@Ahk2Exe-SetVersion 4.1.9.1 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -644,7 +658,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.1.8.6" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.1.9.1" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -654,6 +668,7 @@ global strIniFile := A_WorkingDir . "\" . strAppName . ".ini"
 global strIniBackupFile := A_WorkingDir . "\" . strAppName . "-backup.ini"
 global blnMenuReady := false
 global arrSubmenuStack := Object()
+global arrSubmenuStackPosition := Object()
 global objIconsFile := Object()
 global objIconsIndex := Object()
 global strHotkeyNoneModifiers := ">^!+#" ; right-control/atl/shift/windows impossible keys combination
@@ -688,7 +703,8 @@ Gosub, LoadTheme
 
 ; build even if blnDisplaySpecialFolders or blnDisplaySwitchMenu are false because they could become true
 ; no need to build Recent folders menu at startup since this menu is refreshed on demand
-Gosub, BuildSpecialFoldersMenu
+if (A_OSVersion = "WIN_XP")
+	Gosub, BuildSpecialFoldersMenu
 Gosub, BuildFoldersInExplorerMenu ; need to be initialized here - will be updated at each call to popup menu
 Gosub, BuildGroupMenu
 Gosub, BuildMainMenu
@@ -777,7 +793,7 @@ return
 ^Left::
 GuiControlGet, blnUpMenuVisible, Visible, picUpMenu
 if (blnUpMenuVisible)
-	Gosub, GuiGotoUpMenu
+	Gosub, GuiGotoPreviousMenu
 return
 
 ^A::
@@ -1112,6 +1128,10 @@ if (strTheme = "ERROR") ; if Theme not found, we have a v1 or v2 ini file - add 
 else
 	IniRead, strAvailableThemes, %strIniFile%, Global, AvailableThemes
 	
+IniRead, blnMySystemFoldersBuilt, %strIniFile%, Global, MySystemFoldersBuilt, 0 ; default false
+if !(blnMySystemFoldersBuilt) and (A_OSVersion <> "WIN_XP")
+	Gosub, AddToIniMySystemFoldersMenu ; modify the ini file Folders section before reading it
+
 Loop
 {
 	IniRead, strIniLine, %strIniFile%, Folders, Folder%A_Index% ; keep "Folders" label instead of "Favorite" for backward compatibility
@@ -1158,6 +1178,64 @@ IfNotExist, %strIniFile%
 }
 
 return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+AddToIniMySystemFoldersMenu:
+;------------------------------------------------------------
+
+global strDownloadPath
+
+strInstance := ""
+Loop
+{
+	IniRead, strIniLine, %strIniFile%, Folders, Folder%A_Index% ; keep "Folders" label instead of "Favorite" for backward compatibility
+	if InStr(strIniLine, lMenuMySystemMenu . strInstance)
+		strInstance := strInstance . "+"
+	if (strIniLine = "ERROR")
+	{
+		intNextFolderNumber := A_Index
+		Break
+	}
+}
+strMySystemMenu := lMenuMySystemMenu . strInstance
+
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 0, lMenuSeparator, lMenuSeparator . lMenuSeparator, , , "F")
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 1, strMySystemMenu, lGuiSubmenuSeparator, , lGuiSubmenuSeparator . strMySystemMenu, "S")
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 2, lMenuDesktop, A_Desktop, lGuiSubmenuSeparator . strMySystemMenu)
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 3, , "{450D8FBA-AD25-11D0-98A8-0800361B1103}", lGuiSubmenuSeparator . strMySystemMenu)
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 4, , strPathUsername . "\Pictures", lGuiSubmenuSeparator . strMySystemMenu)
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 5, , strDownloadPath, lGuiSubmenuSeparator . strMySystemMenu)
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 6, lMenuSeparator, lMenuSeparator . lMenuSeparator, lGuiSubmenuSeparator . strMySystemMenu, , "F")
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 7, , "{20D04FE0-3AEA-1069-A2D8-08002B30309D}", lGuiSubmenuSeparator . strMySystemMenu)
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 8, , "{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}", lGuiSubmenuSeparator . strMySystemMenu)
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 9, lMenuSeparator, lMenuSeparator . lMenuSeparator, lGuiSubmenuSeparator . strMySystemMenu, , "F")
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 10, , "{21EC2020-3AEA-1069-A2DD-08002B30309D}", lGuiSubmenuSeparator . strMySystemMenu)
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 11, , "{645FF040-5081-101B-9F08-00AA002F954E}", lGuiSubmenuSeparator . strMySystemMenu)
+
+IniWrite, 1, %strIniFile%, Global, MySystemFoldersBuilt
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+AddToIniOneSystemFolderMenu(intNumber, strSpecialFolderName := "", strSpecialFolderLocation := "", strMenuName := "", strSubmenuFullName := "", strFavoriteType := "P")
+; 0 Folder number, 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
+;------------------------------------------------------------
+{
+	if (strFavoriteType = "S")
+		strIconResource := objIconsFile["lMenuSpecialFolders"] . "," . objIconsIndex["lMenuSpecialFolders"]
+	else
+		strIconResource := objSpecialFolders[strSpecialFolderLocation].DefaultIcon
+	if !StrLen(strSpecialFolderName)
+		strSpecialFolderName := objSpecialFolders[strSpecialFolderLocation].DefaultName
+
+	strNewIniLine := strSpecialFolderName . "|" . strSpecialFolderLocation . "|" . strMenuName . "|" . strSubmenuFullName . "|" . strFavoriteType . "|" . strIconResource
+	
+	IniWrite, %strNewIniLine%, %strIniFile%, Folders, Folder%intNumber% ; keep "Folders" label instead of "Favorite" for backward compatibility
+}
 ;------------------------------------------------------------
 
 
@@ -1387,8 +1465,8 @@ InitSpecialFolderObject("{BB06C0E4-D293-4f75-8A90-CB05B6477EEE}", "", -1, "", ""
 ;---------------------
 ; Path from registry (no CLSID), localized name and icon provided, no Shell Command - to be tested with DOpus, TC and FPc
 
-RegRead, strException, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, {374DE290-123F-4565-9164-39C4925E467B}
-InitSpecialFolderObject(strException, "", -1, "", "downloads", ""
+RegRead, strDownloadPath, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, {374DE290-123F-4565-9164-39C4925E467B}
+InitSpecialFolderObject(strDownloadPath, "", -1, "", "downloads", ""
 	, lMenuDownloads, "lMenuDownloads"
 	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 RegRead, strException, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Music
@@ -1468,9 +1546,8 @@ InitSpecialFolderObject(strPathUsers . "\Public", "Public", -1, "", "common", ""
 	, "Public Folder", "" ; Public
 	, "SCT", "SCT", "SCT", "CLS", "DOA", "CLS", "CLS")
 	; OK     OK      OK     OK    OK      OK
-StringReplace, strException, lMenuPictures, &
 InitSpecialFolderObject(strPathUsername . "\Pictures", "", 39, "", "mypictures", ""
-	, strException, "lMenuPictures"
+	, lMenuPictures, "lMenuPictures"
 	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 InitSpecialFolderObject(strPathUsername . "\Favorites", "", -1, "", "", ""
 	, lMenuFavoritesInternet, "Favorites"
@@ -1479,9 +1556,8 @@ InitSpecialFolderObject(strPathUsername . "\Favorites", "", -1, "", "", ""
 ;---------------------
 ; Path using AHK constants (no CLSID), localized name and icon provided, no Shell Command - to be tested with DOpus, TC and FPc
 
-StringReplace, strException, lMenuDesktop, &
 InitSpecialFolderObject(A_Desktop, "", 0, "A_Desktop", "desktop", 2121
-	, strException, "lMenuDesktop"
+	, lMenuDesktop, "lMenuDesktop"
 	, "CLS", "CLS", "CLS", "CLS", "DOA", "TCC", "CLS")
 InitSpecialFolderObject(A_DesktopCommon, "", -1, "A_DesktopCommon", "commondesktopdir", ""
 	, lMenuCommonDesktop, "lMenuDesktop"
@@ -2395,7 +2471,7 @@ if !IsColumnBreak(arrMenus[lMainMenuName][arrMenus[lMainMenuName].MaxIndex()].Fa
 ; column break not allowed if first item is a separator
 	Menu, %lMainMenuName%, Add
 
-if (blnDisplaySpecialFolders)
+if (blnDisplaySpecialFolders) and (A_OSVersion = "WIN_XP")
 	AddMenuIcon(lMainMenuName, lMenuSpecialFolders, ":menuSpecialFolders", "lMenuSpecialFolders")
 
 if (blnDisplayFoldersInExplorerMenu)
@@ -2413,7 +2489,7 @@ if (blnDisplayGroupMenu)
 if (blnDisplayRecentFolders)
 	AddMenuIcon(lMainMenuName, lMenuRecentFolders . "...", "RefreshRecentFolders", "lMenuRecentFolders")
 
-if (blnDisplaySpecialFolders or blnDisplayRecentFolders or blnDisplayFoldersInExplorerMenu or blnDisplayGroupMenu)
+if ((blnDisplaySpecialFolders and A_OSVersion = "WIN_XP") or blnDisplayRecentFolders or blnDisplayFoldersInExplorerMenu or blnDisplayGroupMenu)
 	Menu, %lMainMenuName%, Add
 
 AddMenuIcon(lMainMenuName, L(lMenuSettings, strAppName) . "...", "GuiShow", "lMenuSettings")
@@ -2723,7 +2799,7 @@ if (blnDiagMode)
 
 ; Enable when adapted to use ::ClassID location
 
-if (blnDisplaySpecialFolders)
+if (blnDisplaySpecialFolders) and (A_OSVersion = "WIN_XP")
 	if (blnNewWindow)
 	{
 		; In case it was disabled while in a dialog box
@@ -5065,6 +5141,8 @@ OpenMenuFromEditForm:
 OpenMenuFromGuiHotkey:
 ;------------------------------------------------------------
 
+intCurrentLastPosition := 0
+
 if (A_ThisLabel = "GuiMenusListChanged")
 {
 	GuiControlGet, strNewDropdownMenu, , drpMenusList
@@ -5072,38 +5150,40 @@ if (A_ThisLabel = "GuiMenusListChanged")
 		return
 }
 
-Gosub, SaveCurrentListviewToMenuObject ; save current LV before changing strCurrentMenu
+Gosub, SaveCurrentListviewToMenuObject ; save current LV
 
-strSavedMenu := strCurrentMenu
-if (A_ThisLabel = "GuiMenusListChanged")
-{
-	arrSubmenuStack.Insert(1, strSavedMenu) ; push the current menu to the left arrow stack
-	strCurrentMenu := strNewDropdownMenu
-}
-else if (A_ThisLabel = "GuiGotoUpMenu")
-{
-	arrSubmenuStack.Insert(1, strSavedMenu) ; push the current menu to the left arrow stack
-	strCurrentMenu := SubStr(strCurrentMenu, 1, InStr(strCurrentMenu, lGuiSubmenuSeparator, , 0) - 1) 
-}
-else if (A_ThisLabel = "GuiGotoPreviousMenu")
+if (A_ThisLabel = "GuiGotoPreviousMenu")
 {
 	strCurrentMenu := arrSubmenuStack[1] ; pull the top menu from the left arrow stack
 	arrSubmenuStack.Remove(1) ; remove the top menu from the left arrow stack
-}
-else if (A_ThisLabel = "OpenMenuFromEditForm") or (A_ThisLabel = "OpenMenuFromGuiHotkey")
-{
-	arrSubmenuStack.Insert(1, strSavedMenu) ; push the current menu to the left arrow stack
-	strCurrentMenu := strCurrentSubmenuFullName
+
+	intCurrentLastPosition := arrSubmenuStackPosition[1] ; pull the focus position in top menu from the left arrow stack
+	arrSubmenuStackPosition.Remove(1) ; remove the top position from the left arrow stack
 }
 else
-	return ; should not occur
+{
+	arrSubmenuStack.Insert(1, strCurrentMenu) ; push the current menu to the left arrow stack
+	
+	if (A_ThisLabel = "GuiMenusListChanged")
+		strCurrentMenu := strNewDropdownMenu
+	else if (A_ThisLabel = "GuiGotoUpMenu")
+		strCurrentMenu := SubStr(strCurrentMenu, 1, InStr(strCurrentMenu, lGuiSubmenuSeparator, , 0) - 1) 
+	else if (A_ThisLabel = "OpenMenuFromEditForm") or (A_ThisLabel = "OpenMenuFromGuiHotkey")
+		strCurrentMenu := strCurrentSubmenuFullName
 
-strPreviousMenu := strSavedMenu
+	arrSubmenuStackPosition.Insert(1, LV_GetNext("Focused"))
+}
 
 GuiControl, % (arrSubmenuStack.MaxIndex() ? "Show" : "Hide"), picPreviousMenu
 GuiControl, % (strCurrentMenu <> lMainMenuName ? "Show" : "Hide"), picUpMenu
 
 Gosub, LoadOneMenuToGui
+
+if (intCurrentLastPosition) ; we went to a previous menu
+{
+	LV_Modify(0, "-Select")
+	LV_Modify(intCurrentLastPosition, "Select Focus Vis")
+}
 
 return
 ;------------------------------------------------------------
@@ -5505,7 +5585,8 @@ if (blnSaveEnabled)
 		Gosub, RestoreBackupMenuObjects
 		
 		; restore popup menu
-		Gosub, BuildSpecialFoldersMenu
+		if (A_OSVersion = "WIN_XP")
+			Gosub, BuildSpecialFoldersMenu
 		Gosub, BuildFoldersInExplorerMenu
 		Gosub, BuildMainMenu ; need to be initialized here - will be updated at each call to popup menu
 
@@ -5780,6 +5861,8 @@ if (A_ThisLabel = "GuiEditFavorite")
 }
 else
 {
+	Gosub, SaveCurrentListviewToMenuObject ; update menu object from LV, for items dropdown list
+	
 	intRowToEdit := 0 ;  used when saving to flag to insert a new row
 	strCurrentName := "" ; make sure it is empty
 	strCurrentSubmenuFullName := "" ;  make sure it is empty
@@ -6273,7 +6356,7 @@ if (blnRadioSubmenu)
 	}
 	if ((A_ThisLabel = "GuiMoveOneFavoriteSave") and InStr(strParentMenu, strCurrentMenu . lGuiSubmenuSeparator . strFavoriteShortName) <> 0)
 	{
-		Oops(lDialogMenuNotMoveUnderItself "Menu ""~1~"" cannot be moved under itself", strFavoriteShortName)
+		Oops(lDialogMenuNotMoveUnderItself, strFavoriteShortName)
 		intRowToEdit := intRowToEdit + 1
 		return
 	}
@@ -6566,8 +6649,11 @@ GuiControl, ChooseString, drpIconSize, %intIconSize%
 
 Gui, 2:Add, Text, y+7 x240, %lOptionsDisplayMenus%
 
-Gui, 2:Add, CheckBox, y+10 xs vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
-GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
+if (A_OSVersion = "WIN_XP")
+{
+	Gui, 2:Add, CheckBox, y+10 xs vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
+	GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
+}
 
 Gui, 2:Add, CheckBox, y+10 xs vblnDisplayFoldersInExplorerMenu, %lOptionsDisplayFoldersInExplorerMenu%
 GuiControl, , blnDisplayFoldersInExplorerMenu, %blnDisplayFoldersInExplorerMenu%
@@ -6776,7 +6862,8 @@ Menu, Tray, % blnOptionsRunAtStartup ? "Check" : "Uncheck", %lMenuRunAtStartup%
 
 IniWrite, %blnDisplayTrayTip%, %strIniFile%, Global, DisplayTrayTip
 IniWrite, %blnDisplayIcons%, %strIniFile%, Global, DisplayIcons
-IniWrite, %blnDisplaySpecialFolders%, %strIniFile%, Global, DisplaySpecialFolders
+if (A_OSVersion = "WIN_XP")
+	IniWrite, %blnDisplaySpecialFolders%, %strIniFile%, Global, DisplaySpecialFolders
 IniWrite, %blnDisplayRecentFolders%, %strIniFile%, Global, DisplayRecentFolders
 IniWrite, %intRecentFolders%, %strIniFile%, Global, RecentFolders
 IniWrite, %blnDisplayFoldersInExplorerMenu%, %strIniFile%, Global, DisplayFoldersInExplorerMenu
@@ -6863,7 +6950,8 @@ if (strLanguageCodePrev <> strLanguageCode) or (strThemePrev <> strTheme)
 }	
 
 ; else rebuild special and Group menus
-Gosub, BuildSpecialFoldersMenu
+if (A_OSVersion = "WIN_XP")
+	Gosub, BuildSpecialFoldersMenu
 Gosub, BuildFoldersInExplorerMenu
 Gosub, BuildGroupMenu
 
