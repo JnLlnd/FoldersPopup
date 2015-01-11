@@ -622,7 +622,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.1.9.1 BETA
+;@Ahk2Exe-SetVersion 4.1.9.3 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -667,7 +667,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.1.9.1" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.1.9.3" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -2551,7 +2551,6 @@ BuildOneMenu(strMenu)
 		{
 			strSubMenuFullName := arrThisMenu[A_Index].SubmenuFullName
 			strSubMenuDisplayName := arrThisMenu[A_Index].FavoriteName
-			StringReplace, strSubMenuDisplayName, strSubMenuDisplayName, &, &&
 			strSubMenuParent := arrThisMenu[A_Index].MenuName
 			
 			BuildOneMenu(strSubMenuFullName) ; recursive call
@@ -2601,7 +2600,6 @@ BuildOneMenu(strMenu)
 		else ; this is a favorite (folder, document or URL)
 		{
 			strSubMenuDisplayName := arrThisMenu[A_Index].FavoriteName
-			StringReplace, strSubMenuDisplayName, strSubMenuDisplayName, &, &&
 			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = lMainMenuName)) . " " : "")
 				. strSubMenuDisplayName
 			Menu, % arrThisMenu[A_Index].MenuName, Add, %strMenuName%, OpenFavorite
@@ -3137,7 +3135,6 @@ else ; this is a favorite
 		StringTrimLeft, strThisMenu, A_ThisMenuItem, 3 ; remove "&1 " from menu item
 	else
 		strThisMenu := A_ThisMenuItem
-	StringReplace, strThisMenu, strThisMenu, &&, &
 	strLocation := GetLocationFor(A_ThisMenu, strThisMenu)
 	strFavoriteType := GetFavoriteTypeFor(A_ThisMenu, strThisMenu)
 }
@@ -4769,7 +4766,9 @@ strLatestVersion := Url2Var("http://code.jeanlalonde.ca/ahk/folderspopup/latest-
 	. "?v=" . strCurrentVersion
 	. "&os=" . A_OSVersion
 	. "&is64=" . A_Is64bitOS
-	. "&setup=" . (blnSetup) + (2 * (blnDonor ? 1 : 0)))
+    . "&setup=" . (blnSetup) + (2 * (blnDonor ? 1 : 0))
+    . "&lsys=" . A_Language
+    . "&lfp=" . strLanguageCode)
 
 if !StrLen(strLatestVersion)
 	if (A_ThisMenuItem = lMenuUpdate)
