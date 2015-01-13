@@ -164,7 +164,7 @@ lMenuColumnBreak	colonna
 lMenuCommonAppData	Dati Applicazioni (pubblica)
 lMenuCommonDesktop	Desktop pubblico
 lMenuCommonStartMenu	Menù Avvio (pubblico)
-lMenuCommonStartupMenu	Menù Esecuzione Automatica (pubblico)
+lMenuCommonStartupMenu	Esecuzione Automatica (pubblico)
 lMenuControlPanel	Pannello di &Controllo
 lMenuCookies	Cookies
 lMenuDesktop	Desktop

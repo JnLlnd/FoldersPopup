@@ -18,6 +18,12 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 4.1.9.4 BETA (2015-01-??)
+	* 
+	
+	Version: 4.1.9.3 BETA (2015-01-11)
+	* revert ampersand (&) handling in menu as it was in 4.1, one & for shortcut, && to display an ampersand
+
 	Version: 4.1.9.2 BETA (2015-01-10)
 	* Italian translation update
 	* Korean translation update
@@ -622,7 +628,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.1.9.3 BETA
+;@Ahk2Exe-SetVersion 4.1.9.4 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -667,7 +673,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.1.9.3" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.1.9.4" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -4802,7 +4808,6 @@ if FirstVsSecondIs(strLatestVersion, strCurrentVersion) = 1
 		, % l(lUpdatePrompt, strAppName
 			, strCurrentVersion . (strCurrentBranch = "beta" ? " BETA" : "")
 			, strLatestVersion . (strCurrentBranch = "beta" ? " BETA" : ""))
-		, 30
 	IfMsgBox, Yes
 		if (strCurrentBranch = "prod")
 			Run, %strAppLandingPage%
@@ -4817,7 +4822,7 @@ if FirstVsSecondIs(strLatestVersion, strCurrentVersion) = 1
 }
 else if (A_ThisMenuItem = lMenuUpdate)
 {
-	MsgBox, 4, % l(lUpdateTitle, strAppName), % l(lUpdateYouHaveLatest, strAppVersion, strAppName), 30
+	MsgBox, 4, % l(lUpdateTitle, strAppName), % l(lUpdateYouHaveLatest, strAppVersion, strAppName)
 	IfMsgBox, Yes
 		if (strCurrentBranch = "prod")
 			Run, %strAppLandingPage%
