@@ -19,7 +19,8 @@ To-do for v4:
 
 
 	Version: 4.1.9.4 BETA (2015-01-??)
-	* 
+	* remove timeout from msgbox in check4update
+	* italian language update
 	
 	Version: 4.1.9.3 BETA (2015-01-11)
 	* revert ampersand (&) handling in menu as it was in 4.1, one & for shortcut, && to display an ampersand
@@ -4755,7 +4756,7 @@ Check4Update:
 ;------------------------------------------------------------
 
 strAppLandingPage := " http://code.jeanlalonde.ca/folderspopup/"
-strBetaLandingPage := "http://code.jeanlalonde.ca/folderspopup-v42-beta-tests/"
+strBetaLandingPage := "http://code.jeanlalonde.ca/ahk/folderspopup/check4update-beta-redirect.html"
 
 Gui, 1:+OwnDialogs
 
@@ -4772,7 +4773,11 @@ strLatestVersion := Url2Var("http://code.jeanlalonde.ca/ahk/folderspopup/latest-
 	. "?v=" . strCurrentVersion
 	. "&os=" . A_OSVersion
 	. "&is64=" . A_Is64bitOS
-    . "&setup=" . (blnSetup) + (2 * (blnDonor ? 1 : 0))
+    . "&setup=" . (blnSetup)
+				+ (2 * (blnDonor ? 1 : 0))
+				+ (4 * (blnUseDirectoryOpus ? 1 : 0))
+				+ (8 * (blnUseTotalCommander ? 1 : 0))
+				+ (16 * (blnUseFPconnect ? 1 : 0))
     . "&lsys=" . A_Language
     . "&lfp=" . strLanguageCode)
 
