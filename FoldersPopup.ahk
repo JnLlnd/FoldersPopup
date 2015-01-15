@@ -18,6 +18,10 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 4.1.9.5 BETA (2015-01-??)
+	* italian languag fixes
+	* Minimized language variable added
+	
 	Version: 4.1.9.4 BETA (2015-01-14)
 	* change landing page URL in FP code for a redirect page easier to manage on the website
 	* remove timeout from msgbox in check4update
@@ -630,7 +634,7 @@ To-do for v4:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.1.9.4 BETA
+;@Ahk2Exe-SetVersion 4.1.9.5 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -675,7 +679,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.1.9.4" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.1.9.5" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -3742,7 +3746,7 @@ if (A_ThisLabel = "GuiGroupEditFromManage")
 	for intIndex, objIniExplorerInGroup in objIniExplorersInGroup
 		LV_Add("Check", objIniExplorerInGroup.Name
 			, (objIniExplorerInGroup.WindowType = "DO" ? "Directory Opus" : (objIniExplorerInGroup.WindowType = "TC" ? "Total Commander" : "Windows Explorer"))
-			, (objIniExplorerInGroup.MinMax = -1 ? "Minimized" : (objIniExplorerInGroup.MinMax = "1" ? lDialogMaximized : lDialogNormal))
+			, (objIniExplorerInGroup.MinMax = -1 ? lDialogMinimized : (objIniExplorerInGroup.MinMax = "1" ? lDialogMaximized : lDialogNormal))
 			, (objIniExplorerInGroup.MinMax = 0 ? objIniExplorerInGroup.Left : "-")
 			, (objIniExplorerInGroup.MinMax = 0 ? objIniExplorerInGroup.Top : "-")
 			, (objIniExplorerInGroup.MinMax = 0 ? objIniExplorerInGroup.Width : "-")
@@ -3759,7 +3763,7 @@ else
 		StringSplit, arrExplorerPosition, arrExplorerPosition, "|"
 		LV_Add("Check", objGroupMenuExplorer.Name
 			, (objGroupMenuExplorer.WindowType = "DO" ? "Directory Opus" : (objGroupMenuExplorer.WindowType = "TC" ? "Total Commander" : "Windows Explorer"))
-			, (objGroupMenuExplorer.MinMax = -1 ? "Minimized" : (objGroupMenuExplorer.MinMax = "1" ? "Maximized" : "Normal"))
+			, (objGroupMenuExplorer.MinMax = -1 ? lDialogMinimized : (objGroupMenuExplorer.MinMax = "1" ? "Maximized" : "Normal"))
 			, (objGroupMenuExplorer.MinMax = 0 ? arrExplorerPosition1 : "-")
 			, (objGroupMenuExplorer.MinMax = 0 ? arrExplorerPosition2 : "-")
 			, (objGroupMenuExplorer.MinMax = 0 ? arrExplorerPosition3 : "-")
