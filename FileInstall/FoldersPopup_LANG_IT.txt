@@ -64,6 +64,7 @@ lDialogGroupSelect	Seleziona un Gruppo
 lDialogGroupSelectError	Per favore, seleziona il Gruppo da ~1~.
 lDialogIcon	Icona
 lDialogInvalidHotkey	Con il tuo attuale layout di tastiera di sistema, non è stato possibile usare l'hotkey "~1~" per aprire il popup menù (errore: tasto scelto non valido).`n`nPer favore, apri la finestra "~2~ Impostazioni" dal menù dell'icona nell'area notifiche e clicca: "Opzioni". In questa casella di dialogo, scegli un altro shortcut per "~3~".
+lDialogMaximized	Massimizzata
 lDialogMenuNotMoveUnderItself	Il menù "~1~" non può essere posizionato sotto se stesso.
 lDialogMoveFavoritesTitle	Sposta i Preferiti - ~1~ ~2~
 lDialogNormal	Normale
@@ -77,6 +78,7 @@ lDialogSubmenuLabel	Sottomenù
 lDialogSubmenuNameEmpty	Il nome del sottomenù non può essere vuoto. Si prega di inserire un nome.
 lDialogSubmenuParentMenu	Scegli il menù in cui inserirlo
 lDialogSubmenuShortName	Nome breve del sottomenù (voce menu)
+lDialogTabNext	Seguente
 lDialogThirdPartyDetected	~1~ ha riscontrato che ~2~ è installato nel tuo sistema.`n`nVuoi abilitare l'integrazione con ~2~?
 lDialogURLLabel	Link (URL)
 lDialogURLShortName	Nome breve del Link (voce menù)
@@ -145,6 +147,9 @@ lGuiSubmenuDropdownLabel	Menù da modificare:
 lGuiSubmenuLocation	>
 lGuiSubmenuSeparator	>
 lGuiTitle	Impostazioni - ~1~ ~2~
+lHelpTabAddingFavorite	Aggiungere Favoriti
+lHelpTabGettingStarted	Per Cominciare
+lHelpTabTitlesTipsAndTricks	Trucchi e Suggerimenti
 lHelpText1	All'avvio, FoldersPopup aggiunge un icona nell'area notifiche e resta in attesa. Quando hai bisogno di cambiare la cartella corrente in Windows Explorer o in una casella di dialogo per file, semplicemente clicca il tasto centrale del mouse o premi Windows-A e, nel menù popup, seleziona la cartella desiderata. FoldersPopup ti trasferirà ad essa istantaneamente! Oppure puoi usarlo per aprire velocemente un documento preferito o una pagina web.
 lHelpText2	Scegli "Impostazioni" per aprire la finestra delle Impostazioni di FoldersPopup dove puoi aggiungere al tuo menù CARTELLE, DOCUMENTI o LINK WEB preferiti. Puoi spostarli, rinominarli o eliminarli. Puoi anche aggiungere, spostare, rinominare o eliminare SOTTOMENU. E' possibile selezionarli poi dalla lista a discesa: "Menù per modifiche". Ricorda di cliccare "Salva" per salvare le modifiche.
 lHelpText3	Per AGGIUNGERE velocemente una nuova CARTELLA preferita al menù popup:`n1) Vai alle cartelle usate di frequente.`n2) Clicca il tasto centrale del mouse (o premi Windows-A) e scegli "Aggiungi questa Cartella".`n3) Assegna alla cartella un nome breve, clicca "Aggiungi", e poi "Salva", nella finestra delle Impostazioni.
@@ -164,7 +169,7 @@ lMenuColumnBreak	colonna
 lMenuCommonAppData	Dati Applicazioni (pubblica)
 lMenuCommonDesktop	Desktop pubblico
 lMenuCommonStartMenu	Menù Avvio (pubblico)
-lMenuCommonStartupMenu	Esecuzione Automatica (pubblico)
+lMenuCommonStartupMenu	Menù Esecuzione Automatica (pubblico)
 lMenuControlPanel	Pannello di &Controllo
 lMenuCookies	Cookies
 lMenuDesktop	Desktop
@@ -186,7 +191,6 @@ lMenuHistory	Cronologia
 lMenuMenu	Menù
 lMenuMyComputer	&Mio Computer
 lMenuMyMusic	Musica
-lMenuMySystemMenu	Le mie Cartelle Speciali
 lMenuMyVideo	Video
 lMenuNetworkNeighborhood	Rete di Wi&ndows
 lMenuPictures	Immagini
@@ -252,6 +256,7 @@ lOptionsMenuFixPosition	In posizione prefissata
 lOptionsMenuNearMouse	Vicino al puntatore del mouse
 lOptionsMenuPositionPrompt	Apri il menù popup:
 lOptionsMouse	Mouse
+lOptionsMouseAndKeyboard	Mouse e Tastiera
 lOptionsMouseButtonsText	Tasto Sinistro del Mouse|Tasto Centrale del Mouse|Tasto Destro del Mouse|Tasto Speciale 1 del Mouse|Tasto Speciale 2 del Mouse|Rotellina SU|Rotellina GIU'|Rotellina a Sinistra|Rotellina a Destra|
 lOptionsMouseCheckLButton	Non è possibile assegnare il "Tasto Sinistro del Mouse" da solo, senza modificatore.
 lOptionsMouseNone	Nessuno
@@ -265,8 +270,11 @@ lOptionsRecentFolders	Cartelle Recen&ti
 lOptionsRunAtStartup	&Esegui all'avvio
 lOptionsShift	Shift
 lOptionsSpacebar	usa la barra spaziatrice
+lOptionsTabFileManagersIntro	Per utenti di file manager di terze parti
 lOptionsTabMouseAndKeyboardIntro	Definisci i tasti del mouse e scorciatoie da tastiera per lanciare ~1~.
+lOptionsTabOtherOptionsIntro	Adatta le funzioni di FoldersPopup alle tue esigenze!
 lOptionsTheme	Tema
+lOptionsThirdParty	Supporto ai File Manager di terze parti
 lOptionsThirdPartyDetail	Seleziona il file del programma (.exe) ~1~ per abilitare l'integrazione di ~1~ .
 lOptionsThirdPartyDetailFPconnect	Seleziona il file di programma (.exe) di FPconnect per abilitare l'integrazione di altri file manager.
 lOptionsThirdPartyPrompt	File del programma:
