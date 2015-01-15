@@ -128,7 +128,7 @@ lGuiGroupSaveSelectAll	Sélectionner tout
 lGuiGroupSaveSelectExisting	ou choisissez un groupe à remplacer:
 lGuiGroupSaveShortName	Nom du groupe (pour les menus)
 lGuiHelp	Aide
-lGuiKotkeysHelp	Aide sur les raccourcis des favoris
+lGuiHotkeysHelp	Aide sur les raccourcis des favoris
 lGuiHotkeysHelpText	Flèche Bas: Sélectioner le prochain favoris`nFlèche Haut: Sélectioner le favoris précédent`nCtrl-N: Ajouter un nouveau favoris`nEntrée: Modifier un favoris`n`nMaj-Haut/Bas: Sélectionner des favoris contigus`nCtrl-Clic: Sélectionner des favoris non-contigus`nCtrl-A: Sélectionner tous les favoris`n`nCtrl-Bas: Déplacer un ou des favoris vers le bas`nCtrl-Haut: Déplacer un ou des favoris vers le haut`nSuppr: Supprimer un ou des favoris`n`nCtrl-Droite: Ouvrir un sous-menu`nCtrl-Gauche: Ouvrir le sous-menu contenant ce menu
 lGuiLvDialogsHeader	Boîtes de dialogue prises en charge`n(une partie du nom suffit)
 lGuiLvFavoritesHeader	Nom|Emplacement

@@ -130,7 +130,7 @@ lGuiGroupSaveSelectExisting	o seleziona un Gruppo da sovrascrivere:
 lGuiGroupSaveShortName	Nome breve del gruppo (voce menù)
 lGuiHelp	Aiuto
 lGuiHotkeysHelpText	Giù: Seleziona il Preferito successivo`nSu: Seleziona il Preferito precedente`nCtrl-N: Aggiungi un nuovo Preferito`nInvio: Modifica il Preferito`n`nShift-Up/Down: Seleziona Preferiti contigui`nCtrl-Click: Seleziona Preferiti non contigui`nCtrl-A: Seleziona tutti i Preferiti`n`nCtrl-Down: Sposta in giù il Preferito(i)`nCtrl-Up: Sposta in sù il Preferito(i)`nDel: Elimina il Preferito(i)`n`nCtrl-Right: Apri il sottomenù`nCtrl-Left: Apri il sottomenù superiore
-lGuiKotkeysHelp	Preferiti Collegamenti Aiuto
+lGuiHotkeysHelp	Preferiti Collegamenti Aiuto
 lGuiLvDialogsHeader	Caselle di Dialogo supportate`n(sono ammessi anche nomi incompleti) 
 lGuiLvFavoritesHeader	Nome|Destinazione
 lGuiMove	Sposta

@@ -24,9 +24,11 @@ lDialogCancelTitle	Annuleren - ~1~ ~2~
 lDialogEdit	Bewerken
 lDialogEditDialogPrompt	Voer de nieuwe naam voor het dialoogvenster in`n(of een deel van de naam):
 lDialogEditDialogTitle	Bewerk dialoogvenster - ~1~ ~2~
+lDialogEndOfMenu	einde van het menu
 lDialogFavoriteDoesNotExistPrompt	De favoriet "~1~" bestaat niet of is niet beschikbaar.`n`nIndien deze favoriet zich op een netwerkschijf bevindt, probeer dan opnieuw na aanmelding op het netwerk.`n`nIndien een favoriet een link bevat naar een webpagina, kies dan de "Link (URL)" optie wanneer je de favoriet aanmaakt.
 lDialogFavoriteDoesNotExistTitle	Favorite does not exist - ~1~
 lDialogFavoriteLocationEmpty	Deze locatie is leeg. Kies alstublieft een locatie.
+lDialogFavoriteMenuPosition	Voeg de nieuwe favoriet toe vóór het geselecteerde
 lDialogFavoriteNameEmpty	De naam van de favoriet is leeg. Kies een naam...
 lDialogFavoriteNameNoColumnBreak	De naam van het menu kan niet beginnen met de speciale tekens  "~1~" die gebruikt worden als scheiding tussen kolommen.
 lDialogFavoriteNameNoPipe	De naam van de favoriet of menu mag het gereserveerde karakter "|" niet bevatten.
@@ -35,6 +37,7 @@ lDialogFavoriteNameNotNew	De naam "~1~" is reeds in gebruik in dit menu. Kies al
 lDialogFavoriteParentMenu	Favoriet hoofd menu
 lDialogFavoriteRemovePrompt	Verwijder het submenu "~1~"`nen ALLE inhoud (mappen en submenu's)?
 lDialogFavoriteRemoveTitle	Verwijder favoriet - ~1~
+lDialogFavoritesParentMenuMove	Verplaats ~1~ favorieten naar dit menu
 lDialogFileLabel	Document
 lDialogFileShortName	Document naam (voor in het menu)
 lDialogFolderLabel	Map
@@ -61,11 +64,15 @@ lDialogGroupSelectError	Gelieve de groep te selecteren om ~1~.
 lDialogIcon	Icoon
 lDialogInvalidHotkey	Met je huidige toetsenbordindeling kan de sneltoets "~1~" niet gebruikt worden als een trigger voor het popup menu.`n`nGelieve het "~2~ Settings" venster te openen vanuit het taakbalkmenu en selecteers "Opties". Gelieve in dit venster een andere sneltoets te kiezen voor "~3~".
 lDialogMaximized	Gemaximalizeerd
+lDialogMenuNotMoveUnderItself	Menu "~1~" kan niet onder zichzelf verplaatst worden
+lDialogMoveFavoritesTitle	Verplaats Favorieten - ~1~ ~2~
 lDialogNormal	Normaal
 lDialogOpenThisMenu	Open dit menu
+lDialogRemoveMultipleFavorites	Wil je echt de ~1~ favorieten of submenus verwijderen?
 lDialogSave	Bewaren
 lDialogSelectItemToEdit	Gelieve het te bewerken object te selecteren.
 lDialogSelectItemToRemove	Gelieve het te verwijderen object te selecteren.
+lDialogSpecialLabel	Speciale Mappen
 lDialogSubmenuLabel	Submenu
 lDialogSubmenuNameEmpty	De naam van dit submenu is leeg. Kies een naam...
 lDialogSubmenuParentMenu	Submenu hoofd menu
@@ -102,6 +109,8 @@ lGuiAddFavorite	Toevoegen
 lGuiCancel	&Annuleren
 lGuiClose	&Sluiten
 lGuiDonate	Steun
+lGuiDropFilesHelp	Drag & Drop Help
+lGuiDropFilesIncentive	Je kan volgende favoriettypes Drag & Drop'en`nnaar het venster ~1~:`n`n- ~2~`n- ~3~
 lGuiEditFavorite	Bewerken
 lGuiGroupClosing	Vensters sluiten
 lGuiGroupOf	van
@@ -121,8 +130,11 @@ lGuiGroupSaveSelectAll	Alles selecteren
 lGuiGroupSaveSelectExisting	of kies een bestaande groep om te overschrijven:
 lGuiGroupSaveShortName	Verkorte groepsnaam (voor menu)
 lGuiHelp	Hulp
+lGuiHotkeysHelp	Favorieten Snelkoppelingen Help
+lGuiHotkeysHelpText	Pijltje-naar-beneden: Selecteer de volgende favoriet`nPijltje-naar-boven: Selecteer de vorige favoriet`nCtrl-N: Voeg een nieuwe favoriet toe`nEnter: Wijzig de favoriet`n`nShift+Pijl naar boven of beneden: Selecteer meerdere favorieten`nCtrl-Click: Selecteer meerdere lossen favorieten`nCtrl-A: Selecteer alle favorieten`n`nCtrl+Pijltje-naar-beneden: Verplaats favorieten naar beneden`nCtrl+Pijltje-naar-boven: Verplaats favorieten naar boven`nDel: Verwijder favorieten`n`nCtrl+Pijltje-naar-rechts: Open submenu`nCtrl+Pijltje-naar-links: Open hoger liggende submenu
 lGuiLvDialogsHeader	Ondersteunde dialoogvensters`n(deel van de naam volstaat)
 lGuiLvFavoritesHeader	Naam|Locatie
+lGuiMove	Verplaatsen
 lGuiMoveFavoriteDown	Naar beneden
 lGuiMoveFavoriteUp	Naar boven
 lGuiOptions	Opties
@@ -149,14 +161,23 @@ lHelpTitle	Hulp - ~1~ ~2~
 lMainMenuName	Hoofdmenu
 lMenuAbout	Over
 lMenuAddThisFolder	Deze m&ap toevoegen
+lMenuAppData	Applicatiegegevens
+lMenuCache	Cache
 lMenuColumnBreak	kolom
+lMenuCommonAppData	Gemeenschappelijke Applicatiegegevens
+lMenuCommonDesktop	Gemeenschappelijk Bureaublad
+lMenuCommonStartMenu	Gemeenschappelijk Start Menu
+lMenuCommonStartupMenu	Gemeenschappelijk Startup Menu
 lMenuControlPanel	&Configuratiescherm
+lMenuCookies	Cookies
 lMenuDesktop	Bureaublad
 lMenuDialogNotSupported	Dit type dialoogvenster wordt nog niet ondersteund
 lMenuDocuments	Documenten
 lMenuDownloads	Downloads
 lMenuExitFoldersPopup	Exit ~1~
+lMenuFavoritesInternet	Favorieten (Internet)
 lMenuFoldersInExplorer	Huidige Mappen
+lMenuFonts	Lettertypen
 lMenuFPMenu	~1~ ~2~
 lMenuGroup	&Mapgroepen
 lMenuGroupAdd	toevoegen
@@ -164,11 +185,20 @@ lMenuGroupLoad	Laad een groep
 lMenuGroupReplace	vervangen
 lMenuGroupSave	De huidige mappen als een groep bewaren
 lMenuHelp	Hulp
+lMenuHistory	Geschiedenis
 lMenuMenu	Menu
 lMenuMyComputer	&Mijn Computer
+lMenuMyMusic	Mijn Muziek
+lMenuMySystemMenu	Mijn speciale mappen
+lMenuMyVideo	Mijn Video's
 lMenuNetworkNeighborhood	Mijn &Netwerklocaties
 lMenuPictures	Afbeeldingen
+lMenuProgramFiles	Programmabestanden
+lMenuProgramsFolderStartMenu	Startmenuprogramma's
+lMenuPublicLibraries	Gemeenschappelijke Templates (sjablonen)
+lMenuQuickLaunch	Snelkoppelingen
 lMenuRecentFolders	&Recente bezochte mappen
+lMenuRecentItems	Onlangs geopend
 lMenuRecycleBin	Prullenbak
 lMenuRefreshRecent	Vernieuwen van het menu met de recent bezochten mappen
 lMenuReservedShortcuts	SWRFA
@@ -178,12 +208,23 @@ lMenuSeparator	----------------
 lMenuSettings	&~1~ Instellingen
 lMenuSpecialExplorer	Speciaal verkenner venster
 lMenuSpecialFolders	&Speciale Mappen
+lMenuStartMenu	Start Menu
+lMenuStartup	Startup
 lMenuSuspendHotkeys	Pauzeer Hotkeys
+lMenuSystemCertificates	Systeem Certificaten
+lMenuTemplates	Templates (sjablonen)
+lMenuTemporaryFiles	Tijdelijke bestanden
 lMenuUpdate	Controleren op nieuwe versies
+lMenuUserFolder	User Folder
+lMenuUserPinned	User Pinned
 lNavigateFileError	Een fout trad op tijdens het openen van deze map:`n~1~.
 lNavigateSpecialError	Een fout trad op tijdens het openen van de speciale map #~1~.
+lOopsCouldNotOpenSpecialFolder	~1~ kan de speciale folder "~2~" niet openen.
+lOopsDialogBox	Het dialoogvenster
 lOopsTitle	~1~ (~2~)
 lOopsWriteProtectedError	~1~ werd gestart vanuit een map die tegen schrijven beschermd is en dus kan het configuratiebestand "~1~.ini" niet worden aangemaakt.`n`nVerplaats de ~1~. EXE naar een normale map en start het programma vanuit deze map.`n`n~1~ wordt nu afgesloten.
+lOopsWrongFPconnectAppPathFilename	Verkeerd pad- of bestandsnaam gedecteerd voor de parameter "AppPath" in de FPconnect configuratie:`n~1~.`n`nControleer het opgegeven pad voor de .exe ( variabele "AppPath" in FCConnect ini file):`n~2~
+lOopsWrongThirdPartyPath	Verkeerd pad- of bestandsnaam gedecteerd voor ~1~:`n~2~.`n`nControleer het .exe bestand wat geselecteerd werd voor ~1~ in "Opties", tab "~3~".
 lOopsZipFileError	Blijkbaar heb je ~1~ direct gestart vanuit een .ZIP bestand.`n`nJe moet het ~1~ .EXE bestand uit het .ZIP bestand uitpakken in een map van jouw keuze vooraleer het te starten.`n`n~1~ wordt nu afgesloten.
 lOptionsAlt	Alt
 lOptionsArrDescriptions1	Kies de combinatie van MUISknop en speciale toetsen (CTRL/ALT/SHIFT/WIN) die het popup menu voor mappen opent in Windows Verkenner of in bestandsdialoogvensters. Standaard is dit de middenste muisknop zonder een speciale toets.
@@ -234,8 +275,10 @@ lOptionsTabOtherOptionsIntro	Laat ~1~ functioneren zoals jij wil!
 lOptionsTheme	Thema
 lOptionsThirdParty	Add-on voor de support van andere programma's voor bestandsbeheer
 lOptionsThirdPartyDetail	Selecteer het ~1~ programma (.exe) om de ~1~ integratie te activeren.
+lOptionsThirdPartyDetailFPconnect	Selecteer het FPconnect programma (.exe) om de integratie met jouw bestandsbeheerprogramma te activeren.
 lOptionsThirdPartyPrompt	Programma:
 lOptionsThirdPartyTitle	~1~ gebruikers
+lOptionsThirdPartyTitleFPconnect	Gebruikers van andere programma's voor bestandsbeheer gebruiken FPconnect
 lOptionsTitles	Muis - Folders Popup|Muis - Nieuwe Verkenner|Toetsenbord - Folders Popup|Toetsenbord - Nieuwe Verkenner|Recente Mappen|Instellingen
 lOptionsTitlesSub	(toon menu in de Verkenner en dialoogvensters)|(toon menu in een willekeurig venster)|(toon menu in de Verkenner en dialoogvensters)|(toon menu in een willekeurig venster)|(lijst met recent bezochte Windows locaties)|(menu configuratie and opties)
 lOptionsTotalCommanderUseTabs	Gebruik tabs

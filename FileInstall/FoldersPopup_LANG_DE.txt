@@ -24,9 +24,11 @@ lDialogCancelTitle	Abbrechen - ~1~ ~2~
 lDialogEdit	Bearbeiten
 lDialogEditDialogPrompt	Geben Sie den neuen Namen für die Dialogbox ein`n(oder einen Teil des Namens):
 lDialogEditDialogTitle	Dialogbox bearbeiten - ~1~ ~2~
+lDialogEndOfMenu	Ende des Menüs
 lDialogFavoriteDoesNotExistPrompt	Der Favorit "~1~" existiert nicht oder ist nicht verfügbar.`n`nSollte sich dieser Favorit auf einem Netzlaufwerk befinden, versuchen Sie es nach erfolgter Authentifizierung nochmals.`n`nSollte dieser Favorit ein Link auf eine Webseite sein, wählen Sie die Option "Link (URL)" wenn Sie den Favoriten hinzufügen.
 lDialogFavoriteDoesNotExistTitle	Favorit existiert nicht - ~1~
 lDialogFavoriteLocationEmpty	Dieser Ort ist leer. Bitte wählen Sie einen Ort.
+lDialogFavoriteMenuPosition	neuen Favoriten vor diesem Element einfügen
 lDialogFavoriteNameEmpty	Der Name des Favorite ist leer. Bitte wählen Sie einen kurzen Namen.
 lDialogFavoriteNameNoColumnBreak	Der Menüname kann die reservierten Zeichen "~1~" nicht als Spaltentrennzeichen verwenden.
 lDialogFavoriteNameNoPipe	Der Favorit oder Menüname darf das reservierte Zeichen "|" (vertikale Linie) nicht enthalten.
@@ -35,6 +37,7 @@ lDialogFavoriteNameNotNew	Der Name ~1~ wird bereits in diesem Menü verwendet. Bi
 lDialogFavoriteParentMenu	Favorite Hauptmenü
 lDialogFavoriteRemovePrompt	Entfernen des Untermenü "~1~"`nund ALL seines Inhalts (Ordner und Untermenüs)?
 lDialogFavoriteRemoveTitle	Entfernen des Favorite - ~1~
+lDialogFavoritesParentMenuMove	Verschiebe ~1~ Favoriten in dieses Menü
 lDialogFileLabel	Dokumente
 lDialogFileShortName	Dokument-Kurzname (für Menü)
 lDialogFolderLabel	Ordner
@@ -61,11 +64,15 @@ lDialogGroupSelectError	Bitte die Gruppe zum ~1~ auswählen.
 lDialogIcon	Symbol
 lDialogInvalidHotkey	Mit dem derzeitigen Tastaturlayout kann das Tastenkürzel "~1~" nicht verwendet werden, um das Popup-Menü aufzurufen (kein gültiger Tasten Name).`n`nBitte öffnen Sie das "~2~ Einstellungen" aus dem Tray-Menü und klicken Sie auf "Optionen". Wählen Sie in diesem Dialog ein anderes Tastenkürzel für "~3~".
 lDialogMaximized	Maximiert
+lDialogMenuNotMoveUnderItself	Menü "~1~" kann nicht in sich selbst verschoben werden
+lDialogMoveFavoritesTitle	Favoriten verschieben - ~1~ ~2~
 lDialogNormal	Normal
 lDialogOpenThisMenu	Dieses Menü öffnen
+lDialogRemoveMultipleFavorites	Wollen Sie wirklich ~1~ entfernen?
 lDialogSave	Speichern
 lDialogSelectItemToEdit	Bitte wählen Sie das zu bearbeitende Element.
 lDialogSelectItemToRemove	Bitte wählen Sie das zu entfernende Element.
+lDialogSpecialLabel	Special Folder
 lDialogSubmenuLabel	Untermenü
 lDialogSubmenuNameEmpty	Kein Name für das Untermenü angegeben. Bitte Namen vergeben.
 lDialogSubmenuParentMenu	Untermenü Elternmenü
@@ -102,6 +109,8 @@ lGuiAddFavorite	Hinzufügen
 lGuiCancel	&Abbrechen
 lGuiClose	&Schliessen
 lGuiDonate	Unterstützen
+lGuiDropFilesHelp	Drag & Drop Hilfe
+lGuiDropFilesIncentive	Sie können folgende Favoritentypen per Ziehen und Ablegen`nin das ~1~ Fenster verschieben:`n`n- ~2~`n- ~3~
 lGuiEditFavorite	Bearbeiten
 lGuiGroupClosing	Schliesse Fenster
 lGuiGroupOf	von
@@ -121,8 +130,11 @@ lGuiGroupSaveSelectAll	Alles auswählen
 lGuiGroupSaveSelectExisting	oder wählen Sie eine bestehende Gruppe zum Überschreiben:
 lGuiGroupSaveShortName	Kurzname der Gruppe (für das Menü)
 lGuiHelp	Hilfe
+lGuiHotkeysHelpText	Runter: Nächster Favorit`nRauf: Vorhergehender Favorit`nStrg-N: Neuen Favoriten hinzufügen`nEnter: Favorit bearbeiten`n`nShift-Rauf/Runter: Zusammenhängende Favoriten auswählen`nStrg-Click: Unzusammenhängende Favoriten auswählen`nStrg-A: Alle Favoriten auswählen`n`nStrg-Runter: Favorit(en) nach unten verschieben`nStrg-Hoch: Favorit(en) nach Oben verschieben`nEntf: Favorit(en) entfernen`n`nStrg-Rechts: Untermenü öffnen`nStrg-Links: Elternmenü öffnen
+lGuiHotkeysHelp	Favoriten Shortcuts Hilfe
 lGuiLvDialogsHeader	Unterstützte Dialoge`n(Teile der Namen)
 lGuiLvFavoritesHeader	Name|Ort
+lGuiMove	Verschieben
 lGuiMoveFavoriteDown	Nach u&nten bewegen
 lGuiMoveFavoriteUp	Nach o&ben bewegen
 lGuiOptions	Optionen
@@ -149,14 +161,23 @@ lHelpTitle	Hilfe - ~1~ ~2~
 lMainMenuName	Haupt
 lMenuAbout	Ü&ber
 lMenuAddThisFolder	&Diesen Ordner hinzufügen
+lMenuAppData	Anwendungsdaten
+lMenuCache	Cache
 lMenuColumnBreak	Spalte
+lMenuCommonAppData	Common Application Data
+lMenuCommonDesktop	Common Desktop
+lMenuCommonStartMenu	Common Startmenü
+lMenuCommonStartupMenu	Common Startup Menu
 lMenuControlPanel	&Systemsteuerung
+lMenuCookies	Cookies
 lMenuDesktop	Desktop
 lMenuDialogNotSupported	Diese Dialogbox wird momentan noch nicht unterstützt
 lMenuDocuments	Dokumente
 lMenuDownloads	Downloads
 lMenuExitFoldersPopup	Beenden ~1~
+lMenuFavoritesInternet	Favoriten (Internet)
 lMenuFoldersInExplorer	Ordner im Explorer
+lMenuFonts	Fonts
 lMenuFPMenu	~1~ ~2~
 lMenuGroup	Ordner &Gruppen
 lMenuGroupAdd	hinzufügen
@@ -164,11 +185,20 @@ lMenuGroupLoad	Gruppe laden
 lMenuGroupReplace	ersetzen
 lMenuGroupSave	Aktuelle Ordner als Gruppe speichern
 lMenuHelp	Hilfe
+lMenuHistory	History
 lMenuMenu	Menü
 lMenuMyComputer	&Mein Computer
+lMenuMyMusic	Eigene Musik
+lMenuMySystemMenu	Meine Systemordner
+lMenuMyVideo	Eigene Videos
 lMenuNetworkNeighborhood	&Netzwerkumgebung
 lMenuPictures	Bilder
+lMenuProgramFiles	Programme
+lMenuProgramsFolderStartMenu	Programme (Startmenü)
+lMenuPublicLibraries	Public Libraries
+lMenuQuickLaunch	Schnellstart
 lMenuRecentFolders	&Kürzlich verwendete Ordner
+lMenuRecentItems	Zuletzt verwendet
 lMenuRecycleBin	&Papierkorb
 lMenuRefreshRecent	Menü der kürzlich verwendeten Ordner wird aktualisiert
 lMenuReservedShortcuts	SWKFD
@@ -178,12 +208,23 @@ lMenuSeparator	----------------
 lMenuSettings	&~1~ Einstellungen
 lMenuSpecialExplorer	Spezielles Explorer-Fenster
 lMenuSpecialFolders	&Spezielle Ordner
+lMenuStartMenu	Startmenü
+lMenuStartup	Startup
 lMenuSuspendHotkeys	Suspend Hotkeys
+lMenuSystemCertificates	System Certificates
+lMenuTemplates	Vorlagen
+lMenuTemporaryFiles	Temporäre Dateien
 lMenuUpdate	Nach &Update suchen
+lMenuUserFolder	User Folder
+lMenuUserPinned	User Pinned
 lNavigateFileError	Beim Öffnen des Ordners `n~1~ trat ein Fehler auf.
 lNavigateSpecialError	Beim Öffnen des Speziellen Ordners #~1~ trat ein Fehler auf.
+lOopsCouldNotOpenSpecialFolder	~1~ konnte den Systemordner nicht öffnen: "~2~".
+lOopsDialogBox	Die Dialogbox
 lOopsTitle	~1~ (~2~)
 lOopsWriteProtectedError	Es scheint, daß ~1~ aus einem SCHREIBGESCHÜTZTEN ORDNER heraus ausgeführt wird, in dem die Konfigurationsdatei "~1~.ini" nicht erstellt werden kann.`n`nVerschieben Sie die ~1~ .EXE Datei in einen STANDARD Ordner Ihrer Wahl und führen Sie es daraus nochmals aus.`n`n~1~ wird beendet.
+lOopsWrongFPconnectAppPathFilename	Falscher Pfad oder Dateiname für Parameter "AppPath" in der FPconnect Konfiguration:`n~1~.`n`nPrüfen Sie den .exe Dateipfad auf "AppPath" in der Datei FCConnect ini:`n~2~
+lOopsWrongThirdPartyPath	Falscher Pfad oder Dateiname für ~1~:`n~2~.`n`nPrüfen Sie die ausgewählte .exe Datei auf ~1~ unter "Optionen", tab "~3~".
 lOopsZipFileError	Es scheint, daß ~1~ direkt aus einer .ZIP Datei ausgeführt wird.`n`nSie müssen zuerst die Datei ~1~ .EXE aus dem Archiv in ein Verzeichnis Ihrer Wahl entpacken und dann ausführen.`n`n~1~ wird beendet.
 lOptionsAlt	Alt
 lOptionsArrDescriptions1	Wählen Sie die MAUStaste und die Kombitasten, welche das FoldersPopup Menü im Windows Explorer oder Dateidialogboxen aufruft. Standardmäßig ist dies die mittlere Maustaste ohne zusätzliche Kombitaste.
@@ -234,8 +275,10 @@ lOptionsTabOtherOptionsIntro	Lassen Sie ~1~ funktionieren, wie Sie es wollen!
 lOptionsTheme	Thema
 lOptionsThirdParty	Add-on Unterstützung für Dateimanager von Drittanbietern
 lOptionsThirdPartyDetail	WÃ¤hlen Sie die ~1~ Programmdatei (.exe) um die ~1~ Integration einzuschalten.
+lOptionsThirdPartyDetailFPconnect	Wählen Sie die ausführbare Datei von FPconnect (.exe) für die Integration anderer Dateimanager.
 lOptionsThirdPartyPrompt	Programmdatei:
 lOptionsThirdPartyTitle	~1~ Benutzer
+lOptionsThirdPartyTitleFPconnect	Andere Benutzer weiterer Dateimanager, die FPconnect verwenden
 lOptionsTitles	Maus - Ordner Popup|Maus - Neu Explorer|Tastatur - Ordner Popup|Tastatur - Neu Explorer|Zuletzt verwendete Ordner|Einstellungsfenster
 lOptionsTitlesSub	(Pop-Menü überlagert Explorer und Dialogboxen)|(Pop-Menü aus beliebigem Fenster)|(Pop-Menü im Explorer und Dialogboxen)|(Pop-Menü aus beliebigem Fenster)|(Windows-Liste kürzlicher Orte)|(Menükonfiguration und Optionen)
 lOptionsTotalCommanderUseTabs	Verwende Registerkarten

@@ -18,9 +18,10 @@ To-do for v4:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.1.9.4 BETA (2015-01-??)
+	Version: 4.1.9.4 BETA (2015-01-14)
+	* change landing page URL in FP code for a redirect page easier to manage on the website
 	* remove timeout from msgbox in check4update
-	* italian language update
+	* German, Dutch and Italian language updates
 	
 	Version: 4.1.9.3 BETA (2015-01-11)
 	* revert ampersand (&) handling in menu as it was in 4.1, one & for shortcut, && to display an ampersand
@@ -4950,7 +4951,7 @@ Gui, 1:Add, Text, xs+5 y+5 w78 center gGuiGroupsManage, %lDialogGroups% ; Static
 Gui, 1:Add, Text, Section x185 ys+245 ; Static23
 
 Gui, 1:Font, s8 w400 italic, Verdana
-Gui, 1:Add, Link, xm+30 yp w240 gGuiHotkeysHelpClicked, <a>%lGuiKotkeysHelp%</a> ; center option not working SysLink1
+Gui, 1:Add, Link, xm+30 yp w240 gGuiHotkeysHelpClicked, <a>%lGuiHotkeysHelp%</a> ; center option not working SysLink1
 Gui, 1:Add, Link, xm+270 yp w240 gGuiDropFilesHelpClicked right, <a>%lGuiDropFilesHelp%</a>
 
 Gui, 1:Add, Text, xm y+60
@@ -4986,7 +4987,7 @@ GuiHotkeysHelpClicked:
 ;------------------------------------------------------------
 Gui, 1:+OwnDialogs
 
-MsgBox, 0, %strAppName% - %lGuiKotkeysHelp%
+MsgBox, 0, %strAppName% - %lGuiHotkeysHelp%
 	, %lGuiHotkeysHelpText%
 
 return
