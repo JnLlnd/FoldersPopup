@@ -12,6 +12,9 @@
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 4.2.0 (2015-01-15)
+	* see changes in beta version 4.1.8 to 4.1.9.6
+	
 	Version: 4.1.9.6 BETA (2015-01-15)
 	* italian and german translation fixes
 	
@@ -631,7 +634,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.1.9.6 BETA
+;@Ahk2Exe-SetVersion 4.2.0
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -676,8 +679,8 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.1.9.6" ; "major.minor.bugs" or "major.minor.beta.release"
-global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
+global strCurrentVersion := "4.2" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
 global blnDiagMode := False
@@ -6752,7 +6755,7 @@ Gui, 2:Add, Checkbox, x+10 yp vblnTotalCommanderUseTabs, %lOptionsTotalCommander
 GuiControl, , blnTotalCommanderUseTabs, %blnTotalCommanderUseTabs%
 
 Gui, 2:Font, s8 w700
-Gui, 2:Add, Link, y+15 x15, %lOptionsThirdPartyTitleFPconnect% - BETA TEST (<a href="https://github.com/rolandtoth/FPconnect">%lGuiHelp%</a>)
+Gui, 2:Add, Link, y+15 x15, %lOptionsThirdPartyTitleFPconnect% (<a href="https://github.com/rolandtoth/FPconnect">%lGuiHelp%</a>)
 Gui, 2:Font
 Gui, 2:Add, Text, y+5 x15, %lOptionsThirdPartyDetailFPconnect%
 Gui, 2:Add, Text, y+10 x15, %lOptionsThirdPartyPrompt%
