@@ -66,6 +66,7 @@ lDialogInvalidHotkey	Mit dem derzeitigen Tastaturlayout kann das Tastenkürzel "~
 lDialogMaximized	Maximiert
 lDialogMenuNotMoveUnderItself	Menü "~1~" kann nicht in sich selbst verschoben werden
 lDialogMoveFavoritesTitle	Favoriten verschieben - ~1~ ~2~
+lDialogMinimized	Minimiert
 lDialogNormal	Normal
 lDialogOpenThisMenu	Dieses Menü öffnen
 lDialogRemoveMultipleFavorites	Wollen Sie wirklich ~1~ entfernen?
@@ -273,7 +274,7 @@ lOptionsTabFileManagersIntro	Für Nutzer von Dateimanagern von Drittanbietern
 lOptionsTabMouseAndKeyboardIntro	Legen Sie die Maustasten und Tastenkürzel fest, welche ~1~ auslösen.
 lOptionsTabOtherOptionsIntro	Lassen Sie ~1~ funktionieren, wie Sie es wollen!
 lOptionsTheme	Thema
-lOptionsThirdParty	Add-on Unterstützung für Dateimanager von Drittanbietern
+lOptionsThirdParty	Unterstützung anderer Dateimananger
 lOptionsThirdPartyDetail	WÃ¤hlen Sie die ~1~ Programmdatei (.exe) um die ~1~ Integration einzuschalten.
 lOptionsThirdPartyDetailFPconnect	Wählen Sie die ausführbare Datei von FPconnect (.exe) für die Integration anderer Dateimanager.
 lOptionsThirdPartyPrompt	Programmdatei:

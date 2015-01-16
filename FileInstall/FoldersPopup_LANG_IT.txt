@@ -66,6 +66,7 @@ lDialogIcon	Icona
 lDialogInvalidHotkey	Con il tuo attuale layout di tastiera di sistema, non è stato possibile usare l'hotkey "~1~" per aprire il popup menù (errore: tasto scelto non valido).`n`nPer favore, apri la finestra "~2~ Impostazioni" dal menù dell'icona nell'area notifiche e clicca: "Opzioni". In questa casella di dialogo, scegli un altro shortcut per "~3~".
 lDialogMaximized	Massimizzata
 lDialogMenuNotMoveUnderItself	Il menù "~1~" non può essere posizionato sotto se stesso.
+lDialogMinimized	Minimizzato
 lDialogMoveFavoritesTitle	Sposta i Preferiti - ~1~ ~2~
 lDialogNormal	Normale
 lDialogOpenThisMenu	Apri questo menù
@@ -110,7 +111,7 @@ lGuiAddFavorite	Aggiungi
 lGuiCancel	&Annulla
 lGuiClose	&Chiudi
 lGuiDonate	Supporto
-lGuiDropFilesHelp	Aiuto Drag & Drop
+lGuiDropFilesHelp	Drag and Drop (promemoria)
 lGuiDropFilesIncentive	Puoi trascinare i seguenti tipi di preferiti`nsulla finestra ~1~:`n`n- ~2~`n- ~3~
 lGuiEditFavorite	Modifica
 lGuiGroupClosing	Chiusura delle finestre
@@ -131,8 +132,8 @@ lGuiGroupSaveSelectAll	Seleziona Tutti
 lGuiGroupSaveSelectExisting	o seleziona un Gruppo da sovrascrivere:
 lGuiGroupSaveShortName	Nome breve del gruppo (voce menù)
 lGuiHelp	Aiuto
-lGuiHotkeysHelpText	Giù: Seleziona il Preferito successivo`nSu: Seleziona il Preferito precedente`nCtrl-N: Aggiungi un nuovo Preferito`nInvio: Modifica il Preferito`n`nShift-Up/Down: Seleziona Preferiti contigui`nCtrl-Click: Seleziona Preferiti non contigui`nCtrl-A: Seleziona tutti i Preferiti`n`nCtrl-Down: Sposta in giù il Preferito(i)`nCtrl-Up: Sposta in sù il Preferito(i)`nDel: Elimina il Preferito(i)`n`nCtrl-Right: Apri il sottomenù`nCtrl-Left: Apri il sottomenù superiore
-lGuiHotkeysHelp	Preferiti Collegamenti Aiuto
+lGuiHotkeysHelpText	Freccia-Su: Seleziona il Preferito precedente`nFreccia-Giù: Seleziona il Preferito successivo`nCtrl+N: Aggiungi un nuovo Preferito`nInvio: Modifica il Preferito evidenziato`n`nShift+Su/Giù: Seleziona Preferiti contigui`nCtrl+ClickSinistro: Seleziona Preferiti non contigui`nCtrl+A: Seleziona tutti i Preferiti`n`nCtrl+Su: Sposta in su il Preferito(i)`nCtrl+Giù: Sposta in giù il Preferito(i)`nCanc: Elimina il Preferito(i)`n`nCtrl+Sinistra: Risali nel sottomenù superiore`nCtrl+Destra: Scendi nel sottomenù inferiore
+lGuiHotkeysHelp	Organizzazione Preferiti (scorciatoie)
 lGuiLvDialogsHeader	Caselle di Dialogo supportate`n(sono ammessi anche nomi incompleti) 
 lGuiLvFavoritesHeader	Nome|Destinazione
 lGuiMove	Sposta
@@ -169,7 +170,7 @@ lMenuColumnBreak	colonna
 lMenuCommonAppData	Dati Applicazioni (pubblica)
 lMenuCommonDesktop	Desktop pubblico
 lMenuCommonStartMenu	Menù Avvio (pubblico)
-lMenuCommonStartupMenu	Menù Esecuzione Automatica (pubblico)
+lMenuCommonStartupMenu	Esecuzione Automatica (pubblico)
 lMenuControlPanel	Pannello di &Controllo
 lMenuCookies	Cookies
 lMenuDesktop	Desktop
