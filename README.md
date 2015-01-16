@@ -13,6 +13,83 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### Version: 4.2 (2015-01-15)
+* See all changes from v4.1.8 to v4.1.9.6 BETA
+
+### Version: 4.1.9.1 to 4.1.9.6 BETA (2015-01-10 to 2015-01-15)
+* German, Dutch, Swedish and Italian language updates
+* Minimized language variable added
+* change landing page URL in FP code for a redirect page easier to manage on the website
+* remove timeout from msgbox in check4update
+* revert ampersand (&) handling in menu as it was in 4.1, one & for shortcut, && to display an ampersand
+* Added the FP ico file to the portable package
+* re-enabled the Special Folders menu in Windows XP
+
+### Version: 4.1.8.7 BETA (2015-01-08)
+* add the new customizable My Special Folders menu as last item in the user's main menu (except for XP)
+* add a bln value in ini file to track that the new My Special Folders was created (except for XP)
+* protection if user already has a My Special Folders menu before FP creates it
+* stop building the old Special Folders menu (except for XP)
+* remove option to display special folders menu (except for XP)
+* in Settings, Ctrl-Left is now as clicking on on the left arrow (instead of the up arrow) beside the menu dropdown list
+* in Settings, remember the last menu position when returning to a previously displayed menu
+* refactor of code around navigation to previous menu (arrows left of the Menu to edit in Settings)
+* remove & in special folders menu names in language files
+* fix bug when moving up/down or removing favorite, the items list in add favorite is now updated
+* fix error message bug when moving folder under itself
+* swedish translation update
+
+### Version: 4.1.8.6 BETA (2015-01-06)
+* improve performance when moving large number of favorite from one submenu to another
+* fix bug & not being kept in menu names
+* fix bug in add favorite when changing favorite type, default icon not being properly set and location not being properly reset
+* fix bug when moving out all favorite from a submenu, menu item is now grayed out
+* Korean language updates
+
+### Version: 4.1.8.5 BETA (2015-01-04)
+* prevent double-click on Up/Down arrows buttons to overwrite the clipboard
+* fix a bug when moving multiple favorites with Up/Down or Ctrl-Up/Ctrl-Down, selection is now kept
+
+### Version: 4.1.8.4 BETA (2015-01-03)
+* add hotkeys to Gui to move favorites (Ctrl-Down/Up), edit favorite (Enter), open submenu (Ctrl-Right), return to parent menu (Ctrl-Left), Select All (Ctrl-A), Add new (Ctrl-N) and Remove (Del)
+* add shortcuts help in main Gui, new layout for drag & drop help
+* allow multiple select of favorites to move or delete them; adapt gui Edit and Remove buttons if multiple selection
+* add separator and column break not allowed if multiple favorites selected
+* looped uses of adapted guiaddfavoritesave to move favorites
+* add moved favorites at end of destination menu
+* arrows move multiple favorites
+* in add/edit favorite, save default button 
+* special folder Performance Information and Tool only on Win7 (not available on Win8 and more)
+* add support for six special folders in TC with use of :: instead of shell:::
+* fix bug special folder Images with Total Commander
+* fix bug in manage groups, Select a group was sorted with list of groups
+
+### Version: 4.1.8.3 BETA (2014-12-31)
+* fix bug default position in menu not correct after last items in menu was removed
+* fix bug when change to submenmu using edit button, the delete button in new submenu deleted items in the previous menu
+
+### Version: 4.1.8.2 BETA (2014-12-31)
+* complete refactor of special folders using CLSID, Shell commands, Shell constants, AHK constants, DOpus alias or TC commands, and supporting NavigateExplorer, NewExplorer, Dialog, Console, DOpus, TC and FPc
+* adaptation of OpenFavorite and navigate/new window functions to the refactored special folders
+* error message when a special folder cuold not be open
+* add support for FPconnect TargetPath filename
+* support environment variables in FPc paths
+* fix bug when moving a favorite to another submenu
+
+### Version: 4.1.8.1 BETA (2014-12-27)
+* removed support for FreeCommander XE (now available via FPconnect)
+* add version and os info to check4update request
+
+### Version: 4.1.8 BETA (2014-12-26)
+* add dropdown list in Add Favorite dialog box to select the position of the new favorite in the menu
+* for Windows 7 and more, refactor InitSpecialFolders with ClassID and exceptions for unavailable ClassID (the Special Folders submenu is maintained but users could replace it by creating their own Special Folders in any menus)
+* add icons and translateble default names for exceptions
+* extended support for FPconnect (universal file manager connecteor from Roland Toth) with auto-detection of FPconnect, open in current tab/window or new tab/window
+* fix bug not showing icons for system menus in main menu under Win_XP
+* fix delay in group load for slow drives
+* the FP menu can now be open over the FP Settings window with middle-mouse click (or Win-A)
+* language files updates
+
 ### Version: 4.1 (2014-12-20)
 * addition of Italian language, thanks to Riccardo Leone
 * redesign the Help and Options windows into three tabs to save height on small screens
