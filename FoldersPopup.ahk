@@ -12,6 +12,8 @@
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 4.2.1 (2015-01-??)
+	
 	Version: 4.2.0 (2015-01-15)
 	* see changes in beta version 4.1.8 to 4.1.9.6
 	
@@ -634,7 +636,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.2.0
+;@Ahk2Exe-SetVersion 4.2.1
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -679,7 +681,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.2" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.2.1" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8

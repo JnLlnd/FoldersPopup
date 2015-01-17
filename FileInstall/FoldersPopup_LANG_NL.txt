@@ -1,5 +1,5 @@
 lAboutText1	~1~ ~2~ (~3~ bits)
-lAboutText2	~1~ wordt ontwikkeld door Jean Lalonde gebruik`nmakend van <a href="http://ahkscript.org/">AutoHotkey</a> programmeertaal.`n`nNederlandse vertaling: Pieter Dejonghe`nDuitse vertaling: Edgar "Fast Edi" Hoffmann`nFranse vertaling: Jean Lalonde`nKorean vertaling: Om Il-Sung`nZweedse vertaling: Åke Engelbrektson`nItaliaanse vertaling: Riccardo Leone`Andere talen: (hulp is welkom)`nnCorrectie Engelse vertaling: (hulp is welkom)`n`nOntwerp icons: <a href="http://www.visualpharm.com">Visual Pharm</a>`nInstaller: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> van jrsoftware.org`nAutoHotkey_L v1.1 bronbestanden: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText2	~1~ wordt ontwikkeld door Jean Lalonde gebruik`nmakend van <a href="http://ahkscript.org/">AutoHotkey</a> programmeertaal.`n`nNederlandse vertaling: Pieter Dejonghe`nDuitse vertaling: Edgar "Fast Edi" Hoffmann`nFranse vertaling: Jean Lalonde`nKoreaanse vertaling: Om Il-Sung`nZweedse vertaling: Åke Engelbrektson`nItaliaanse vertaling: Riccardo Leone`nAndere talen: (hulp is welkom)`nCorrectie Engelse vertaling: (hulp is welkom)`n`nOntwerp icons: <a href="http://www.visualpharm.com">Visual Pharm</a>`nInstaller: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> van jrsoftware.org`nAutoHotkey_L v1.1 bronbestanden: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
 lAboutText4	Ondersteuning via <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	Over... - ~1~ ~2~
@@ -65,6 +65,7 @@ lDialogIcon	Icoon
 lDialogInvalidHotkey	Met je huidige toetsenbordindeling kan de sneltoets "~1~" niet gebruikt worden als een trigger voor het popup menu.`n`nGelieve het "~2~ Settings" venster te openen vanuit het taakbalkmenu en selecteers "Opties". Gelieve in dit venster een andere sneltoets te kiezen voor "~3~".
 lDialogMaximized	Gemaximalizeerd
 lDialogMenuNotMoveUnderItself	Menu "~1~" kan niet onder zichzelf verplaatst worden
+lDialogMinimized	Geminimaliseerd
 lDialogMoveFavoritesTitle	Verplaats Favorieten - ~1~ ~2~
 lDialogNormal	Normaal
 lDialogOpenThisMenu	Open dit menu
