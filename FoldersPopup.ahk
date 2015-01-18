@@ -1,3 +1,10 @@
+/*
+Bug:
+- In Excel getting the message that “The picture is too large and will be truncated.” when FP running
+
+To-do:
+
+*/
 ;===============================================
 /*
 	FoldersPopup
@@ -13,6 +20,8 @@
 
 
 	Version: 4.2.1 (2015-01-??)
+	* make FP compliant with Windows themes by adding a FP theme named "Windows" that keeps Windows theme's colors (making FP display OK when user selects a dark Windows theme)
+	* making the FP theme "Windows" selected by default for new users
 	
 	Version: 4.2.0 (2015-01-15)
 	* see changes in beta version 4.1.8 to 4.1.9.6
@@ -722,7 +731,8 @@ Gosub, InitSpecialFolders
 Gosub, LoadIniFile
 if (blnDiagMode)
 	Gosub, InitDiagMode
-Gosub, LoadTheme
+if (blnUseColors)
+	Gosub, LoadTheme
 
 ; build even if blnDisplaySpecialFolders or blnDisplaySwitchMenu are false because they could become true
 ; no need to build Recent folders menu at startup since this menu is refreshed on demand
@@ -1108,8 +1118,8 @@ else
 IniRead, strTheme, %strIniFile%, Global, Theme
 if (strTheme = "ERROR") ; if Theme not found, we have a v1 or v2 ini file - add the themes to the ini file
 {
-	strTheme := "Grey"
-	strAvailableThemes := "Grey|Yellow|Light Blue|Light Red|Light Green"
+	strTheme := "Windows"
+	strAvailableThemes := "Windows|Grey|Light Blue|Light Green|Light Red|Yellow"
 	IniWrite, %strTheme%, %strIniFile%, Global, Theme
 	IniWrite, %strAvailableThemes%, %strIniFile%, Global, AvailableThemes
 	FileAppend,
@@ -1149,7 +1159,15 @@ if (strTheme = "ERROR") ; if Theme not found, we have a v1 or v2 ini file - add 
 		, %strIniFile%
 }
 else
+{
 	IniRead, strAvailableThemes, %strIniFile%, Global, AvailableThemes
+	if !InStr(strAvailableThemes, "Windows|")
+	{
+		strAvailableThemes := "Windows|" . strAvailableThemes
+		IniWrite, %strAvailableThemes%, %strIniFile%, Global, AvailableThemes
+	}
+}
+blnUseColors := (strTheme <> "Windows")
 	
 IniRead, blnMySystemFoldersBuilt, %strIniFile%, Global, MySystemFoldersBuilt, 0 ; default false
 if !(blnMySystemFoldersBuilt) and (A_OSVersion <> "WIN_XP")
@@ -1968,7 +1986,8 @@ Menu, Tray, Add, %lDonateMenu%, GuiDonate
 Menu, Tray, Add
 Menu, Tray, Add, % L(lMenuExitFoldersPopup, strAppName), ExitFoldersPopup
 Menu, Tray, Default, % L(lMenuSettings, strAppName)
-Menu, Tray, Color, %strMenuBackgroundColor%
+if (blnUseColors)
+	Menu, Tray, Color, %strMenuBackgroundColor%
 Menu, Tray, Tip, % strAppName . " " . strAppVersion . " (" . str32or64 . "-bit)`n" . (blnDonor ? lDonateThankyou : lDonateButton)
 
 return
@@ -2011,7 +2030,8 @@ RegRead, str, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explo
 
 Menu, menuSpecialFolders, Add
 Menu, menuSpecialFolders, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
-Menu, menuSpecialFolders, Color, %strMenuBackgroundColor%
+if (blnUseColors)
+	Menu, menuSpecialFolders, Color, %strMenuBackgroundColor%
 
 AddMenuIcon("menuSpecialFolders", lMenuDesktop, "OpenSpecialFolder", "lMenuDesktop")
 AddMenuIcon("menuSpecialFolders", lMenuDocuments, "OpenSpecialFolder", "lMenuDocuments")
@@ -2035,7 +2055,8 @@ BuildRecentFoldersMenu:
 
 Menu, menuRecentFolders, Add
 Menu, menuRecentFolders, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
-Menu, menuRecentFolders, Color, %strMenuBackgroundColor%
+if (blnUseColors)
+	Menu, menuRecentFolders, Color, %strMenuBackgroundColor%
 
 objRecentFolders := Object()
 intRecentFoldersIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
@@ -2234,7 +2255,8 @@ for intIndex, objFolder in objExplorersWindows
 
 Menu, menuFoldersInExplorer, Add
 Menu, menuFoldersInExplorer, DeleteAll
-Menu, menuFoldersInExplorer, Color, %strMenuBackgroundColor%
+if (blnUseColors)
+	Menu, menuFoldersInExplorer, Color, %strMenuBackgroundColor%
 
 intShortcutFoldersInExplorer := 0
 objLocationUrlByName := Object()
@@ -2259,7 +2281,8 @@ BuildGroupMenu:
 
 Menu, menuGroups, Add
 Menu, menuGroups, DeleteAll
-Menu, menuGroups, Color, %strMenuBackgroundColor%
+if (blnUseColors)
+	Menu, menuGroups, Color, %strMenuBackgroundColor%
 
 intShortcut := 0
 Loop, Parse, strGroups, |
@@ -2486,7 +2509,8 @@ blnMainIsFirstColumn := True
 
 Menu, %lMainMenuName%, Add
 Menu, %lMainMenuName%, DeleteAll
-Menu, %lMainMenuName%, Color, %strMenuBackgroundColor%
+if (blnUseColors)
+	Menu, %lMainMenuName%, Color, %strMenuBackgroundColor%
 
 BuildOneMenu(lMainMenuName) ; and recurse for submenus
 
@@ -2500,13 +2524,15 @@ if (blnDisplaySpecialFolders) and (A_OSVersion = "WIN_XP")
 if (blnDisplayFoldersInExplorerMenu)
 {
 	AddMenuIcon(lMainMenuName, lMenuFoldersInExplorer, ":menuFoldersInExplorer", "lMenuFoldersInExplorer")
-	Menu, menuFoldersInExplorer, Color, %strMenuBackgroundColor%
+	if (blnUseColors)
+		Menu, menuFoldersInExplorer, Color, %strMenuBackgroundColor%
 }
 
 if (blnDisplayGroupMenu)
 {
 	AddMenuIcon(lMainMenuName, lMenuGroup, ":menuGroups", "lMenuGroup")
-	Menu, menuGroups, Color, %strMenuBackgroundColor%
+	if (blnUseColors)
+		Menu, menuGroups, Color, %strMenuBackgroundColor%
 }
 
 if (blnDisplayRecentFolders)
@@ -2568,7 +2594,8 @@ BuildOneMenu(strMenu)
 			strSubMenuParent := arrThisMenu[A_Index].MenuName
 			
 			BuildOneMenu(strSubMenuFullName) ; recursive call
-			Try Menu, %strSubMenuParent%, Color, %strMenuBackgroundColor% ; Try because this can fail if submenu is empty
+			if (blnUseColors)
+				Try Menu, %strSubMenuParent%, Color, %strMenuBackgroundColor% ; Try because this can fail if submenu is empty
 			
 			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = lMainMenuName)) . " " : "") . strSubMenuDisplayName
 			Try Menu, %strSubMenuParent%, Add, %strMenuName%, % ":" . strSubMenuFullName
@@ -3722,7 +3749,8 @@ intGui2WinID := WinExist("A")
 strGuiGroupSaveEditTitle := L(lGuiGroupSaveEditTitle, (A_ThisLabel = "GuiGroupEditFromManage" ? lDialogEdit : lDialogSave), strAppName, strAppVersion)
 Gui, 3:New, , %strGuiGroupSaveEditTitle%
 Gui, 3:Margin, 10, 10
-Gui, 3:Color, %strGuiWindowColor%
+if (blnUseColors)
+	Gui, 3:Color, %strGuiWindowColor%
 Gui, 3:+OwnDialogs
 
 Gui, 3:Font, s10 w700, Verdana
@@ -3732,8 +3760,11 @@ Gui, 3:Font
 Gui, 3:Add, Text, x10 y+15 w670 center, %lGuiGroupSaveSelect%
 Gui, 3:Add, Link, x10 yp w100 vlblGroupSelect gGroupSelectClicked, <a>%lGuiGroupSaveDeselectAll%</a>
 
+; Gui, 3:Add, ListView
+;	, xm w680 h200 Checked Count32 -Multi LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% gGuiGroupListViewEvents
+;	, %lGuiGroupSaveLvHeader%|Hidden: LocationURL|IsSpecialFolder|WindowId|Position|TabId
 Gui, 3:Add, ListView
-	, xm w680 h200 Checked Count32 -Multi LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% gGuiGroupListViewEvents
+	, % "xm w680 h200 Checked Count32 -Multi LV0x10 " . (blnUseColors ? "c" . strGuiListviewTextColor . " Background" . strGuiListviewBackgroundColor : "") . " gGuiGroupListViewEvents"
 	, %lGuiGroupSaveLvHeader%|Hidden: LocationURL|IsSpecialFolder|WindowId|Position|TabId
 Loop, 4
 	LV_ModifyCol(A_Index + 3, "Right")
@@ -4904,11 +4935,13 @@ BuildGui:
 lGuiFullTitle := L(lGuiTitle, strAppName, strAppVersion)
 Gui, 1:New, , %lGuiFullTitle%
 Gui, Margin, 10, 10
-Gui, 1:Color, %strGuiWindowColor%
+if (blnUseColors)
+	Gui, 1:Color, %strGuiWindowColor%
 
 intWidth := 460
 
-Gui, 1:Font, s12 w700 c%strTextColor%, Verdana
+; Gui, 1:Font, s12 w700 c%strTextColor%, Verdana
+Gui, 1:Font, % "s12 w700 " . (blnUseColors ? "c" . strTextColor : ""), Verdana
 Gui, 1:Add, Text, xm ym h25, %strAppName% %strAppVersion%
 Gui, 1:Font, s9 w400, Verdana
 Gui, 1:Add, Text, xm y+1 w527, %lAppTagline%
@@ -4924,8 +4957,11 @@ Gui, 1:Add, Picture, xm+15 yp gGuiGotoUpMenu vpicUpMenu hidden, %strTempDir%\up-
 Gui, 1:Add, DropDownList, xm+30 yp w480 vdrpMenusList gGuiMenusListChanged
 
 ; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
+; Gui, 1:Add, ListView
+;	, xm+30 w480 h240 Count32 AltSubmit NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFavoritesList gGuiFavoritesListEvents
+;	, %lGuiLvFavoritesHeader%|Hidden Menu|Hidden Submenu|Hidden FavoriteType|Hidden IconResource
 Gui, 1:Add, ListView
-	, xm+30 w480 h240 Count32 AltSubmit NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFavoritesList gGuiFavoritesListEvents
+	, % "xm+30 w480 h240 Count32 AltSubmit NoSortHdr LV0x10 " . (blnUseColors ? "c" . strGuiListviewTextColor . " Background" . strGuiListviewBackgroundColor : "") . " vlvFavoritesList gGuiFavoritesListEvents"
 	, %lGuiLvFavoritesHeader%|Hidden Menu|Hidden Submenu|Hidden FavoriteType|Hidden IconResource
 Loop, 4
  	LV_ModifyCol(A_Index + 2, 0) ; hide 3rd-6th columns
@@ -5228,7 +5264,8 @@ Gui, 1:Submit, NoHide
 Gui, 2:New, , % L(lDialogGroupManageGroupsTitle, strAppName, strAppVersion)
 Gui, 2:+Owner1
 Gui, 2:+OwnDialogs
-Gui, 2:Color, %strGuiWindowColor%
+if (blnUseColors)
+	Gui, 2:Color, %strGuiWindowColor%
 
 Gui, 2:Font, w600 
 Gui, 2:Add, Text, x10 y10, %lDialogGroupManageAbout%
@@ -5932,7 +5969,8 @@ Gui, 1:Submit, NoHide
 Gui, 2:New, , % L(lDialogAddEditFavoriteTitle, (A_ThisLabel = "GuiEditFavorite" ? lDialogEdit : lDialogAdd), strAppName, strAppVersion)
 Gui, 2:+Owner1
 Gui, 2:+OwnDialogs
-Gui, 2:Color, %strGuiWindowColor%
+if (blnUseColors)
+	Gui, 2:Color, %strGuiWindowColor%
 
 Gui, 2:Add, Text, % x10 y10 vlblFavoriteParentMenu, % (blnRadioSubmenu ? lDialogSubmenuParentMenu : lDialogFavoriteParentMenu)
 Gui, 2:Add, DropDownList, x10 w300 vdrpParentMenu gDropdownParentMenuChanged, % BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu, strCurrentSubmenuFullName) . "|"
@@ -6626,7 +6664,8 @@ intGui1WinID := WinExist("A")
 ; Build Gui header
 Gui, 1:Submit, NoHide
 Gui, 2:New, , % L(lOptionsGuiTitle, strAppName, strAppVersion)
-Gui, 2:Color, %strGuiWindowColor%
+if (blnUseColors)
+	Gui, 2:Color, %strGuiWindowColor%
 Gui, 2:+Owner1
 Gui, 2:Font, s10 w700, Verdana
 Gui, 2:Add, Text, x10 y10 w595 center, % L(lOptionsGuiTitle, strAppName)
@@ -6695,7 +6734,7 @@ Gui, 2:Add, Text, % "yp x+10 vlblRecentFolders " . (blnDisplayRecentFolders ? ""
 ; column 3
 
 Gui, 2:Add, Text, ys x430 Section, %lOptionsTheme%
-Gui, 2:Add, DropDownList, ys x+10 w120 vdrpTheme Sort, %strAvailableThemes%
+Gui, 2:Add, DropDownList, ys x+10 w120 vdrpTheme, %strAvailableThemes%
 GuiControl, ChooseString, drpTheme, %strTheme%
 
 Gui, 2:Add, Text, y+7 xs Section, %lOptionsMenuPositionPrompt%
@@ -7021,7 +7060,8 @@ intGui2WinID := WinExist("A")
 Gui, 2:Submit, NoHide
 
 Gui, 3:New, , % L(lOptionsChangeHotkeyTitle, strAppName, strAppVersion)
-Gui, 3:Color, %strGuiWindowColor%
+if (blnUseColors)
+	Gui, 3:Color, %strGuiWindowColor%
 Gui, 3:+Owner2
 Gui, 3:Font, s10 w700, Verdana
 Gui, 3:Add, Text, x10 y10 w350 center, % L(lOptionsChangeHotkeyTitle, strAppName)
@@ -7255,7 +7295,8 @@ intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
 
 Gui, 2:New, , % L(lAboutTitle, strAppName, strAppVersion)
-Gui, 2:Color, %strGuiWindowColor%
+if (blnUseColors)
+	Gui, 2:Color, %strGuiWindowColor%
 Gui, 2:+Owner1
 Gui, 2:Font, s12 w700, Verdana
 Gui, 2:Add, Link, y10 w350 vlblAboutText1, % L(lAboutText1, strAppName, strAppVersion, str32or64)
@@ -7286,7 +7327,8 @@ intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
 
 Gui, 2:New, , % L(lDonateTitle, strAppName, strAppVersion)
-Gui, 2:Color, %strGuiWindowColor%
+if (blnUseColors)
+	Gui, 2:Color, %strGuiWindowColor%
 Gui, 2:+Owner1
 Gui, 2:Font, s12 w700, Verdana
 Gui, 2:Add, Link, y10 w420, % L(lDonateText1, strAppName)
@@ -7355,7 +7397,8 @@ intGui1WinID := WinExist("A")
 Gui, 1:Submit, NoHide
 
 Gui, 2:New, , % L(lHelpTitle, strAppName, strAppVersion)
-Gui, 2:Color, %strGuiWindowColor%
+if (blnUseColors)
+	Gui, 2:Color, %strGuiWindowColor%
 Gui, 2:+Owner1
 intWidth := 600
 Gui, 2:Font, s12 w700, Verdana
