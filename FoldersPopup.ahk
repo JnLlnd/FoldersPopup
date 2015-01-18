@@ -1,6 +1,5 @@
 /*
 Bug:
-- In Excel getting the message that “The picture is too large and will be truncated.” when FP running
 
 To-do:
 
@@ -19,10 +18,11 @@ To-do:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.2.1 (2015-01-??)
+	Version: 4.2.1 (2015-01-18)
 	* make FP compliant with Windows themes by adding a FP theme named "Windows" that keeps Windows theme's colors (making FP display OK when user selects a dark Windows theme)
 	* making the FP theme "Windows" selected by default for new users
-	
+	* because of a side-effect in XL 2010, revert a patch in v4.2 to prevent double-click up/down buttons in Settings to overwrite the clipboard with the image URL (a Windows "undesired feature")
+
 	Version: 4.2.0 (2015-01-15)
 	* see changes in beta version 4.1.8 to 4.1.9.6
 	
@@ -72,7 +72,7 @@ To-do:
 	* Korean language updates
 	
 	Version: 4.1.8.5 BETA (2015-01-04)
-	* prevent double-click on Up/Down arrows buttons to overwrite the clipboard
+	* prevent double-click on Up/Down arrows buttons to overwrite the clipboard (note: feature reverted in v4.2.1 because of a side effect in XL 2010)
 	* fix a bug when moving multiple favorites with Up/Down or Ctrl-Up/Ctrl-Down, selection is now kept
 	
 	Version: 4.1.8.4 BETA (2015-01-03)
@@ -795,12 +795,15 @@ return
 
 #Include %A_ScriptDir%\FoldersPopup_LANG.ahk
 
-; prevent double-click on some static control to overwrite the clipboard
+/*
+REMOVED IN v4.2.1 BECAUSE OF A SIDE EFFECTIN XL 2010
+; prevent double-click on some static control to overwrite the clipboard with the image URL (a windows "undesired feature")
 ; see http://www.autohotkey.com/board/topic/94962-doubleclick-on-gui-pictures-puts-their-path-in-your-clipboard/
 OnClipboardChange:
 If A_EventInfo
   ClipboardAllBK := ClipboardAll
 return
+*/
 
 ; Gui Hotkeys
 #If WinActive(lGuiFullTitle)
@@ -5531,8 +5534,13 @@ GuiMoveOneFavoriteUp:
 GuiMoveOneFavoriteDown:
 ;------------------------------------------------------------
 
+; prevent double-click on some static control to overwrite the clipboard with the image URL (a windows "undesired feature")
+; see http://www.autohotkey.com/board/topic/94962-doubleclick-on-gui-pictures-puts-their-path-in-your-clipboard/
 If (A_GuiEvent="DoubleClick")
-  Clipboard := ClipboardAllBK
+	; would be used to restore clipboard's  previous content if there was not a side effect in XL 2010
+	; (see: https://github.com/JnLlnd/FoldersPopup/issues/128)
+	; Clipboard := ClipboardAllBK
+	Clipboard := "" ; better than nothing, empty the clipboard because we could not restore its previous content
 
 if !InStr(A_ThisLabel, "One")
 {
