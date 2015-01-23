@@ -18,6 +18,10 @@ To-do:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 4.2.2 (2015-01-??)
+	* adding diag code to Check4update command
+	* removing unwanted space at the beginning of strAppLandingPage
+	
 	Version: 4.2.1 (2015-01-18)
 	* make FP compliant with Windows themes by adding a FP theme named "Windows" that keeps Windows theme's colors (making FP display OK when user selects a dark Windows theme)
 	* making the FP theme "Windows" selected by default for new users
@@ -34,7 +38,7 @@ To-do:
 	* Minimized language variable added
 	
 	Version: 4.1.9.4 BETA (2015-01-14)
-	* change landing page URL in FP code for a redirect page easier to manage on the website
+	* change beta landing page URL in FP code for a redirect page easier to manage on the website
 	* remove timeout from msgbox in check4update
 	* German, Dutch and Italian language updates
 	
@@ -1855,12 +1859,11 @@ if !FileExist(strDiagFile)
 	Diag("A_Language", A_Language)
 	Diag("A_IsAdmin", A_IsAdmin)
 }
-else
-	FileAppend, `n, %strDiagFile% ; required when the last line of the existing file ends with "
 
 FileRead, strDiag, %strIniFile%
 StringReplace, strDiag, strDiag, `", `"`"
-Diag("IniFile", """" . strDiag . """`n")
+Diag("IniFile", """" . strDiag . """")
+FileAppend, `n, %strDiagFile% ; required when the last line of the existing file ends with "
 
 return
 ;------------------------------------------------------------
@@ -4796,8 +4799,13 @@ ExitApp
 Check4Update:
 ;------------------------------------------------------------
 
-strAppLandingPage := " http://code.jeanlalonde.ca/folderspopup/"
+strAppLandingPage := "http://code.jeanlalonde.ca/folderspopup/"
 strBetaLandingPage := "http://code.jeanlalonde.ca/ahk/folderspopup/check4update-beta-redirect.html"
+if (blnDiagMode)
+{
+	Diag("Check4Update strAppLandingPage", strAppLandingPage)
+	Diag("Check4Update strBetaLandingPage", strBetaLandingPage)
+}
 
 Gui, 1:+OwnDialogs
 
@@ -4831,6 +4839,13 @@ if !StrLen(strLatestVersion)
 strLatestVersion := SubStr(strLatestVersion, InStr(strLatestVersion, "[[") + 2) 
 strLatestVersion := SubStr(strLatestVersion, 1, InStr(strLatestVersion, "]]") - 1) 
 strLatestVersion := Trim(strLatestVersion, "`n`l") ; remove en-of-line if present
+
+if (blnDiagMode)
+{
+	Diag("Check4Update strCurrentVersion", strCurrentVersion)
+	Diag("Check4Update strLatestVersion", strLatestVersion)
+	Diag("Check4Update strLatestSkipped", strLatestSkipped)
+}
 
 Loop, Parse, strLatestVersion, , 0123456789. ; strLatestVersion should only contain digits and dots
 	; if we get here, the content returned by the URL above is wrong
@@ -4870,10 +4885,18 @@ else if (A_ThisMenuItem = lMenuUpdate)
 {
 	MsgBox, 4, % l(lUpdateTitle, strAppName), % l(lUpdateYouHaveLatest, strAppVersion, strAppName)
 	IfMsgBox, Yes
+	{
+		if (blnDiagMode)
+		{
+			Diag("Check4Update lMenuUpdate strCurrentBranch", strCurrentBranch)
+			Diag("Check4Update lMenuUpdate strAppLandingPage", strAppLandingPage)
+			Diag("Check4Update lMenuUpdate strBetaLandingPage", strBetaLandingPage)
+		}
 		if (strCurrentBranch = "prod")
 			Run, %strAppLandingPage%
 		else
 			Run, %strBetaLandingPage%
+	}
 }
 
 return 
