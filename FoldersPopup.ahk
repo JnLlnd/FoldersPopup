@@ -19,8 +19,9 @@ To-do:
 
 
 	Version: 4.2.2 (2015-01-??)
-	* adding diag code to Check4update command
+	* adding diag code to Check4Update command
 	* removing unwanted space at the beginning of strAppLandingPage
+	* stop incrementing usage counter when checking for update manually
 	
 	Version: 4.2.1 (2015-01-18)
 	* make FP compliant with Windows themes by adding a FP theme named "Windows" that keeps Windows theme's colors (making FP display OK when user selects a dark Windows theme)
@@ -649,7 +650,7 @@ To-do:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.2.1
+;@Ahk2Exe-SetVersion 4.2.2
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -694,7 +695,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.2.1" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.2.2" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -4809,13 +4810,16 @@ if (blnDiagMode)
 
 Gui, 1:+OwnDialogs
 
-if Time2Donate(intStartups, blnDonor)
+if (A_ThisMenuItem <> lMenuUpdate)
 {
-	MsgBox, 36, % l(lDonateCheckTitle, intStartups, strAppName), % l(lDonateCheckPrompt, strAppName, intStartups)
-	IfMsgBox, Yes
-		Gosub, GuiDonate
+	if Time2Donate(intStartups, blnDonor)
+	{
+		MsgBox, 36, % l(lDonateCheckTitle, intStartups, strAppName), % l(lDonateCheckPrompt, strAppName, intStartups)
+		IfMsgBox, Yes
+			Gosub, GuiDonate
+	}
+	IniWrite, % (intStartups + 1), %strIniFile%, Global, Startups
 }
-IniWrite, % (intStartups + 1), %strIniFile%, Global, Startups
 
 blnSetup := (FileExist(A_ScriptDir . "\_do_not_remove_or_rename.txt") = "" ? 0 : 1)
 strLatestVersion := Url2Var("http://code.jeanlalonde.ca/ahk/folderspopup/latest-version/latest-version-2-" . strCurrentBranch . ".php"
