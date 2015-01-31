@@ -22,6 +22,8 @@ To-do:
 	* adding diag code to Check4Update command
 	* removing unwanted space at the beginning of strAppLandingPage
 	* stop incrementing usage counter when checking for update manually
+	* fix a bug with environment variable not being expanded when checking if target file exist
+	* fix bug under XP during group load when an Explorer already contains the target folder, the existing Explorer is now activated and resized (consequence: a group cannot contain the same folder twice)
 	
 	Version: 4.2.1 (2015-01-18)
 	* make FP compliant with Windows themes by adding a FP theme named "Windows" that keeps Windows theme's colors (making FP display OK when user selects a dark Windows theme)
@@ -3194,6 +3196,11 @@ if (blnDiagMode)
 	Diag("FavoriteType", strFavoriteType)
 }
 
+strLocation := EnvVars(strLocation)
+
+if (blnDiagMode)
+	Diag("EnvVars(Path)", strLocation)
+
 if !((strFavoriteType = "U") or (strFavoriteType = "P")) ; not URL or Special Folder, this strLocation should exist
 	if !FileExist(strLocation)
 		; this favorite does not exist and it is not a special folder or an URL
@@ -3239,7 +3246,7 @@ else if WindowIsAnExplorer(strTargetClass)
 	else
 		strThisLocation := strLocation
 	
-	NavigateExplorer(EnvVars(strThisLocation), strTargetWinId)
+	NavigateExplorer(strThisLocation, strTargetWinId)
 }
 else if WindowIsConsole(strTargetClass)
 {
@@ -3267,7 +3274,7 @@ else if WindowIsConsole(strTargetClass)
 	else
 		strThisLocation := strLocation
 
-	NavigateConsole(EnvVars(strThisLocation), strTargetWinId)
+	NavigateConsole(strThisLocation, strTargetWinId)
 }
 else if WindowIsFPconnect(strTargetWinId) ; must be before other third-party file managers
 {
@@ -3300,7 +3307,7 @@ else if WindowIsFPconnect(strTargetWinId) ; must be before other third-party fil
 	else
 		strThisLocation := strLocation
 	
-	NavigateFPconnect(EnvVars(strThisLocation), strTargetWinId, strTargetClass)
+	NavigateFPconnect(strThisLocation, strTargetWinId, strTargetClass)
 }
 else if WindowIsDirectoryOpus(strTargetClass)
 {
@@ -3333,7 +3340,7 @@ else if WindowIsDirectoryOpus(strTargetClass)
 	else
 		strThisLocation := strLocation
 	
-	NavigateDirectoryOpus(EnvVars(strThisLocation), strTargetWinId)
+	NavigateDirectoryOpus(strThisLocation, strTargetWinId)
 }
 /* removed for FPconnect: 
 else if WindowIsFreeCommander(strTargetClass)
@@ -3376,7 +3383,7 @@ else if WindowIsTotalCommander(strTargetClass)
 		strThisLocation := strLocation
 	
 	if strThisLocation is not integer 
-		NavigateTotalCommander(EnvVars(strThisLocation), strTargetWinId, strTargetControl)
+		NavigateTotalCommander(strThisLocation, strTargetWinId, strTargetControl)
 	else
 		NavigateTotalCommanderCommand(strThisLocation, strTargetWinId, strTargetControl)
 }
@@ -3414,7 +3421,7 @@ else if WindowIsDialog(strTargetClass, strTargetWinId)
 	else
 		strThisLocation := strLocation
 	
-	NavigateDialog(EnvVars(strThisLocation), strTargetWinId, strTargetClass)
+	NavigateDialog(strThisLocation, strTargetWinId, strTargetClass)
 }
 else ; we open the folder in a new window
 	Gosub, OpenFavoriteInNewWindow
@@ -3437,7 +3444,7 @@ if (strFavoriteType = "P")
 	else if (SubStr(strLocation, 1, 1) = "{")
 		strThisLocation := "shell:::" . strLocation
 if !StrLen(strThisLocation)
-	strThisLocation := EnvVars(strLocation)
+	strThisLocation := strLocation ; already expanded by EnvVars() in OpenFavorite
 
 if (blnDiagMode)
 {
@@ -4049,28 +4056,36 @@ while, intExplorer := WindowOfType("EX") ; returns the index of the first Explor
 	else
 		strExplorerLocationOrClassId := objIniExplorersInGroup[intExplorer].Name
 	DiagGroupLoad("strExplorerLocationOrClassId", strExplorerLocationOrClassId)
+	DiagGroupLoad("objIniExplorersInGroup[intExplorer].LocationURL", objIniExplorersInGroup[intExplorer].LocationURL)
 	DiagGroupLoad("objIniExplorersInGroup[intExplorer].MinMax", objIniExplorersInGroup[intExplorer].MinMax)
+	
+	strNewWindowId := GetExplorerIdIfContains(objIniExplorersInGroup[intExplorer].LocationURL) ; returns the ID of the Explorer containing LocationURL or an empty string if no Explorer contain LocationURL
 
-	strExplorerIDsBefore := GetExplorersIDs() ;  get a list of existing Explorer windows before launching this new Explorer
-	DiagGroupLoad("strExplorerIDsBefore", strExplorerIDsBefore)
-	Run, % "explorer.exe """ . strExplorerLocationOrClassId . """",
-		, % (objIniExplorersInGroup[intExplorer].MinMax = -1 ? "Min" : (objIniExplorersInGroup[intExplorer].MinMax = 1 ? "Max" : ""))
-	Loop
+	if StrLen(strNewWindowId) ; then we activate the existing Explorer
+		WinActivate, ahk_id %strNewWindowId%
+	else ; then we create a new Explorer with this LocationURL
 	{
-		if (A_Index > 25)
+		strExplorerIDsBefore := GetExplorersIDs() ;  get a list of existing Explorer windows before launching this new Explorer
+		DiagGroupLoad("strExplorerIDsBefore", strExplorerIDsBefore)
+		Run, % "explorer.exe """ . strExplorerLocationOrClassId . """",
+			, % (objIniExplorersInGroup[intExplorer].MinMax = -1 ? "Min" : (objIniExplorersInGroup[intExplorer].MinMax = 1 ? "Max" : ""))
+		Loop
 		{
-			Oops(lDialogGroupLoadErrorLoading, strExplorerLocationOrClassId)
-			blnGroupLoadError := True
-			blnGroupLoadExplorerError := True
-			Break
+			if (A_Index > 25)
+			{
+				Oops(lDialogGroupLoadErrorLoading, strExplorerLocationOrClassId)
+				blnGroupLoadError := True
+				blnGroupLoadExplorerError := True
+				Break
+			}
+			Sleep, 200
+			strExplorerIDsAfter := GetExplorersIDs() ;  get an updated list of existing Explorer windows
+			DiagGroupLoad("strExplorerIDsAfter take " . A_Index, strExplorerIDsAfter)
+			strNewWindowId := GetNewExplorer(strExplorerIDsBefore, strExplorerIDsAfter) ; check if we have a new Explorer window
+			DiagGroupLoad("strNewWindowId", strNewWindowId)
+			If StrLen(strNewWindowId)
+				Break ; if we have a new window, WinMove it
 		}
-		Sleep, 200
-		strExplorerIDsAfter := GetExplorersIDs() ;  get an updated list of existing Explorer windows
-		DiagGroupLoad("strExplorerIDsAfter take " . A_Index, strExplorerIDsAfter)
-		strNewWindowId := GetNewExplorer(strExplorerIDsBefore, strExplorerIDsAfter) ; check if we have a new Explorer window
-		DiagGroupLoad("strNewWindowId", strNewWindowId)
-		If StrLen(strNewWindowId)
-			Break ; if we have a new window, WinMove it
 	}
 	
 	if !(blnGroupLoadError)
@@ -4365,6 +4380,32 @@ GetExplorersIDs()
 			strExplorerIDs := strExplorerIDs . objExplorer.HWND . "|"
 	}
 	return strExplorerIDs
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GetExplorerIdIfContains(strLocationURL)
+;------------------------------------------------------------
+{
+	strExplorerID := ""
+	for objExplorer in ComObjCreate("Shell.Application").Windows
+	{
+		strType := ""
+		try strType := objExplorer.Type ; Gets the type name of the contained document object. "Document HTML" for IE windows. Should be empty for file Explorer windows.
+		strWindowID := ""
+		try strWindowID := objExplorer.HWND ; Try to get the handle of the window. Some ghost Explorer in the ComObjCreate may return an empty handle
+		if !StrLen(strType) and StrLen(strWindowID) ; strType must be empty and strWindowID must not be empty
+			if (objExplorer.LocationURL = strLocationURL)
+			{
+				strExplorerID := strWindowID
+				DiagGroupLoad("LocationURL Is", objExplorer.LocationURL)
+				break
+			}
+			else
+				DiagGroupLoad("LocationURL Is Not", objExplorer.LocationURL)
+	}
+	return strExplorerID
 }
 ;------------------------------------------------------------
 
