@@ -18,12 +18,12 @@ To-do:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.2.2 (2015-01-??)
-	* adding diag code to Check4Update command
-	* removing unwanted space at the beginning of strAppLandingPage
-	* stop incrementing usage counter when checking for update manually
-	* fix a bug with environment variable not being expanded when checking if target file exist
+	Version: 4.2.2 (2015-01-31)
+	* fix a bug with environment variables not being expanded when checking if target file exist
 	* fix bug under XP during group load when an Explorer already contains the target folder, the existing Explorer is now activated and resized (consequence: a group cannot contain the same folder twice)
+	* fix bug with check for update URL on some browsers
+	* adding diag code to Check4Update command
+	* stop incrementing usage counter when checking for update manually
 	
 	Version: 4.2.1 (2015-01-18)
 	* make FP compliant with Windows themes by adding a FP theme named "Windows" that keeps Windows theme's colors (making FP display OK when user selects a dark Windows theme)

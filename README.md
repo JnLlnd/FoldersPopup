@@ -1,9 +1,9 @@
 # FoldersPopup - Read me
 
-Popup menu to jump from folders to folders. Freeware.
+Move like a breeze between your frequently used folders and documents! Freeware.
 
 Written using AHKScript v1.1.09.03+ (http://www.ahkscript.org)  
-By JnLlnd on [AHKScript forum](http://ahkscript.org/boards/memberlist.php?mode=viewprofile&u=66), based on DirMenu v2 by Robert Ryan 2012 (rbrtryn on [AutoHotkey.com forum](http://www.autohotkey.com/board/user/15020-rbrtryn/))  
+By JnLlnd on [AHKScript forum](http://ahkscript.org/boards/memberlist.php?mode=viewprofile&u=66)
 Thanks to LearningOne for sharing his code and to others who helped in [this thread on AHKScript.org forum](http://ahkscript.org/boards/viewtopic.php?f=5&t=526).
 
 ## Links
@@ -12,6 +12,18 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 * [Download 32-bits / 64-bits](http://code.jeanlalonde.ca/ahk/folderspopup/folderspopup.zip)
 
 ## History
+
+### Version: 4.2.2 (2015-01-31)
+* fix a bug with environment variables not being expanded when checking if target file exist
+* fix bug under XP during group load when an Explorer already contains the target folder, the existing Explorer is now activated and resized (consequence: a group cannot contain the same folder twice)
+* fix bug with check for update URL on some browsers
+* adding diag code to Check4Update command
+* stop incrementing usage counter when checking for update manually
+
+### Version: 4.2.1 (2015-01-18)
+* make FP compliant with Windows themes by adding a FP theme named "Windows" that keeps Windows theme's colors (making FP display OK when user selects a dark Windows theme)
+* making the FP theme "Windows" selected by default for new users
+* because of a side-effect in XL 2010, revert a patch in v4.2 to prevent double-click up/down buttons in Settings to overwrite the clipboard with the image URL (a Windows "undesired feature")
 
 ### Version: 4.2 (2015-01-15)
 * See all changes from v4.1.8 to v4.1.9.6 BETA
