@@ -18,6 +18,9 @@ To-do:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 4.2.3 (2015-02-07)
+	* fix a bug with expanded environment variables
+	
 	Version: 4.2.2 (2015-01-31)
 	* fix a bug with environment variables not being expanded when checking if target file exist
 	* fix bug under XP during group load when an Explorer already contains the target folder, the existing Explorer is now activated and resized (consequence: a group cannot contain the same folder twice)
@@ -3196,6 +3199,7 @@ if (blnDiagMode)
 	Diag("FavoriteType", strFavoriteType)
 }
 
+objThisSpecialFolder := objSpecialFolders[strLocation] ; save objThisSpecialFolder before expanding EnvVars
 strLocation := EnvVars(strLocation)
 
 if (blnDiagMode)
@@ -3221,7 +3225,7 @@ if (strFavoriteType = "D" or strFavoriteType = "U") ; this is a document or an U
 ; else this is a folder
 
 if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
-	or ((strFavoriteType = "P") and objSpecialFolders[strLocation].Use4NavigateExplorer = "NEW")
+	or ((strFavoriteType = "P") and objThisSpecialFolder.Use4NavigateExplorer = "NEW")
 	
 	Gosub, OpenFavoriteInNewWindow
 
@@ -3231,13 +3235,13 @@ else if WindowIsAnExplorer(strTargetClass)
 		Diag("Navigate", "NavigateExplorer")
 	
 	if (strFavoriteType = "P")
-		if (objSpecialFolders[strLocation].Use4NavigateExplorer = "CLS")
+		if (objThisSpecialFolder.Use4NavigateExplorer = "CLS")
 			if (SubStr(strLocation, 1, 1) = "{")
 				strThisLocation := "shell:::" . strLocation
 			else
 				strThisLocation := strLocation
-		else if (objSpecialFolders[strLocation].Use4NavigateExplorer = "SCT")
-			strThisLocation := "shell:" . objSpecialFolders[strLocation].ShellConstantText
+		else if (objThisSpecialFolder.Use4NavigateExplorer = "SCT")
+			strThisLocation := "shell:" . objThisSpecialFolder.ShellConstantText
 		else
 		{
 			Oops(lOopsCouldNotOpenSpecialFolder, "Explorer", strLocation)
@@ -3254,14 +3258,14 @@ else if WindowIsConsole(strTargetClass)
 		Diag("Navigate", "NavigateConsole")
 	
 	if (strFavoriteType = "P")
-		if ((objSpecialFolders[strLocation].Use4Console = "CLS") and SubStr(strLocation, 1, 1) <> "{")
+		if ((objThisSpecialFolder.Use4Console = "CLS") and SubStr(strLocation, 1, 1) <> "{")
 			strThisLocation := strLocation
-		else if (objSpecialFolders[strLocation].Use4Console = "AHK")
+		else if (objThisSpecialFolder.Use4Console = "AHK")
 		{
-			strThisLocation := objSpecialFolders[strLocation].AHKConstant
+			strThisLocation := objThisSpecialFolder.AHKConstant
 			strThisLocation := %strThisLocation%
 		}
-		else if (objSpecialFolders[strLocation].Use4Console = "NEW")
+		else if (objThisSpecialFolder.Use4Console = "NEW")
 		{
 			Gosub, OpenFavoriteInNewWindow
 			return
@@ -3284,17 +3288,17 @@ else if WindowIsFPconnect(strTargetWinId) ; must be before other third-party fil
 		Diag("TargetWinId", strTargetWinId)
 	}
 	if (strFavoriteType = "P")
-		if (objSpecialFolders[strLocation].Use4FPc = "CLS")
+		if (objThisSpecialFolder.Use4FPc = "CLS")
 			if (SubStr(strLocation, 1, 1) = "{")
 				strThisLocation := "shell:::" . strLocation
 			else
 				strThisLocation := strLocation
-		else if (objSpecialFolders[strLocation].Use4FPc = "AHK")
+		else if (objThisSpecialFolder.Use4FPc = "AHK")
 		{
-			strThisLocation := objSpecialFolders[strLocation].AHKConstant
+			strThisLocation := objThisSpecialFolder.AHKConstant
 			strThisLocation := %strThisLocation%
 		}
-		else if (objSpecialFolders[strLocation].Use4FPc = "NEW")
+		else if (objThisSpecialFolder.Use4FPc = "NEW")
 		{
 			Gosub, OpenFavoriteInNewWindow
 			return
@@ -3315,19 +3319,19 @@ else if WindowIsDirectoryOpus(strTargetClass)
 		Diag("Navigate", "DirectoryOpus")
 
 	if (strFavoriteType = "P")
-		if (objSpecialFolders[strLocation].Use4DOpus = "DOA")
-			strThisLocation := "/" . objSpecialFolders[strLocation].DOpusAlias
-		else if (objSpecialFolders[strLocation].Use4DOpus = "CLS")
+		if (objThisSpecialFolder.Use4DOpus = "DOA")
+			strThisLocation := "/" . objThisSpecialFolder.DOpusAlias
+		else if (objThisSpecialFolder.Use4DOpus = "CLS")
 			if (SubStr(strLocation, 1, 1) = "{")
 				strThisLocation := "shell:::" . strLocation
 			else
 				strThisLocation := strLocation
-		else if (objSpecialFolders[strLocation].Use4DOpus = "AHK")
+		else if (objThisSpecialFolder.Use4DOpus = "AHK")
 		{
-			strThisLocation := objSpecialFolders[strLocation].AHKConstant
+			strThisLocation := objThisSpecialFolder.AHKConstant
 			strThisLocation := %strThisLocation%
 		}
-		else if (objSpecialFolders[strLocation].Use4DOpus = "NEW")
+		else if (objThisSpecialFolder.Use4DOpus = "NEW")
 		{
 			Gosub, OpenFavoriteInNewWindow
 			return
@@ -3357,19 +3361,19 @@ else if WindowIsTotalCommander(strTargetClass)
 		Diag("Navigate", "NavigateTotalCommander")
 	
 	if (strFavoriteType = "P")
-		if (objSpecialFolders[strLocation].Use4TC = "TCC")
-			strThisLocation := objSpecialFolders[strLocation].TCCommand
-		else if (objSpecialFolders[strLocation].Use4TC = "CLS")
+		if (objThisSpecialFolder.Use4TC = "TCC")
+			strThisLocation := objThisSpecialFolder.TCCommand
+		else if (objThisSpecialFolder.Use4TC = "CLS")
 			if (SubStr(strLocation, 1, 1) = "{")
 				strThisLocation := "::" . strLocation
 			else
 				strThisLocation := strLocation
-		else if (objSpecialFolders[strLocation].Use4TC = "AHK")
+		else if (objThisSpecialFolder.Use4TC = "AHK")
 		{
-			strThisLocation := objSpecialFolders[strLocation].AHKConstant
+			strThisLocation := objThisSpecialFolder.AHKConstant
 			strThisLocation := %strThisLocation%
 		}
-		else if (objSpecialFolders[strLocation].Use4TC = "NEW")
+		else if (objThisSpecialFolder.Use4TC = "NEW")
 		{
 			Gosub, OpenFavoriteInNewWindow
 			return
@@ -3396,19 +3400,19 @@ else if WindowIsDialog(strTargetClass, strTargetWinId)
 	}
 
 	if (strFavoriteType = "P")
-		if (objSpecialFolders[strLocation].Use4Dialog = "CLS")
+		if (objThisSpecialFolder.Use4Dialog = "CLS")
 			if (SubStr(strLocation, 1, 1) = "{")
 				strThisLocation := "shell:::" . strLocation
 			else
 				strThisLocation := strLocation
-		else if (objSpecialFolders[strLocation].Use4Dialog = "SCT")
-			strThisLocation := "shell:" . objSpecialFolders[strLocation].ShellConstantText
-		else if (objSpecialFolders[strLocation].Use4Dialog = "AHK")
+		else if (objThisSpecialFolder.Use4Dialog = "SCT")
+			strThisLocation := "shell:" . objThisSpecialFolder.ShellConstantText
+		else if (objThisSpecialFolder.Use4Dialog = "AHK")
 		{
-			strThisLocation := objSpecialFolders[strLocation].AHKConstant
+			strThisLocation := objThisSpecialFolder.AHKConstant
 			strThisLocation := %strThisLocation%
 		}
-		else if (objSpecialFolders[strLocation].Use4Dialog = "NEW")
+		else if (objThisSpecialFolder.Use4Dialog = "NEW")
 		{
 			Gosub, OpenFavoriteInNewWindow
 			return
@@ -3439,8 +3443,8 @@ OpenFavoriteInNewWindow:
 
 strThisLocation := ""
 if (strFavoriteType = "P")
-	if (objSpecialFolders[strLocation].Use4NewExplorer = "SCT")
-		strThisLocation := "shell:" . objSpecialFolders[strLocation].ShellConstantText
+	if (objThisSpecialFolder.Use4NewExplorer = "SCT")
+		strThisLocation := "shell:" . objThisSpecialFolder.ShellConstantText
 	else if (SubStr(strLocation, 1, 1) = "{")
 		strThisLocation := "shell:::" . strLocation
 if !StrLen(strThisLocation)
@@ -3455,17 +3459,17 @@ if (blnDiagMode)
 if (blnUseFPconnect)
 {	
 	if (strFavoriteType = "P")
-		if (objSpecialFolders[strLocation].Use4FPc = "NEW")
+		if (objThisSpecialFolder.Use4FPc = "NEW")
 		{
 			Run, Explorer "%strThisLocation%"
 			return
 		}
-		else if (objSpecialFolders[strLocation].Use4FPc = "AHK")
+		else if (objThisSpecialFolder.Use4FPc = "AHK")
 		{
-			strThisLocation := objSpecialFolders[strLocation].AHKConstant
+			strThisLocation := objThisSpecialFolder.AHKConstant
 			strThisLocation := %strThisLocation%
 		}
-		else if (objSpecialFolders[strLocation].Use4FPc <> "CLS")
+		else if (objThisSpecialFolder.Use4FPc <> "CLS")
 		{
 			Oops(lOopsCouldNotOpenSpecialFolder, "FPconnect", strLocation)
 			return
@@ -3476,19 +3480,19 @@ if (blnUseFPconnect)
 else if (blnUseDirectoryOpus)
 {
 	if (strFavoriteType = "P")
-		if (objSpecialFolders[strLocation].Use4DOpus = "DOA")
-			strThisLocation := "/" . objSpecialFolders[strLocation].DOpusAlias
-		else if (objSpecialFolders[strLocation].Use4DOpus = "CLS")
+		if (objThisSpecialFolder.Use4DOpus = "DOA")
+			strThisLocation := "/" . objThisSpecialFolder.DOpusAlias
+		else if (objThisSpecialFolder.Use4DOpus = "CLS")
 			if (SubStr(strLocation, 1, 1) = "{")
 				strThisLocation := "shell:::" . strLocation
 			else
 				strThisLocation := strLocation
-		else if (objSpecialFolders[strLocation].Use4DOpus = "AHK")
+		else if (objThisSpecialFolder.Use4DOpus = "AHK")
 		{
-			strThisLocation := objSpecialFolders[strLocation].AHKConstant
+			strThisLocation := objThisSpecialFolder.AHKConstant
 			strThisLocation := %strThisLocation%
 		}
-		else if (objSpecialFolders[strLocation].Use4DOpus = "NEW")
+		else if (objThisSpecialFolder.Use4DOpus = "NEW")
 		{
 			Run, Explorer "%strThisLocation%"
 			return
@@ -3507,19 +3511,19 @@ else if (blnUseDirectoryOpus)
 else if (blnUseTotalCommander)
 {	
 	if (strFavoriteType = "P")
-		if (objSpecialFolders[strLocation].Use4TC = "TCC")
-			strThisLocation := objSpecialFolders[strLocation].TCCommand
-		else if (objSpecialFolders[strLocation].Use4TC = "CLS")
+		if (objThisSpecialFolder.Use4TC = "TCC")
+			strThisLocation := objThisSpecialFolder.TCCommand
+		else if (objThisSpecialFolder.Use4TC = "CLS")
 			if (SubStr(strLocation, 1, 1) = "{")
 				strThisLocation := "::" . strLocation
 			else
 				strThisLocation := strLocation
-		else if (objSpecialFolders[strLocation].Use4TC = "AHK")
+		else if (objThisSpecialFolder.Use4TC = "AHK")
 		{
-			strThisLocation := objSpecialFolders[strLocation].AHKConstant
+			strThisLocation := objThisSpecialFolder.AHKConstant
 			strThisLocation := %strThisLocation%
 		}
-		else if (objSpecialFolders[strLocation].Use4TC = "NEW")
+		else if (objThisSpecialFolder.Use4TC = "NEW")
 		{
 			Run, Explorer "%strThisLocation%"
 			return
