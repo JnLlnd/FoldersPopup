@@ -18,8 +18,9 @@ To-do:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.2.3 (2015-02-07)
-	* fix a bug with expanded environment variables
+	Version: 4.2.4 (2015-02-08)
+	* fix a version number in v4.2.3 causing an error in update checking
+	* fix a bug with expanded environment variables in favorites of type Special folders
 	
 	Version: 4.2.2 (2015-01-31)
 	* fix a bug with environment variables not being expanded when checking if target file exist
@@ -655,7 +656,7 @@ To-do:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.2.2
+;@Ahk2Exe-SetVersion 4.2.4
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -700,7 +701,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.2.2" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.2.4" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
