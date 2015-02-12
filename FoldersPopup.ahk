@@ -18,6 +18,8 @@ To-do:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 4.2.5 (2015-02-??)
+	
 	Version: 4.2.4 (2015-02-08)
 	* fix a version number in v4.2.3 causing an error in update checking
 	* fix a bug with expanded environment variables in favorites of type Special folders
@@ -656,7 +658,7 @@ To-do:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.2.4
+;@Ahk2Exe-SetVersion 4.2.5
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -701,7 +703,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.2.4" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.2.5" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -790,7 +792,7 @@ DllCall("CreateMutex", "uint", 0, "int", false, "str", strAppName . "Mutex")
 
 
 ; ### only when debugging Gui
-; Gosub, GuiShow
+Gosub, GuiShow
 ; Gosub, GuiOptions
 ; Gosub, GuiAddFavorite
 ; Gosub, GuiAddFromPopup
@@ -5003,98 +5005,206 @@ Time2Donate(intStartups, blnDonor)
 ; MAIN GUI
 ;========================================================================================================================
 
+InsertGuiControlPos(strControlName, intX, intY, blnCenter := false)
+; InsertGuiControlPos(strControlName, intX, intY, intW := "", intH := "", blnCenter := false)
+{
+	global objGuiControls
 
+	objGuiControl := Object()
+	objGuiControl.Name := strControlName
+	objGuiControl.X := intX
+	objGuiControl.Y := intY
+	; objGuiControl.W := intW
+	; objGuiControl.H := intH
+	objGuiControl.Center := blnCenter
+	
+	objGuiControls.Insert(objGuiControl)
+}
+
+
+;------------------------------------------------------------
+GuiSize:
+
+if A_EventInfo = 1  ; The window has been minimized.  No action needed.
+    return
+
+; ###_D(A_GuiWidth . " / " . A_GuiHeight)
+intGuiW := (A_GuiWidth < 600 ? 600 : A_GuiWidth)
+intGuiH := (A_GuiHeight < 500 ? 500 : A_GuiHeight)
+; ###_D(intGuiW . " / " . A_GuiHeight)
+
+for intIndex, objGuiControl in objGuiControls
+{
+	intX := objGuiControl.X
+	intY := objGuiControl.Y
+	; intH := objGuiControl.H
+	; intW := objGuiControl.W
+
+	; if (objGuiControl.Name = "picGuiGroupsManage")
+	;	###_D(intX . "/" . intY, true)
+	if (intX < 0)
+		intX:= intGuiW + intX
+	if (intY < 0)
+		intY := intGuiH + intY
+	; if (objGuiControl.Name = "picGuiGroupsManage")
+	;	###_D(intX . "/" . intY, true)
+
+	if (objGuiControl.Center)
+	{
+		intXavant := intX
+		GuiControlGet, arrPos, Pos, % objGuiControl.Name
+		intX := intX - (arrPosW // 2) ; Floor divide
+		; ###_D("objGuiControl.Name: " . objGuiControl.Name . "`narrPosW: " . arrPosW . "`nintXavant: " . intXavant . "`nintX: " . intX)
+	}
+	GuiControl, 1:Move, % objGuiControl.Name
+		, % "x" . intX 
+		.  " y" . intY
+		; . (intW = "" ? "" : " w" . intW) 
+		; . (intH = "" ? "" : " h" . intH)
+		
+	; ToolTip, % objGuiControl.Name
+	; Sleep, 250
+}
+ToolTip
+
+intListW := intGuiW - 40 - 88
+intListH := intGuiH - 115 - 132
+/*
+###_D(""
+	. "intGuiW: " . intGuiW . "`n"
+	. "intGuiH: " . intGuiH . "`n"
+	. "intListW: " . intListW . "`n"
+	. "intListH: " . intListH . "`n"
+	. "")
+*/
+GuiControl, 1:Move, lvFavoritesList, w%intListW% h%intListH%
+GuiControl, 1:Move, drpMenusList, w%intListW%
+
+GuiControlGet, arrPos, Pos, lnkGuiDropHelpClicked
+GuiControl, 1:Move, lnkGuiDropHelpClicked, % "x" . (arrPosX - arrPosW)
+
+return
+;------------------------------------------------------------
+
+
+; ####
 ;------------------------------------------------------------
 BuildGui:
 ;------------------------------------------------------------
 
+objGuiControls := Object()
+
+InsertGuiControlPos("picGuiOptions",			 -44,   10, true) ; true = center
+InsertGuiControlPos("picGuiAddFavorite",		 -44,  122, true)
+InsertGuiControlPos("picGuiEditFavorite",		 -44,  199, true)
+InsertGuiControlPos("picGuiRemoveFavorite",		 -44,  274, true)
+InsertGuiControlPos("picGuiGroupsManage",		 -44, -150, true)
+
+InsertGuiControlPos("picAddColumnBreak",		  10,  230)
+InsertGuiControlPos("picAddSeparator",			  10,  200)
+InsertGuiControlPos("picGuiDonate",				  50,  -62, true)
+InsertGuiControlPos("picMoveFavoriteDown",		  10,  170)
+InsertGuiControlPos("picMoveFavoriteUp",		  10,  140)
+InsertGuiControlPos("picPreviousMenu",			  10,   84)
+InsertGuiControlPos("picSortFavorites",			  10, -165)
+InsertGuiControlPos("picUpMenu",				  25,   84)
+InsertGuiControlPos("picGuiAbout",				-114,  -62, true)
+InsertGuiControlPos("picGuiHelp",				 -54,  -62, true)
+
+InsertGuiControlPos("btnGuiCancel",				  50, -80)
+InsertGuiControlPos("btnGuiSave",				 150, -80)				
+InsertGuiControlPos("drpMenusList",				  40,   84)
+InsertGuiControlPos("lblAppName",				  10,   10)
+InsertGuiControlPos("lblAppTagLine",			  10,   42)
+InsertGuiControlPos("lblGuiAbout",				-114,  -20, true)
+InsertGuiControlPos("lblGuiAddFavorite",		 -44,  172, true)
+InsertGuiControlPos("lblGuiDonate",				  50,  -20, true)
+InsertGuiControlPos("lblGuiEditFavorite",		 -44,  249, true)
+InsertGuiControlPos("lblGuiGroupsManage",		 -44,  -95, true)
+InsertGuiControlPos("lblGuiHelp",				 -54,  -20, true)
+InsertGuiControlPos("lblGuiOptions",			 -44,   45, true)
+InsertGuiControlPos("lblGuiRemoveFavorite",		 -44,  324, true)
+InsertGuiControlPos("lblSubmenuDropdownLabel",	  40,   66)
+InsertGuiControlPos("lnkGuiHotkeysHelpClicked",	  40, -130)
+InsertGuiControlPos("lnkGuiDropHelpClicked",	 -88, -130)
+InsertGuiControlPos("lvFavoritesList",			  40,  115)
+
 lGuiFullTitle := L(lGuiTitle, strAppName, strAppVersion)
-Gui, 1:New, , %lGuiFullTitle%
-Gui, Margin, 10, 10
+Gui, 1:New, +Resize, %lGuiFullTitle%
+; Gui, Margin, 10, 10
 if (blnUseColors)
 	Gui, 1:Color, %strGuiWindowColor%
 
-intWidth := 460
-
 ; Gui, 1:Font, s12 w700 c%strTextColor%, Verdana
 Gui, 1:Font, % "s12 w700 " . (blnUseColors ? "c" . strTextColor : ""), Verdana
-Gui, 1:Add, Text, xm ym h25, %strAppName% %strAppVersion%
+Gui, 1:Add, Text, vlblAppName x0 y0, %strAppName% %strAppVersion%
 Gui, 1:Font, s9 w400, Verdana
-Gui, 1:Add, Text, xm y+1 w527, %lAppTagline%
+Gui, 1:Add, Text, vlblAppTagLine, %lAppTagline%
 
-Gui, 1:Add, Picture, x+10 ym Section gGuiOptions, %strTempDir%\settings-32.png ; Static3
+Gui, 1:Add, Picture, vpicGuiAddFavorite gGuiAddFavorite, %strTempDir%\add_property-48.png ; Static15
+Gui, 1:Add, Picture, vpicGuiEditFavorite gGuiEditFavorite x+1 yp, %strTempDir%\edit_property-48.png ; Static17
+Gui, 1:Add, Picture, vpicGuiRemoveFavorite gGuiRemoveFavorite x+1 yp, %strTempDir%\delete_property-48.png ; Static19
+Gui, 1:Add, Picture, vpicGuiGroupsManage gGuiGroupsManage x+1 yp, %strTempDir%\channel_mosaic-48.png ; Static21
+Gui, 1:Add, Picture, vpicGuiOptions gGuiOptions x+1 yp, %strTempDir%\settings-32.png ; Static3
+Gui, 1:Add, Picture, vpicPreviousMenu gGuiGotoPreviousMenu hidden x+1 yp, %strTempDir%\left-12.png ; Static6
+Gui, 1:Add, Picture, vpicUpMenu gGuiGotoUpMenu hidden x+1 yp, %strTempDir%\up-12.png ; Static7
+Gui, 1:Add, Picture, vpicMoveFavoriteUp gGuiMoveFavoriteUp x+1 yp, %strTempDir%\up_circular-26.png ; 9
+Gui, 1:Add, Picture, vpicMoveFavoriteDown gGuiMoveFavoriteDown x+1 yp, %strTempDir%\down_circular-26.png ; Static10
+Gui, 1:Add, Picture, vpicAddSeparator gGuiAddSeparator x+1 yp, %strTempDir%\separator-26.png ; Static11
+Gui, 1:Add, Picture, vpicAddColumnBreak gGuiAddColumnBreak x+1 yp, %strTempDir%\column-26.png ; Static12
+Gui, 1:Add, Picture, vpicSortFavorites gGuiSortFavorites x+1 yp, %strTempDir%\generic_sorting2-26-grey.png ; Static13
+Gui, 1:Add, Picture, vpicGuiAbout gGuiAbout x+1 yp, %strTempDir%\about-32.png ; Static25
+Gui, 1:Add, Picture, vpicGuiHelp gGuiHelp x+1 yp, %strTempDir%\help-32.png ; Static26
+
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs-10 y+0 w52 center gGuiOptions, %lGuiOptions% ; Static4
+Gui, 1:Add, Text, vlblGuiOptions gGuiOptions x0 y+20, %lGuiOptions% ; Static4
+Gui, 1:Add, Text, vlblSubmenuDropdownLabel x+1 yp, %lGuiSubmenuDropdownLabel%
+Gui, 1:Add, Text, vlblGuiAddFavorite center gGuiAddFavorite x+1 yp, %lGuiAddFavorite% ; Static16
+Gui, 1:Add, Text, vlblGuiEditFavorite center gGuiEditFavorite x+1 yp, %lGuiEditFavorite% ; Static18
+Gui, 1:Add, Text, vlblGuiRemoveFavorite center gGuiRemoveFavorite x+1 yp, %lGuiRemoveFavorite% ; Static20
+Gui, 1:Add, Text, vlblGuiGroupsManage center gGuiGroupsManage x+1 yp, %lDialogGroups% ; Static22
+Gui, 1:Add, Text, vlblGuiAbout center gGuiAbout x+1 yp, %lGuiAbout% ; Static28
+Gui, 1:Add, Text, vlblGuiHelp center gGuiHelp x+1 yp, %lGuiHelp% ; Static29
+
+Gui, 1:Font, s8 w400 italic, Verdana
+Gui, 1:Add, Link, vlnkGuiHotkeysHelpClicked gGuiHotkeysHelpClicked x0 y+1, <a>%lGuiHotkeysHelp%</a> ; center option not working SysLink1
+Gui, 1:Add, Link, vlnkGuiDropHelpClicked gGuiDropFilesHelpClicked right x+1 yp, <a>%lGuiDropFilesHelp%</a>
 
 Gui, 1:Font, s8 w400, Verdana
-Gui, 1:Add, Text, xm+30, %lGuiSubmenuDropdownLabel%
-Gui, 1:Add, Picture, xm y+5 gGuiGotoPreviousMenu vpicPreviousMenu hidden, %strTempDir%\left-12.png ; Static6
-Gui, 1:Add, Picture, xm+15 yp gGuiGotoUpMenu vpicUpMenu hidden, %strTempDir%\up-12.png ; Static7
-Gui, 1:Add, DropDownList, xm+30 yp w480 vdrpMenusList gGuiMenusListChanged
+Gui, 1:Add, DropDownList, vdrpMenusList gGuiMenusListChanged x0 y+1
 
 ; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
 ; Gui, 1:Add, ListView
 ;	, xm+30 w480 h240 Count32 AltSubmit NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFavoritesList gGuiFavoritesListEvents
 ;	, %lGuiLvFavoritesHeader%|Hidden Menu|Hidden Submenu|Hidden FavoriteType|Hidden IconResource
 Gui, 1:Add, ListView
-	, % "xm+30 w480 h240 Count32 AltSubmit NoSortHdr LV0x10 " . (blnUseColors ? "c" . strGuiListviewTextColor . " Background" . strGuiListviewBackgroundColor : "") . " vlvFavoritesList gGuiFavoritesListEvents"
+	, % "vlvFavoritesList Count32 AltSubmit NoSortHdr LV0x10 " . (blnUseColors ? "c" . strGuiListviewTextColor . " Background" . strGuiListviewBackgroundColor : "") . " gGuiFavoritesListEvents x+1 yp"
 	, %lGuiLvFavoritesHeader%|Hidden Menu|Hidden Submenu|Hidden FavoriteType|Hidden IconResource
 Loop, 4
  	LV_ModifyCol(A_Index + 2, 0) ; hide 3rd-6th columns
 
-Gui, 1:Add, Text, Section x+0 yp
-
-Gui, 1:Add, Picture, xm ys+25 vpicMoveFavoriteUp gGuiMoveFavoriteUp, %strTempDir%\up_circular-26.png ; 9
-Gui, 1:Add, Picture, xm ys+55 vpicMoveFavoriteDown gGuiMoveFavoriteDown, %strTempDir%\down_circular-26.png ; Static10
-Gui, 1:Add, Picture, xm ys+85 gGuiAddSeparator, %strTempDir%\separator-26.png ; Static11
-Gui, 1:Add, Picture, xm ys+115 gGuiAddColumnBreak, %strTempDir%\column-26.png ; Static12
-Gui, 1:Add, Picture, xm+1 ys+205 gGuiSortFavorites, %strTempDir%\generic_sorting2-26-grey.png ; Static13
-
-Gui, 1:Add, Text, Section xs ys
-
-Gui, 1:Font, s8 w400, Arial ; button legend
-
-Gui, 1:Add, Picture, xs+20 ys+7 gGuiAddFavorite, %strTempDir%\add_property-48.png ; Static15
-Gui, 1:Add, Text, xs+5 y+0 w78 center gGuiAddFavorite, %lGuiAddFavorite% ; Static16
-
-Gui, 1:Add, Picture, xs+20 vpicEditFavorite gGuiEditFavorite, %strTempDir%\edit_property-48.png ; Static17
-Gui, 1:Add, Text, xs+5 y+0 w78 center vlblEditFavorite gGuiEditFavorite, %lGuiEditFavorite% ; Static18
-
-Gui, 1:Add, Picture, xs+20 vpicRemoveFavorite gGuiRemoveFavorite, %strTempDir%\delete_property-48.png ; Static19
-Gui, 1:Add, Text, xs+5 y+0 w78 center vlblRemoveFavorite gGuiRemoveFavorite, %lGuiRemoveFavorite% ; Static20
-
-Gui, 1:Add, Picture, xs+20 y+30 gGuiGroupsManage, %strTempDir%\channel_mosaic-48.png ; Static21
-Gui, 1:Add, Text, xs+5 y+5 w78 center gGuiGroupsManage, %lDialogGroups% ; Static22
-
-Gui, 1:Add, Text, Section x185 ys+245 ; Static23
-
-Gui, 1:Font, s8 w400 italic, Verdana
-Gui, 1:Add, Link, xm+30 yp w240 gGuiHotkeysHelpClicked, <a>%lGuiHotkeysHelp%</a> ; center option not working SysLink1
-Gui, 1:Add, Link, xm+270 yp w240 gGuiDropFilesHelpClicked right, <a>%lGuiDropFilesHelp%</a>
-
-Gui, 1:Add, Text, xm y+60
 Gui, 1:Font, s9 w600, Verdana
-Gui, 1:Add, Button, ys+60 Disabled Default vbtnGuiSave gGuiSave, %lGuiSave% ; Button1
-Gui, 1:Add, Button, yp vbtnGuiCancel gGuiCancel, %lGuiClose% ; Close until changes occur - Button2
-Gui, 1:Font, s6 w400, Verdana
-GuiCenterButtons(lGuiFullTitle, 50, 30, 40, -80, "btnGuiSave", "btnGuiCancel")
+Gui, 1:Add, Button, vbtnGuiSave Disabled Default gGuiSave x0 y+1, %lGuiSave% ; Button1
+Gui, 1:Add, Button, vbtnGuiCancel gGuiCancel x+1 yp, %lGuiClose% ; Close until changes occur - Button2
 
-Gui, 1:Add, Picture, x490 yp+13 gGuiAbout Section, %strTempDir%\about-32.png ; Static25
-Gui, 1:Add, Picture, x550 yp gGuiHelp, %strTempDir%\help-32.png ; Static26
 if !(blnDonor)
 {
 	strDonateButtons := "thumbs_up|solutions|handshake|conference|gift"
 	StringSplit, arrDonateButtons, strDonateButtons, |
 	Random, intDonateButton, 1, 5
 
-	Gui, 1:Add, Picture, xm+20 yp gGuiDonate, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png" ; Static27
+	Gui, 1:Add, Picture, vpicGuiDonate gGuiDonate x0 y+1, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png" ; Static27
+	Gui, 1:Font, s8 w400, Arial ; button legend
+	Gui, 1:Add, Text, vlblGuiDonate center gGuiDonate x+1 yp, %lGuiDonate% ; Static30
 }
 
-Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, xs-20 ys+35 w68 center gGuiAbout, %lGuiAbout% ; Static28
-Gui, 1:Add, Text, xs+50 ys+35 w52 center gGuiHelp, %lGuiHelp% ; Static29
-if !(blnDonor)
-	Gui, 1:Add, Text, xm+10 ys+35 w52 center gGuiDonate, %lGuiDonate% ; Static30
+; GuiCenterButtons(lGuiFullTitle, 50, 30, 40, -80, "btnGuiSave", "btnGuiCancel")
+
+Gui, 1:Show, w613 
+return
+
+; GuiControlGet, p, Pos, btnGuiSave
+; ###_D(pX . " / " . pY . " / " . pH)
 
 return
 ;------------------------------------------------------------
@@ -5227,23 +5337,23 @@ else if (A_GuiEvent = "I")
 	intFavoriteSelected := LV_GetCount("Selected")
 	if (intFavoriteSelected > 1)
 	{
-		GuiControl, , lblEditFavorite, % lGuiMove . " (" . intFavoriteSelected . ")"
-		GuiControl, +gGuiMoveMultipleFavorites, lblEditFavorite
-		GuiControl, +gGuiMoveMultipleFavorites, picEditFavorite
-		GuiControl, , lblRemoveFavorite, % lGuiRemoveFavorite . " (" . intFavoriteSelected . ")"
-		GuiControl, +gGuiRemoveMultipleFavorites, lblRemoveFavorite
-		GuiControl, +gGuiRemoveMultipleFavorites, picRemoveFavorite
+		GuiControl, , lblGuiEditFavorite, % lGuiMove . " (" . intFavoriteSelected . ")"
+		GuiControl, +gGuiMoveMultipleFavorites, lblGuiEditFavorite
+		GuiControl, +gGuiMoveMultipleFavorites, picGuiEditFavorite
+		GuiControl, , lblGuiRemoveFavorite, % lGuiRemoveFavorite . " (" . intFavoriteSelected . ")"
+		GuiControl, +gGuiRemoveMultipleFavorites, lblGuiRemoveFavorite
+		GuiControl, +gGuiRemoveMultipleFavorites, picGuiRemoveFavorite
 		GuiControl, +gGuiMoveMultipleFavoritesUp, picMoveFavoriteUp
 		GuiControl, +gGuiMoveMultipleFavoritesDown, picMoveFavoriteDown
 	}
 	else
 	{
-		GuiControl, , lblEditFavorite, %lGuiEditFavorite%
-		GuiControl, +gGuiEditFavorite, lblEditFavorite
-		GuiControl, +gGuiEditFavorite, picEditFavorite
-		GuiControl, , lblRemoveFavorite, %lGuiRemoveFavorite%
-		GuiControl, +gGuiRemoveFavorite, lblRemoveFavorite
-		GuiControl, +gGuiRemoveFavorite, picRemoveFavorite
+		GuiControl, , lblGuiEditFavorite, %lGuiEditFavorite%
+		GuiControl, +gGuiEditFavorite, lblGuiEditFavorite
+		GuiControl, +gGuiEditFavorite, picGuiEditFavorite
+		GuiControl, , lblGuiRemoveFavorite, %lGuiRemoveFavorite%
+		GuiControl, +gGuiRemoveFavorite, lblGuiRemoveFavorite
+		GuiControl, +gGuiRemoveFavorite, picGuiRemoveFavorite
 		GuiControl, +gGuiMoveFavoriteUp, picMoveFavoriteUp
 		GuiControl, +gGuiMoveFavoriteDown, picMoveFavoriteDown
 	}
@@ -7853,7 +7963,7 @@ GuiCenterButtons(strWindow, intInsideHorizontalMargin := 10, intInsideVerticalMa
 ;------------------------------------------------------------
 {
 	DetectHiddenWindows, On
-	Gui, Show, Hide
+	Gui, Show, Hide ; ### why?
 	WinGetPos, , , intWidth, , %strWindow%
 
 	intWidth := intWidth + intLeftRightOffset
