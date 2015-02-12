@@ -2,7 +2,10 @@
 Bug:
 
 To-do:
-
+- check GuiCenterButtons(lGuiFullTitle, 50, 30, 40, -80, "btnGuiSave", "btnGuiCancel")
+- update mouseover ids
+- save Settings Gui size on quit
+- restore Settings Gui size on load
 */
 ;===============================================
 /*
@@ -741,6 +744,7 @@ Gosub, InitSystemArrays
 Gosub, InitLanguage
 Gosub, InitLanguageArrays
 Gosub, InitSpecialFolders
+Gosub, InitGuiControls
 Gosub, LoadIniFile
 if (blnDiagMode)
 	Gosub, InitDiagMode
@@ -792,7 +796,7 @@ DllCall("CreateMutex", "uint", 0, "int", false, "str", strAppName . "Mutex")
 
 
 ; ### only when debugging Gui
-Gosub, GuiShow
+; Gosub, GuiShow
 ; Gosub, GuiOptions
 ; Gosub, GuiAddFavorite
 ; Gosub, GuiAddFromPopup
@@ -5005,8 +5009,58 @@ Time2Donate(intStartups, blnDonor)
 ; MAIN GUI
 ;========================================================================================================================
 
-InsertGuiControlPos(strControlName, intX, intY, blnCenter := false)
-; InsertGuiControlPos(strControlName, intX, intY, intW := "", intH := "", blnCenter := false)
+;------------------------------------------------------------
+InitGuiControls:
+;------------------------------------------------------------
+
+objGuiControls := Object()
+
+InsertGuiControlPos("lnkGuiDropHelpClicked",	 -88, -130)
+InsertGuiControlPos("lnkGuiHotkeysHelpClicked",	  40, -130)
+
+InsertGuiControlPos("picGuiOptions",			 -44,   10, true) ; true = center
+InsertGuiControlPos("picGuiAddFavorite",		 -44,  122, true)
+InsertGuiControlPos("picGuiEditFavorite",		 -44,  199, true)
+InsertGuiControlPos("picGuiRemoveFavorite",		 -44,  274, true)
+InsertGuiControlPos("picGuiGroupsManage",		 -44, -150, true, true) ; true = center, true = draw
+InsertGuiControlPos("picGuiDonate",				  50,  -62, true, true)
+InsertGuiControlPos("picGuiHelp",				 -44,  -62, true, true)
+InsertGuiControlPos("picGuiAbout",				-104,  -62, true, true)
+
+InsertGuiControlPos("picAddColumnBreak",		  10,  230)
+InsertGuiControlPos("picAddSeparator",			  10,  200)
+InsertGuiControlPos("picMoveFavoriteDown",		  10,  170)
+InsertGuiControlPos("picMoveFavoriteUp",		  10,  140)
+InsertGuiControlPos("picPreviousMenu",			  10,   84)
+InsertGuiControlPos("picSortFavorites",			  10, -165)
+InsertGuiControlPos("picUpMenu",				  25,   84)
+
+InsertGuiControlPos("btnGuiSave",				   0,  -90)				
+InsertGuiControlPos("btnGuiCancel",				   0,  -90)
+
+InsertGuiControlPos("drpMenusList",				  40,   84)
+
+InsertGuiControlPos("lblGuiDonate",				  50,  -20, true)
+InsertGuiControlPos("lblGuiAbout",				-104,  -20, true)
+InsertGuiControlPos("lblGuiHelp",				 -44,  -20, true)
+InsertGuiControlPos("lblAppName",				  10,   10)
+InsertGuiControlPos("lblAppTagLine",			  10,   42)
+InsertGuiControlPos("lblGuiAddFavorite",		 -44,  172, true)
+InsertGuiControlPos("lblGuiEditFavorite",		 -44,  249, true)
+InsertGuiControlPos("lblGuiOptions",			 -44,   45, true)
+InsertGuiControlPos("lblGuiRemoveFavorite",		 -44,  324, true)
+InsertGuiControlPos("lblSubmenuDropdownLabel",	  40,   66)
+InsertGuiControlPos("lblGuiGroupsManage",		 -44,  -95, true)
+
+InsertGuiControlPos("lvFavoritesList",			  40,  115)
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+InsertGuiControlPos(strControlName, intX, intY, blnCenter := false, blnDraw := false)
+;------------------------------------------------------------
 {
 	global objGuiControls
 
@@ -5014,128 +5068,76 @@ InsertGuiControlPos(strControlName, intX, intY, blnCenter := false)
 	objGuiControl.Name := strControlName
 	objGuiControl.X := intX
 	objGuiControl.Y := intY
-	; objGuiControl.W := intW
-	; objGuiControl.H := intH
 	objGuiControl.Center := blnCenter
+	objGuiControl.Draw := blnDraw
 	
 	objGuiControls.Insert(objGuiControl)
 }
+;------------------------------------------------------------
 
 
 ;------------------------------------------------------------
 GuiSize:
+;------------------------------------------------------------
 
 if A_EventInfo = 1  ; The window has been minimized.  No action needed.
     return
 
-; ###_D(A_GuiWidth . " / " . A_GuiHeight)
-intGuiW := (A_GuiWidth < 600 ? 600 : A_GuiWidth)
-intGuiH := (A_GuiHeight < 500 ? 500 : A_GuiHeight)
-; ###_D(intGuiW . " / " . A_GuiHeight)
+intListW := A_GuiWidth - 40 - 88
+intListH := A_GuiHeight - 115 - 132
+
+intButtonSpacing := (intListW - (100 * 2)) // 3
 
 for intIndex, objGuiControl in objGuiControls
 {
 	intX := objGuiControl.X
 	intY := objGuiControl.Y
-	; intH := objGuiControl.H
-	; intW := objGuiControl.W
 
-	; if (objGuiControl.Name = "picGuiGroupsManage")
-	;	###_D(intX . "/" . intY, true)
 	if (intX < 0)
-		intX:= intGuiW + intX
+		intX:= A_GuiWidth + intX
 	if (intY < 0)
-		intY := intGuiH + intY
-	; if (objGuiControl.Name = "picGuiGroupsManage")
-	;	###_D(intX . "/" . intY, true)
+		intY := A_GuiHeight + intY
 
 	if (objGuiControl.Center)
 	{
-		intXavant := intX
 		GuiControlGet, arrPos, Pos, % objGuiControl.Name
 		intX := intX - (arrPosW // 2) ; Floor divide
-		; ###_D("objGuiControl.Name: " . objGuiControl.Name . "`narrPosW: " . arrPosW . "`nintXavant: " . intXavant . "`nintX: " . intX)
 	}
-	GuiControl, 1:Move, % objGuiControl.Name
-		, % "x" . intX 
-		.  " y" . intY
-		; . (intW = "" ? "" : " w" . intW) 
-		; . (intH = "" ? "" : " h" . intH)
-		
-	; ToolTip, % objGuiControl.Name
-	; Sleep, 250
-}
-ToolTip
 
-intListW := intGuiW - 40 - 88
-intListH := intGuiH - 115 - 132
-/*
-###_D(""
-	. "intGuiW: " . intGuiW . "`n"
-	. "intGuiH: " . intGuiH . "`n"
-	. "intListW: " . intListW . "`n"
-	. "intListH: " . intListH . "`n"
-	. "")
-*/
+	if (objGuiControl.Name = "lnkGuiDropHelpClicked")
+	{
+		GuiControlGet, arrPos, Pos, lnkGuiDropHelpClicked
+		intX := intX - arrPosW
+	}
+	else if (objGuiControl.Name = "btnGuiSave")
+		intX := 40 + intButtonSpacing
+	else if (objGuiControl.Name = "btnGuiCancel")
+		intX := 40 + (2 * intButtonSpacing) + 100
+		
+	GuiControl, % "1:Move" . (objGuiControl.Draw ? "Draw" : ""), % objGuiControl.Name, % "x" . intX	.  " y" . intY
+		
+}
+
+intListW := A_GuiWidth - 40 - 88
+intListH := A_GuiHeight - 115 - 132
+
 GuiControl, 1:Move, lvFavoritesList, w%intListW% h%intListH%
 GuiControl, 1:Move, drpMenusList, w%intListW%
-
-GuiControlGet, arrPos, Pos, lnkGuiDropHelpClicked
-GuiControl, 1:Move, lnkGuiDropHelpClicked, % "x" . (arrPosX - arrPosW)
 
 return
 ;------------------------------------------------------------
 
 
-; ####
 ;------------------------------------------------------------
 BuildGui:
 ;------------------------------------------------------------
 
-objGuiControls := Object()
-
-InsertGuiControlPos("picGuiOptions",			 -44,   10, true) ; true = center
-InsertGuiControlPos("picGuiAddFavorite",		 -44,  122, true)
-InsertGuiControlPos("picGuiEditFavorite",		 -44,  199, true)
-InsertGuiControlPos("picGuiRemoveFavorite",		 -44,  274, true)
-InsertGuiControlPos("picGuiGroupsManage",		 -44, -150, true)
-
-InsertGuiControlPos("picAddColumnBreak",		  10,  230)
-InsertGuiControlPos("picAddSeparator",			  10,  200)
-InsertGuiControlPos("picGuiDonate",				  50,  -62, true)
-InsertGuiControlPos("picMoveFavoriteDown",		  10,  170)
-InsertGuiControlPos("picMoveFavoriteUp",		  10,  140)
-InsertGuiControlPos("picPreviousMenu",			  10,   84)
-InsertGuiControlPos("picSortFavorites",			  10, -165)
-InsertGuiControlPos("picUpMenu",				  25,   84)
-InsertGuiControlPos("picGuiAbout",				-114,  -62, true)
-InsertGuiControlPos("picGuiHelp",				 -54,  -62, true)
-
-InsertGuiControlPos("btnGuiCancel",				  50, -80)
-InsertGuiControlPos("btnGuiSave",				 150, -80)				
-InsertGuiControlPos("drpMenusList",				  40,   84)
-InsertGuiControlPos("lblAppName",				  10,   10)
-InsertGuiControlPos("lblAppTagLine",			  10,   42)
-InsertGuiControlPos("lblGuiAbout",				-114,  -20, true)
-InsertGuiControlPos("lblGuiAddFavorite",		 -44,  172, true)
-InsertGuiControlPos("lblGuiDonate",				  50,  -20, true)
-InsertGuiControlPos("lblGuiEditFavorite",		 -44,  249, true)
-InsertGuiControlPos("lblGuiGroupsManage",		 -44,  -95, true)
-InsertGuiControlPos("lblGuiHelp",				 -54,  -20, true)
-InsertGuiControlPos("lblGuiOptions",			 -44,   45, true)
-InsertGuiControlPos("lblGuiRemoveFavorite",		 -44,  324, true)
-InsertGuiControlPos("lblSubmenuDropdownLabel",	  40,   66)
-InsertGuiControlPos("lnkGuiHotkeysHelpClicked",	  40, -130)
-InsertGuiControlPos("lnkGuiDropHelpClicked",	 -88, -130)
-InsertGuiControlPos("lvFavoritesList",			  40,  115)
-
 lGuiFullTitle := L(lGuiTitle, strAppName, strAppVersion)
-Gui, 1:New, +Resize, %lGuiFullTitle%
-; Gui, Margin, 10, 10
+Gui, 1:New, +Resize +MinSize620x500, %lGuiFullTitle%
+
 if (blnUseColors)
 	Gui, 1:Color, %strGuiWindowColor%
 
-; Gui, 1:Font, s12 w700 c%strTextColor%, Verdana
 Gui, 1:Font, % "s12 w700 " . (blnUseColors ? "c" . strTextColor : ""), Verdana
 Gui, 1:Add, Text, vlblAppName x0 y0, %strAppName% %strAppVersion%
 Gui, 1:Font, s9 w400, Verdana
@@ -5170,7 +5172,7 @@ Gui, 1:Font, s8 w400 italic, Verdana
 Gui, 1:Add, Link, vlnkGuiHotkeysHelpClicked gGuiHotkeysHelpClicked x0 y+1, <a>%lGuiHotkeysHelp%</a> ; center option not working SysLink1
 Gui, 1:Add, Link, vlnkGuiDropHelpClicked gGuiDropFilesHelpClicked right x+1 yp, <a>%lGuiDropFilesHelp%</a>
 
-Gui, 1:Font, s8 w400, Verdana
+Gui, 1:Font, s8 w400 normal, Verdana
 Gui, 1:Add, DropDownList, vdrpMenusList gGuiMenusListChanged x0 y+1
 
 ; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
@@ -5184,8 +5186,8 @@ Loop, 4
  	LV_ModifyCol(A_Index + 2, 0) ; hide 3rd-6th columns
 
 Gui, 1:Font, s9 w600, Verdana
-Gui, 1:Add, Button, vbtnGuiSave Disabled Default gGuiSave x0 y+1, %lGuiSave% ; Button1
-Gui, 1:Add, Button, vbtnGuiCancel gGuiCancel x+1 yp, %lGuiClose% ; Close until changes occur - Button2
+Gui, 1:Add, Button, vbtnGuiSave Disabled Default gGuiSave x200 y400 w100 h50, %lGuiSave% ; Button1
+Gui, 1:Add, Button, vbtnGuiCancel gGuiCancel x350 yp w100 h50, %lGuiClose% ; Close until changes occur - Button2
 
 if !(blnDonor)
 {
@@ -5195,16 +5197,10 @@ if !(blnDonor)
 
 	Gui, 1:Add, Picture, vpicGuiDonate gGuiDonate x0 y+1, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png" ; Static27
 	Gui, 1:Font, s8 w400, Arial ; button legend
-	Gui, 1:Add, Text, vlblGuiDonate center gGuiDonate x+1 yp, %lGuiDonate% ; Static30
+	Gui, 1:Add, Text, vlblGuiDonate center gGuiDonate x0 y+1, %lGuiDonate% ; Static30
 }
 
-; GuiCenterButtons(lGuiFullTitle, 50, 30, 40, -80, "btnGuiSave", "btnGuiCancel")
-
-Gui, 1:Show, w613 
-return
-
-; GuiControlGet, p, Pos, btnGuiSave
-; ###_D(pX . " / " . pY . " / " . pH)
+Gui, 1:Show, Hide w620 h500
 
 return
 ;------------------------------------------------------------
@@ -5817,7 +5813,7 @@ GuiShow:
 strCurrentMenu := lMainMenuName
 Gosub, BackupMenuObjects
 Gosub, LoadSettingsToGui
-Gui, 1:Show, AutoSize Center
+Gui, 1:Show
 
 return
 ;------------------------------------------------------------
