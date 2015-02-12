@@ -2,8 +2,6 @@
 Bug:
 
 To-do:
-- check GuiCenterButtons(lGuiFullTitle, 50, 30, 40, -80, "btnGuiSave", "btnGuiCancel")
-- update mouseover ids
 - save Settings Gui size on quit
 - restore Settings Gui size on load
 */
@@ -22,6 +20,8 @@ To-do:
 
 
 	Version: 4.2.5 (2015-02-??)
+	* make the Settings window resizable
+	* adjust hand mouse pointer when hover clickable controls
 	
 	Version: 4.2.4 (2015-02-08)
 	* fix a version number in v4.2.3 causing an error in update checking
@@ -813,7 +813,7 @@ return
 #Include %A_ScriptDir%\FoldersPopup_LANG.ahk
 
 /*
-REMOVED IN v4.2.1 BECAUSE OF A SIDE EFFECTIN XL 2010
+REMOVED IN v4.2.1 BECAUSE OF A SIDE EFFECT IN XL 2010
 ; prevent double-click on some static control to overwrite the clipboard with the image URL (a windows "undesired feature")
 ; see http://www.autohotkey.com/board/topic/94962-doubleclick-on-gui-pictures-puts-their-path-in-your-clipboard/
 OnClipboardChange:
@@ -1922,10 +1922,17 @@ WM_MOUSEMOVE(wParam, lParam)
 		return
 
 	MouseGetPos, , , , strControl ; Static1, StaticN, Button1, ButtonN
-	StringReplace, strControl, strControl, Static
+	if InStr(strControl, "Static")
+	{
+		StringReplace, intControl, strControl, Static
+		; 3-23, 25-26
+		if (intControl < 3) or (intControl = 24) or (intControl > 26)
+			return
+	}
+	else if !InStr(strControl, "Button")
+		return
 
-	If InStr(".3.4.6.7.9.10.11.12.13.15.16.17.18.19.20.21.22.25.26.27.28.29.30.Button1.Button2.", "." . strControl . ".")
-		DllCall("SetCursor", "UInt", objCursor)
+	DllCall("SetCursor", "UInt", objCursor)
 
 	return
 }
@@ -2424,7 +2431,7 @@ CollectTCLists(objLists)
 			ClipBoard := ""
 			sleep, 50
 		}
-		SendMessage, 0x433, %cm_CopyTrgPathToClip%, , ,  ahk_id %strWindowId%
+		SendMessage, 0x433, %cm_CopyTrgPathToClip%, , , ahk_id %strWindowId%
 		ClipWait, 2, 1 ; wait up to 2 seconds for text (1) in the Clipboard
 		sleep, 10 ; wait 10 additional seconds to improve reliability
 		if StrLen(ClipBoard)
@@ -3852,7 +3859,7 @@ Gui, 3:Add, Text, ys x300, %lGuiGroupSaveRestoreOption%
 Gui, 3:Add, Radio, % "x+10 yp section vblnRadioAddWindows " . (blnReplaceWhenRestoringThisGroup ? "" : "checked"), %lGuiGroupSaveAddWindowsLabel%
 Gui, 3:Add, Radio, % "xs y+5 vblnRadioReplaceWindows " . (blnReplaceWhenRestoringThisGroup ? "checked" : ""), %lGuiGroupSaveReplaceWindowsLabel%
 
-GuiCenterButtons(strGuiGroupSaveEditTitle, 10, 5, 20, , "btnGroupSave", "btnGroupSaveCancel")
+GuiCenterButtons(strGuiGroupSaveEditTitle, 10, 5, 20, "btnGroupSave", "btnGroupSaveCancel")
 
 GuiControl, Focus, strGroupSaveName
 if (A_ThisLabel = "GuiGroupEditFromManage")
@@ -5015,6 +5022,8 @@ InitGuiControls:
 
 objGuiControls := Object()
 
+; Order of controls important to avoid drawgins gliches when resizing
+
 InsertGuiControlPos("lnkGuiDropHelpClicked",	 -88, -130)
 InsertGuiControlPos("lnkGuiHotkeysHelpClicked",	  40, -130)
 
@@ -5138,41 +5147,43 @@ Gui, 1:New, +Resize +MinSize620x500, %lGuiFullTitle%
 if (blnUseColors)
 	Gui, 1:Color, %strGuiWindowColor%
 
+; Order of controls important to avoid drawgins gliches when resizing
+
 Gui, 1:Font, % "s12 w700 " . (blnUseColors ? "c" . strTextColor : ""), Verdana
 Gui, 1:Add, Text, vlblAppName x0 y0, %strAppName% %strAppVersion%
 Gui, 1:Font, s9 w400, Verdana
 Gui, 1:Add, Text, vlblAppTagLine, %lAppTagline%
 
-Gui, 1:Add, Picture, vpicGuiAddFavorite gGuiAddFavorite, %strTempDir%\add_property-48.png ; Static15
-Gui, 1:Add, Picture, vpicGuiEditFavorite gGuiEditFavorite x+1 yp, %strTempDir%\edit_property-48.png ; Static17
-Gui, 1:Add, Picture, vpicGuiRemoveFavorite gGuiRemoveFavorite x+1 yp, %strTempDir%\delete_property-48.png ; Static19
-Gui, 1:Add, Picture, vpicGuiGroupsManage gGuiGroupsManage x+1 yp, %strTempDir%\channel_mosaic-48.png ; Static21
-Gui, 1:Add, Picture, vpicGuiOptions gGuiOptions x+1 yp, %strTempDir%\settings-32.png ; Static3
-Gui, 1:Add, Picture, vpicPreviousMenu gGuiGotoPreviousMenu hidden x+1 yp, %strTempDir%\left-12.png ; Static6
-Gui, 1:Add, Picture, vpicUpMenu gGuiGotoUpMenu hidden x+1 yp, %strTempDir%\up-12.png ; Static7
-Gui, 1:Add, Picture, vpicMoveFavoriteUp gGuiMoveFavoriteUp x+1 yp, %strTempDir%\up_circular-26.png ; 9
-Gui, 1:Add, Picture, vpicMoveFavoriteDown gGuiMoveFavoriteDown x+1 yp, %strTempDir%\down_circular-26.png ; Static10
-Gui, 1:Add, Picture, vpicAddSeparator gGuiAddSeparator x+1 yp, %strTempDir%\separator-26.png ; Static11
-Gui, 1:Add, Picture, vpicAddColumnBreak gGuiAddColumnBreak x+1 yp, %strTempDir%\column-26.png ; Static12
-Gui, 1:Add, Picture, vpicSortFavorites gGuiSortFavorites x+1 yp, %strTempDir%\generic_sorting2-26-grey.png ; Static13
-Gui, 1:Add, Picture, vpicGuiAbout gGuiAbout x+1 yp, %strTempDir%\about-32.png ; Static25
-Gui, 1:Add, Picture, vpicGuiHelp gGuiHelp x+1 yp, %strTempDir%\help-32.png ; Static26
+Gui, 1:Add, Picture, vpicGuiAddFavorite gGuiAddFavorite, %strTempDir%\add_property-48.png ; Static3
+Gui, 1:Add, Picture, vpicGuiEditFavorite gGuiEditFavorite x+1 yp, %strTempDir%\edit_property-48.png ; Static4
+Gui, 1:Add, Picture, vpicGuiRemoveFavorite gGuiRemoveFavorite x+1 yp, %strTempDir%\delete_property-48.png ; Static5
+Gui, 1:Add, Picture, vpicGuiGroupsManage gGuiGroupsManage x+1 yp, %strTempDir%\channel_mosaic-48.png ; Static6
+Gui, 1:Add, Picture, vpicGuiOptions gGuiOptions x+1 yp, %strTempDir%\settings-32.png ; Static7
+Gui, 1:Add, Picture, vpicPreviousMenu gGuiGotoPreviousMenu hidden x+1 yp, %strTempDir%\left-12.png ; Static8
+Gui, 1:Add, Picture, vpicUpMenu gGuiGotoUpMenu hidden x+1 yp, %strTempDir%\up-12.png ; Static9
+Gui, 1:Add, Picture, vpicMoveFavoriteUp gGuiMoveFavoriteUp x+1 yp, %strTempDir%\up_circular-26.png ; Static10
+Gui, 1:Add, Picture, vpicMoveFavoriteDown gGuiMoveFavoriteDown x+1 yp, %strTempDir%\down_circular-26.png ; Static11
+Gui, 1:Add, Picture, vpicAddSeparator gGuiAddSeparator x+1 yp, %strTempDir%\separator-26.png ; Static12
+Gui, 1:Add, Picture, vpicAddColumnBreak gGuiAddColumnBreak x+1 yp, %strTempDir%\column-26.png ; Static13
+Gui, 1:Add, Picture, vpicSortFavorites gGuiSortFavorites x+1 yp, %strTempDir%\generic_sorting2-26-grey.png ; Static14
+Gui, 1:Add, Picture, vpicGuiAbout gGuiAbout x+1 yp, %strTempDir%\about-32.png ; Static15
+Gui, 1:Add, Picture, vpicGuiHelp gGuiHelp x+1 yp, %strTempDir%\help-32.png ; Static16
 
 Gui, 1:Font, s8 w400, Arial ; button legend
-Gui, 1:Add, Text, vlblGuiOptions gGuiOptions x0 y+20, %lGuiOptions% ; Static4
-Gui, 1:Add, Text, vlblSubmenuDropdownLabel x+1 yp, %lGuiSubmenuDropdownLabel%
-Gui, 1:Add, Text, vlblGuiAddFavorite center gGuiAddFavorite x+1 yp, %lGuiAddFavorite% ; Static16
-Gui, 1:Add, Text, vlblGuiEditFavorite center gGuiEditFavorite x+1 yp, %lGuiEditFavorite% ; Static18
+Gui, 1:Add, Text, vlblGuiOptions gGuiOptions x0 y+20, %lGuiOptions% ; Static17
+Gui, 1:Add, Text, vlblGuiAddFavorite center gGuiAddFavorite x+1 yp, %lGuiAddFavorite% ; Static18
+Gui, 1:Add, Text, vlblGuiEditFavorite center gGuiEditFavorite x+1 yp, %lGuiEditFavorite% ; Static19
 Gui, 1:Add, Text, vlblGuiRemoveFavorite center gGuiRemoveFavorite x+1 yp, %lGuiRemoveFavorite% ; Static20
-Gui, 1:Add, Text, vlblGuiGroupsManage center gGuiGroupsManage x+1 yp, %lDialogGroups% ; Static22
-Gui, 1:Add, Text, vlblGuiAbout center gGuiAbout x+1 yp, %lGuiAbout% ; Static28
-Gui, 1:Add, Text, vlblGuiHelp center gGuiHelp x+1 yp, %lGuiHelp% ; Static29
+Gui, 1:Add, Text, vlblGuiGroupsManage center gGuiGroupsManage x+1 yp, %lDialogGroups% ; Static21
+Gui, 1:Add, Text, vlblGuiAbout center gGuiAbout x+1 yp, %lGuiAbout% ; Static22
+Gui, 1:Add, Text, vlblGuiHelp center gGuiHelp x+1 yp, %lGuiHelp% ; Static23
 
 Gui, 1:Font, s8 w400 italic, Verdana
 Gui, 1:Add, Link, vlnkGuiHotkeysHelpClicked gGuiHotkeysHelpClicked x0 y+1, <a>%lGuiHotkeysHelp%</a> ; center option not working SysLink1
-Gui, 1:Add, Link, vlnkGuiDropHelpClicked gGuiDropFilesHelpClicked right x+1 yp, <a>%lGuiDropFilesHelp%</a>
+Gui, 1:Add, Link, vlnkGuiDropHelpClicked gGuiDropFilesHelpClicked right x+1 yp, <a>%lGuiDropFilesHelp%</a> ; SysLink2
 
 Gui, 1:Font, s8 w400 normal, Verdana
+Gui, 1:Add, Text, vlblSubmenuDropdownLabel x+1 yp, %lGuiSubmenuDropdownLabel%
 Gui, 1:Add, DropDownList, vdrpMenusList gGuiMenusListChanged x0 y+1
 
 ; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
@@ -5195,9 +5206,9 @@ if !(blnDonor)
 	StringSplit, arrDonateButtons, strDonateButtons, |
 	Random, intDonateButton, 1, 5
 
-	Gui, 1:Add, Picture, vpicGuiDonate gGuiDonate x0 y+1, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png" ; Static27
+	Gui, 1:Add, Picture, vpicGuiDonate gGuiDonate x0 y+1, % strTempDir . "\" . arrDonateButtons%intDonateButton% . "-32.png" ; Static25
 	Gui, 1:Font, s8 w400, Arial ; button legend
-	Gui, 1:Add, Text, vlblGuiDonate center gGuiDonate x0 y+1, %lGuiDonate% ; Static30
+	Gui, 1:Add, Text, vlblGuiDonate center gGuiDonate x0 y+1, %lGuiDonate% ; Static26
 }
 
 Gui, 1:Show, Hide w620 h500
@@ -5464,7 +5475,7 @@ Gui, 2:Add, Text, x10 y+10 w%intWidth%, % L(lDialogGroupManageCreatingPrompt, lD
 Gui, 2:Add, Button, x10 y+10 vbtnGroupManageNew gGuiGroupManageNew, %lDialogGroupNew%
 GuiControl, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Save group menu if no Explorer
 	, btnGroupManageNew
-GuiCenterButtons(L(lDialogGroupManageGroupsTitle, strAppName, strAppVersion), , , , , "btnGroupManageNew")
+GuiCenterButtons(L(lDialogGroupManageGroupsTitle, strAppName, strAppVersion), , , , "btnGroupManageNew")
 if !(intExplorersIndex)
 	Gui, 2:Add, Text, x10 y+10 w%intWidth%, %lDialogGroupManageCannotSave%
 
@@ -5477,10 +5488,10 @@ Gui, 2:Add, DropDownList, x10 y+10 w%intWidth% vdrpGroupsList, %lDialogGroupSele
 Gui, 2:Add, Button, x10 y+10 vbtnGroupManageLoad  gGuiGroupManageLoad, %lDialogGroupLoad%
 Gui, 2:Add, Button, x10 yp vbtnGroupManageEdit gGuiGroupManageEdit, %lDialogGroupEdit%
 Gui, 2:Add, Button, x10 yp vbtnGroupManageDelete gGuiGroupManageDelete, %lDialogGroupDelete%
-GuiCenterButtons(L(lDialogGroupManageGroupsTitle, strAppName, strAppVersion), , , , , "btnGroupManageLoad", "btnGroupManageEdit", "btnGroupManageDelete")
+GuiCenterButtons(L(lDialogGroupManageGroupsTitle, strAppName, strAppVersion), , , , "btnGroupManageLoad", "btnGroupManageEdit", "btnGroupManageDelete")
 
 Gui, 2:Add, Button, x+10 y+30 vbtnGroupManageClose g2GuiClose h33, %lGui2Close%
-GuiCenterButtons(L(lDialogGroupManageGroupsTitle, strAppName, strAppVersion), , , , , "btnGroupManageClose")
+GuiCenterButtons(L(lDialogGroupManageGroupsTitle, strAppName, strAppVersion), , , , "btnGroupManageClose")
 Gui, 2:Add, Text, x10, %A_Space%
 
 Gui, 2:Show, AutoSize Center
@@ -6205,13 +6216,13 @@ if (A_ThisLabel = "GuiEditFavorite")
 {
 	Gui, 2:Add, Button, y+20 vbtnEditFolderSave gGuiEditFavoriteSave default, %lDialogSave%
 	Gui, 2:Add, Button, yp vbtnEditFolderCancel gGuiEditFavoriteCancel, %lGuiCancel%
-	GuiCenterButtons(L(lDialogAddEditFavoriteTitle, lDialogEdit, strAppName, strAppVersion), 10, 5, 20, , "btnEditFolderSave", "btnEditFolderCancel")
+	GuiCenterButtons(L(lDialogAddEditFavoriteTitle, lDialogEdit, strAppName, strAppVersion), 10, 5, 20, "btnEditFolderSave", "btnEditFolderCancel")
 }
 else
 {
 	Gui, 2:Add, Button, y+20 vbtnAddFolderAdd gGuiAddFavoriteSave default, %lDialogAdd%
 	Gui, 2:Add, Button, yp vbtnAddFolderCancel gGuiAddFavoriteCancel, %lGuiCancel%
-	GuiCenterButtons(L(lDialogAddEditFavoriteTitle, lDialogAdd, strAppName, strAppVersion), 10, 5, 20, , "btnAddFolderAdd", "btnAddFolderCancel")
+	GuiCenterButtons(L(lDialogAddEditFavoriteTitle, lDialogAdd, strAppName, strAppVersion), 10, 5, 20, "btnAddFolderAdd", "btnAddFolderCancel")
 }
 
 Gosub, GuiFavoriteIconDefault
@@ -6242,7 +6253,7 @@ Gui, 2:Add, DropDownList, x10 w300 vdrpParentMenu, % BuildMenuTreeDropDown(lMain
 
 Gui, 2:Add, Button, y+20 vbtnMoveFavoritesSave gGuiMoveMultipleFavoritesSave, %lGuiMove%
 Gui, 2:Add, Button, yp vbtnMoveFavoritesCancel gGuiEditFavoriteCancel, %lGuiCancel%
-GuiCenterButtons(L(lDialogMoveFavoritesTitle, strAppName, strAppVersion), 10, 5, 20, , "btnMoveFavoritesSave", "btnMoveFavoritesCancel")
+GuiCenterButtons(L(lDialogMoveFavoritesTitle, strAppName, strAppVersion), 10, 5, 20, "btnMoveFavoritesSave", "btnMoveFavoritesCancel")
 
 GuiControl, 2:Focus, drpParentMenu
 Gui, 2:Show, AutoSize Center
@@ -6975,7 +6986,7 @@ GuiControl, , blnDirectoryOpusUseTabs, %blnDirectoryOpusUseTabs%
 Gui, 2:Font, s8 w700
 Gui, 2:Add, Link, y+15 x15, % L(lOptionsThirdPartyTitle, "Total Commander") . " (<a href=""http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/"">" . lGuiHelp . "</a>)"
 Gui, 2:Font
-Gui, 2:Add, Text, y+5 x15,  % L(lOptionsThirdPartyDetail, "Total Commander")
+Gui, 2:Add, Text, y+5 x15, % L(lOptionsThirdPartyDetail, "Total Commander")
 Gui, 2:Add, Text, y+10 x15, %lOptionsThirdPartyPrompt%
 Gui, 2:Add, Edit, x+10 yp w300 h20 vstrTotalCommanderPath, %strTotalCommanderPath%
 Gui, 2:Add, Button, x+10 yp vbtnSelectTCPath gButtonSelectTCPath, %lDialogBrowseButton%
@@ -7000,7 +7011,7 @@ GuiControlGet, arrTabPos, Pos, intOptionsTab
 Gui, 2:Add, Button, % "y" . arrTabPosY + arrTabPosH + 10. " vbtnOptionsSave gButtonOptionsSave Default", %lGuiSave%
 Gui, 2:Add, Button, yp vbtnOptionsCancel gButtonOptionsCancel, %lGuiCancel%
 Gui, 2:Add, Button, yp vbtnOptionsDonate gGuiDonate, %lDonateButton%
-GuiCenterButtons(L(lOptionsGuiTitle, strAppName, strAppVersion), 10, 5, 20, , "btnOptionsSave", "btnOptionsCancel", "btnOptionsDonate")
+GuiCenterButtons(L(lOptionsGuiTitle, strAppName, strAppVersion), 10, 5, 20, "btnOptionsSave", "btnOptionsCancel", "btnOptionsDonate")
 
 Gui, 2:Add, Text
 GuiControl, Focus, btnOptionsSave
@@ -7294,10 +7305,10 @@ if (intHotkeyType = 3)
 	Gui, 3:Add, DropDownList, % "y" . arrTopY + 50 . " x150 w200 vstrOptionsMouse gOptionsMouseChanged", % strMouseButtonsWithDefault%intIndex%
 
 Gui, 3:Add, Button, % "x10 y" . arrTopY + 100 . " vbtnResetHotkey gButtonResetHotkey" . intIndex, %lGuiResetDefault%
-GuiCenterButtons(L(lOptionsChangeHotkeyTitle, strAppName, strAppVersion), 10, 5, 20, , "btnResetHotkey")
+GuiCenterButtons(L(lOptionsChangeHotkeyTitle, strAppName, strAppVersion), 10, 5, 20, "btnResetHotkey")
 Gui, 3:Add, Button, y+20 x10 vbtnChangeHotkeySave gButtonChangeHotkeySave%intIndex%, %lGuiSave%
 Gui, 3:Add, Button, yp x+20 vbtnChangeHotkeyCancel gButtonChangeHotkeyCancel, %lGuiCancel%
-GuiCenterButtons(L(lOptionsChangeHotkeyTitle, strAppName, strAppVersion), 10, 5, 20, , "btnChangeHotkeySave", "btnChangeHotkeyCancel")
+GuiCenterButtons(L(lOptionsChangeHotkeyTitle, strAppName, strAppVersion), 10, 5, 20, "btnChangeHotkeySave", "btnChangeHotkeyCancel")
 
 Gui, 3:Add, Text
 GuiControl, Focus, btnChangeHotkeySave
@@ -7496,7 +7507,7 @@ Gui, 2:Font, s8 w400, Verdana
 
 Gui, 2:Add, Button, y+20 vbtnAboutDonate gGuiDonate, %lDonateButton%
 Gui, 2:Add, Button, yp vbtnAboutClose g2GuiClose vbtnAboutClose, %lGui2Close%
-GuiCenterButtons(L(lAboutTitle, strAppName, strAppVersion), 10, 5, 20, , "btnAboutDonate", "btnAboutClose")
+GuiCenterButtons(L(lAboutTitle, strAppName, strAppVersion), 10, 5, 20, "btnAboutDonate", "btnAboutClose")
 
 GuiControl, Focus, btnAboutClose
 Gui, 2:Show, AutoSize Center
@@ -7549,7 +7560,7 @@ Gui, 2:Add, Link, y+10 x130, <a href="http://code.jeanlalonde.ca/support-freewar
 
 Gui, 2:Font, s8 w400, Verdana
 Gui, 2:Add, Button, x175 y+20 g2GuiClose vbtnDonateClose, %lGui2Close%
-GuiCenterButtons(L(lDonateTitle, strAppName, strAppVersion), 10, 5, 20, , "btnDonateClose")
+GuiCenterButtons(L(lDonateTitle, strAppName, strAppVersion), 10, 5, 20, "btnDonateClose")
 
 GuiControl, Focus, btnDonateDefault
 Gui, 2:Show, AutoSize Center
@@ -7601,13 +7612,13 @@ Gui, 2:Tab, 1
 Gui, 2:Add, Link, w%intWidth%, % lHelpText1
 Gui, 2:Add, Link, w%intWidth%, % lHelpText2
 Gui, 2:Add, Button, vbtnNext1 gNextHelpButtonClicked, %lDialogTabNext%
-GuiCenterButtons(L(lHelpTitle, strAppName, strAppVersion), 10, 5, 20, , "btnNext1")
+GuiCenterButtons(L(lHelpTitle, strAppName, strAppVersion), 10, 5, 20, "btnNext1")
 
 Gui, 2:Tab, 2
 Gui, 2:Add, Link, w%intWidth%, % lHelpText3
 Gui, 2:Add, Link, w%intWidth%, % lHelpText4
 Gui, 2:Add, Button, vbtnNext2 gNextHelpButtonClicked, %lDialogTabNext%
-GuiCenterButtons(L(lHelpTitle, strAppName, strAppVersion), 10, 5, 20, , "btnNext2")
+GuiCenterButtons(L(lHelpTitle, strAppName, strAppVersion), 10, 5, 20, "btnNext2")
 
 Gui, 2:Tab, 3
 Gui, 2:Add, Link, w%intWidth%, % lHelpText5
@@ -7618,7 +7629,7 @@ Gui, 2:Tab
 GuiControlGet, arrTabPos, Pos, intHelpTab
 Gui, 2:Add, Button, % "x180 y" . arrTabPosY + arrTabPosH + 10. " vbtnHelpDonate gGuiDonate", %lDonateButton%
 Gui, 2:Add, Button, x+80 yp g2GuiClose vbtnHelpClose, %lGui2Close%
-GuiCenterButtons(L(lHelpTitle, strAppName, strAppVersion), 10, 5, 20, , "btnHelpDonate", "btnHelpClose")
+GuiCenterButtons(L(lHelpTitle, strAppName, strAppVersion), 10, 5, 20, "btnHelpDonate", "btnHelpClose")
 
 GuiControl, Focus, btnHelpClose
 Gui, 2:Show, AutoSize Center
@@ -7954,7 +7965,7 @@ DiagGroupLoad(strName, strData)
 
 
 ;------------------------------------------------------------
-GuiCenterButtons(strWindow, intInsideHorizontalMargin := 10, intInsideVerticalMargin := 0, intDistanceBetweenButtons := 20, intLeftRightOffset := 0, arrControls*)
+GuiCenterButtons(strWindow, intInsideHorizontalMargin := 10, intInsideVerticalMargin := 0, intDistanceBetweenButtons := 20, arrControls*)
 ; This is a variadic function. See: http://ahkscript.org/docs/Functions.htm#Variadic
 ;------------------------------------------------------------
 {
@@ -7962,7 +7973,6 @@ GuiCenterButtons(strWindow, intInsideHorizontalMargin := 10, intInsideVerticalMa
 	Gui, Show, Hide ; ### why?
 	WinGetPos, , , intWidth, , %strWindow%
 
-	intWidth := intWidth + intLeftRightOffset
 	intMaxControlWidth := 0
 	intMaxControlHeight := 0
 	for intIndex, strControl in arrControls
