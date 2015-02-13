@@ -1,5 +1,6 @@
 /*
 Bug:
+- listview empty when loading maximized
 
 To-do:
 - save Settings Gui size on quit
@@ -22,6 +23,8 @@ To-do:
 	Version: 4.2.5 (2015-02-??)
 	* make the Settings window resizable
 	* adjust hand mouse pointer when hover clickable controls
+	* save Settings Gui size and maximized state to ini file on quit
+	* restore Settings Gui size and maximized state on load
 	
 	Version: 4.2.4 (2015-02-08)
 	* fix a version number in v4.2.3 causing an error in update checking
@@ -673,6 +676,7 @@ To-do:
 #SingleInstance force
 #KeyHistory 0
 ListLines, Off
+DetectHiddenWindows, On
 ComObjError(False) ; we will do our own error handling
 
 ; avoid error message when shortcut destination is missing
@@ -1086,6 +1090,8 @@ IniRead, intIconSize, %strIniFile%, Global, IconSize, 24
 IniRead, strGroups, %strIniFile%, Global, Groups, %A_Space% ; empty string if not found
 IniRead, blnCheck4Update, %strIniFile%, Global, Check4Update, 1
 IniRead, blnOpenMenuOnTaskbar, %strIniFile%, Global, OpenMenuOnTaskbar, 1
+IniRead, blnRememberSettingsPosition, %strIniFile%, Global, RememberSettingsPosition, 1
+IniRead, strSettingsPosition, %strIniFile%, Global, SettingsPosition, center w636 h538
 
 IniRead, blnDonor, %strIniFile%, Global, Donor, 0 ; Please, be fair. Don't cheat with this.
 if !(blnDonor)
@@ -1967,6 +1973,19 @@ AHK_NOTIFYICON(wParam, lParam)
 CleanUpBeforeExit:
 ;-----------------------------------------------------------
 
+if (blnRememberSettingsPosition)
+{
+	WinGetPos, intX, intY, intW, intH, %lGuiFullTitle%
+	WinGet, intMinMax, MinMax, %lGuiFullTitle%
+	if (intMinMax = 1)
+		strSettingsPosition := "center w636 h538 Maximize"
+	else
+		strSettingsPosition := "x" . intX . " y" . intY . " w" . intW . " h" . intH
+}
+else
+	strSettingsPosition := "center w636 h538"
+IniWrite, %strSettingsPosition%, %strIniFile%, Global, SettingsPosition
+
 FileRemoveDir, %strTempDir%, 1 ; Remove all files and subdirectories
 
 if (blnDiagMode)
@@ -2010,7 +2029,7 @@ Menu, Tray, Add, %lMenuHelp%, GuiHelp
 Menu, Tray, Add, %lMenuAbout%, GuiAbout
 Menu, Tray, Add, %lDonateMenu%, GuiDonate
 Menu, Tray, Add
-Menu, Tray, Add, % L(lMenuExitFoldersPopup, strAppName), ExitFoldersPopup
+Menu, Tray, Add, % L(lMenuExitFoldersPopup, strAppName), CleanUpBeforeExit
 Menu, Tray, Default, % L(lMenuSettings, strAppName)
 if (blnUseColors)
 	Menu, Tray, Color, %strMenuBackgroundColor%
@@ -4847,15 +4866,6 @@ return
 
 
 ;------------------------------------------------------------
-ExitFoldersPopup:
-;------------------------------------------------------------
-
-ExitApp
-
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
 Check4Update:
 ;------------------------------------------------------------
 
@@ -5142,7 +5152,7 @@ BuildGui:
 ;------------------------------------------------------------
 
 lGuiFullTitle := L(lGuiTitle, strAppName, strAppVersion)
-Gui, 1:New, +Resize +MinSize620x500, %lGuiFullTitle%
+Gui, 1:New, +Resize +MinSize636x538, %lGuiFullTitle%
 
 if (blnUseColors)
 	Gui, 1:Color, %strGuiWindowColor%
@@ -5211,7 +5221,7 @@ if !(blnDonor)
 	Gui, 1:Add, Text, vlblGuiDonate center gGuiDonate x0 y+1, %lGuiDonate% ; Static26
 }
 
-Gui, 1:Show, Hide w620 h500
+Gui, 1:Show, Hide %strSettingsPosition%
 
 return
 ;------------------------------------------------------------
@@ -6935,7 +6945,10 @@ Gui, 2:Add, Text, ys x430 Section, %lOptionsTheme%
 Gui, 2:Add, DropDownList, ys x+10 w120 vdrpTheme, %strAvailableThemes%
 GuiControl, ChooseString, drpTheme, %strTheme%
 
-Gui, 2:Add, Text, y+7 xs Section, %lOptionsMenuPositionPrompt%
+Gui, 2:Add, CheckBox, y+10 xs vblnRememberSettingsPosition, %lOptionsRememberSettingsPosition%
+GuiControl, , blnRememberSettingsPosition, %blnRememberSettingsPosition%
+
+Gui, 2:Add, Text, y+12 xs Section, %lOptionsMenuPositionPrompt%
 
 Gui, 2:Add, Radio, % "y+5 xs vradPopupMenuPosition1 gPopupMenuPositionClicked Group " . (intPopupMenuPosition = 1 ? "Checked" : ""), %lOptionsMenuNearMouse%
 Gui, 2:Add, Radio, % "y+5 xs vradPopupMenuPosition2 gPopupMenuPositionClicked " . (intPopupMenuPosition = 2 ? "Checked" : ""), %lOptionsMenuActiveWindow%
@@ -7133,6 +7146,7 @@ IniWrite, %blnDisplayGroupMenu%, %strIniFile%, Global, DisplaySwitchMenu ; keep 
 IniWrite, %blnDisplayMenuShortcuts%, %strIniFile%, Global, DisplayMenuShortcuts
 IniWrite, %blnCheck4Update%, %strIniFile%, Global, Check4Update
 IniWrite, %blnOpenMenuOnTaskbar%, %strIniFile%, Global, OpenMenuOnTaskbar
+IniWrite, %blnRememberSettingsPosition%, %strIniFile%, Global, RememberSettingsPosition
 
 if (radPopupMenuPosition1)
 	intPopupMenuPosition := 1
@@ -7969,7 +7983,6 @@ GuiCenterButtons(strWindow, intInsideHorizontalMargin := 10, intInsideVerticalMa
 ; This is a variadic function. See: http://ahkscript.org/docs/Functions.htm#Variadic
 ;------------------------------------------------------------
 {
-	DetectHiddenWindows, On
 	Gui, Show, Hide ; ### why?
 	WinGetPos, , , intWidth, , %strWindow%
 
