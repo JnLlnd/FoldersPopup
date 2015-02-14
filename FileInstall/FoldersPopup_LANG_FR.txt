@@ -267,6 +267,7 @@ lOptionsPopupFix	Menu popup à une position fixe
 lOptionsPopupFixPositionX	Position X:
 lOptionsPopupFixPositionY	Y:
 lOptionsRecentFolders	Emplacements récents
+lOptionsRememberSettingsPosition	Mémorise la position de la fenêtre
 lOptionsRunAtStartup	Exécuter au démarrage
 lOptionsShift	Maj
 lOptionsSpacebar	utiliser la barre d'espace
@@ -279,6 +280,7 @@ lOptionsThirdPartyDetail	Pour activer l'intégration avec ~1~, localisez le progr
 lOptionsThirdPartyDetailFPconnect	Pour activer l'intégration avec d'autres gestionnaires de fichiers, localisez le programme FPconnect.exe.
 lOptionsThirdPartyPrompt	Fichier:
 lOptionsThirdPartyTitle	Utilisateurs de ~1~
+lOptionsThirdPartyTitleFPconnect	Utilisateurs d'autres gestionnaires de fichiers avec FPconnect
 lOptionsTitles	Souris - Popup|Souris - Nouvel explorateur|Clavier - Popup|Clavier - Nouvel explorateur|Emplacements récents|Paramètres
 lOptionsTitlesSub	(dans l'Explorateur et les boîtes de dialogue)|(dans n'importe quelle fenêtre)|(dans l'Explorateur et les boîtes de dialogue)|(dans n'importe quelle fenêtre)|(liste des emplacements récents de Windows)|(configuration du menu et options)
 lOptionsTotalCommanderUseTabs	Utiliser les onglets
