@@ -1,10 +1,9 @@
 /*
 Bug:
-- listview empty when loading maximized
+- see http://www.autohotkey.com/board/topic/10202-when-are-a-guiwidth-and-a-guiheight-valid/#entry64460
+- listview column 2 resize to fill LV
 
 To-do:
-- save Settings Gui size on quit
-- restore Settings Gui size on load
 */
 ;===============================================
 /*
@@ -23,8 +22,10 @@ To-do:
 	Version: 4.2.5 (2015-02-??)
 	* make the Settings window resizable
 	* adjust hand mouse pointer when hover clickable controls
-	* save Settings Gui size and maximized state to ini file on quit
-	* restore Settings Gui size and maximized state on load
+	* save Settings Gui size state to ini file on quit
+	* restore Settings Gui size on load
+	* when saved maximized, restore at default size and center
+	* prevent minimizing the settings window to avoid user to forget to save settings
 	
 	Version: 4.2.4 (2015-02-08)
 	* fix a version number in v4.2.3 causing an error in update checking
@@ -800,7 +801,7 @@ DllCall("CreateMutex", "uint", 0, "int", false, "str", strAppName . "Mutex")
 
 
 ; ### only when debugging Gui
-; Gosub, GuiShow
+Gosub, GuiShow
 ; Gosub, GuiOptions
 ; Gosub, GuiAddFavorite
 ; Gosub, GuiAddFromPopup
@@ -827,7 +828,7 @@ return
 */
 
 ; Gui Hotkeys
-#If WinActive(lGuiFullTitle)
+#If WinActive("ahk_id " . strAppHwnd)
 
 ^Up::
 if (LV_GetCount("Selected") > 1)
@@ -1091,7 +1092,9 @@ IniRead, strGroups, %strIniFile%, Global, Groups, %A_Space% ; empty string if no
 IniRead, blnCheck4Update, %strIniFile%, Global, Check4Update, 1
 IniRead, blnOpenMenuOnTaskbar, %strIniFile%, Global, OpenMenuOnTaskbar, 1
 IniRead, blnRememberSettingsPosition, %strIniFile%, Global, RememberSettingsPosition, 1
-IniRead, strSettingsPosition, %strIniFile%, Global, SettingsPosition, center w636 h538
+
+IniRead, strSettingsPosition, %strIniFile%, Global, SettingsPosition, -1|-1|636|538
+StringSplit, arrSettingsPosition, strSettingsPosition, |
 
 IniRead, blnDonor, %strIniFile%, Global, Donor, 0 ; Please, be fair. Don't cheat with this.
 if !(blnDonor)
@@ -1973,17 +1976,16 @@ AHK_NOTIFYICON(wParam, lParam)
 CleanUpBeforeExit:
 ;-----------------------------------------------------------
 
+strSettingsPosition := "-1|-1|636|538" ; -1|-1 for center
 if (blnRememberSettingsPosition)
 {
-	WinGetPos, intX, intY, intW, intH, %lGuiFullTitle%
-	WinGet, intMinMax, MinMax, %lGuiFullTitle%
-	if (intMinMax = 1)
-		strSettingsPosition := "center w636 h538 Maximize"
-	else
-		strSettingsPosition := "x" . intX . " y" . intY . " w" . intW . " h" . intH
+	WinGet, intMinMax, MinMax, ahk_id %strAppHwnd%
+	if (intMinMax <> 1) ; if window is maximized, we keep the default positionand size (center w636 h538)
+	{
+		WinGetPos, intX, intY, intW, intH, ahk_id %strAppHwnd%
+		strSettingsPosition := intX . "|" . intY . "|" . intW . "|" . intH
+	}
 }
-else
-	strSettingsPosition := "center w636 h538"
 IniWrite, %strSettingsPosition%, %strIniFile%, Global, SettingsPosition
 
 FileRemoveDir, %strTempDir%, 1 ; Remove all files and subdirectories
@@ -5054,8 +5056,8 @@ InsertGuiControlPos("picPreviousMenu",			  10,   84)
 InsertGuiControlPos("picSortFavorites",			  10, -165)
 InsertGuiControlPos("picUpMenu",				  25,   84)
 
-InsertGuiControlPos("btnGuiSave",				   0,  -90)				
-InsertGuiControlPos("btnGuiCancel",				   0,  -90)
+InsertGuiControlPos("btnGuiSave",				   0,  -90, , true)				
+InsertGuiControlPos("btnGuiCancel",				   0,  -90, , true)
 
 InsertGuiControlPos("drpMenusList",				  40,   84)
 
@@ -5099,7 +5101,7 @@ InsertGuiControlPos(strControlName, intX, intY, blnCenter := false, blnDraw := f
 GuiSize:
 ;------------------------------------------------------------
 
-if A_EventInfo = 1  ; The window has been minimized.  No action needed.
+if (A_EventInfo = 1)  ; The window has been minimized.  No action needed.
     return
 
 intListW := A_GuiWidth - 40 - 88
@@ -5137,11 +5139,27 @@ for intIndex, objGuiControl in objGuiControls
 		
 }
 
-intListW := A_GuiWidth - 40 - 88
-intListH := A_GuiHeight - 115 - 132
-
-GuiControl, 1:Move, lvFavoritesList, w%intListW% h%intListH%
 GuiControl, 1:Move, drpMenusList, w%intListW%
+GuiControl, 1:Move, lvFavoritesList, w%intListW% h%intListH%
+
+Gosub, AjustColumnWidth
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+AjustColumnWidth:
+;------------------------------------------------------------
+
+LV_ModifyCol(1, "Auto") ; adjust column width ####
+
+; See http://www.autohotkey.com/board/topic/6073-get-listview-column-width-with-sendmessage/
+intCol1 := 0 ; column index, zero-based
+SendMessage, 0x1000+29, %intCol1%, 0, SysListView321, ahk_id %strAppHwnd%
+intCol1 := ErrorLevel ; column width
+; ###_D(x . " / " A_GuiWidth . " / " . intListW - intCol1 - 21)
+LV_ModifyCol(2, intListW - intCol1 - 21) ; adjust column width (-21 is for vertical scroll bar width)
 
 return
 ;------------------------------------------------------------
@@ -5152,7 +5170,10 @@ BuildGui:
 ;------------------------------------------------------------
 
 lGuiFullTitle := L(lGuiTitle, strAppName, strAppVersion)
-Gui, 1:New, +Resize +MinSize636x538, %lGuiFullTitle%
+Gui, 1:New, +Resize -MinimizeBox +MinSize636x538, %lGuiFullTitle%
+
+Gui, +LastFound
+strAppHwnd := WinExist()
 
 if (blnUseColors)
 	Gui, 1:Color, %strGuiWindowColor%
@@ -5221,7 +5242,12 @@ if !(blnDonor)
 	Gui, 1:Add, Text, vlblGuiDonate center gGuiDonate x0 y+1, %lGuiDonate% ; Static26
 }
 
-Gui, 1:Show, Hide %strSettingsPosition%
+x := 1
+Gui, 1:Show, % " " . (arrSettingsPosition1 = -1 ? "center w636 h538" : "x" . arrSettingsPosition1 . " y" . arrSettingsPosition2)
+x := 2
+if (arrSettingsPosition1 <> -1)
+	WinMove, ahk_id %strAppHwnd%, , , , %arrSettingsPosition3%, %arrSettingsPosition4%
+x := 3
 
 return
 ;------------------------------------------------------------
