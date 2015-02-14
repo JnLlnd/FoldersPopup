@@ -801,7 +801,7 @@ DllCall("CreateMutex", "uint", 0, "int", false, "str", strAppName . "Mutex")
 
 
 ; ### only when debugging Gui
-Gosub, GuiShow
+; Gosub, GuiShow
 ; Gosub, GuiOptions
 ; Gosub, GuiAddFavorite
 ; Gosub, GuiAddFromPopup
@@ -1093,7 +1093,7 @@ IniRead, blnCheck4Update, %strIniFile%, Global, Check4Update, 1
 IniRead, blnOpenMenuOnTaskbar, %strIniFile%, Global, OpenMenuOnTaskbar, 1
 IniRead, blnRememberSettingsPosition, %strIniFile%, Global, RememberSettingsPosition, 1
 
-IniRead, strSettingsPosition, %strIniFile%, Global, SettingsPosition, -1|-1|636|538
+IniRead, strSettingsPosition, %strIniFile%, Global, SettingsPosition, -1 ; center at minimal size
 StringSplit, arrSettingsPosition, strSettingsPosition, |
 
 IniRead, blnDonor, %strIniFile%, Global, Donor, 0 ; Please, be fair. Don't cheat with this.
@@ -1976,11 +1976,11 @@ AHK_NOTIFYICON(wParam, lParam)
 CleanUpBeforeExit:
 ;-----------------------------------------------------------
 
-strSettingsPosition := "-1|-1|636|538" ; -1|-1 for center
+strSettingsPosition := "-1" ; center at minimal size
 if (blnRememberSettingsPosition)
 {
 	WinGet, intMinMax, MinMax, ahk_id %strAppHwnd%
-	if (intMinMax <> 1) ; if window is maximized, we keep the default positionand size (center w636 h538)
+	if (intMinMax <> 1) ; if window is maximized, we keep the default positionand size (center at minimal size)
 	{
 		WinGetPos, intX, intY, intW, intH, ahk_id %strAppHwnd%
 		strSettingsPosition := intX . "|" . intY . "|" . intW . "|" . intH
@@ -5242,12 +5242,9 @@ if !(blnDonor)
 	Gui, 1:Add, Text, vlblGuiDonate center gGuiDonate x0 y+1, %lGuiDonate% ; Static26
 }
 
-x := 1
-Gui, 1:Show, % " " . (arrSettingsPosition1 = -1 ? "center w636 h538" : "x" . arrSettingsPosition1 . " y" . arrSettingsPosition2)
-x := 2
+Gui, 1:Show, % "Hide " . (arrSettingsPosition1 = -1 ? "center w636 h538" : "x" . arrSettingsPosition1 . " y" . arrSettingsPosition2)
 if (arrSettingsPosition1 <> -1)
 	WinMove, ahk_id %strAppHwnd%, , , , %arrSettingsPosition3%, %arrSettingsPosition4%
-x := 3
 
 return
 ;------------------------------------------------------------
@@ -5310,8 +5307,7 @@ Loop, % arrMenus[strCurrentMenu].MaxIndex()
 		LV_Add(, arrMenus[strCurrentMenu][A_Index].FavoriteName, arrMenus[strCurrentMenu][A_Index].FavoriteLocation, arrMenus[strCurrentMenu][A_Index].MenuName
 			, "", arrMenus[strCurrentMenu][A_Index].FavoriteType, arrMenus[strCurrentMenu][A_Index].IconResource)
 LV_Modify(1, "Select Focus")
-LV_ModifyCol(1, "AutoHdr")
-LV_ModifyCol(2, "AutoHdr")
+Gosub, AjustColumnWidth
 
 GuiControl, , drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
 
@@ -5633,8 +5629,7 @@ intInsertPosition := LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1
 LV_Modify(0, "-Select")
 LV_Insert(intInsertPosition, "Select Focus", lMenuSeparator, lMenuSeparator . lMenuSeparator, strCurrentMenu, "", "", "")
 LV_Modify(LV_GetNext(), "Vis")
-LV_ModifyCol(1, "AutoHdr")
-LV_ModifyCol(2, "AutoHdr")
+Gosub, AjustColumnWidth
 
 GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lGuiCancel%
@@ -5661,8 +5656,7 @@ LV_Insert(intInsertPosition, "Select Focus"
 	, strColumnBreakIndicator . " " lMenuColumnBreak . " " . strColumnBreakIndicator
 	, strCurrentMenu, "", "", "")
 LV_Modify(LV_GetNext(), "Vis")
-LV_ModifyCol(1, "AutoHdr")
-LV_ModifyCol(2, "AutoHdr")
+Gosub, AjustColumnWidth
 
 GuiControl, Enable, btnGuiSave
 GuiControl, , btnGuiCancel, %lGuiCancel%
@@ -6721,8 +6715,7 @@ else ; add menu item to selected menu object
 
 GuiControl, 1:, drpMenusList, % "|" . BuildMenuTreeDropDown(lMainMenuName, strCurrentMenu) . "|"
 
-LV_ModifyCol(1, "AutoHdr")
-LV_ModifyCol(2, "AutoHdr")
+Gosub, AjustColumnWidth
 
 if (A_ThisLabel = "GuiEditFavoriteSave") or (A_ThisLabel = "GuiMoveOneFavoriteSave")
 {
@@ -6851,8 +6844,7 @@ if (A_ThisLabel = "GuiRemoveFavorite")
 	if !LV_GetNext() ; if last item was deleted, select the new last item
 		LV_Modify(LV_GetCount(), "Select Focus")
 }
-LV_ModifyCol(1, "AutoHdr")
-LV_ModifyCol(2, "AutoHdr")
+Gosub, AjustColumnWidth
 
 if (strFavoriteType = "S")
 {
