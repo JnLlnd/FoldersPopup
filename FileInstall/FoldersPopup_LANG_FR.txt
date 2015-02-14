@@ -267,7 +267,7 @@ lOptionsPopupFix	Menu popup à une position fixe
 lOptionsPopupFixPositionX	Position X:
 lOptionsPopupFixPositionY	Y:
 lOptionsRecentFolders	Emplacements récents
-lOptionsRememberSettingsPosition	Mémorise la position de la fenêtre
+lOptionsRememberSettingsPosition	Mémoriser la position de la fenêtre
 lOptionsRunAtStartup	Exécuter au démarrage
 lOptionsShift	Maj
 lOptionsSpacebar	utiliser la barre d'espace
