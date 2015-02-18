@@ -17,7 +17,7 @@ To-do:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.2.5 (2015-02-??)
+	Version: 4.2.9.1 BETA (2015-02-17)
 	* make the Settings window resizable
 	* adjust hand mouse pointer when hover clickable controls
 	* save Settings Gui size state to ini file on quit
@@ -663,7 +663,7 @@ To-do:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.2.5
+;@Ahk2Exe-SetVersion 4.2.9.1 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -709,8 +709,8 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.2.5" ; "major.minor.bugs" or "major.minor.beta.release"
-global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
+global strCurrentVersion := "4.2.9.1" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
 global blnDiagMode := False
