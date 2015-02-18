@@ -1,7 +1,5 @@
 /*
 Bug:
-- see http://www.autohotkey.com/board/topic/10202-when-are-a-guiwidth-and-a-guiheight-valid/#entry64460
-- listview column 2 resize to fill LV
 
 To-do:
 */
@@ -5243,6 +5241,7 @@ if !(blnDonor)
 }
 
 Gui, 1:Show, % "Hide " . (arrSettingsPosition1 = -1 ? "center w636 h538" : "x" . arrSettingsPosition1 . " y" . arrSettingsPosition2)
+sleep, 50
 if (arrSettingsPosition1 <> -1)
 	WinMove, ahk_id %strAppHwnd%, , , , %arrSettingsPosition3%, %arrSettingsPosition4%
 
