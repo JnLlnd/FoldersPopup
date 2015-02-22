@@ -267,6 +267,7 @@ lOptionsPopupFix	Popup-&Menü an fester Position
 lOptionsPopupFixPositionX	Position X:
 lOptionsPopupFixPositionY	Y:
 lOptionsRecentFolders	Zuletzt verwendete Ordner
+lOptionsRememberSettingsPosition	Fensterposition merken
 lOptionsRunAtStartup	Beim Sta&rt ausführen
 lOptionsShift	Shift
 lOptionsSpacebar	verwende Leertaste
