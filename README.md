@@ -13,6 +13,14 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### Version: 4.3 (2015-02-22)
+* make the Settings window resizable
+* save Settings Gui size state to ini file on quit
+* restore Settings Gui size on load
+* when saved maximized, restore at default size and center
+* prevent minimizing the settings window to avoid user to forget to save settings
+* adjust hand mouse pointer when hover clickable controls
+
 ### Version: 4.2.2 (2015-01-31)
 * fix a bug with environment variables not being expanded when checking if target file exist
 * fix bug under XP during group load when an Explorer already contains the target folder, the existing Explorer is now activated and resized (consequence: a group cannot contain the same folder twice)

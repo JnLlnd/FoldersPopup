@@ -17,7 +17,7 @@ To-do:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.2.9.1 BETA (2015-02-17)
+	Version: 4.3 (2015-02-22)
 	* make the Settings window resizable
 	* adjust hand mouse pointer when hover clickable controls
 	* save Settings Gui size state to ini file on quit
