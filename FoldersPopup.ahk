@@ -5201,7 +5201,7 @@ Gui, 1:Add, Picture, vpicGuiHelp gGuiHelp x+1 yp, %strTempDir%\help-32.png ; Sta
 Gui, 1:Font, s8 w400, Arial ; button legend
 Gui, 1:Add, Text, vlblGuiOptions gGuiOptions x0 y+20, %lGuiOptions% ; Static17
 Gui, 1:Add, Text, vlblGuiAddFavorite center gGuiAddFavorite x+1 yp, %lGuiAddFavorite% ; Static18
-Gui, 1:Add, Text, vlblGuiEditFavorite center gGuiEditFavorite x+1 yp, %lGuiEditFavorite% ; Static19
+Gui, 1:Add, Text, vlblGuiEditFavorite center gGuiEditFavorite x+1 yp w88, %lGuiEditFavorite% ; Static19, w88 to make room fot when multiple favorites are selected
 Gui, 1:Add, Text, vlblGuiRemoveFavorite center gGuiRemoveFavorite x+1 yp, %lGuiRemoveFavorite% ; Static20
 Gui, 1:Add, Text, vlblGuiGroupsManage center gGuiGroupsManage x+1 yp, %lDialogGroups% ; Static21
 Gui, 1:Add, Text, vlblGuiAbout center gGuiAbout x+1 yp, %lGuiAbout% ; Static22
