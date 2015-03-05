@@ -17,6 +17,9 @@ To-do:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 4.9.1 (2015-03-??)
+	*
+	
 	Version: 4.3 (2015-02-22)
 	* make the Settings window resizable
 	* adjust hand mouse pointer when hover clickable controls
@@ -663,7 +666,7 @@ To-do:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.3
+;@Ahk2Exe-SetVersion 4.9.1
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -709,7 +712,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.3" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.9.1" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 global str32or64 := A_PtrSize * 8
@@ -1206,7 +1209,7 @@ Loop
 	if (strIniLine = "ERROR")
 		Break
 	strIniLine := strIniLine . "|||" ; additional "|" to make sure we have all empty items
-	; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
+	; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource, 7 AppArguments, 8 AppWorkingDir
 	StringSplit, arrThisFavorite, strIniLine, |
 
 	objFavorite := Object() ; new menu item
@@ -1230,6 +1233,8 @@ Loop
 			objFavorite.FavoriteType := "F" ; "F" folder
 
 	objFavorite.IconResource := arrThisFavorite6 ; icon resource in format "iconfile,iconindex"
+	objFavorite.IconResource := arrThisFavorite7 ; application arguments
+	objFavorite.IconResource := arrThisFavorite8 ; application working directory
 
 	if (objFavorite.FavoriteType = "S") ; then this is a new submenu
 	{
@@ -1290,7 +1295,7 @@ return
 
 ;------------------------------------------------------------
 AddToIniOneSystemFolderMenu(intNumber, strSpecialFolderName := "", strSpecialFolderLocation := "", strMenuName := "", strSubmenuFullName := "", strFavoriteType := "P")
-; 0 Folder number, 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
+; 0 Folder number, 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource (, 7 AppArguments, 8 AppWorkingDir)
 ;------------------------------------------------------------
 {
 	if (strFavoriteType = "S")
@@ -2833,7 +2838,7 @@ GetMenuHandle(strMenuName)
 
 
 ;========================================================================================================================
-; POPUP MNEU
+; POPUP MENU
 ;========================================================================================================================
 
 
@@ -3221,8 +3226,7 @@ else ; this is a favorite
 		StringTrimLeft, strThisMenu, A_ThisMenuItem, 3 ; remove "&1 " from menu item
 	else
 		strThisMenu := A_ThisMenuItem
-	strLocation := GetLocationFor(A_ThisMenu, strThisMenu)
-	strFavoriteType := GetFavoriteTypeFor(A_ThisMenu, strThisMenu)
+	GetFavoriteProperties(A_ThisMenu, strThisMenu, strLocation, strFavoriteType, strAppArguments, strAppWorkingDir)
 }
 if (blnDiagMode)
 {
@@ -3252,6 +3256,12 @@ if !((strFavoriteType = "U") or (strFavoriteType = "P")) ; not URL or Special Fo
 if (strFavoriteType = "D" or strFavoriteType = "U") ; this is a document or an URL
 {
 	Run, %strLocation%
+	return
+}
+
+if (strFavoriteType = "A") ; this is an application
+{
+	Run, %strLocation% ; #### arg workingdir
 	return
 }
 
@@ -3585,32 +3595,20 @@ return
 
 
 ;------------------------------------------------------------
-GetLocationFor(strMenu, strName)
+GetFavoriteProperties(strMenu, strName, ByRef strLocation, ByRef strFavoriteType, ByRef strAppArguments, ByRef strAppWorkingDir)
 ;------------------------------------------------------------
 {
-	global
+	global arrMenus
 	
 	Loop, % arrMenus[strMenu].MaxIndex()
 		if (strName = arrMenus[strMenu][A_Index].FavoriteName)
 		{
 			strLocation := arrMenus[strMenu][A_Index].FavoriteLocation
+			strFavoriteType := arrMenus[strMenu][A_Index].FavoriteType
+			strAppArguments := arrMenus[strMenu][A_Index].AppArguments
+			strAppWorkingDir := arrMenus[strMenu][A_Index].AppWorkingDir
 			break
 		}
-
-	return strLocation
-}
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-GetFavoriteTypeFor(strMenu, strName)
-;------------------------------------------------------------
-{
-	global
-	
-	Loop, % arrMenus[strMenu].MaxIndex()
-		if (strName = arrMenus[strMenu][A_Index].FavoriteName)
-			return arrMenus[strMenu][A_Index].FavoriteType
 }
 ;------------------------------------------------------------
 
