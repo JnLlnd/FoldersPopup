@@ -267,6 +267,7 @@ lOptionsPopupFix	Popup &Menu op een Vaste Positie
 lOptionsPopupFixPositionX	Positie X:
 lOptionsPopupFixPositionY	Y:
 lOptionsRecentFolders	R&ecente Mappen
+lOptionsRememberSettingsPosition	Herinneren positie venster
 lOptionsRunAtStartup	&Uitvoeren bij Opstarten
 lOptionsShift	Shift
 lOptionsSpacebar	gebruik de spatiebalk
