@@ -1233,8 +1233,8 @@ Loop
 			objFavorite.FavoriteType := "F" ; "F" folder
 
 	objFavorite.IconResource := arrThisFavorite6 ; icon resource in format "iconfile,iconindex"
-	objFavorite.IconResource := arrThisFavorite7 ; application arguments
-	objFavorite.IconResource := arrThisFavorite8 ; application working directory
+	objFavorite.AppArguments := arrThisFavorite7 ; application arguments
+	objFavorite.AppWorkingDir := arrThisFavorite8 ; application working directory
 
 	if (objFavorite.FavoriteType = "S") ; then this is a new submenu
 	{
@@ -3261,7 +3261,7 @@ if (strFavoriteType = "D" or strFavoriteType = "U") ; this is a document or an U
 
 if (strFavoriteType = "A") ; this is an application
 {
-	Run, %strLocation% ; #### arg workingdir
+	Run, %strLocation% "%strAppArguments%", %strAppWorkingDir% ; double-quotes required around strAppArguments, no dbl-quotes for strAppWorkingDir
 	return
 }
 
@@ -5213,15 +5213,12 @@ Gui, 1:Font, s8 w400 normal, Verdana
 Gui, 1:Add, Text, vlblSubmenuDropdownLabel x+1 yp, %lGuiSubmenuDropdownLabel%
 Gui, 1:Add, DropDownList, vdrpMenusList gGuiMenusListChanged x0 y+1
 
-; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
-; Gui, 1:Add, ListView
-;	, xm+30 w480 h240 Count32 AltSubmit NoSortHdr LV0x10 c%strGuiListviewTextColor% Background%strGuiListviewBackgroundColor% vlvFavoritesList gGuiFavoritesListEvents
-;	, %lGuiLvFavoritesHeader%|Hidden Menu|Hidden Submenu|Hidden FavoriteType|Hidden IconResource
+; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource, 7 AppArguments, 8 AppWorkingDir
 Gui, 1:Add, ListView
 	, % "vlvFavoritesList Count32 AltSubmit NoSortHdr LV0x10 " . (blnUseColors ? "c" . strGuiListviewTextColor . " Background" . strGuiListviewBackgroundColor : "") . " gGuiFavoritesListEvents x+1 yp"
-	, %lGuiLvFavoritesHeader%|Hidden Menu|Hidden Submenu|Hidden FavoriteType|Hidden IconResource
-Loop, 4
- 	LV_ModifyCol(A_Index + 2, 0) ; hide 3rd-6th columns
+	, %lGuiLvFavoritesHeader%|Hidden Menu|Hidden Submenu|Hidden FavoriteType|Hidden IconResource|Hidden AppArguments|Hidden AppWorkingDir
+Loop, 6
+ 	LV_ModifyCol(A_Index + 2, 0) ; hide 3rd-8th columns
 
 Gui, 1:Font, s9 w600, Verdana
 Gui, 1:Add, Button, vbtnGuiSave Disabled Default gGuiSave x200 y400 w100 h50, %lGuiSave% ; Button1
@@ -5294,6 +5291,7 @@ LoadOneMenuToGui:
 Gui, 1:ListView, lvFavoritesList
 LV_Delete()
 
+; #### 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource, 7 AppArguments, 8 AppWorkingDir
 ; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
 Loop, % arrMenus[strCurrentMenu].MaxIndex()
 	if (arrMenus[strCurrentMenu][A_Index].FavoriteType = "S") ; this is a submenu
