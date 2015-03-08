@@ -291,7 +291,6 @@ lOptionsWin	Win
 lPickIconButtonCustom	Personalizzato
 lPickIconButtonDefault	Default
 lPickIconDocumentPrompt	Selezionare un'icona a scelta o usare l'icona di default per questo tipo di documento?
-lPickIconNoLocation	Seleziona dapprima un documento prima di scegliere l'icona da associare.
 lPickIconTitle	Seleziona l'icona per ~1~ - ~2~
 lReloadPrompt	~1~ cambiato in ~2~. Vuoi ricaricare ~3~ in ~2~ ora? Le modifiche non salvate al menù delle cartelle verranno perse.
 lReloadPromptDefaultHotkey	Scorciatoia riportata al valore di default. Questa modifica sarà effettiva solo dopo aver ricaricato ~1~.`n`nVuoi ricaricare ~1~ ora? Le modifiche non salvate al menù delle cartelle verranno perse.

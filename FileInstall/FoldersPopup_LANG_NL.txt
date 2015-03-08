@@ -290,7 +290,6 @@ lOptionsWin	Win
 lPickIconButtonCustom	Aangepast
 lPickIconButtonDefault	Standaard
 lPickIconDocumentPrompt	Wil je een aangepast icoon gebruiken of liever het standaard icoon voor dit type document? 
-lPickIconNoLocation	Selecteer eerst het document en dan pas het icoon.
 lPickIconTitle	Selecteer ~1~ Icoon - ~2~
 lReloadPrompt	~1~ werd gewijzigd naar ~2~. Wil je ~3~ laden in het ~2~ nu? Niet bewaarde wijzigingen gaan verloren.
 lReloadPromptDefaultHotkey	Hotkey changed to default value. This change will be effective only after you reload ~1~.`n`nDo you want to reload ~1~ now? Unsaved changes to the folders menu will be lost.

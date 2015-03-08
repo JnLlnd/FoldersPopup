@@ -290,7 +290,6 @@ lOptionsWin	Win
 lPickIconButtonCustom	Angepasst
 lPickIconButtonDefault	Standard
 lPickIconDocumentPrompt	Angepasstes oder Standard-Symbol für diese Art von Dokument verwenden?
-lPickIconNoLocation	Vor der Wahl des Symbols bitte zuerst das Dokument auswählen.
 lPickIconTitle	Auswahl ~1~ Symbol - ~2~
 lReloadPrompt	~1~  wurde in ~2~ geändert. Wollen Sie jetzt ~3~ in ~2~ neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
 lReloadPromptDefaultHotkey	Schnelltaste auf Standard zurückgesetzt. Diese Änderung tritt erst durch erneutes Laden von ~1~ in Kraft.`n`nWollen Sie ~1~ jetzt neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
