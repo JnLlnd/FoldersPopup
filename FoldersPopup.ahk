@@ -1,5 +1,7 @@
 /*
 Bug:
+- move add fav buttons when drop files
+- startin must call folder select
 
 To-do:
 */
@@ -948,40 +950,40 @@ StringSplit, arrMouseButtons, strMouseButtons, |
 strIconsMenus := "lMenuDesktop|lMenuDocuments|lMenuPictures|lMenuMyComputer|lMenuNetworkNeighborhood|lMenuControlPanel|lMenuRecycleBin"
 	. "|menuRecentFolders|menuGroupDialog|menuGroupExplorer|lMenuSpecialFolders|lMenuGroup|lMenuFoldersInExplorer"
 	. "|lMenuRecentFolders|lMenuSettings|lMenuAddThisFolder|lDonateMenu|Submenu|Network|UnknownDocument|Folder"
-	. "|menuGroupSave|menuGroupLoad|lMenuDownloads|Templates|MyMusic|MyVideo|History|Favorites|Temporary|Winver|Fonts"
+	. "|menuGroupSave|menuGroupLoad|lMenuDownloads|Templates|MyMusic|MyVideo|History|Favorites|Temporary|Winver|Fonts|Application"
 
 if (A_OSVersion = "WIN_XP")
 {
 	strIconsFile := "shell32|shell32|shell32|shell32|shell32|shell32|shell32"
 				. "|shell32|shell32|shell32|shell32|shell32|shell32"
 				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
-				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32|winver|shell32"
+				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32|winver|shell32"|shell32
 	strIconsIndex := "35|127|118|16|19|22|33"
 				. "|4|147|4|4|147|147"
 				. "|214|166|111|161|85|10|1|4"
-				. "|7|7|156|55|129|130|21|209|132|1|39"
+				. "|7|7|156|55|129|130|21|209|132|1|39|97"
 }
 else if (A_OSVersion = "WIN_VISTA")
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres"
 				. "|imageres|imageres|shell32|shell32|shell32|imageres|shell32|shell32"
-				. "|shell32|shell32|shell32|shell32|imageres|imageres|shell32|shell32|shell32|winver|shell32"
+				. "|shell32|shell32|shell32|shell32|imageres|imageres|shell32|shell32|shell32|winver|shell32|shell32"
 	strIconsIndex := "105|85|67|104|114|22|49"
 				. "|112|174|3|3|251|174"
 				. "|112|109|88|161|85|28|1|3"
-				. "|259|259|123|55|103|177|240|87|153|1|39"
+				. "|259|259|123|55|103|177|240|87|153|1|39|97"
 }
 else
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres|shell32|shell32"
-				. "|shell32|shell32|imageres|shell32|imageres|imageres|shell32|shell32|shell32|winver|shell32"
+				. "|shell32|shell32|imageres|shell32|imageres|imageres|shell32|shell32|shell32|winver|shell32|shell32"
 	strIconsIndex := "106|189|68|105|115|23|50"
 				. "|113|176|203|203|99|176"
 				. "|113|110|217|208|298|29|1|4"
-				. "|297|46|176|55|104|179|240|87|153|1|39"
+				. "|297|46|176|55|104|179|240|87|153|1|39|304"
 }
 
 StringSplit, arrIconsFile, strIconsFile, |
@@ -6126,7 +6128,7 @@ GuiEditFavorite:
 ;------------------------------------------------------------
 
 ; Icon resource in the format "iconfile,index", examnple "shell32.dll,2"
-; strDefaultIconResource -> default icon for the current type of favorite (F, P, D, U or S)
+; strDefaultIconResource -> default icon for the current type of favorite (F, P, D, U, A or S)
 ; strSavedIconResource -> actual value in the ListView or in the menu object
 ; strCurrentIconResource -> icon currently displayed in the Add/Edit dialog box
 ; strCurrentIconResource is always equal to strDefaultIconResource or strSavedIconResource
@@ -6195,8 +6197,19 @@ else
 		blnRadioFolder := true
 	else if (A_ThisLabel = "GuiAddFromDropFiles")
 	{
-		blnRadioFile := LocationIsDocument(strCurrentLocation)
-		blnRadioFolder := not blnRadioFile
+		SplitPath, strCurrentLocation, , , strExtension
+		if InStr("exe.com.bat", strExtension)
+		{
+			blnRadioApplication := true
+			blnRadioFile := false
+			blnRadioFolder := false
+		}
+		else
+		{
+			blnRadioApplication := false
+			blnRadioFile := LocationIsDocument(strCurrentLocation)
+			blnRadioFolder := not blnRadioFile
+		}
 	}
 }
 
@@ -6239,14 +6252,20 @@ if (A_ThisLabel = "GuiAddFavorite")
 	Gui, 2:Add, Radio, xs vblnRadioSubmenu gRadioButtonsChanged, %lDialogSubmenuLabel%
 }
 
-Gui, 2:Add, Text, x10 y+10 w300 vlblShortName, % (blnRadioSubmenu ? lDialogSubmenuShortName : (blnRadioFile ? lDialogFileShortName : (blnRadioURL ? lDialogURLShortName : (blnRadioSpecial ? lDialogSpecialLabel : lDialogFolderShortName))))
+Gui, 2:Add, Text, x10 y+10 w300 vlblShortName
+	, % (blnRadioSubmenu ? lDialogSubmenuShortName
+	: (blnRadioFile ? lDialogFileShortName 
+	: (blnRadioURL ? lDialogURLShortName 
+	: (blnRadioSpecial ? lDialogSpecialLabel 
+	: (blnRadioApplication ? lDialogApplicationLabel 
+	: lDialogFolderShortName)))))
 Gui, 2:Add, Edit, x10 w300 Limit250 vstrFavoriteShortName, % (A_ThisLabel = "GuiEditFavorite" ? strCurrentName : strFavoriteShortName)
 
 if (blnRadioSubmenu)
 	Gui, 2:Add, Button, x+10 yp vbnlEditFolderOpenMenu gGuiOpenThisMenu, %lDialogOpenThisMenu%
 else
 {
-	Gui, 2:Add, Text, x10 w300 vlblFolder section, % (blnRadioFile ? lDialogFileLabel : (blnRadioURL ? lDialogURLLabel : lDialogFolderLabel))
+	Gui, 2:Add, Text, x10 w300 vlblFolder section, % (blnRadioFile ? lDialogFileLabel : (blnRadioURL ? lDialogURLLabel : (blnRadioApplication ? lDialogApplicationLabel : lDialogFolderLabel)))
 	
 	Gui, 2:Add, DropDownList, xs ys w300 vdrpSpecialFolder gDropdownSpecialFolderChanged hidden, %strSpecialFoldersList%
 	if (A_ThisLabel = "GuiEditFavorite")
@@ -6472,7 +6491,7 @@ EditFolderLocationChanged:
 ;------------------------------------------------------------
 Gui, 2:Submit, NoHide
 
-if (blnRadioFile)
+if (blnRadioFile or blnRadioApplication)
 {
 	strCurrentIconResource := ""
 	Gosub, GuiFavoriteIconDefault
@@ -6517,7 +6536,7 @@ GuiPickIconDialog:
 Gui, 2:Submit, NoHide
 Gui, 2:+OwnDialogs
 
-if (blnRadioFile and !StrLen(strFavoriteLocation))
+if ((blnRadioFile or blnRadioApplication) and !StrLen(strFavoriteLocation))
 {
 	Oops(lPickIconNoLocation)
 	return
@@ -6549,7 +6568,7 @@ GuiRemoveIcon:
 ;------------------------------------------------------------
 Gui, 2:Submit, NoHide
 
-if (blnRadioFile)
+if (blnRadioFile or blnRadioApplication)
 {
 	GetIcon4Location(strFavoriteLocation, strThisIconFile, intThisIconIndex)
 	strCurrentIconResource := strThisIconFile . "," . intThisIconIndex
@@ -6563,7 +6582,6 @@ return
 ;------------------------------------------------------------
 
 
-; ####
 ;------------------------------------------------------------
 GuiFavoriteIconDefault:
 ;------------------------------------------------------------
@@ -6578,7 +6596,7 @@ else if (blnRadioURL)
 	GetIcon4Location(strTempDir . "\default_browser_icon.html", strThisIconFile, intThisIconIndex)
 	strDefaultIconResource := strThisIconFile . "," . intThisIconIndex
 }
-else if (blnRadioFile)
+else if (blnRadioFile or blnRadioApplication)
 {
 	; default icon for the selected file in add/edit favorite
 	GetIcon4Location(strFavoriteLocation, strThisIconFile, intThisIconIndex)
@@ -6631,11 +6649,14 @@ Loop
 	LV_GetText(strCurrentSubmenuFullName, intRowToEdit, 4)
 	LV_GetText(strFavoriteType, intRowToEdit, 5)
 	LV_GetText(strCurrentIconResource, intRowToEdit, 6)
+	LV_GetText(strAppArguments, intRowToEdit, 7)
+	LV_GetText(strAppWorkingDir, intRowToEdit, 8)
 
 	blnRadioFolder := (strFavoriteType = "F")
 	blnRadioSpecial := (strFavoriteType = "P")
 	blnRadioFile := (strFavoriteType = "D")
 	blnRadioURL := (strFavoriteType = "U")
+	blnRadioApplication := (strFavoriteType = "A")
 	blnRadioSubmenu := (strFavoriteType = "S")
 
 	Gosub, GuiMoveOneFavoriteSave
@@ -6683,7 +6704,7 @@ if IsColumnBreak(strFavoriteShortName)
 	return
 }
 
-if  ((blnRadioFolder or blnRadioFile or blnRadioURL) and !StrLen(strFavoriteLocation))
+if  ((blnRadioFolder or blnRadioFile or blnRadioApplication or blnRadioURL) and !StrLen(strFavoriteLocation))
 {
 	Oops(lDialogFavoriteLocationEmpty)
 	return
@@ -6731,7 +6752,7 @@ if (blnRadioSubmenu)
 else
 	strNewSubmenuFullName := ""
 
-strFavoriteType := (blnRadioSubmenu ? "S" : (blnRadioURL ? "U" : (blnRadioFile ? "D" : (blnRadioURL ? "U" : (blnRadioSpecial ? "P" : "F"))))) ; submenu, document, URL, folder or sPecial
+strFavoriteType := (blnRadioSubmenu ? "S" : (blnRadioURL ? "U" : (blnRadioFile ? "D" : (blnRadioURL ? "U" : (blnRadioSpecial ? "P" : (blnRadioApplication ? "A" : "F")))))) ; submenu, document, URL, sPecial, application or else folder
 
 Gosub, 2GuiClose
 
@@ -6745,7 +6766,7 @@ if (strParentMenu = strCurrentMenu)
 	{
 		LV_Modify(0, "-Select")
 		LV_Insert(intNewItemPos, "Select Focus"
-			, strFavoriteShortName, strFavoriteLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType, strCurrentIconResource)
+			, strFavoriteShortName, strFavoriteLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType, strCurrentIconResource, strAppArguments, strAppWorkingDir)
 		LV_Modify(LV_GetNext(), "Vis")
 	
 		Gosub, SaveCurrentListviewToMenuObject ; save current LV tbefore update the dropdown menu
@@ -6754,7 +6775,7 @@ if (strParentMenu = strCurrentMenu)
 	else ; GuiEditFavoriteSave or GuiMoveOneFavoriteSave
 	{
 		LV_Modify(intRowToEdit, "Select Focus"
-			, strFavoriteShortName, strFavoriteLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType, strCurrentIconResource)
+			, strFavoriteShortName, strFavoriteLocation, strCurrentMenu, strNewSubmenuFullName, strFavoriteType, strCurrentIconResource, strAppArguments, strAppWorkingDir)
 	}
 }
 else ; add menu item to selected menu object
@@ -6766,6 +6787,8 @@ else ; add menu item to selected menu object
 	objFavorite.SubmenuFullName := strNewSubmenuFullName ; full name of the submenu
 	objFavorite.FavoriteType := strFavoriteType ; "F" folder, "P" sPecial, "D" document, "U" for URL or "S" submenu
 	objFavorite.IconResource := strCurrentIconResource ; icon resource in format "iconfile,iconindex"
+	objFavorite.AppArguments := strAppArguments ; application arguments
+	objFavorite.AppWorkingDir := strAppWorkingDir ; application working directory
 	arrMenus[objFavorite.MenuName].Insert(intNewItemPos, objFavorite) ; add this menu item to the new menu
 
 	if (A_ThisLabel = "GuiEditFavoriteSave") or (A_ThisLabel = "GuiMoveOneFavoriteSave")
@@ -6939,7 +6962,7 @@ RemoveAllSubMenus(strSubmenuFullName)
 ;========================================================================================================================
 ; OPTIONS
 ;========================================================================================================================
-
+; ####
 
 ;------------------------------------------------------------
 GuiOptions:
@@ -8263,11 +8286,20 @@ GetIcon4Location(strLocation, ByRef strDefaultIcon, ByRef intDefaultIcon, strDef
 	global blnDiagMode
 	global objIconsFile
 	global objIconsIndex
+	global blnRadioApplication
 	
 	if !StrLen(strLocation)
 	{
-		strDefaultIcon := objIconsFile["UnknownDocument"]
-		intDefaultIcon := objIconsIndex["UnknownDocument"]
+		if (blnRadioApplication)
+		{
+			strDefaultIcon := objIconsFile["Application"]
+			intDefaultIcon := objIconsIndex["Application"]
+		}
+		else
+		{
+			strDefaultIcon := objIconsFile["UnknownDocument"]
+			intDefaultIcon := objIconsIndex["UnknownDocument"]
+		}
 		return
 	}
 	
