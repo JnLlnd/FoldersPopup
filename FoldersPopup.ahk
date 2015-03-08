@@ -5148,7 +5148,7 @@ return
 AjustColumnWidth:
 ;------------------------------------------------------------
 
-LV_ModifyCol(1, "Auto") ; adjust column width ####
+LV_ModifyCol(1, "Auto") ; adjust column width
 
 ; See http://www.autohotkey.com/board/topic/6073-get-listview-column-width-with-sendmessage/
 intCol1 := 0 ; column index, zero-based
@@ -5291,16 +5291,16 @@ LoadOneMenuToGui:
 Gui, 1:ListView, lvFavoritesList
 LV_Delete()
 
-; #### 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource, 7 AppArguments, 8 AppWorkingDir
-; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
+; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource, 7 AppArguments, 8 AppWorkingDir
 Loop, % arrMenus[strCurrentMenu].MaxIndex()
 	if (arrMenus[strCurrentMenu][A_Index].FavoriteType = "S") ; this is a submenu
 		LV_Add(, arrMenus[strCurrentMenu][A_Index].FavoriteName, lGuiSubmenuLocation, arrMenus[strCurrentMenu][A_Index].MenuName
 			, arrMenus[strCurrentMenu][A_Index].SubmenuFullName, arrMenus[strCurrentMenu][A_Index].FavoriteType
 			, arrMenus[strCurrentMenu][A_Index].IconResource)
-	else ; this is a folder or document
+	else ; this is a folder, document, URL or application
 		LV_Add(, arrMenus[strCurrentMenu][A_Index].FavoriteName, arrMenus[strCurrentMenu][A_Index].FavoriteLocation, arrMenus[strCurrentMenu][A_Index].MenuName
-			, "", arrMenus[strCurrentMenu][A_Index].FavoriteType, arrMenus[strCurrentMenu][A_Index].IconResource)
+			, "", arrMenus[strCurrentMenu][A_Index].FavoriteType, arrMenus[strCurrentMenu][A_Index].IconResource
+			, arrMenus[strCurrentMenu][A_Index].AppArguments, arrMenus[strCurrentMenu][A_Index].AppWorkingDir)
 LV_Modify(1, "Select Focus")
 Gosub, AjustColumnWidth
 
@@ -5317,7 +5317,7 @@ SaveCurrentListviewToMenuObject:
 arrMenus[strCurrentMenu] := Object() ; re-init current menu array
 Gui, 1:ListView, lvFavoritesList
 
-; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
+; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource, 7 AppArguments, 8 AppWorkingDir
 Loop % LV_GetCount()
 {
 	LV_GetText(strName, A_Index, 1)
@@ -5326,14 +5326,18 @@ Loop % LV_GetCount()
 	LV_GetText(strSubmenu, A_Index, 4)
 	LV_GetText(strFavoriteType, A_Index, 5)
 	LV_GetText(strIconResource, A_Index, 6)
+	LV_GetText(strAppArguments, A_Index, 7)
+	LV_GetText(strAppWorkingDir, A_Index, 8)
 
 	objFavorite := Object() ; new menu item
 	objFavorite.FavoriteName := strName ; display name of this menu item
 	objFavorite.FavoriteLocation := strLocation ; path for this menu item
 	objFavorite.MenuName := strCurrentMenu ; parent menu of this menu item - do not use strMenu because lack of lMainMenuName
 	objFavorite.SubmenuFullName := strSubmenu ; if menu, full name of the submenu
-	objFavorite.FavoriteType := strFavoriteType ; "F" folder, "D" document or "S" submenu
+	objFavorite.FavoriteType := strFavoriteType ; "F" folder, "D" document, "U" url, "P" sPecial, "A" application or "S" submenu
 	objFavorite.IconResource := strIconResource ; icon resource in format "iconfile,iconindex"
+	objFavorite.AppArguments := strAppArguments ; application arguments
+	objFavorite.AppWorkingDir := strAppWorkingDir ; application working directory
 	arrMenus[strCurrentMenu].Insert(objFavorite) ; add this menu item to parent menu - do not use strMenu because lack of lMainMenuName
 }
 
@@ -5622,7 +5626,7 @@ if (LV_GetCount("Selected") > 1)
 
 intInsertPosition := LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1
 LV_Modify(0, "-Select")
-LV_Insert(intInsertPosition, "Select Focus", lMenuSeparator, lMenuSeparator . lMenuSeparator, strCurrentMenu, "", "", "")
+LV_Insert(intInsertPosition, "Select Focus", lMenuSeparator, lMenuSeparator . lMenuSeparator, strCurrentMenu, "", "", "", "", "")
 LV_Modify(LV_GetNext(), "Vis")
 Gosub, AjustColumnWidth
 
@@ -5645,11 +5649,12 @@ if (LV_GetCount("Selected") > 1)
 
 intInsertPosition := LV_GetCount() ? (LV_GetNext() ? LV_GetNext() : 0xFFFF) : 1
 LV_Modify(0, "-Select")
-; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
+; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource, 7 AppArguments, 8 AppWorkingDir
+
 LV_Insert(intInsertPosition, "Select Focus"
-	, strColumnBreakIndicator . " " lMenuColumnBreak . " " . strColumnBreakIndicator
-	, strColumnBreakIndicator . " " lMenuColumnBreak . " " . strColumnBreakIndicator
-	, strCurrentMenu, "", "", "")
+	, strColumnBreakIndicator . " " . lMenuColumnBreak . " " . strColumnBreakIndicator
+	, strColumnBreakIndicator . " " . lMenuColumnBreak . " " . strColumnBreakIndicator
+	, strCurrentMenu, "", "", "", "", "")
 LV_Modify(LV_GetNext(), "Vis")
 Gosub, AjustColumnWidth
 
@@ -5770,15 +5775,15 @@ if (intSelectedRow = (InStr(A_ThisLabel, "Up") ? 1 : LV_GetCount()))
 	return
 }
 
-Loop, 6
+Loop, 8
 	LV_GetText(arrThis%A_Index%, intSelectedRow, A_Index)
 
-Loop, 6
+Loop, 8
 	LV_GetText(arrOther%A_Index%, intSelectedRow + (InStr(A_ThisLabel, "Up") ? -1 : 1), A_Index)
 
 LV_Modify(intSelectedRow, "-Select")
-LV_Modify(intSelectedRow, "", arrOther1, arrOther2, arrOther3, arrOther4, arrOther5, arrOther6)
-LV_Modify(intSelectedRow + (InStr(A_ThisLabel, "Up") ? -1 : 1), , arrThis1, arrThis2, arrThis3, arrThis4, arrThis5, arrThis6)
+LV_Modify(intSelectedRow, "", arrOther1, arrOther2, arrOther3, arrOther4, arrOther5, arrOther6, arrOther7, arrOther8)
+LV_Modify(intSelectedRow + (InStr(A_ThisLabel, "Up") ? -1 : 1), , arrThis1, arrThis2, arrThis3, arrThis4, arrThis5, arrThis6, arrThis7, arrThis8)
 
 if !InStr(A_ThisLabel, "One")
 	LV_Modify(intSelectedRow + (InStr(A_ThisLabel, "Up") ? -1 : 1), "Select Focus Vis")
@@ -5826,13 +5831,15 @@ SaveOneMenu(strMenu)
 	
 	Loop, % arrMenus[strMenu].MaxIndex()
 	{
-		; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource
+		; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource, 7 AppArguments, 8 AppWorkingDir
 		strValue := arrMenus[strMenu][A_Index].FavoriteName
 			. "|" . arrMenus[strMenu][A_Index].FavoriteLocation
 			. "|" . SubStr(arrMenus[strMenu][A_Index].MenuName, StrLen(lMainMenuName) + 1) ; remove main menu name for ini file
 			. "|" . SubStr(arrMenus[strMenu][A_Index].SubmenuFullName, StrLen(lMainMenuName) + 1) ; remove main menu name for ini file
 			. "|" . arrMenus[strMenu][A_Index].FavoriteType
 			. "|" . arrMenus[strMenu][A_Index].IconResource
+			. "|" . arrMenus[strMenu][A_Index].AppArguments
+			. "|" . arrMenus[strMenu][A_Index].AppWorkingDir
 		intIndex := intIndex + 1
 		IniWrite, %strValue%, %strIniFile%, Folders, Folder%intIndex% ; keep "Folders" label instead of "Favorite" for backward compatibility
 		if (arrMenus[strMenu][A_Index].FavoriteType = "S")
@@ -5926,6 +5933,7 @@ for strMenuName, arrMenu in arrMenus
 	arrMenuBK := Object()
 	for intIndex, objFavorite in arrMenu
 	{
+		; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource, 7 AppArguments, 8 AppWorkingDir
 		objFavoriteBK := Object()
 		objFavoriteBK.MenuName := objFavorite.MenuName
 		objFavoriteBK.FavoriteName := objFavorite.FavoriteName
@@ -5933,6 +5941,8 @@ for strMenuName, arrMenu in arrMenus
 		objFavoriteBK.SubmenuFullName := objFavorite.SubmenuFullName
 		objFavoriteBK.FavoriteType := objFavorite.FavoriteType
 		objFavoriteBK.IconResource := objFavorite.IconResource
+		objFavoriteBK.AppArguments := objFavorite.AppArguments
+		objFavoriteBK.AppWorkingDir := objFavorite.AppWorkingDir
 		arrMenuBK.Insert(objFavoriteBK)
 	}
 	arrMenusBK.Insert(strMenuName, arrMenuBK) ; add this submenu to the array of menus
@@ -5953,6 +5963,7 @@ for strMenuName, arrMenuBK in arrMenusBK
 	arrMenu := Object()
 	for intIndex, objFavoriteBK in arrMenuBK
 	{
+		; 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource, 7 AppArguments, 8 AppWorkingDir
 		objFavorite := Object()
 		objFavorite.MenuName := objFavoriteBK.MenuName
 		objFavorite.FavoriteName := objFavoriteBK.FavoriteName
@@ -5960,6 +5971,8 @@ for strMenuName, arrMenuBK in arrMenusBK
 		objFavorite.SubmenuFullName := objFavoriteBK.SubmenuFullName
 		objFavorite.FavoriteType := objFavoriteBK.FavoriteType
 		objFavorite.IconResource := objFavoriteBK.IconResource
+		objFavorite.AppArguments := objFavoriteBK.AppArguments
+		objFavorite.AppWorkingDir := objFavoriteBK.AppWorkingDir
 		arrMenu.Insert(objFavorite)
 	}
 	arrMenus.Insert(strMenuName, arrMenu) ; add this submenu to the array of menus
@@ -6137,11 +6150,14 @@ if (A_ThisLabel = "GuiEditFavorite")
 	LV_GetText(strFavoriteType, intRowToEdit, 5)
 	LV_GetText(strSavedIconResource, intRowToEdit, 6)
 	strCurrentIconResource := strSavedIconResource
+	LV_GetText(strAppArguments, intRowToEdit, 7)
+	LV_GetText(strAppWorkingDir, intRowToEdit, 8)
 
 	blnRadioFolder := (strFavoriteType = "F")
 	blnRadioSpecial := (strFavoriteType = "P")
 	blnRadioFile := (strFavoriteType = "D")
 	blnRadioURL := (strFavoriteType = "U")
+	blnRadioApplication := (strFavoriteType = "A")
 	blnRadioSubmenu := (strFavoriteType = "S")
 }
 else
@@ -6155,6 +6171,8 @@ else
 	strSavedIconResource := "" ;  make sure it is empty
 	strDefaultIconResource := "" ;  make sure it is empty
 	strCurrentIconResource := "" ;  make sure it is empty
+	strAppArguments := "" ;  make sure it is empty
+	strAppWorkingDir := "" ;  make sure it is empty
 	
 	if (A_ThisLabel = "GuiAddFromPopup" or A_ThisLabel = "GuiAddFromDropFiles")
 		; strCurrentLocation is received from AddThisFolder or GuiDropFiles
@@ -6170,6 +6188,7 @@ else
 	blnRadioSpecial := false
 	blnRadioFile := false
 	blnRadioURL := false
+	blnRadioApplication := false
 	blnRadioSubmenu := false
 	
 	if (A_ThisLabel = "GuiAddFromPopup")
@@ -6215,6 +6234,7 @@ if (A_ThisLabel = "GuiAddFavorite")
 	If WindowsIsVersion7OrMore()
 		Gui, 2:Add, Radio, xs vblnRadioSpecial gRadioButtonsChanged, %lDialogSpecialLabel%
 	Gui, 2:Add, Radio, xs vblnRadioFile gRadioButtonsChanged, %lDialogFileLabel%
+	Gui, 2:Add, Radio, xs vblnRadioApplication gRadioButtonsChanged, %lDialogApplicationLabel%
 	Gui, 2:Add, Radio, xs vblnRadioURL gRadioButtonsChanged, %lDialogURLLabel%
 	Gui, 2:Add, Radio, xs vblnRadioSubmenu gRadioButtonsChanged, %lDialogSubmenuLabel%
 }
@@ -6237,16 +6257,39 @@ else
 		Gui, 2:Add, Button, x+10 yp vbtnSelectFolderLocation gButtonSelectFolderLocation, %lDialogBrowseButton%
 }
 
+Gui, 2:Add, Text, x10 w300 vlblArguments, %lDialogArgumentsLabel%
+Gui, 2:Add, Edit, x10 w300 Limit250 vstrAppArguments, %strAppArguments%
+Gui, 2:Add, Text, x10 w300 vlblWorkingDir, %lDialogWorkingDirLabel%
+Gui, 2:Add, Edit, x10 w300 Limit250 vstrAppWorkingDir, %strAppWorkingDir%
+Gui, 2:Add, Button, x+10 yp vbtnSelectWorkingDir gButtonSelectWorkingDir, %lDialogBrowseButton%
+
+GuiControlGet, arrPos, Pos, strAppArguments
+intMinButtonY := arrPosY
+
 if (A_ThisLabel = "GuiEditFavorite")
 {
 	Gui, 2:Add, Button, y+20 vbtnEditFolderSave gGuiEditFavoriteSave default, %lDialogSave%
 	Gui, 2:Add, Button, yp vbtnEditFolderCancel gGuiEditFavoriteCancel, %lGuiCancel%
+	
+	if (!blnRadioApplication)
+	{
+		GuiControl, Move, btnEditFolderSave, y%intMinButtonY%
+		GuiControl, Move, btnEditFolderCancel, y%intMinButtonY%
+	}
+	
 	GuiCenterButtons(L(lDialogAddEditFavoriteTitle, lDialogEdit, strAppName, strAppVersion), 10, 5, 20, "btnEditFolderSave", "btnEditFolderCancel")
 }
 else
 {
 	Gui, 2:Add, Button, y+20 vbtnAddFolderAdd gGuiAddFavoriteSave default, %lDialogAdd%
 	Gui, 2:Add, Button, yp vbtnAddFolderCancel gGuiAddFavoriteCancel, %lGuiCancel%
+	
+	GuiControlGet, arrPos, Pos, btnAddFolderCancel
+	intMaxButtonY := arrPosY
+	
+	GuiControl, Move, btnAddFolderAdd, y%intMinButtonY%
+	GuiControl, Move, btnAddFolderCancel, y%intMinButtonY%
+	
 	GuiCenterButtons(L(lDialogAddEditFavoriteTitle, lDialogAdd, strAppName, strAppVersion), 10, 5, 20, "btnAddFolderAdd", "btnAddFolderCancel")
 }
 
@@ -6331,13 +6374,18 @@ RadioButtonsChanged:
 Gui, 2:Submit, NoHide
 
 GuiControlGet, blnAddMode, Visible, blnRadioFolder ; if radio buttons visible, we are in add mode
-if (blnAddMode = "") ; if control is just not visible, we are in edit mode
+if (ErrorLevel) ; if control does not exist, we are in edit mode
 	blnAddMode := 0
 
 GuiControl, % "2:" . (blnRadioSpecial ? "Show" : "Hide"), drpSpecialFolder
 GuiControl, % "2:" . (blnRadioSubmenu or blnRadioSpecial ? "Hide" : "Show"), lblFolder
 GuiControl, % "2:" . (blnRadioSubmenu or blnRadioSpecial ? "Hide" : "Show"), strFavoriteLocation
 GuiControl, % "2:" . (blnRadioSubmenu or blnRadioSpecial or blnRadioURL ? "Hide" : "Show"), btnSelectFolderLocation
+GuiControl, % "2:" . (blnRadioApplication ? "Show" : "Hide"), lblArguments
+GuiControl, % "2:" . (blnRadioApplication ? "Show" : "Hide"), strAppArguments
+GuiControl, % "2:" . (blnRadioApplication ? "Show" : "Hide"), lblWorkingDir
+GuiControl, % "2:" . (blnRadioApplication ? "Show" : "Hide"), strAppWorkingDir
+GuiControl, % "2:" . (blnRadioApplication ? "Show" : "Hide"), btnSelectWorkingDir
 
 if (blnAddMode) and StrLen(strFavoriteLocation) ; in add mode keep only folder name if we have a file name, else empty it
 {
@@ -6368,17 +6416,29 @@ else if (blnRadioURL)
 	GuiControl, 2:, lblShortName, %lDialogURLShortName%
 	GuiControl, 2:, lblFolder, %lDialogURLLabel%
 }
+else if (blnRadioApplication)
+{
+	GuiControl, 2:, lblShortName, %lDialogApplicationShortName%
+	GuiControl, 2:, lblFolder, %lDialogApplicationLabel%
+}
 else ; blnRadioSubmenu
 {
 	GuiControl, 2:, lblShortName, %lDialogSubmenuShortName%
 }
+
+if (blnAddMode) ; move buttons considering app properties fields
+{
+	GuiControl, Move, btnAddFolderAdd, % "y" . (blnRadioApplication ? intMaxButtonY : intMinButtonY)
+	GuiControl, Move, btnAddFolderCancel, % "y" . (blnRadioApplication ? intMaxButtonY : intMinButtonY)
+}
+Gui, Show, AutoSize Center ; resize window considering app properties fields
 
 Gosub, GuiFavoriteIconDefault
 if (blnAddMode)
 	strCurrentIconResource := strDefaultIconResource
 Gosub, GuiFavoriteIconDisplay
 
-if (blnRadioFolder or blnRadioFile)
+if (blnRadioFolder or blnRadioFile or blnRadioApplication)
 	GuiControl, 2:+Default, btnSelectFolderLocation
 else
 	GuiControl, 2:+Default, btnAddFolderAdd
@@ -6425,6 +6485,7 @@ return
 
 ;------------------------------------------------------------
 ButtonSelectFolderLocation:
+ButtonSelectWorkingDir:
 ;------------------------------------------------------------
 Gui, 2:Submit, NoHide
 Gui, 2:+OwnDialogs
@@ -6437,10 +6498,14 @@ else
 if !(StrLen(strNewLocation))
 	return
 
-GuiControl, 2:, strFavoriteLocation, %strNewLocation%
-
-if !StrLen(strFavoriteShortName)
-	GuiControl, 2:, strFavoriteShortName, % GetDeepestFolderName(strNewLocation)
+if (A_ThisLabel = "ButtonSelectFolderLocation")
+{
+	GuiControl, 2:, strFavoriteLocation, %strNewLocation%
+	if !StrLen(strFavoriteShortName)
+		GuiControl, 2:, strFavoriteShortName, % GetDeepestFolderName(strNewLocation)
+}
+else
+	GuiControl, 2:, strAppWorkingDir, %strNewLocation%
 
 return
 ;------------------------------------------------------------
@@ -6498,6 +6563,7 @@ return
 ;------------------------------------------------------------
 
 
+; ####
 ;------------------------------------------------------------
 GuiFavoriteIconDefault:
 ;------------------------------------------------------------

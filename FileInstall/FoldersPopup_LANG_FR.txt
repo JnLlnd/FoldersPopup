@@ -17,6 +17,9 @@ lDialogAddFileSelect	Choisir un nouveau document:
 lDialogAddFolderManuallyPrompt	Désolé, nous ne pouvons détecter automatiquement le dossier actif dans ce type de fenêtre.`n`nVoulez-vous ajouter ce dossier manuellement?
 lDialogAddFolderManuallyTitle	Ajouter un dossier - ~1~ ~2~
 lDialogAddFolderSelect	Choisir ou créer un nouveau dossier:
+lDialogApplicationLabel	Application
+lDialogApplicationShortName	Nom de l'application (pour les menus)
+lDialogArgumentsLabel	Paramètres
 lDialogBrowseButton	Parcourir
 lDialogCancelButton	Annuler
 lDialogCancelPrompt	Annuler les changements?
@@ -35,9 +38,9 @@ lDialogFavoriteNameNoPipe	Le nom du favori ou du sous-menu ne doit pas inclure l
 lDialogFavoriteNameNoSeparator	Le nom du sous-menu ne doit pas inclure le caractère réservé "~1~".
 lDialogFavoriteNameNotNew	Le nom "~1~" est déjà présent dans ce menu. Veuillez choisir un nouveau nom.
 lDialogFavoriteParentMenu	Insérer le nouveau favoris dans ce menu
-lDialogFavoritesParentMenuMove	Déplacer ~1~ favoris vers ce menu
 lDialogFavoriteRemovePrompt	Supprimer le sous-menu "~1~"`net TOUT son contenu (dossiers et sous-menus)?
 lDialogFavoriteRemoveTitle	Supprimer un favori - ~1~
+lDialogFavoritesParentMenuMove	Déplacer ~1~ favoris vers ce menu
 lDialogFileLabel	Document
 lDialogFileShortName	Nom du document (pour les menus)
 lDialogFolderLabel	Dossier
@@ -80,6 +83,7 @@ lDialogTabNext	Suite
 lDialogThirdPartyDetected	~1~ a détecté que ~2~ est installé sur votre ordinateur.`n`nVoulez-vous activer l'intégration avec ~2~?
 lDialogURLLabel	Lien (URL)
 lDialogURLShortName	Nom de ce lien (pour les menus)
+lDialogWorkingDirLabel	Démarrer dans
 lDonateButton	Soutenez ce gratuiciel!
 lDonateCheckPrompt	Vous aimez ~1~?`n`n~1~ n'est pas seulement GRATUIT mais aussi distribué SANS ces attrapes publicitaires dont on ne sait jamais si elles transportent des virus ou encore des logiciels espions ou malveillants.`n`nCela fait maintenant ~2~ fois que ~1~ est appelé pour faciliter votre travail quotidien. Que diriez-vous de soutenir ce gratuiciel à votre tour?
 lDonateCheckTitle	~1~ fois! - ~2~
