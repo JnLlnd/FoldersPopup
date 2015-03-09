@@ -1,7 +1,5 @@
 /*
 Bug:
-- move add fav buttons when drop files
-- startin must call folder select
 
 To-do:
 */
@@ -6305,9 +6303,12 @@ else
 	
 	GuiControlGet, arrPos, Pos, btnAddFolderCancel
 	intMaxButtonY := arrPosY
-	
-	GuiControl, Move, btnAddFolderAdd, y%intMinButtonY%
-	GuiControl, Move, btnAddFolderCancel, y%intMinButtonY%
+
+	if !(A_ThisLabel = "GuiAddFromDropFiles" and blnRadioApplication)
+	{
+		GuiControl, Move, btnAddFolderAdd, y%intMinButtonY%
+		GuiControl, Move, btnAddFolderCancel, y%intMinButtonY%
+	}
 	
 	GuiCenterButtons(L(lDialogAddEditFavoriteTitle, lDialogAdd, strAppName, strAppVersion), 10, 5, 20, "btnAddFolderAdd", "btnAddFolderCancel")
 }
@@ -6509,7 +6510,7 @@ ButtonSelectWorkingDir:
 Gui, 2:Submit, NoHide
 Gui, 2:+OwnDialogs
 
-if (blnRadioFolder)
+if (blnRadioFolder) or (A_ThisLabel = "ButtonSelectWorkingDir")
 	FileSelectFolder, strNewLocation, *%strCurrentLocation%, 3, %lDialogAddFolderSelect%
 else
 	FileSelectFile, strNewLocation, S3, %strCurrentLocation%, %lDialogAddFileSelect%
