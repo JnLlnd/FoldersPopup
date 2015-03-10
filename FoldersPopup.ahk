@@ -763,6 +763,7 @@ if (A_OSVersion = "WIN_XP")
 	Gosub, BuildSpecialFoldersMenu
 Gosub, BuildFoldersInExplorerMenu ; need to be initialized here - will be updated at each call to popup menu
 Gosub, BuildGroupMenu
+Gosub, BuildClipboardMenu
 Gosub, BuildMainMenu
 Gosub, BuildGui
 Gosub, BuildTrayMenu
@@ -811,6 +812,7 @@ DllCall("CreateMutex", "uint", 0, "int", false, "str", strAppName . "Mutex")
 ; Gosub, PopupMenuNewWindowKeyboard
 ; Gosub, BuildFoldersInExplorerMenu
 ; Gosub, BuildGroupMenu
+; Gosub, BuildClipboardMenu
 ; Gosub, GuiGroupSaveFromMenu
 ; Gosub, GuiGroupsManage
 
@@ -948,40 +950,47 @@ StringSplit, arrMouseButtons, strMouseButtons, |
 strIconsMenus := "lMenuDesktop|lMenuDocuments|lMenuPictures|lMenuMyComputer|lMenuNetworkNeighborhood|lMenuControlPanel|lMenuRecycleBin"
 	. "|menuRecentFolders|menuGroupDialog|menuGroupExplorer|lMenuSpecialFolders|lMenuGroup|lMenuFoldersInExplorer"
 	. "|lMenuRecentFolders|lMenuSettings|lMenuAddThisFolder|lDonateMenu|Submenu|Network|UnknownDocument|Folder"
-	. "|menuGroupSave|menuGroupLoad|lMenuDownloads|Templates|MyMusic|MyVideo|History|Favorites|Temporary|Winver|Fonts|Application"
+	. "|menuGroupSave|menuGroupLoad|lMenuDownloads|Templates|MyMusic|MyVideo|History|Favorites|Temporary|Winver"
+	. "|Fonts|Application|Clipboard"
 
 if (A_OSVersion = "WIN_XP")
 {
 	strIconsFile := "shell32|shell32|shell32|shell32|shell32|shell32|shell32"
 				. "|shell32|shell32|shell32|shell32|shell32|shell32"
 				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32"
-				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32|winver|shell32"|shell32
+				. "|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32|shell32|winver"
+				. "|shell32|shell32|shell32"
 	strIconsIndex := "35|127|118|16|19|22|33"
 				. "|4|147|4|4|147|147"
 				. "|214|166|111|161|85|10|1|4"
-				. "|7|7|156|55|129|130|21|209|132|1|39|97"
+				. "|7|7|156|55|129|130|21|209|132|1"
+				. "|39|97|145"
 }
 else if (A_OSVersion = "WIN_VISTA")
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres"
 				. "|imageres|imageres|shell32|shell32|shell32|imageres|shell32|shell32"
-				. "|shell32|shell32|shell32|shell32|imageres|imageres|shell32|shell32|shell32|winver|shell32|shell32"
+				. "|shell32|shell32|shell32|shell32|imageres|imageres|shell32|shell32|shell32|winver"
+				. "|shell32|shell32|shell32"
 	strIconsIndex := "105|85|67|104|114|22|49"
 				. "|112|174|3|3|251|174"
 				. "|112|109|88|161|85|28|1|3"
-				. "|259|259|123|55|103|177|240|87|153|1|39|97"
+				. "|259|259|123|55|103|177|240|87|153|1"
+				. "|39|97|261"
 }
 else
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres|shell32|shell32"
-				. "|shell32|shell32|imageres|shell32|imageres|imageres|shell32|shell32|shell32|winver|shell32|shell32"
+				. "|shell32|shell32|imageres|shell32|imageres|imageres|shell32|shell32|shell32|winver"
+				. "|shell32|shell32|shell32"
 	strIconsIndex := "106|189|68|105|115|23|50"
 				. "|113|176|203|203|99|176"
 				. "|113|110|217|208|298|29|1|4"
-				. "|297|46|176|55|104|179|240|87|153|1|39|304"
+				. "|297|46|176|55|104|179|240|87|153|1"
+				. "|39|304|261"
 }
 
 StringSplit, arrIconsFile, strIconsFile, |
@@ -1080,6 +1089,7 @@ IniRead, blnDisplaySpecialFolders, %strIniFile%, Global, DisplaySpecialFolders, 
 IniRead, blnDisplayRecentFolders, %strIniFile%, Global, DisplayRecentFolders, 1
 IniRead, blnDisplayFoldersInExplorerMenu, %strIniFile%, Global, DisplayFoldersInExplorerMenu, 1
 IniRead, blnDisplayGroupMenu, %strIniFile%, Global, DisplaySwitchMenu, 1 ; keep "Switch" in label instead of "Group" for backward compatibility
+IniRead, blnDisplayClipboardMenu, %strIniFile%, Global, DisplayClipboardMenu, 1
 IniRead, intPopupMenuPosition, %strIniFile%, Global, PopupMenuPosition, 1
 IniRead, strPopupFixPosition, %strIniFile%, Global, PopupFixPosition, 20,20
 StringSplit, arrPopupFixPosition, strPopupFixPosition, `,
@@ -2352,6 +2362,53 @@ return
 
 
 ;------------------------------------------------------------
+BuildClipboardMenu:
+;------------------------------------------------------------
+
+Menu, menuClipboard, Add
+Menu, menuClipboard, DeleteAll
+if (blnUseColors)
+	Menu, menuClipboard, Color, %strMenuBackgroundColor%
+
+blnClipboardMenuEmpty := 1
+
+Gosub, RefreshClipboardMenu
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+RefreshClipboardMenu:
+;------------------------------------------------------------
+
+blnPreviousClipboardMenuDeleted := 0
+intShortcutClipboardMenu := 0
+
+Loop, parse, Clipboard, `n, `r%A_Space%%A_Tab%
+{
+    strClipboardLine = %A_LoopField%
+
+	if StrLen(FileExist(strClipboardLine))
+	{
+		if !(blnPreviousClipboardMenuDeleted)
+		{
+			Menu, menuClipboard, Add
+			Menu, menuClipboard, DeleteAll
+			blnPreviousClipboardMenuDeleted := 1
+		}
+		blnClipboardMenuEmpty := 0
+
+		strMenuName := (blnDisplayMenuShortcuts and (intShortcutFoldersInExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutClipboardMenu, false) . " " : "") . strClipboardLine
+		AddMenuIcon("menuClipboard", strMenuName, "OpenClipboard", "lMenuClipboard")
+	}
+}
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 CollectExplorers(objExplorers, pExplorers)
 ;------------------------------------------------------------
 {
@@ -2588,7 +2645,10 @@ if (blnDisplayGroupMenu)
 if (blnDisplayRecentFolders)
 	AddMenuIcon(lMainMenuName, lMenuRecentFolders . "...", "RefreshRecentFolders", "lMenuRecentFolders")
 
-if ((blnDisplaySpecialFolders and A_OSVersion = "WIN_XP") or blnDisplayRecentFolders or blnDisplayFoldersInExplorerMenu or blnDisplayGroupMenu)
+if (blnDisplayClipboardMenu)
+	AddMenuIcon(lMainMenuName, lMenuClipboard . "...", ":menuClipboard", "Clipboard")
+
+if ((blnDisplaySpecialFolders and A_OSVersion = "WIN_XP") or blnDisplayRecentFolders or blnDisplayFoldersInExplorerMenu or blnDisplayGroupMenu or blnDisplayClipboardMenu)
 	Menu, %lMainMenuName%, Add
 
 AddMenuIcon(lMainMenuName, L(lMenuSettings, strAppName) . "...", "GuiShow", "lMenuSettings")
@@ -2941,6 +3001,12 @@ if (blnDisplayGroupMenu)
 		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Save group menu if no Explorer
 		, %lMenuGroupSave%
 
+if (blnDisplayClipboardMenu)
+{
+	Gosub, RefreshClipboardMenu
+	Menu, %lMainMenuName%, % (blnClipboardMenuEmpty ? "Disable" : "Enable"), %lMenuClipboard%...
+}
+
 ; Enable "Add This Folder" only if the target window is an Explorer, TotalCommander,
 ; Directory Opus or a dialog box under WIN_7 (does not work under WIN_XP). Tested on WIN_XP and WIN_7.
 ; Other tests shown that WIN_8 behaves like WIN_7.
@@ -3198,6 +3264,7 @@ WindowIsFoldersPopup(strClass)
 OpenFavorite:
 OpenRecentFolder:
 OpenFolderInExplorer:
+OpenClipboard:
 ;------------------------------------------------------------
 
 if (A_ThisLabel = "OpenRecentFolder")
@@ -3219,6 +3286,23 @@ else if (A_ThisLabel = "OpenFolderInExplorer")
 			strLocation :=  A_ThisMenuItem
 	}
 	strFavoriteType := "F" ; folder
+}
+else if (A_ThisLabel = "OpenClipboard")
+{
+	if (blnDisplayMenuShortcuts)
+		StringTrimLeft, strLocation, A_ThisMenuItem, 3 ; remove "&1 " from menu item
+	else
+		strLocation :=  A_ThisMenuItem
+	
+	SplitPath, strLocation, , , strExtension
+	if InStr("exe.com.bat", strExtension)
+	{
+		strFavoriteType := "A" ; application
+		strAppArguments := "" ; make sure it is empty from previous calls
+		strAppWorkingDir := "" ; make sure it is empty from previous calls
+	}
+	else
+		strFavoriteType := (LocationIsDocument(strOutTarget) ? "D" : "F") ; folder or document
 }
 else ; this is a favorite
 {
@@ -6963,7 +7047,6 @@ RemoveAllSubMenus(strSubmenuFullName)
 ;========================================================================================================================
 ; OPTIONS
 ;========================================================================================================================
-; ####
 
 ;------------------------------------------------------------
 GuiOptions:
@@ -7035,6 +7118,9 @@ GuiControl, , blnDisplayFoldersInExplorerMenu, %blnDisplayFoldersInExplorerMenu%
 
 Gui, 2:Add, CheckBox, y+10 xs vblnDisplayGroupMenu, %lOptionsDisplayGroupMenu%
 GuiControl, , blnDisplayGroupMenu, %blnDisplayGroupMenu%
+
+Gui, 2:Add, CheckBox, y+10 xs vblnDisplayClipboardMenu, %lOptionsDisplayClipboardMenu%
+GuiControl, , blnDisplayClipboardMenu, %blnDisplayClipboardMenu%
 
 Gui, 2:Add, CheckBox, y+10 xs vblnDisplayRecentFolders gDisplayRecentFoldersClicked, %lOptionsDisplayRecentFolders%
 GuiControl, , blnDisplayRecentFolders, %blnDisplayRecentFolders%
@@ -7246,6 +7332,7 @@ IniWrite, %blnDisplayRecentFolders%, %strIniFile%, Global, DisplayRecentFolders
 IniWrite, %intRecentFolders%, %strIniFile%, Global, RecentFolders
 IniWrite, %blnDisplayFoldersInExplorerMenu%, %strIniFile%, Global, DisplayFoldersInExplorerMenu
 IniWrite, %blnDisplayGroupMenu%, %strIniFile%, Global, DisplaySwitchMenu ; keep "Switch" for backward compatibility
+IniWrite, %blnDisplayClipboardMenu%, %strIniFile%, Global, DisplayClipboardMenu
 IniWrite, %blnDisplayMenuShortcuts%, %strIniFile%, Global, DisplayMenuShortcuts
 IniWrite, %blnCheck4Update%, %strIniFile%, Global, Check4Update
 IniWrite, %blnOpenMenuOnTaskbar%, %strIniFile%, Global, OpenMenuOnTaskbar
