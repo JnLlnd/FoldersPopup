@@ -177,7 +177,7 @@ lMenuDocuments	Documenten
 lMenuDownloads	Downloads
 lMenuExitFoldersPopup	Exit ~1~
 lMenuFavoritesInternet	Favorieten (Internet)
-lMenuFoldersInExplorer	Huidige Mappen
+lMenuFoldersInExplorer	&Huidige Mappen
 lMenuFonts	Lettertypen
 lMenuFPMenu	~1~ ~2~
 lMenuGroup	&Mapgroepen
@@ -202,7 +202,7 @@ lMenuRecentFolders	&Recente bezochte mappen
 lMenuRecentItems	Onlangs geopend
 lMenuRecycleBin	Prullenbak
 lMenuRefreshRecent	Vernieuwen van het menu met de recent bezochten mappen
-lMenuReservedShortcuts	SWRFA
+lMenuReservedShortcuts	SHMRKFA
 lMenuReservedShortcutsDonate	T
 lMenuRunAtStartup	Uitvoe&ren bij opstarten
 lMenuSeparator	----------------

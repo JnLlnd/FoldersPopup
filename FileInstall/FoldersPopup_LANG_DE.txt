@@ -177,7 +177,7 @@ lMenuDocuments	Dokumente
 lMenuDownloads	Downloads
 lMenuExitFoldersPopup	Beenden ~1~
 lMenuFavoritesInternet	Favoriten (Internet)
-lMenuFoldersInExplorer	Ordner im Explorer
+lMenuFoldersInExplorer	&Ordner im Explorer
 lMenuFonts	Fonts
 lMenuFPMenu	~1~ ~2~
 lMenuGroup	Ordner &Gruppen
@@ -190,7 +190,7 @@ lMenuHistory	History
 lMenuMenu	Menü
 lMenuMyComputer	&Mein Computer
 lMenuMyMusic	Eigene Musik
-lMenuMySystemMenu	Meine Systemordner
+lMenuMySystemMenu	Meine &Systemordner
 lMenuMyVideo	Eigene Videos
 lMenuNetworkNeighborhood	&Netzwerkumgebung
 lMenuPictures	Bilder
@@ -202,7 +202,7 @@ lMenuRecentFolders	&Kürzlich verwendete Ordner
 lMenuRecentItems	Zuletzt verwendet
 lMenuRecycleBin	&Papierkorb
 lMenuRefreshRecent	Menü der kürzlich verwendeten Ordner wird aktualisiert
-lMenuReservedShortcuts	SWKFD
+lMenuReservedShortcuts	SOGKZFD
 lMenuReservedShortcutsDonate	U
 lMenuRunAtStartup	&Beim Start von Windows ausführen
 lMenuSeparator	----------------

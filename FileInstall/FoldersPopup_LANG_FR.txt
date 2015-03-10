@@ -166,6 +166,7 @@ lMenuAbout	À propos
 lMenuAddThisFolder	&Ajouter ce dossier au menu
 lMenuAppData	Application Data
 lMenuCache	Cache
+lMenuClipboard	P&resse-papiers
 lMenuColumnBreak	colonne
 lMenuCommonAppData	Application Data (commun)
 lMenuCommonDesktop	Bureau (commun)
@@ -179,10 +180,10 @@ lMenuDocuments	Documents
 lMenuDownloads	Téléchargements
 lMenuExitFoldersPopup	Quitter ~1~
 lMenuFavoritesInternet	Favoris (Internet)
-lMenuFoldersInExplorer	Dossiers dans l'Explorateur
+lMenuFoldersInExplorer	&Dossiers dans l'Explorateur
 lMenuFonts	Polices
 lMenuFPMenu	~2~ ~1~
-lMenuGroup	Groupes de dossiers
+lMenuGroup	&Groupes de dossiers
 lMenuGroupAdd	ajouter
 lMenuGroupDOpus	Listes Directory Opus et
 lMenuGroupLoad	Ouvrir un groupe
@@ -193,7 +194,7 @@ lMenuHistory	Historique
 lMenuMenu	Menu
 lMenuMyComputer	Ordinateur
 lMenuMyMusic	Ma musique
-lMenuMySystemMenu	Mes dossiers spéciaux
+lMenuMySystemMenu	Mes dossiers &spéciaux
 lMenuMyVideo	Mes vidéos
 lMenuNetworkNeighborhood	Réseau
 lMenuPictures	Images
@@ -205,7 +206,7 @@ lMenuRecentFolders	&Emplacements récents
 lMenuRecentItems	Documents récents
 lMenuRecycleBin	Corbeille
 lMenuRefreshRecent	Actualisation des dossiers récents en cours
-lMenuReservedShortcuts	DBEPA
+lMenuReservedShortcuts	SDGERPA
 lMenuReservedShortcutsDonate	S
 lMenuRunAtStartup	Exécuter au démarrage
 lMenuSeparator	----------------
@@ -243,6 +244,7 @@ lOptionsChangeHotkeyTitle	Modification de déclencheur - ~1~ ~2~
 lOptionsCheck4Update	Vérifier la mise à jour
 lOptionsCtrl	Ctrl
 lOptionsDirectoryOpusUseTabs	Utiliser les onglets
+lOptionsDisplayClipboardMenu	Presse-papiers
 lOptionsDisplayFoldersInExplorerMenu	Dossiers dans l'Explorateur
 lOptionsDisplayGroupMenu	Groupes de dossiers
 lOptionsDisplayIcons	Afficher les icônes des menus
