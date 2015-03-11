@@ -18,7 +18,18 @@ To-do:
 
 
 	Version: 4.9.1 (2015-03-??)
-	*
+	* add the favorite type Application
+	* add Arguments and Working directory fields to Application favorites
+	* execute the Application favorites passing properly the arguments and setting the working directory
+	* make room in the Add Favorite window for additional property fields
+	* support default and custom icons for Application favorites
+	* add the Clipboard menu item in the main menu and add to the submenu folders, documents or applications paths found in the Clipboard
+	* if no path is found in the current Clipboard, the previous submenu content is preserved
+	* add an option to determine if the Clipboard menu is shown (default true)
+	* disable clipboard submenu if empty
+	* add clipboard icon to Clipboard menu
+	* remove arguments double quotes when there is no argument
+	* process environment vars for app favorites and clipboard paths
 	
 	Version: 4.3 (2015-02-22)
 	* make the Settings window resizable
@@ -2389,7 +2400,7 @@ Loop, parse, Clipboard, `n, `r%A_Space%%A_Tab%
 {
     strClipboardLine = %A_LoopField%
 
-	if StrLen(FileExist(strClipboardLine))
+	if StrLen(FileExist(EnvVars(strClipboardLine)))
 	{
 		if !(blnPreviousClipboardMenuDeleted)
 		{
@@ -3292,7 +3303,7 @@ else if (A_ThisLabel = "OpenClipboard")
 	if (blnDisplayMenuShortcuts)
 		StringTrimLeft, strLocation, A_ThisMenuItem, 3 ; remove "&1 " from menu item
 	else
-		strLocation :=  A_ThisMenuItem
+		strLocation :=  EnvVars(A_ThisMenuItem)
 	
 	SplitPath, strLocation, , , strExtension
 	if InStr("exe.com.bat", strExtension)
@@ -3345,7 +3356,7 @@ if (strFavoriteType = "D" or strFavoriteType = "U") ; this is a document or an U
 
 if (strFavoriteType = "A") ; this is an application
 {
-	Run, %strLocation% "%strAppArguments%", %strAppWorkingDir% ; double-quotes required around strAppArguments, no dbl-quotes for strAppWorkingDir
+	Run, % strLocation . (StrLen(strAppArguments) ? " """ . EnvVars(strAppArguments) . """" : ""), % EnvVars(strAppWorkingDir) ; double-quotes required around strAppArguments, no dbl-quotes for strAppWorkingDir
 	return
 }
 
