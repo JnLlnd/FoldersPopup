@@ -17,7 +17,9 @@ To-do:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.9.2 (2015-03-??)
+	Version: 4.9.2 (2015-03-12)
+	* check for beta versions updates
+	* enabled only for users who ran a beta version previously and who enabled the Check for update option
 	
 	Version: 4.9.1 (2015-03-10)
 	* add the favorite type Application
