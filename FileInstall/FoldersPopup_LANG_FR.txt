@@ -308,6 +308,8 @@ lTrayTipWorkingTitle	~1~ ~2~ se prépare...
 lUpdateButtonRemind	Rappelez-moi
 lUpdateError	Une erreur est survenue lors de la vérification du numéro de la plus récente version. La vérification de la mise à jour est interrompue.
 lUpdatePrompt	Mettre à jour ~1~ de la version v~2~ à la version v~3~?
+lUpdatePromptBeta	Il y a une nouvelle version BETA de ~1~.`n`nMettre à jour ~1~ de la version v~2~ à la version v~3~?
+lUpdatePromptBetaContinue	Désirez-vous toujours être informé des futures versions beta?
 lUpdateTitle	Mettre à jour ~1~?
 lUpdateYouHaveLatest	Vous avez la version la plus récente: ~1~.`n`nVisiter la page web de ~2~ quand même?
 lWindowIsTreeviewText	Désolé... À cause d'une limitation de Windows, ce type de boîte de dialogue (TreeView) n'est pas compatible avec ~1~ pour le moment.

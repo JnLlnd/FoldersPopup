@@ -17,7 +17,9 @@ To-do:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.9.1 (2015-03-??)
+	Version: 4.9.2 (2015-03-??)
+	
+	Version: 4.9.1 (2015-03-10)
 	* add the favorite type Application
 	* add Arguments and Working directory fields to Application favorites
 	* execute the Application favorites passing properly the arguments and setting the working directory
@@ -677,7 +679,7 @@ To-do:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.9.1 BETA
+;@Ahk2Exe-SetVersion 4.9.2 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -723,9 +725,10 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.9.1" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.9.2" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
+
 global str32or64 := A_PtrSize * 8
 global blnDiagMode := False
 global strDiagFile := A_WorkingDir . "\" . strAppName . "-DIAG.txt"
@@ -755,6 +758,8 @@ else if InStr(A_ComputerName, "STIC") ; for my work hotkeys
 	strIniFile := A_WorkingDir . "\" . strAppName . "-WORK.ini"
 ; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
+
+IniWrite, %strCurrentVersion%, %strIniFile%, Global, % "LastVersionUsed" . (strCurrentBranch = "beta" ? "Beta" : "Prod")
 
 ; Keep gosubs in this order
 Gosub, InitSystemArrays
@@ -1105,7 +1110,10 @@ IniRead, intPopupMenuPosition, %strIniFile%, Global, PopupMenuPosition, 1
 IniRead, strPopupFixPosition, %strIniFile%, Global, PopupFixPosition, 20,20
 StringSplit, arrPopupFixPosition, strPopupFixPosition, `,
 IniRead, blnDisplayMenuShortcuts, %strIniFile%, Global, DisplayMenuShortcuts, 0
-IniRead, strLatestSkipped, %strIniFile%, Global, % "LatestVersionSkipped" . (strCurrentBranch = "beta" ? "Beta" : ""), 0.0
+IniRead, strLatestSkippedProd, %strIniFile%, Global, LatestVersionSkipped, 0.0 ; do not add "Prod" to ini variable for backward compatibility
+IniRead, strLatestSkippedBeta, %strIniFile%, Global, LatestVersionSkippedBeta, 0.0
+IniRead, strLatestUsedProd, %strIniFile%, Global, LastVersionUsedProd, 0.0
+IniRead, strLatestUsedBeta, %strIniFile%, Global, LastVersionUsedBeta, 0.0
 IniRead, blnDiagMode, %strIniFile%, Global, DiagMode, 0
 IniRead, intStartups, %strIniFile%, Global, Startups, 1
 IniRead, intRecentFolders, %strIniFile%, Global, RecentFolders, 10
@@ -4962,8 +4970,10 @@ return
 Check4Update:
 ;------------------------------------------------------------
 
+strUrlCheck4Update := "http://code.jeanlalonde.ca/ahk/folderspopup/latest-version/latest-version-3.php"
 strAppLandingPage := "http://code.jeanlalonde.ca/folderspopup/"
 strBetaLandingPage := "http://code.jeanlalonde.ca/ahk/folderspopup/check4update-beta-redirect.html"
+
 if (blnDiagMode)
 {
 	Diag("Check4Update strAppLandingPage", strAppLandingPage)
@@ -4984,7 +4994,8 @@ if (A_ThisMenuItem <> lMenuUpdate)
 }
 
 blnSetup := (FileExist(A_ScriptDir . "\_do_not_remove_or_rename.txt") = "" ? 0 : 1)
-strLatestVersion := Url2Var("http://code.jeanlalonde.ca/ahk/folderspopup/latest-version/latest-version-2-" . strCurrentBranch . ".php"
+
+strLatestVersions := Url2Var(strUrlCheck4Update
 	. "?v=" . strCurrentVersion
 	. "&os=" . A_OSVersion
 	. "&is64=" . A_Is64bitOS
@@ -4995,25 +5006,17 @@ strLatestVersion := Url2Var("http://code.jeanlalonde.ca/ahk/folderspopup/latest-
 				+ (16 * (blnUseFPconnect ? 1 : 0))
     . "&lsys=" . A_Language
     . "&lfp=" . strLanguageCode)
-
-if !StrLen(strLatestVersion)
+if !StrLen(strLatestVersions)
 	if (A_ThisMenuItem = lMenuUpdate)
 	{
 		Oops(lUpdateError)
 		return ; an error occured during ComObjCreate
 	}
-strLatestVersion := SubStr(strLatestVersion, InStr(strLatestVersion, "[[") + 2) 
-strLatestVersion := SubStr(strLatestVersion, 1, InStr(strLatestVersion, "]]") - 1) 
-strLatestVersion := Trim(strLatestVersion, "`n`l") ; remove en-of-line if present
 
-if (blnDiagMode)
-{
-	Diag("Check4Update strCurrentVersion", strCurrentVersion)
-	Diag("Check4Update strLatestVersion", strLatestVersion)
-	Diag("Check4Update strLatestSkipped", strLatestSkipped)
-}
-
-Loop, Parse, strLatestVersion, , 0123456789. ; strLatestVersion should only contain digits and dots
+strLatestVersions := SubStr(strLatestVersions, InStr(strLatestVersions, "[[") + 2) 
+strLatestVersions := SubStr(strLatestVersions, 1, InStr(strLatestVersions, "]]") - 1) 
+strLatestVersions := Trim(strLatestVersions, "`n`l") ; remove en-of-line if present
+Loop, Parse, strLatestVersions, , 0123456789.| ; strLatestVersions should only contain digits, dots and one pipe (|) between prod and beta versions
 	; if we get here, the content returned by the URL above is wrong
 	if (A_ThisMenuItem <> lMenuUpdate)
 		return ; return silently
@@ -5023,29 +5026,60 @@ Loop, Parse, strLatestVersion, , 0123456789. ; strLatestVersion should only cont
 		return
 	}
 
-if (FirstVsSecondIs(strLatestSkipped, strLatestVersion) >= 0 and (A_ThisMenuItem <> lMenuUpdate))
+StringSplit, arrLatestVersions, strLatestVersions, |
+strLatestVersionProd := arrLatestVersions1
+strLatestVersionBeta := arrLatestVersions2
+
+if (blnDiagMode)
+{
+	Diag("Check4Update strCurrentVersion", strCurrentVersion)
+	Diag("Check4Update strLatestVersionProd", strLatestVersionProd)
+	Diag("Check4Update strLatestVersionBeta", strLatestVersionBeta)
+	Diag("Check4Update strLatestSkippedProd", strLatestSkippedProd)
+	Diag("Check4Update strLatestSkippedBeta", strLatestSkippedBeta)
+	Diag("Check4Update strLatestUsedProd", strLatestUsedProd)
+	Diag("Check4Update strLatestUsedBeta", strLatestUsedBeta)
+}
+
+Gui, 1:+OwnDialogs
+
+if (strLatestUsedBeta <> "0.0")
+{
+	if FirstVsSecondIs(strLatestVersionBeta, strCurrentVersion) = 1
+	{
+		SetTimer, Check4UpdateChangeButtonNames, 50
+
+		MsgBox, 3, % l(lUpdateTitle, strAppName) ; do not add BETA to keep buttons rename working
+			, % l(lUpdatePromptBeta, strAppName, strCurrentVersion, strLatestVersionBeta)
+		IfMsgBox, Yes
+			Run, %strBetaLandingPage%
+		IfMsgBox, Cancel ; Remind me
+			IniWrite, 0.0, %strIniFile%, Global, LatestVersionSkippedBeta
+		IfMsgBox, No
+		{
+			IniWrite, %strLatestVersionBeta%, %strIniFile%, Global, LatestVersionSkippedBeta
+			MsgBox, 4, % l(lUpdateTitle, strAppName . " BETA"), %lUpdatePromptBetaContinue%
+			IfMsgBox, No
+				IniWrite, 0.0, %strIniFile%, Global, LastVersionUsedBeta
+		}
+	}
+}
+
+if (FirstVsSecondIs(strLatestSkippedProd, strLatestVersionProd) >= 0 and (A_ThisMenuItem <> lMenuUpdate))
 	return
 
-if FirstVsSecondIs(strLatestVersion, strCurrentVersion) = 1
+if FirstVsSecondIs(strLatestVersionProd, strCurrentVersion) = 1
 {
-	Gui, 1:+OwnDialogs
 	SetTimer, Check4UpdateChangeButtonNames, 50
 
 	MsgBox, 3, % l(lUpdateTitle, strAppName)
-		, % l(lUpdatePrompt, strAppName
-			, strCurrentVersion . (strCurrentBranch = "beta" ? " BETA" : "")
-			, strLatestVersion . (strCurrentBranch = "beta" ? " BETA" : ""))
+		, % l(lUpdatePrompt, strAppName, strCurrentVersion, strLatestVersionProd)
 	IfMsgBox, Yes
-		if (strCurrentBranch = "prod")
-			Run, %strAppLandingPage%
-		else
-			Run, %strBetaLandingPage%
+		Run, %strAppLandingPage%
 	IfMsgBox, No
-		IniWrite, %strLatestVersion%, %strIniFile%, Global, % "LatestVersionSkipped" . (strCurrentBranch = "beta" ? "Beta" : "")
+		IniWrite, %strLatestVersionProd%, %strIniFile%, Global, LatestVersionSkipped ; do not add "Prod" to ini variable for backward compatibility
 	IfMsgBox, Cancel ; Remind me
-		IniWrite, 0.0, %strIniFile%, Global, % "LatestVersionSkipped" . (strCurrentBranch = "beta" ? "Beta" : "")
-	IfMsgBox, TIMEOUT ; Remind me
-		IniWrite, 0.0, %strIniFile%, Global, % "LatestVersionSkipped" . (strCurrentBranch = "beta" ? "Beta" : "")
+		IniWrite, 0.0, %strIniFile%, Global, LatestVersionSkipped ; do not add "Prod" to ini variable for backward compatibility
 }
 else if (A_ThisMenuItem = lMenuUpdate)
 {
@@ -5058,10 +5092,7 @@ else if (A_ThisMenuItem = lMenuUpdate)
 			Diag("Check4Update lMenuUpdate strAppLandingPage", strAppLandingPage)
 			Diag("Check4Update lMenuUpdate strBetaLandingPage", strBetaLandingPage)
 		}
-		if (strCurrentBranch = "prod")
-			Run, %strAppLandingPage%
-		else
-			Run, %strBetaLandingPage%
+		Run, %strAppLandingPage%
 	}
 }
 
