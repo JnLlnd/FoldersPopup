@@ -17,6 +17,10 @@ To-do:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 4.9.3 (2015-03-??)
+	* add URL parsing in Clipboard submenu
+	* fix icon bug inside Clipboard menu (using only Folder and URL icons - not document or application icons to preserve update speed)
+
 	Version: 4.9.2 (2015-03-12)
 	* check for beta versions updates
 	* enabled only for users who ran a beta version previously and who enabled the Check for update option
@@ -681,7 +685,7 @@ To-do:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.9.2 BETA
+;@Ahk2Exe-SetVersion 4.9.3 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -727,7 +731,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.9.2" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.9.3" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 
@@ -2391,7 +2395,7 @@ Menu, menuClipboard, DeleteAll
 if (blnUseColors)
 	Menu, menuClipboard, Color, %strMenuBackgroundColor%
 
-blnClipboardMenuEmpty := 1
+blnClipboardMenuEnable := 0
 
 Gosub, RefreshClipboardMenu
 
@@ -2403,9 +2407,12 @@ return
 RefreshClipboardMenu:
 ;------------------------------------------------------------
 
+GetIcon4Location(strTempDir . "\default_browser_icon.html", strThisIconFile, intThisIconIndex)
+
 blnPreviousClipboardMenuDeleted := 0
 intShortcutClipboardMenu := 0
 
+; Parse Clipboard for folder, document or application filenames (filenames alone on one line)
 Loop, parse, Clipboard, `n, `r%A_Space%%A_Tab%
 {
     strClipboardLine = %A_LoopField%
@@ -2418,14 +2425,94 @@ Loop, parse, Clipboard, `n, `r%A_Space%%A_Tab%
 			Menu, menuClipboard, DeleteAll
 			blnPreviousClipboardMenuDeleted := 1
 		}
-		blnClipboardMenuEmpty := 0
+		blnClipboardMenuEnable := 1
 
 		strMenuName := (blnDisplayMenuShortcuts and (intShortcutFoldersInExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutClipboardMenu, false) . " " : "") . strClipboardLine
-		AddMenuIcon("menuClipboard", strMenuName, "OpenClipboard", "lMenuClipboard")
+		AddMenuIcon("menuClipboard", strMenuName, "OpenClipboard", "Folder")
 	}
+
+	; Parse Clipboard line for URLs (anywhere on the line)
+	strURLSearchString := strClipboardLine
+	Gosub, RefreshClipboardMenuURLs
 }
 
 return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+RefreshClipboardMenuURLs:
+;------------------------------------------------------------
+; Adapted from AHK help file: http://ahkscript.org/docs/commands/LoopReadFile.htm
+; It's done this particular way because some URLs have other URLs embedded inside them:
+StringGetPos, intURLStart1, strURLSearchString, http://
+StringGetPos, intURLStart2, strURLSearchString, https://
+StringGetPos, intURLStart3, strURLSearchString, www.
+
+; Find the left-most starting position:
+intURLStart := intURLStart1 ; Set starting default.
+Loop
+{
+	; It helps performance (at least in a script with many variables) to resolve
+	; "intURLStart%A_Index%" only once:
+	intArrayElement := intURLStart%A_Index%
+	if (intArrayElement = "") ; End of the array has been reached.
+		break
+	if (intArrayElement = -1) ; This element is disqualified.
+		continue
+	if (intURLStart = -1)
+		intURLStart := intArrayElement
+	else ; intURLStart has a valid position in it, so compare it with intArrayElement.
+	{
+		if (intArrayElement <> -1)
+			if (intArrayElement < intURLStart)
+				intURLStart := intArrayElement
+	}
+}
+
+if (intURLStart = -1) ; No URLs exist in strURLSearchString.
+	return
+
+; Otherwise, extract this strURL:
+StringTrimLeft, strURL, strURLSearchString, %intURLStart% ; Omit the beginning/irrelevant part.
+Loop, parse, strURL, %A_Tab%%A_Space%<> ; Find the first space, tab, or angle (if any).
+{
+	strURL := A_LoopField
+	break ; i.e. perform only one loop iteration to fetch the first "field".
+}
+; If the above loop had zero iterations because there were no ending characters found,
+; leave the contents of the strURL var untouched.
+
+; If the strURL ends in a double quote, remove it.  For now, StringReplace is used, but
+; note that it seems that double quotes can legitimately exist inside URLs, so this
+; might damage them:
+StringReplace, strURLCleansed, strURL, ",, All
+
+; if we get here, we have at least one URL, check if we need to delete previous menu
+if !(blnPreviousClipboardMenuDeleted)
+{
+	Menu, menuClipboard, Add
+	Menu, menuClipboard, DeleteAll
+	blnPreviousClipboardMenuDeleted := 1
+}
+blnClipboardMenuEnable := 1
+
+strMenuName := (blnDisplayMenuShortcuts and (intShortcutFoldersInExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutClipboardMenu, false) . " " : "") . strURLCleansed
+if StrLen(strMenuName) < 260 ; skip too long URLs
+{
+	Menu, menuClipboard, Add, %strMenuName%, OpenClipboard
+	Menu, menuClipboard, Icon, %strMenuName%, %strThisIconFile%, %intThisIconIndex%, %intIconSize%
+}
+
+; See if there are any other URLs in this line:
+StringLen, intCharactersToOmit, strURL
+intCharactersToOmit := intCharactersToOmit + intURLStart
+StringTrimLeft, strURLSearchString, strURLSearchString, %intCharactersToOmit%
+
+Gosub, RefreshClipboardMenuURLs ; Recursive call to self.
+
+return
+
 ;------------------------------------------------------------
 
 
@@ -3025,7 +3112,7 @@ if (blnDisplayGroupMenu)
 if (blnDisplayClipboardMenu)
 {
 	Gosub, RefreshClipboardMenu
-	Menu, %lMainMenuName%, % (blnClipboardMenuEmpty ? "Disable" : "Enable"), %lMenuClipboard%...
+	Menu, %lMainMenuName%, % (blnClipboardMenuEnable ? "Enable" : "Disable"), %lMenuClipboard%...
 }
 
 ; Enable "Add This Folder" only if the target window is an Explorer, TotalCommander,
@@ -3313,17 +3400,23 @@ else if (A_ThisLabel = "OpenClipboard")
 	if (blnDisplayMenuShortcuts)
 		StringTrimLeft, strLocation, A_ThisMenuItem, 3 ; remove "&1 " from menu item
 	else
-		strLocation :=  EnvVars(A_ThisMenuItem)
-	
-	SplitPath, strLocation, , , strExtension
-	if InStr("exe.com.bat", strExtension)
-	{
-		strFavoriteType := "A" ; application
-		strAppArguments := "" ; make sure it is empty from previous calls
-		strAppWorkingDir := "" ; make sure it is empty from previous calls
-	}
+		strLocation :=  A_ThisMenuItem
+
+	if InStr(strLocation, "http://") = 1 or InStr(strLocation, "https://") = 1 or InStr(strLocation, "www.") = 1
+		strFavoriteType := "U"
 	else
-		strFavoriteType := (LocationIsDocument(strOutTarget) ? "D" : "F") ; folder or document
+	{
+		strLocation :=  EnvVars(strLocation)
+		SplitPath, strLocation, , , strExtension
+		if InStr("exe.com.bat", strExtension)
+		{
+			strFavoriteType := "A" ; application
+			strAppArguments := "" ; make sure it is empty from previous calls
+			strAppWorkingDir := "" ; make sure it is empty from previous calls
+		}
+		else
+			strFavoriteType := (LocationIsDocument(strOutTarget) ? "D" : "F") ; folder or document
+	}
 }
 else ; this is a favorite
 {
