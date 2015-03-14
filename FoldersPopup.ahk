@@ -18,7 +18,7 @@ To-do:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.9.3 (2015-03-??)
+	Version: 4.9.3 (2015-03-14)
 	* add URL parsing in Clipboard submenu
 	* fix icon bug inside Clipboard menu (using only Folder and URL icons - not document or application icons to preserve update speed)
 	* filter out illegal characters in paths / ? : * " > < | (in addition to space, tab and line-feed) from the beginning and the end of each clipboard line
