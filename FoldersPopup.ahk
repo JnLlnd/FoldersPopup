@@ -22,6 +22,7 @@ To-do:
 	* add URL parsing in Clipboard submenu
 	* fix icon bug inside Clipboard menu (using only Folder and URL icons - not document or application icons to preserve update speed)
 	* filter out illegal characters in paths / ? : * " > < | (in addition to space, tab and line-feed) from the beginning and the end of each clipboard line
+	* fix two bugs in OpenClipboard making folders always opening in new window
 
 	Version: 4.9.2 (2015-03-12)
 	* check for beta versions updates
@@ -3410,14 +3411,14 @@ else if (A_ThisLabel = "OpenClipboard")
 	{
 		strLocation :=  EnvVars(strLocation)
 		SplitPath, strLocation, , , strExtension
-		if InStr("exe.com.bat", strExtension)
+		if StrLen(strExtension) and InStr("exe.com.bat", strExtension)
 		{
 			strFavoriteType := "A" ; application
 			strAppArguments := "" ; make sure it is empty from previous calls
 			strAppWorkingDir := "" ; make sure it is empty from previous calls
 		}
 		else
-			strFavoriteType := (LocationIsDocument(strOutTarget) ? "D" : "F") ; folder or document
+			strFavoriteType := (LocationIsDocument(strLocation) ? "D" : "F") ; folder or document
 	}
 }
 else ; this is a favorite
