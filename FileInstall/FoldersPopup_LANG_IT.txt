@@ -17,6 +17,9 @@ lDialogAddFileSelect	Scegli il nuovo Documento:
 lDialogAddFolderManuallyPrompt	Mi spiace, non riesco a trovare la cartella attuale in questo tipo di finestra.`n`nVuoi aggiungerla manualmente adesso?
 lDialogAddFolderManuallyTitle	Aggiungi Questa Cartella - ~1~ ~2~
 lDialogAddFolderSelect	Scegli o crea una nuova Cartella:
+lDialogApplicationLabel	Applicazione
+lDialogApplicationShortName	Nome dell'applicazione (per il menù)
+lDialogArgumentsLabel	Parametri
 lDialogBrowseButton	Sfoglia
 lDialogCancelButton	Annulla
 lDialogCancelPrompt	Vuoi scartare le modifiche?
@@ -83,6 +86,7 @@ lDialogTabNext	Seguente
 lDialogThirdPartyDetected	~1~ ha riscontrato che ~2~ è installato nel tuo sistema.`n`nVuoi abilitare l'integrazione con ~2~?
 lDialogURLLabel	Link (URL)
 lDialogURLShortName	Nome breve del Link (voce menù)
+lDialogWorkingDirLabel	Avvia in
 lDonateButton	Supporta il Freeware!
 lDonateCheckPrompt	Sei soddisfatto di ~1~?`n`n~1~ non solo è GRATUITO ma anche PRIVO di fastidiosi annunci o adware, che non si è mai sicuri che non nascondano spyware o malware.`n`nAl momento, per ~2~ volte ~1~ ti ha aiutato nelle tue attività quotidiane. Che ne diresti adesso di fare un'offerta a titolo di supporto del programma?
 lDonateCheckTitle	~1~ volte! - ~2~
@@ -132,8 +136,8 @@ lGuiGroupSaveSelectAll	Seleziona Tutti
 lGuiGroupSaveSelectExisting	o seleziona un Gruppo da sovrascrivere:
 lGuiGroupSaveShortName	Nome breve del gruppo (voce menù)
 lGuiHelp	Aiuto
-lGuiHotkeysHelpText	Freccia-Su: Seleziona il Preferito precedente`nFreccia-Giù: Seleziona il Preferito successivo`nCtrl+N: Aggiungi un nuovo Preferito`nInvio: Modifica il Preferito evidenziato`n`nShift+Su/Giù: Seleziona Preferiti contigui`nCtrl+ClickSinistro: Seleziona Preferiti non contigui`nCtrl+A: Seleziona tutti i Preferiti`n`nCtrl+Su: Sposta in su il Preferito(i)`nCtrl+Giù: Sposta in giù il Preferito(i)`nCanc: Elimina il Preferito(i)`n`nCtrl+Sinistra: Risali nel sottomenù superiore`nCtrl+Destra: Scendi nel sottomenù inferiore
 lGuiHotkeysHelp	Organizzazione Preferiti (scorciatoie)
+lGuiHotkeysHelpText	Freccia-Su: Seleziona il Preferito precedente`nFreccia-Giù: Seleziona il Preferito successivo`nCtrl+N: Aggiungi un nuovo Preferito`nInvio: Modifica il Preferito evidenziato`n`nShift+Su/Giù: Seleziona Preferiti contigui`nCtrl+ClickSinistro: Seleziona Preferiti non contigui`nCtrl+A: Seleziona tutti i Preferiti`n`nCtrl+Su: Sposta in su il Preferito(i)`nCtrl+Giù: Sposta in giù il Preferito(i)`nCanc: Elimina il Preferito(i)`n`nCtrl+Sinistra: Risali nel sottomenù superiore`nCtrl+Destra: Scendi nel sottomenù inferiore
 lGuiLvDialogsHeader	Caselle di Dialogo supportate`n(sono ammessi anche nomi incompleti) 
 lGuiLvFavoritesHeader	Nome|Destinazione
 lGuiMove	Sposta
@@ -166,6 +170,7 @@ lMenuAddThisDialog	&Aggiungi Questa Casella di Dialogo all'elenco supportato
 lMenuAddThisFolder	&Aggiungi Questa Cartella
 lMenuAppData	Dati Applicazioni
 lMenuCache	Cache
+lMenuClipboard	A&ppunti di Windows
 lMenuColumnBreak	colonna
 lMenuCommonAppData	Dati Applicazioni (pubblica)
 lMenuCommonDesktop	Desktop pubblico
@@ -203,7 +208,7 @@ lMenuRecentFolders	Cartelle &Recenti
 lMenuRecentItems	Oggetti Recenti
 lMenuRecycleBin	&Cestino
 lMenuRefreshRecent	Aggiorna Menù delle Cartelle Recenti
-lMenuReservedShortcuts	SGRFA
+lMenuReservedShortcuts	SCGRPIA
 lMenuReservedShortcutsDonate	U
 lMenuRunAtStartup	&Esegui all'Avvio
 lMenuSeparator	----------------
@@ -240,6 +245,7 @@ lOptionsChangeHotkeyTitle	Cambia scorciatoia - ~1~ ~2~
 lOptionsCheck4Update	Cerca Aggiornamenti
 lOptionsCtrl	Ctrl
 lOptionsDirectoryOpusUseTabs	Usa i tab
+lOptionsDisplayClipboardMenu	Appunti di Windows
 lOptionsDisplayFoldersInExplorerMenu	Cartelle Correnti
 lOptionsDisplayGroupMenu	&Gruppi di Cartelle
 lOptionsDisplayIcons	Mostra &Icone nel Menù
@@ -291,6 +297,7 @@ lOptionsWin	Win
 lPickIconButtonCustom	Personalizzato
 lPickIconButtonDefault	Default
 lPickIconDocumentPrompt	Selezionare un'icona a scelta o usare l'icona di default per questo tipo di documento?
+lPickIconNoLocation	Seleziona il preferito prima di scegliere un'icona.
 lPickIconTitle	Seleziona l'icona per ~1~ - ~2~
 lReloadPrompt	~1~ cambiato in ~2~. Vuoi ricaricare ~3~ in ~2~ ora? Le modifiche non salvate al menù delle cartelle verranno perse.
 lReloadPromptDefaultHotkey	Scorciatoia riportata al valore di default. Questa modifica sarà effettiva solo dopo aver ricaricato ~1~.`n`nVuoi ricaricare ~1~ ora? Le modifiche non salvate al menù delle cartelle verranno perse.
@@ -302,6 +309,8 @@ lTrayTipWorkingTitle	~1~ ~2~ in esecuzione...
 lUpdateButtonRemind	Ricordamelo più tardi
 lUpdateError	C'è stato un errore nell'accesso al numero di versione più recente. Ricerca aggiornamenti interrotta.
 lUpdatePrompt	Aggiornare ~1~ dalla v~2~ alla v~3~?
+lUpdatePromptBeta	C'è una nuova versione BETA ~1~.`n`nVuoi aggiornare ~1~ dalla v~2~ alla v~3~?
+lUpdatePromptBetaContinue	Vuoi continuare ad essere informato di future versioni beta?
 lUpdateTitle	Aggiornare ~1~?
 lUpdateYouHaveLatest	Hai la versione più recente: ~1~.`n`nVuoi visitare la pagina web ~2~ ugualmente?
 lWindowIsTreeviewText	Mi spiace... A causa di una limitazione di  Windows, questo tipo di casella di dialogo (con vista ad albero) non è attualmente supportata da ~1~.

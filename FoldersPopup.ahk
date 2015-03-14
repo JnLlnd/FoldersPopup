@@ -2,6 +2,7 @@
 Bug:
 
 To-do:
+
 */
 ;===============================================
 /*
@@ -20,6 +21,7 @@ To-do:
 	Version: 4.9.3 (2015-03-??)
 	* add URL parsing in Clipboard submenu
 	* fix icon bug inside Clipboard menu (using only Folder and URL icons - not document or application icons to preserve update speed)
+	* filter out illegal characters in paths / ? : * " > < | (in addition to space, tab and line-feed) from the beginning and the end of each clipboard line
 
 	Version: 4.9.2 (2015-03-12)
 	* check for beta versions updates
@@ -2413,7 +2415,7 @@ blnPreviousClipboardMenuDeleted := 0
 intShortcutClipboardMenu := 0
 
 ; Parse Clipboard for folder, document or application filenames (filenames alone on one line)
-Loop, parse, Clipboard, `n, `r%A_Space%%A_Tab%
+Loop, parse, Clipboard, `n, `r%A_Space%%A_Tab%/?:*`"><|
 {
     strClipboardLine = %A_LoopField%
 
