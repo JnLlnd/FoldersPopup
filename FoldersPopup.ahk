@@ -2,6 +2,7 @@
 Bug:
 
 To-do:
+- in Clipboard menu get document icons
 
 */
 ;===============================================
@@ -18,9 +19,18 @@ To-do:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 4.9.4 (2015-03-??)
+	* add a hotkey to open directly the Current folders menu (by default Ctrl-Win-C)
+	* add a hotkey to open directly the Groups menu (by default Ctrl-Win-G)
+	* add a hotkey to open directly the Clipboard menu (by default Ctrl-Win-V)
+	* redesign the Options dialog box splitting hotkeys in two tabs: one for popup menu hotkeys and one for other hotkeys
+	* review hotkeys language in Options
+	* fix a bug from v4.2 when opening a special folder (Libraries, My Computer, etc.) from the Current Folders menu
+
 	Version: 4.9.3 (2015-03-14)
 	* add URL parsing in Clipboard submenu
-	* fix icon bug inside Clipboard menu (using only Folder and URL icons - not document or application icons to preserve update speed)
+	* keep only URLs shorter than 260 chars
+	* fix icon bug inside Clipboard menu (using only Folder and URL icons for now)
 	* filter out illegal characters in paths / ? : * " > < | (in addition to space, tab and line-feed) from the beginning and the end of each clipboard line
 	* fix two bugs in OpenClipboard making folders always opening in new window
 
@@ -688,7 +698,7 @@ To-do:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.9.3 BETA
+;@Ahk2Exe-SetVersion 4.9.4 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -734,7 +744,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.9.3" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.9.4" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 
@@ -840,6 +850,7 @@ DllCall("CreateMutex", "uint", 0, "int", false, "str", strAppName . "Mutex")
 ; Gosub, BuildClipboardMenu
 ; Gosub, GuiGroupSaveFromMenu
 ; Gosub, GuiGroupsManage
+; Gosub, ShowFoldersInExplorerMenu
 
 return
 
@@ -960,13 +971,13 @@ InitSystemArrays:
 ;-----------------------------------------------------------
 
 ; Hotkeys: ini names, hotkey variables name, default values, gosub label and Gui hotkey titles
-strIniKeyNames := "PopupHotkeyMouse|PopupHotkeyNewMouse|PopupHotkeyKeyboard|PopupHotkeyNewKeyboard|RecentsHotkey|SettingsHotkey"
+strIniKeyNames := "PopupHotkeyMouse|PopupHotkeyNewMouse|PopupHotkeyKeyboard|PopupHotkeyNewKeyboard|SettingsHotkey|FoldersInExplorerHotkey|GroupsHotkey|RecentsHotkey|ClipboardHotkey"
 StringSplit, arrIniKeyNames, strIniKeyNames, |
-strHotkeyVarNames := "strPopupHotkeyMouse|strPopupHotkeyMouseNew|strPopupHotkeyKeyboard|strPopupHotkeyKeyboardNew|strRecentsHotkey|strSettingsHotkey"
+strHotkeyVarNames := "strPopupHotkeyMouse|strPopupHotkeyMouseNew|strPopupHotkeyKeyboard|strPopupHotkeyKeyboardNew|strSettingsHotkey|strFoldersInExplorerHotkey|strGroupsHotkey|strRecentsHotkey|strClipboardHotkey"
 StringSplit, arrHotkeyVarNames, strHotkeyVarNames, |
-strHotkeyDefaults := "MButton|+MButton|#a|+#a|+#r|+#f"
+strHotkeyDefaults := "MButton|+MButton|#a|+#a|+#f|+#c|+#g|+#r|+#v"
 StringSplit, arrHotkeyDefaults, strHotkeyDefaults, |
-strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|RefreshRecentFolders|GuiShow"
+strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|GuiShow|ShowFoldersInExplorerMenu|ShowGroupsMenu|RefreshRecentFolders|ShowClipboardMenu"
 StringSplit, arrHotkeyLabels, strHotkeyLabels, |
 strMouseButtons := "None|LButton|MButton|RButton|XButton1|XButton2|WheelUp|WheelDown|WheelLeft|WheelRight|"
 ; leave last | to enable default value on the last item
@@ -1050,8 +1061,11 @@ IfNotExist, %strIniFile%
 	strPopupHotkeyMouseNewDefault := arrHotkeyDefaults2 ; "+MButton"
 	strPopupHotkeyKeyboardDefault := arrHotkeyDefaults3 ; "#a"
 	strPopupHotkeyKeyboardNewDefault := arrHotkeyDefaults4 ; "+#a"
-	strRecentsHotkeyDefault := arrHotkeyDefaults5 ; "+#r"
-	strSettingsHotkeyDefault := arrHotkeyDefaults6 ; "+#f"
+	strSettingsHotkeyDefault := arrHotkeyDefaults5 ; "+#f"
+	strFoldersInExplorerHotkeyDefault := arrHotkeyDefaults6 ; "+#c"
+	strGroupsHotkeyDefault := arrHotkeyDefaults7 ; "+#g"
+	strRecentsHotkeyDefault := arrHotkeyDefaults8 ; "+#r"
+	strClipboardHotkeyDefault := arrHotkeyDefaults9 ; "+#v"
 	
 	intIconSize := (A_OSVersion = "WIN_XP" ? 16 : 24)
 	
@@ -1062,8 +1076,11 @@ IfNotExist, %strIniFile%
 			PopupHotkeyNewMouse=%strPopupHotkeyMouseNewDefault%
 			PopupHotkeyKeyboard=%strPopupHotkeyKeyboardDefault%
 			PopupHotkeyNewKeyboard=%strPopupHotkeyKeyboardNewDefault%
-			RecentsHotkey=%strRecentsHotkeyDefault%
 			SettingsHotkey=%strSettingsHotkeyDefault%
+			FoldersInExplorerHotkey=%strFoldersInExplorerHotkeyDefault%
+			GroupsHotkey=%strGroupsHotkeyDefault%
+			RecentsHotkey=%strRecentsHotkeyDefault%
+			ClipboardHotkey=%strClipboardHotkeyDefault%
 			DisplayTrayTip=1
 			DisplayIcons=1
 			DisplaySpecialFolders=1
@@ -2138,95 +2155,6 @@ return
 
 
 ;------------------------------------------------------------
-BuildRecentFoldersMenu:
-;------------------------------------------------------------
-
-Menu, menuRecentFolders, Add
-Menu, menuRecentFolders, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
-if (blnUseColors)
-	Menu, menuRecentFolders, Color, %strMenuBackgroundColor%
-
-objRecentFolders := Object()
-intRecentFoldersIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
-
-RegRead, strRecentsFolder, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, Recent
-
-/*
-Alternative to collect recent files *** NOT WORKING with XP
-See: post from Skan http://ahkscript.org/boards/viewtopic.php?f=5&t=4477#p25261
-Implement for Win7+ if FileGetShortcut still produce Windows errors when external drive is not available (despite DllCall in initialization)
-
-strWinPathRecent := RegExReplace(SubStr(strRecentsFolder, 3) . "\", "\\", "\\")
-strRecentFoldersList := ""
-for ObjItem in ComObjGet("winmgmts:")
-	.ExecQuery("Select * from Win32_ShortcutFile where path = '" . strWinPathRecent . "'")
-	strRecentFoldersList := strRecentFoldersList . ObjItem.LastModified . A_Tab . ObjItem.Target . "`n"
-*/
-
-strDirList := ""
-	
-Loop, %strRecentsFolder%\*.* ; tried to limit to number of recent but no good because not sorted chronologically
-	strDirList := strDirList . A_LoopFileTimeModified . "`t`" . A_LoopFileFullPath . "`n"
-Sort, strDirList, R
-
-intShortcut := 0
-
-Loop, parse, strDirList, `n
-{
-	if !StrLen(A_LoopField) ; last line is empty
-		continue
-
-	arrTargetFullName := StrSplit(A_LoopField, A_Tab)
-	strTargetFullName := arrTargetFullName[2]
-	if (blnDiagMode)
-		Diag("BuildRecentFoldersMenu", strTargetFullName)
-	
-	FileGetShortcut, %strTargetFullName%, strOutTarget
-	
-	if (errorlevel) ; hidden or system files (like desktop.ini) returns an error
-		continue
-	if !FileExist(strOutTarget) ; if folder/document was delete or on a removable drive
-	{
-		if (blnDiagMode)
-			Diag("RecentShortcut NO", strOutTarget)
-		continue
-	}
-	else
-		if (blnDiagMode)
-			Diag("RecentShortcut YES", strOutTarget)
-	
-	if LocationIsDocument(strOutTarget) ; not a folder
-		continue
-
-	intRecentFoldersIndex := intRecentFoldersIndex + 1
-	objRecentFolders.Insert(intRecentFoldersIndex, strOutTarget)
-	
-	strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strOutTarget
-	AddMenuIcon("menuRecentFolders", strMenuName, "OpenRecentFolder", "Folder")
-
-	if (intRecentFoldersIndex >= intRecentFolders)
-		break
-}
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-RefreshRecentFolders:
-;------------------------------------------------------------
-
-ToolTip, %lMenuRefreshRecent%...
-Gosub, BuildRecentFoldersMenu
-ToolTip
-CoordMode, Menu, % (intPopupMenuPosition = 2 ? "Window" : "Screen")
-Menu, menuRecentFolders, Show, %intMenuPosX%, %intMenuPosY% ; same position as the calling popup menu
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
 BuildFoldersInExplorerMenu:
 ;------------------------------------------------------------
 
@@ -2360,162 +2288,6 @@ objDOpusListers :=
 objExplorersWindows :=
 
 return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-BuildGroupMenu:
-;------------------------------------------------------------
-
-Menu, menuGroups, Add
-Menu, menuGroups, DeleteAll
-if (blnUseColors)
-	Menu, menuGroups, Color, %strMenuBackgroundColor%
-
-intShortcut := 0
-Loop, Parse, strGroups, |
-{
-	IniRead, blnReplaceWhenRestoringThisGroup, %striniFile%, Group-%A_LoopField%, ReplaceWhenRestoringThisGroup, %A_Space% ; empty if not found
-	strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "")
-		. A_LoopField . " (" . (blnReplaceWhenRestoringThisGroup ? lMenuGroupReplace : lMenuGroupAdd) . ")"
-	AddMenuIcon("menuGroups", strMenuName, "GroupLoad", "lMenuGroup")
-}
-
-if StrLen(strGroups)
-	Menu, menuGroups, Add
-AddMenuIcon("menuGroups", lMenuGroupSave, "GuiGroupSaveFromMenu", "menuGroupSave")
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-BuildClipboardMenu:
-;------------------------------------------------------------
-
-Menu, menuClipboard, Add
-Menu, menuClipboard, DeleteAll
-if (blnUseColors)
-	Menu, menuClipboard, Color, %strMenuBackgroundColor%
-
-blnClipboardMenuEnable := 0
-
-Gosub, RefreshClipboardMenu
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-RefreshClipboardMenu:
-;------------------------------------------------------------
-
-GetIcon4Location(strTempDir . "\default_browser_icon.html", strThisIconFile, intThisIconIndex)
-
-blnPreviousClipboardMenuDeleted := 0
-intShortcutClipboardMenu := 0
-
-; Parse Clipboard for folder, document or application filenames (filenames alone on one line)
-Loop, parse, Clipboard, `n, `r%A_Space%%A_Tab%/?:*`"><|
-{
-    strClipboardLine = %A_LoopField%
-
-	if StrLen(FileExist(EnvVars(strClipboardLine)))
-	{
-		if !(blnPreviousClipboardMenuDeleted)
-		{
-			Menu, menuClipboard, Add
-			Menu, menuClipboard, DeleteAll
-			blnPreviousClipboardMenuDeleted := 1
-		}
-		blnClipboardMenuEnable := 1
-
-		strMenuName := (blnDisplayMenuShortcuts and (intShortcutFoldersInExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutClipboardMenu, false) . " " : "") . strClipboardLine
-		AddMenuIcon("menuClipboard", strMenuName, "OpenClipboard", "Folder")
-	}
-
-	; Parse Clipboard line for URLs (anywhere on the line)
-	strURLSearchString := strClipboardLine
-	Gosub, RefreshClipboardMenuURLs
-}
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-RefreshClipboardMenuURLs:
-;------------------------------------------------------------
-; Adapted from AHK help file: http://ahkscript.org/docs/commands/LoopReadFile.htm
-; It's done this particular way because some URLs have other URLs embedded inside them:
-StringGetPos, intURLStart1, strURLSearchString, http://
-StringGetPos, intURLStart2, strURLSearchString, https://
-StringGetPos, intURLStart3, strURLSearchString, www.
-
-; Find the left-most starting position:
-intURLStart := intURLStart1 ; Set starting default.
-Loop
-{
-	; It helps performance (at least in a script with many variables) to resolve
-	; "intURLStart%A_Index%" only once:
-	intArrayElement := intURLStart%A_Index%
-	if (intArrayElement = "") ; End of the array has been reached.
-		break
-	if (intArrayElement = -1) ; This element is disqualified.
-		continue
-	if (intURLStart = -1)
-		intURLStart := intArrayElement
-	else ; intURLStart has a valid position in it, so compare it with intArrayElement.
-	{
-		if (intArrayElement <> -1)
-			if (intArrayElement < intURLStart)
-				intURLStart := intArrayElement
-	}
-}
-
-if (intURLStart = -1) ; No URLs exist in strURLSearchString.
-	return
-
-; Otherwise, extract this strURL:
-StringTrimLeft, strURL, strURLSearchString, %intURLStart% ; Omit the beginning/irrelevant part.
-Loop, parse, strURL, %A_Tab%%A_Space%<> ; Find the first space, tab, or angle (if any).
-{
-	strURL := A_LoopField
-	break ; i.e. perform only one loop iteration to fetch the first "field".
-}
-; If the above loop had zero iterations because there were no ending characters found,
-; leave the contents of the strURL var untouched.
-
-; If the strURL ends in a double quote, remove it.  For now, StringReplace is used, but
-; note that it seems that double quotes can legitimately exist inside URLs, so this
-; might damage them:
-StringReplace, strURLCleansed, strURL, ",, All
-
-; if we get here, we have at least one URL, check if we need to delete previous menu
-if !(blnPreviousClipboardMenuDeleted)
-{
-	Menu, menuClipboard, Add
-	Menu, menuClipboard, DeleteAll
-	blnPreviousClipboardMenuDeleted := 1
-}
-blnClipboardMenuEnable := 1
-
-strMenuName := (blnDisplayMenuShortcuts and (intShortcutFoldersInExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutClipboardMenu, false) . " " : "") . strURLCleansed
-if StrLen(strMenuName) < 260 ; skip too long URLs
-{
-	Menu, menuClipboard, Add, %strMenuName%, OpenClipboard
-	Menu, menuClipboard, Icon, %strMenuName%, %strThisIconFile%, %intThisIconIndex%, %intIconSize%
-}
-
-; See if there are any other URLs in this line:
-StringLen, intCharactersToOmit, strURL
-intCharactersToOmit := intCharactersToOmit + intURLStart
-StringTrimLeft, strURLSearchString, strURLSearchString, %intCharactersToOmit%
-
-Gosub, RefreshClipboardMenuURLs ; Recursive call to self.
-
-return
-
 ;------------------------------------------------------------
 
 
@@ -2710,6 +2482,309 @@ NameIsInObject(strName, obj)
 		
 	return false
 }
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ShowFoldersInExplorerMenu:
+;------------------------------------------------------------
+
+if !(blnDisplayFoldersInExplorerMenu)
+	return
+
+Gosub, BuildFoldersInExplorerMenu
+if (intExplorersIndex) ; there are Folders in Explorer menu
+{
+	CoordMode, Menu, % (intPopupMenuPosition = 2 ? "Window" : "Screen")
+	Menu, menuFoldersInExplorer, Show, %intMenuPosX%, %intMenuPosY% ; same position as the calling popup menu
+}
+else
+	TrayTip, % L(lTrayTipNoFoldersInExplorerMenuTitle, strAppName), %lTrayTipNoFoldersInExplorerMenuDetail%, , 2
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+BuildGroupMenu:
+;------------------------------------------------------------
+
+Menu, menuGroups, Add
+Menu, menuGroups, DeleteAll
+if (blnUseColors)
+	Menu, menuGroups, Color, %strMenuBackgroundColor%
+
+intShortcut := 0
+Loop, Parse, strGroups, |
+{
+	IniRead, blnReplaceWhenRestoringThisGroup, %striniFile%, Group-%A_LoopField%, ReplaceWhenRestoringThisGroup, %A_Space% ; empty if not found
+	strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "")
+		. A_LoopField . " (" . (blnReplaceWhenRestoringThisGroup ? lMenuGroupReplace : lMenuGroupAdd) . ")"
+	AddMenuIcon("menuGroups", strMenuName, "GroupLoad", "lMenuGroup")
+}
+
+if StrLen(strGroups)
+	Menu, menuGroups, Add
+AddMenuIcon("menuGroups", lMenuGroupSave, "GuiGroupSaveFromMenu", "menuGroupSave")
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ShowGroupsMenu:
+;------------------------------------------------------------
+
+if !(blnDisplayGroupMenu)
+	return
+
+Gosub, BuildFoldersInExplorerMenu
+Menu, menuGroups
+	, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Save group menu if no Explorer
+	, %lMenuGroupSave%
+CoordMode, Menu, % (intPopupMenuPosition = 2 ? "Window" : "Screen")
+Menu, menuGroups, Show, %intMenuPosX%, %intMenuPosY% ; same position as the calling popup menu
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+BuildRecentFoldersMenu:
+;------------------------------------------------------------
+
+Menu, menuRecentFolders, Add
+Menu, menuRecentFolders, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
+if (blnUseColors)
+	Menu, menuRecentFolders, Color, %strMenuBackgroundColor%
+
+objRecentFolders := Object()
+intRecentFoldersIndex := 0 ; used in PopupMenu... to check if we disable the menu when empty
+
+RegRead, strRecentsFolder, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, Recent
+
+/*
+Alternative to collect recent files *** NOT WORKING with XP
+See: post from Skan http://ahkscript.org/boards/viewtopic.php?f=5&t=4477#p25261
+Implement for Win7+ if FileGetShortcut still produce Windows errors when external drive is not available (despite DllCall in initialization)
+
+strWinPathRecent := RegExReplace(SubStr(strRecentsFolder, 3) . "\", "\\", "\\")
+strRecentFoldersList := ""
+for ObjItem in ComObjGet("winmgmts:")
+	.ExecQuery("Select * from Win32_ShortcutFile where path = '" . strWinPathRecent . "'")
+	strRecentFoldersList := strRecentFoldersList . ObjItem.LastModified . A_Tab . ObjItem.Target . "`n"
+*/
+
+strDirList := ""
+	
+Loop, %strRecentsFolder%\*.* ; tried to limit to number of recent but no good because not sorted chronologically
+	strDirList := strDirList . A_LoopFileTimeModified . "`t`" . A_LoopFileFullPath . "`n"
+Sort, strDirList, R
+
+intShortcut := 0
+
+Loop, parse, strDirList, `n
+{
+	if !StrLen(A_LoopField) ; last line is empty
+		continue
+
+	arrTargetFullName := StrSplit(A_LoopField, A_Tab)
+	strTargetFullName := arrTargetFullName[2]
+	if (blnDiagMode)
+		Diag("BuildRecentFoldersMenu", strTargetFullName)
+	
+	FileGetShortcut, %strTargetFullName%, strOutTarget
+	
+	if (errorlevel) ; hidden or system files (like desktop.ini) returns an error
+		continue
+	if !FileExist(strOutTarget) ; if folder/document was delete or on a removable drive
+	{
+		if (blnDiagMode)
+			Diag("RecentShortcut NO", strOutTarget)
+		continue
+	}
+	else
+		if (blnDiagMode)
+			Diag("RecentShortcut YES", strOutTarget)
+	
+	if LocationIsDocument(strOutTarget) ; not a folder
+		continue
+
+	intRecentFoldersIndex := intRecentFoldersIndex + 1
+	objRecentFolders.Insert(intRecentFoldersIndex, strOutTarget)
+	
+	strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strOutTarget
+	AddMenuIcon("menuRecentFolders", strMenuName, "OpenRecentFolder", "Folder")
+
+	if (intRecentFoldersIndex >= intRecentFolders)
+		break
+}
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+RefreshRecentFolders:
+;------------------------------------------------------------
+
+ToolTip, %lMenuRefreshRecent%...
+Gosub, BuildRecentFoldersMenu
+ToolTip
+CoordMode, Menu, % (intPopupMenuPosition = 2 ? "Window" : "Screen")
+Menu, menuRecentFolders, Show, %intMenuPosX%, %intMenuPosY% ; same position as the calling popup menu
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+BuildClipboardMenu:
+;------------------------------------------------------------
+
+Menu, menuClipboard, Add
+Menu, menuClipboard, DeleteAll
+if (blnUseColors)
+	Menu, menuClipboard, Color, %strMenuBackgroundColor%
+
+blnClipboardMenuEnable := 0
+
+Gosub, RefreshClipboardMenu
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+RefreshClipboardMenu:
+;------------------------------------------------------------
+
+GetIcon4Location(strTempDir . "\default_browser_icon.html", strThisIconFile, intThisIconIndex)
+
+blnPreviousClipboardMenuDeleted := 0
+intShortcutClipboardMenu := 0
+
+; Parse Clipboard for folder, document or application filenames (filenames alone on one line)
+Loop, parse, Clipboard, `n, `r%A_Space%%A_Tab%/?:*`"><|
+{
+    strClipboardLine = %A_LoopField%
+
+	if StrLen(FileExist(EnvVars(strClipboardLine)))
+	{
+		if !(blnPreviousClipboardMenuDeleted)
+		{
+			Menu, menuClipboard, Add
+			Menu, menuClipboard, DeleteAll
+			blnPreviousClipboardMenuDeleted := 1
+		}
+		blnClipboardMenuEnable := 1
+
+		strMenuName := (blnDisplayMenuShortcuts and (intShortcutFoldersInExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutClipboardMenu, false) . " " : "") . strClipboardLine
+		AddMenuIcon("menuClipboard", strMenuName, "OpenClipboard", "Folder")
+	}
+
+	; Parse Clipboard line for URLs (anywhere on the line)
+	strURLSearchString := strClipboardLine
+	Gosub, RefreshClipboardMenuURLs
+}
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+RefreshClipboardMenuURLs:
+;------------------------------------------------------------
+; Adapted from AHK help file: http://ahkscript.org/docs/commands/LoopReadFile.htm
+; It's done this particular way because some URLs have other URLs embedded inside them:
+StringGetPos, intURLStart1, strURLSearchString, http://
+StringGetPos, intURLStart2, strURLSearchString, https://
+StringGetPos, intURLStart3, strURLSearchString, www.
+
+; Find the left-most starting position:
+intURLStart := intURLStart1 ; Set starting default.
+Loop
+{
+	; It helps performance (at least in a script with many variables) to resolve
+	; "intURLStart%A_Index%" only once:
+	intArrayElement := intURLStart%A_Index%
+	if (intArrayElement = "") ; End of the array has been reached.
+		break
+	if (intArrayElement = -1) ; This element is disqualified.
+		continue
+	if (intURLStart = -1)
+		intURLStart := intArrayElement
+	else ; intURLStart has a valid position in it, so compare it with intArrayElement.
+	{
+		if (intArrayElement <> -1)
+			if (intArrayElement < intURLStart)
+				intURLStart := intArrayElement
+	}
+}
+
+if (intURLStart = -1) ; No URLs exist in strURLSearchString.
+	return
+
+; Otherwise, extract this strURL:
+StringTrimLeft, strURL, strURLSearchString, %intURLStart% ; Omit the beginning/irrelevant part.
+Loop, parse, strURL, %A_Tab%%A_Space%<> ; Find the first space, tab, or angle (if any).
+{
+	strURL := A_LoopField
+	break ; i.e. perform only one loop iteration to fetch the first "field".
+}
+; If the above loop had zero iterations because there were no ending characters found,
+; leave the contents of the strURL var untouched.
+
+; If the strURL ends in a double quote, remove it.  For now, StringReplace is used, but
+; note that it seems that double quotes can legitimately exist inside URLs, so this
+; might damage them:
+StringReplace, strURLCleansed, strURL, ",, All
+
+; if we get here, we have at least one URL, check if we need to delete previous menu
+if !(blnPreviousClipboardMenuDeleted)
+{
+	Menu, menuClipboard, Add
+	Menu, menuClipboard, DeleteAll
+	blnPreviousClipboardMenuDeleted := 1
+}
+blnClipboardMenuEnable := 1
+
+strMenuName := (blnDisplayMenuShortcuts and (intShortcutFoldersInExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutClipboardMenu, false) . " " : "") . strURLCleansed
+if StrLen(strMenuName) < 260 ; skip too long URLs
+{
+	Menu, menuClipboard, Add, %strMenuName%, OpenClipboard
+	Menu, menuClipboard, Icon, %strMenuName%, %strThisIconFile%, %intThisIconIndex%, %intIconSize%
+}
+
+; See if there are any other URLs in this line:
+StringLen, intCharactersToOmit, strURL
+intCharactersToOmit := intCharactersToOmit + intURLStart
+StringTrimLeft, strURLSearchString, strURLSearchString, %intCharactersToOmit%
+
+Gosub, RefreshClipboardMenuURLs ; Recursive call to self.
+
+return
+
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ShowClipboardMenu:
+;------------------------------------------------------------
+
+if !(blnDisplayClipboardMenu)
+	return
+
+Gosub, RefreshClipboardMenu
+if (blnClipboardMenuEnable)
+{
+	CoordMode, Menu, % (intPopupMenuPosition = 2 ? "Window" : "Screen")
+	Menu, menuClipboard, Show, %intMenuPosX%, %intMenuPosY% ; same position as the calling popup menu
+}
+else
+	TrayTip, % L(lTrayTipNoClipboardMenuTitle, strAppName), %lTrayTipNoClipboardMenuDetail%, , 2
+
+return
 ;------------------------------------------------------------
 
 
@@ -3378,25 +3453,34 @@ OpenFolderInExplorer:
 OpenClipboard:
 ;------------------------------------------------------------
 
+if (A_ThisLabel <> "OpenFavorite")
+; If we arrive here with OpenFavorite, strTargetWinId and strTargetClass were set by CanOpenFavorite in PopupMenuMouse (...).
+; If not, we need to set theses variables here.
+{
+	strTargetWinId := WinExist("A")
+	WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
+}
+	
 if (A_ThisLabel = "OpenRecentFolder")
 {
 	strLocation := objRecentFolders[A_ThisMenuItemPos]
 	strFavoriteType := "F" ; folder
-	strTargetWinId := WinExist("A")
-	WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
 }
 else if (A_ThisLabel = "OpenFolderInExplorer")
 {
-	If (InStr(objLocationUrlByName[A_ThisMenuItem], "::") = 1) ; can include the numeric shortcut
-		strLocation := "shell:" . objLocationUrlByName[A_ThisMenuItem]
+	If (InStr(objLocationUrlByName[A_ThisMenuItem], "::") = 1) ; A_ThisMenuItem can include the numeric shortcut
+	{
+		strLocation := SubStr(objLocationUrlByName[A_ThisMenuItem], 3) ; remove "::" from beginning
+		strFavoriteType := "P" ; sPecial
+	}
 	else
 	{
 		if (blnDisplayMenuShortcuts)
 			StringTrimLeft, strLocation, A_ThisMenuItem, 3 ; remove "&1 " from menu item
 		else
 			strLocation :=  A_ThisMenuItem
+		strFavoriteType := "F" ; folder
 	}
-	strFavoriteType := "F" ; folder
 }
 else if (A_ThisLabel = "OpenClipboard")
 {
@@ -7205,7 +7289,7 @@ Gui, 2:Font, s10 w700, Verdana
 Gui, 2:Add, Text, x10 y10 w595 center, % L(lOptionsGuiTitle, strAppName)
 
 Gui, 2:Font, s8 w600, Verdana
-Gui, 2:Add, Tab2, vintOptionsTab w620 h350 AltSubmit, %A_Space%%lOptionsOtherOptions% | %lOptionsMouseAndKeyboard% | %lOptionsThirdParty%%A_Space%
+Gui, 2:Add, Tab2, vintOptionsTab w620 h400 AltSubmit, %A_Space%%lOptionsOtherOptions% | %lOptionsMouseAndKeyboard% | %lOptionsHotkeys% | %lOptionsThirdParty%%A_Space%
 
 ;---------------------------------------
 ; Tab 1: General options
@@ -7289,34 +7373,55 @@ Gui, 2:Add, Text, % "yp x+5 vlblPopupFixPositionY " . (intPopupMenuPosition = 3 
 Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionY center " . (intPopupMenuPosition = 3 ? "" : "hidden"), %arrPopupFixPosition2%
 
 ;---------------------------------------
-; Tab 2: Build Hotkey Gui lines
+; Tab 2: Popup menu hotkeys
 
 Gui, 2:Tab, 2
 
 Gui, 2:Font
 Gui, 2:Add, Text, x10 y+10 w595 center, % L(lOptionsTabMouseAndKeyboardIntro, strAppName)
 
-loop, % arrIniKeyNames%0%
+loop, 4
 {
 	Gui, 2:Font, s8 w700
-	Gui, 2:Add, Text, Section x15 y+10, % arrOptionsTitles%A_Index%
+	Gui, 2:Add, Text, Section x15 y+20, % arrOptionsTitles%A_Index%
 	Gui, 2:Font, s9 w500, Courier New
-	Gui, 2:Add, Text, x260 ys+5 w280 h23 center 0x1000 vlblHotkeyText%A_Index% gButtonOptionsChangeHotkey%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
+	Gui, 2:Add, Text, x260 ys+20 w280 h23 center 0x1000 vlblHotkeyText%A_Index% gButtonOptionsChangeHotkey%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
 	Gui, 2:Font
 	Gui, 2:Add, Button, yp x555 vbtnChangeHotkey%A_Index% gButtonOptionsChangeHotkey%A_Index%, %lOptionsChangeHotkey%
 	Gui, 2:Font, s8 w500
-	Gui, 2:Add, Text, x15 ys+15, % arrOptionsTitlesSub%A_Index%
+	Gui, 2:Add, Text, x15 ys+20 w240, % arrOptionsTitlesSub%A_Index%
 }
 
 ;---------------------------------------
-; Tab 3: File Managers
+; Tab 3: Other hotkeys
 
 Gui, 2:Tab, 3
+
+Gui, 2:Font
+Gui, 2:Add, Text, x10 y+10 w595 center, %lOptionsTabHotkeysIntro%
+
+loop, 5
+{
+	intIndex := A_Index + 4
+	Gui, 2:Font, s8 w700
+	Gui, 2:Add, Text, Section x15 y+10, % arrOptionsTitles%intIndex%
+	Gui, 2:Font, s9 w500, Courier New
+	Gui, 2:Add, Text, x260 ys+5 w280 h23 center 0x1000 vlblHotkeyText%intIndex% gButtonOptionsChangeHotkey%intIndex%, % Hotkey2Text(strModifiers%intIndex%, strMouseButton%intIndex%, strOptionsKey%intIndex%)
+	Gui, 2:Font
+	Gui, 2:Add, Button, yp x555 vbtnChangeHotkey%intIndex% gButtonOptionsChangeHotkey%intIndex%, %lOptionsChangeHotkey%
+	Gui, 2:Font, s8 w500
+	Gui, 2:Add, Text, x15 ys+15, % arrOptionsTitlesSub%intIndex%
+}
+
+;---------------------------------------
+; Tab 4: File Managers
+
+Gui, 2:Tab, 4
 
 Gui, 2:Add, Text, x10 y+10 w595 center, %lOptionsTabFileManagersIntro%
 
 Gui, 2:Font, s8 w700
-Gui, 2:Add, Link, y+5 x15, % L(lOptionsThirdPartyTitle, "Directory Opus") . " (<a href=""http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/"">" . lGuiHelp . "</a>)"
+Gui, 2:Add, Link, y+15 x15, % L(lOptionsThirdPartyTitle, "Directory Opus") . " (<a href=""http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/"">" . lGuiHelp . "</a>)"
 Gui, 2:Font
 Gui, 2:Add, Text, y+5 x15, % L(lOptionsThirdPartyDetail, "Directory Opus")
 Gui, 2:Add, Text, y+10 x15, %lOptionsThirdPartyPrompt%
@@ -7326,7 +7431,7 @@ Gui, 2:Add, Checkbox, x+10 yp vblnDirectoryOpusUseTabs, %lOptionsDirectoryOpusUs
 GuiControl, , blnDirectoryOpusUseTabs, %blnDirectoryOpusUseTabs%
 
 Gui, 2:Font, s8 w700
-Gui, 2:Add, Link, y+15 x15, % L(lOptionsThirdPartyTitle, "Total Commander") . " (<a href=""http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/"">" . lGuiHelp . "</a>)"
+Gui, 2:Add, Link, y+25 x15, % L(lOptionsThirdPartyTitle, "Total Commander") . " (<a href=""http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/"">" . lGuiHelp . "</a>)"
 Gui, 2:Font
 Gui, 2:Add, Text, y+5 x15, % L(lOptionsThirdPartyDetail, "Total Commander")
 Gui, 2:Add, Text, y+10 x15, %lOptionsThirdPartyPrompt%
@@ -7336,7 +7441,7 @@ Gui, 2:Add, Checkbox, x+10 yp vblnTotalCommanderUseTabs, %lOptionsTotalCommander
 GuiControl, , blnTotalCommanderUseTabs, %blnTotalCommanderUseTabs%
 
 Gui, 2:Font, s8 w700
-Gui, 2:Add, Link, y+15 x15, %lOptionsThirdPartyTitleFPconnect% (<a href="https://github.com/rolandtoth/FPconnect">%lGuiHelp%</a>)
+Gui, 2:Add, Link, y+25 x15, %lOptionsThirdPartyTitleFPconnect% (<a href="https://github.com/rolandtoth/FPconnect">%lGuiHelp%</a>)
 Gui, 2:Font
 Gui, 2:Add, Text, y+5 x15, %lOptionsThirdPartyDetailFPconnect%
 Gui, 2:Add, Text, y+10 x15, %lOptionsThirdPartyPrompt%
@@ -7594,6 +7699,9 @@ ButtonOptionsChangeHotkey3:
 ButtonOptionsChangeHotkey4:
 ButtonOptionsChangeHotkey5:
 ButtonOptionsChangeHotkey6:
+ButtonOptionsChangeHotkey7:
+ButtonOptionsChangeHotkey8:
+ButtonOptionsChangeHotkey9:
 ;------------------------------------------------------------
 
 StringReplace, intIndex, A_ThisLabel, ButtonOptionsChangeHotkey
@@ -7609,7 +7717,7 @@ Gui, 3:Font, s10 w700, Verdana
 Gui, 3:Add, Text, x10 y10 w350 center, % L(lOptionsChangeHotkeyTitle, strAppName)
 Gui, 3:Font
 
-intHotkeyType := 3 ; Settings and Recent folders
+intHotkeyType := 3 ; Folders in Explorer, Groups, Recent folders, Clipboard and Settings
 if InStr(arrIniKeyNames%intIndex%, "Mouse")
 	intHotkeyType := 1
 if InStr(arrIniKeyNames%intIndex%, "Keyboard")
@@ -7731,6 +7839,9 @@ ButtonChangeHotkeySave3:
 ButtonChangeHotkeySave4:
 ButtonChangeHotkeySave5:
 ButtonChangeHotkeySave6:
+ButtonChangeHotkeySave7:
+ButtonChangeHotkeySave8:
+ButtonChangeHotkeySave9:
 ;------------------------------------------------------------
 Gui, 3:Submit
 
@@ -7771,7 +7882,6 @@ if StrLen(strHotkey)
 
 		Hotkey, % "$" . arrHotkeyVarNames%intIndex%, Off, UseErrorLevel ; UseErrorLevel in case we had an invalid key name in the ini file
 		IniWrite, %strHotkey%, %strIniFile%, Global, % arrIniVarNames%intIndex%
-		
 	}
 else
 	Oops(L(lOptionsNoKeyOrMouseSpecified, arrIniVarNames%intIndex%))
@@ -7793,6 +7903,9 @@ ButtonResetHotkey3:
 ButtonResetHotkey4:
 ButtonResetHotkey5:
 ButtonResetHotkey6:
+ButtonResetHotkey7:
+ButtonResetHotkey8:
+ButtonResetHotkey9:
 ;------------------------------------------------------------
 
 StringReplace, intIndex, A_ThisLabel, ButtonResetHotkey
