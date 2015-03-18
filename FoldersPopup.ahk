@@ -2,7 +2,6 @@
 Bug:
 
 To-do:
-- in Clipboard menu get document icons
 
 */
 ;===============================================
@@ -2659,8 +2658,6 @@ return
 RefreshClipboardMenu:
 ;------------------------------------------------------------
 
-GetIcon4Location(strTempDir . "\default_browser_icon.html", strThisIconFile, intThisIconIndex)
-
 blnPreviousClipboardMenuDeleted := 0
 intShortcutClipboardMenu := 0
 
@@ -2668,8 +2665,9 @@ intShortcutClipboardMenu := 0
 Loop, parse, Clipboard, `n, `r%A_Space%%A_Tab%/?:*`"><|
 {
     strClipboardLine = %A_LoopField%
+	strClipboardLineExpanded := EnvVars(strClipboardLine)
 
-	if StrLen(FileExist(EnvVars(strClipboardLine)))
+	if StrLen(FileExist(strClipboardLineExpanded))
 	{
 		if !(blnPreviousClipboardMenuDeleted)
 		{
@@ -2680,7 +2678,15 @@ Loop, parse, Clipboard, `n, `r%A_Space%%A_Tab%/?:*`"><|
 		blnClipboardMenuEnable := 1
 
 		strMenuName := (blnDisplayMenuShortcuts and (intShortcutFoldersInExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutClipboardMenu, false) . " " : "") . strClipboardLine
-		AddMenuIcon("menuClipboard", strMenuName, "OpenClipboard", "Folder")
+		if (blnDisplayIcons)
+			if LocationIsDocument(strClipboardLineExpanded)
+			{
+				GetIcon4Location(strClipboardLineExpanded, strThisIconFile, intThisIconIndex)
+				strIconValue := strThisIconFile . "," . intThisIconIndex
+			}
+			else
+				strIconValue := "Folder"
+		AddMenuIcon("menuClipboard", strMenuName, "OpenClipboard", strIconValue)
 	}
 
 	; Parse Clipboard line for URLs (anywhere on the line)
@@ -2934,7 +2940,7 @@ BuildOneMenu(strMenu)
 			objMenuColumnBreak.MenuArrayPosition := intMenuArrayItemsCount
 			objMenuColumnBreaks.Insert(objMenuColumnBreak)
 		}
-		else ; this is a favorite (folder, document or URL)
+		else ; this is a favorite (folder, document, application or URL)
 		{
 			strSubMenuDisplayName := arrThisMenu[A_Index].FavoriteName
 			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = lMainMenuName)) . " " : "")
@@ -2993,6 +2999,7 @@ NextMenuShortcut(ByRef intShortcut, blnMainMenu)
 
 ;------------------------------------------------------------
 AddMenuIcon(strMenuName, ByRef strMenuItemName, strLabel, strIconValue)
+; strIconValue can be an item from strIconsMenus (eg: "Folder") or a "file,index" combo (eg: "imageres.dll,33")
 ;------------------------------------------------------------
 {
 	global intIconSize
@@ -3013,7 +3020,15 @@ AddMenuIcon(strMenuName, ByRef strMenuItemName, strLabel, strIconValue)
 		; under Win_XP, display icons in main menu only when in first column (for other menus, this fuction is not called)
 	{
 		Menu, %strMenuName%, UseErrorLevel, on
-		Menu, %strMenuName%, Icon, %strMenuItemName%, % objIconsFile[strIconValue], % objIconsIndex[strIconValue], %intIconSize%
+		if InStr(strIconValue, ",")
+			ParseIconResource(strIconValue, strIconFile, intIconIndex)
+		else
+		{
+			strIconFile := objIconsFile[strIconValue]
+			intIconIndex := objIconsIndex[strIconValue]
+		}
+		
+		Menu, %strMenuName%, Icon, %strMenuItemName%, %strIconFile%, %intIconIndex%, %intIconSize%
 		if (ErrorLevel)
 			Menu, %strMenuName%, Icon, %strMenuItemName%
 				, % objIconsFile["UnknownDocument"], % objIconsIndex["UnknownDocument"], %intIconSize%
@@ -5462,7 +5477,6 @@ LV_ModifyCol(1, "Auto") ; adjust column width
 intCol1 := 0 ; column index, zero-based
 SendMessage, 0x1000+29, %intCol1%, 0, SysListView321, ahk_id %strAppHwnd%
 intCol1 := ErrorLevel ; column width
-; ###_D(x . " / " A_GuiWidth . " / " . intListW - intCol1 - 21)
 LV_ModifyCol(2, intListW - intCol1 - 21) ; adjust column width (-21 is for vertical scroll bar width)
 
 return
