@@ -262,7 +262,6 @@ lOptionsMenuFixPosition	À une position fixe
 lOptionsMenuNearMouse	Près du pointeur de la souris
 lOptionsMenuPositionPrompt	Afficher le menu popup:
 lOptionsMouse	Souris
-lOptionsMouseAndKeyboard	Souris et clavier
 lOptionsMouseButtonsText	Bouton de gauche de la souris|Bouton du milieu de la souris|Bouton de droite de la souris|Bouton spécial 1 de la souris|Bouton spécial 2 de la souris|Molette vers le haut|Molette vers le bas|Molette à gauche|Molette à droite|
 lOptionsMouseCheckLButton	Vous ne pouvez pas attribuer le "Bouton de gauche de la souris" sans touche de modification.
 lOptionsMouseNone	Aucun
@@ -287,8 +286,6 @@ lOptionsThirdPartyDetailFPconnect	Pour activer l'intégration avec d'autres gesti
 lOptionsThirdPartyPrompt	Fichier:
 lOptionsThirdPartyTitle	Utilisateurs de ~1~
 lOptionsThirdPartyTitleFPconnect	Utilisateurs d'autres gestionnaires de fichiers avec FPconnect
-lOptionsTitles	Souris - Popup|Souris - Nouvel explorateur|Clavier - Popup|Clavier - Nouvel explorateur|Emplacements récents|Paramètres
-lOptionsTitlesSub	(dans l'Explorateur et les boîtes de dialogue)|(dans n'importe quelle fenêtre)|(dans l'Explorateur et les boîtes de dialogue)|(dans n'importe quelle fenêtre)|(liste des emplacements récents de Windows)|(configuration du menu et options)
 lOptionsTotalCommanderUseTabs	Utiliser les onglets
 lOptionsTrayTip	Afficher la notification au démarrage
 lOptionsTriggerFor	Déclencheur pour:

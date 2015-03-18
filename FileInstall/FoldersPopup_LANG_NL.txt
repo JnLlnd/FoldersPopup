@@ -256,7 +256,6 @@ lOptionsMenuFixPosition	Op een vaste positie
 lOptionsMenuNearMouse	In de buurt van de muisaanwijzer
 lOptionsMenuPositionPrompt	Toon het:
 lOptionsMouse	Muis
-lOptionsMouseAndKeyboard	Muis en toetsenbord
 lOptionsMouseButtonsText	Linkermuisknop|Middenste muisknop|Rechtermuisknop|Speciale muisknop 1|Speciale muisknop 2|Muiswiel omhoog|Muiswiel omlaag|Muiswiel links|Muiswiel rechts|
 lOptionsMouseCheckLButton	Je kan de linkermuisknop niet toewijzen zonder een extra speciale toets erbij.
 lOptionsMouseNone	Geen
@@ -281,8 +280,6 @@ lOptionsThirdPartyDetailFPconnect	Selecteer het FPconnect programma (.exe) om de
 lOptionsThirdPartyPrompt	Programma:
 lOptionsThirdPartyTitle	~1~ gebruikers
 lOptionsThirdPartyTitleFPconnect	Gebruikers van andere programma's voor bestandsbeheer gebruiken FPconnect
-lOptionsTitles	Muis - Folders Popup|Muis - Nieuwe Verkenner|Toetsenbord - Folders Popup|Toetsenbord - Nieuwe Verkenner|Recente Mappen|Instellingen
-lOptionsTitlesSub	(toon menu in de Verkenner en dialoogvensters)|(toon menu in een willekeurig venster)|(toon menu in de Verkenner en dialoogvensters)|(toon menu in een willekeurig venster)|(lijst met recent bezochte Windows locaties)|(menu configuratie and opties)
 lOptionsTotalCommanderUseTabs	Gebruik tabs
 lOptionsTrayTip	Toon &Startup Systeembalk Tip
 lOptionsTriggerFor	Trigger voor:

@@ -256,7 +256,6 @@ lOptionsMenuFixPosition	An fester Position
 lOptionsMenuNearMouse	Nahe des Mauszeigers
 lOptionsMenuPositionPrompt	Menü aufpoppen:
 lOptionsMouse	Maus
-lOptionsMouseAndKeyboard	Maus und Tastatur
 lOptionsMouseButtonsText	Linke Maustaste|Mittlere Maustaste|Rechte Maustaste|Maus-Spezialtaste 1|Maus-Spezialtaste 2|Mausrad hoch|Mausrad runter|Mausrad nach links|Mausrad nach rechts|
 lOptionsMouseCheckLButton	Die linke Maustaste kann nicht ohne Zusatztaste definiert werden.
 lOptionsMouseNone	Keine
@@ -281,8 +280,6 @@ lOptionsThirdPartyDetailFPconnect	Wählen Sie die ausführbare Datei von FPconnect
 lOptionsThirdPartyPrompt	Programmdatei:
 lOptionsThirdPartyTitle	~1~ Benutzer
 lOptionsThirdPartyTitleFPconnect	Andere Benutzer weiterer Dateimanager, die FPconnect verwenden
-lOptionsTitles	Maus - Ordner Popup|Maus - Neu Explorer|Tastatur - Ordner Popup|Tastatur - Neu Explorer|Zuletzt verwendete Ordner|Einstellungsfenster
-lOptionsTitlesSub	(Pop-Menü überlagert Explorer und Dialogboxen)|(Pop-Menü aus beliebigem Fenster)|(Pop-Menü im Explorer und Dialogboxen)|(Pop-Menü aus beliebigem Fenster)|(Windows-Liste kürzlicher Orte)|(Menükonfiguration und Optionen)
 lOptionsTotalCommanderUseTabs	Verwende Registerkarten
 lOptionsTrayTip	Beim Start &Tray-Tip anzeigen
 lOptionsTriggerFor	Auslöser für:

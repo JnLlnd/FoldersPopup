@@ -263,7 +263,6 @@ lOptionsMenuFixPosition	In posizione prefissata
 lOptionsMenuNearMouse	Vicino al puntatore del mouse
 lOptionsMenuPositionPrompt	Apri il menù popup:
 lOptionsMouse	Mouse
-lOptionsMouseAndKeyboard	Mouse e Tastiera
 lOptionsMouseButtonsText	Tasto Sinistro del Mouse|Tasto Centrale del Mouse|Tasto Destro del Mouse|Tasto Speciale 1 del Mouse|Tasto Speciale 2 del Mouse|Rotellina SU|Rotellina GIU'|Rotellina a Sinistra|Rotellina a Destra|
 lOptionsMouseCheckLButton	Non è possibile assegnare il "Tasto Sinistro del Mouse" da solo, senza modificatore.
 lOptionsMouseNone	Nessuno
@@ -288,8 +287,6 @@ lOptionsThirdPartyDetailFPconnect	Seleziona il file di programma (.exe) di FPcon
 lOptionsThirdPartyPrompt	File del programma:
 lOptionsThirdPartyTitle	~1~ utenti
 lOptionsThirdPartyTitleFPconnect	Utenti di altri file manager che usano FPconnect
-lOptionsTitles	Mouse - Folders Popup|Mouse - Nuovo Explorer|Keyboard - Folders Popup|Keyboard - Nuovo Explorer|Cartelle Recenti|Finestra Impostazioni
-lOptionsTitlesSub	(menù popup su Explorer e caselle di dialogo)|(menù popup da qualsiasi finestra di programma)|(menù popup su Explorer e caselle di dialogo)|(menù popup da qualsiasi finestra di programma)|(elenco Posti recenti di Windows)|(configurazione e impostazioni dei menù)
 lOptionsTotalCommanderUseTabs	Usa i tab
 lOptionsTrayTip	All'avvio, &Mostra popup dall'area notifiche
 lOptionsTriggerFor	Per attivare:
