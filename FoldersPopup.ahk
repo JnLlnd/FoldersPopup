@@ -18,7 +18,9 @@ To-do:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.9.4 (2015-03-??)
+	Version: 4.9.5 (2015-03-??)
+	
+	Version: 4.9.4 (2015-03-18)
 	* add a hotkey to open directly the Current folders menu (by default Ctrl-Win-C)
 	* add a hotkey to open directly the Groups menu (by default Ctrl-Win-G)
 	* add a hotkey to open directly the Clipboard menu (by default Ctrl-Win-V)
@@ -697,7 +699,7 @@ To-do:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.9.4 BETA
+;@Ahk2Exe-SetVersion 4.9.5 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -743,7 +745,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.9.4" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.9.5" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 
