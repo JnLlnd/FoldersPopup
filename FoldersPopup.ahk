@@ -19,6 +19,9 @@ To-do:
 
 
 	Version: 4.9.5 (2015-03-??)
+	* change default hotkleys for Settings (+#s), Current Folders (+#f) and Clipboard (+#s)
+	* review hotkeys array naming
+	* add hotkey reminders in special menu labels in main menus
 	
 	Version: 4.9.4 (2015-03-18)
 	* add a hotkey to open directly the Current folders menu (by default Ctrl-Win-C)
@@ -974,9 +977,7 @@ InitSystemArrays:
 ; Hotkeys: ini names, hotkey variables name, default values, gosub label and Gui hotkey titles
 strIniKeyNames := "PopupHotkeyMouse|PopupHotkeyNewMouse|PopupHotkeyKeyboard|PopupHotkeyNewKeyboard|SettingsHotkey|FoldersInExplorerHotkey|GroupsHotkey|RecentsHotkey|ClipboardHotkey"
 StringSplit, arrIniKeyNames, strIniKeyNames, |
-strHotkeyVarNames := "strPopupHotkeyMouse|strPopupHotkeyMouseNew|strPopupHotkeyKeyboard|strPopupHotkeyKeyboardNew|strSettingsHotkey|strFoldersInExplorerHotkey|strGroupsHotkey|strRecentsHotkey|strClipboardHotkey"
-StringSplit, arrHotkeyVarNames, strHotkeyVarNames, |
-strHotkeyDefaults := "MButton|+MButton|#a|+#a|+#f|+#c|+#g|+#r|+#v"
+strHotkeyDefaults := "MButton|+MButton|#a|+#a|+#s|+#f|+#g|+#r|+#c"
 StringSplit, arrHotkeyDefaults, strHotkeyDefaults, |
 strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|GuiShow|ShowFoldersInExplorerMenu|ShowGroupsMenu|RefreshRecentFolders|ShowClipboardMenu"
 StringSplit, arrHotkeyLabels, strHotkeyLabels, |
@@ -1062,11 +1063,11 @@ IfNotExist, %strIniFile%
 	strPopupHotkeyMouseNewDefault := arrHotkeyDefaults2 ; "+MButton"
 	strPopupHotkeyKeyboardDefault := arrHotkeyDefaults3 ; "#a"
 	strPopupHotkeyKeyboardNewDefault := arrHotkeyDefaults4 ; "+#a"
-	strSettingsHotkeyDefault := arrHotkeyDefaults5 ; "+#f"
-	strFoldersInExplorerHotkeyDefault := arrHotkeyDefaults6 ; "+#c"
+	strSettingsHotkeyDefault := arrHotkeyDefaults5 ; "+#s"
+	strFoldersInExplorerHotkeyDefault := arrHotkeyDefaults6 ; "+#f"
 	strGroupsHotkeyDefault := arrHotkeyDefaults7 ; "+#g"
 	strRecentsHotkeyDefault := arrHotkeyDefaults8 ; "+#r"
-	strClipboardHotkeyDefault := arrHotkeyDefaults9 ; "+#v"
+	strClipboardHotkeyDefault := arrHotkeyDefaults9 ; "+#c"
 	
 	intIconSize := (A_OSVersion = "WIN_XP" ? 16 : 24)
 	
@@ -1375,14 +1376,14 @@ LoadIniHotkeys:
 loop, % arrIniKeyNames%0%
 {
 	; Prepare global arrays used by SplitHotkey function
-	IniRead, arrHotkeyVarNames%A_Index%, %strIniFile%, Global, % arrIniKeyNames%A_Index%, % arrHotkeyDefaults%A_Index%
-	SplitHotkey(arrHotkeyVarNames%A_Index%, strMouseButtons
+	IniRead, arrHotkeys%A_Index%, %strIniFile%, Global, % arrIniKeyNames%A_Index%, % arrHotkeyDefaults%A_Index%
+	SplitHotkey(arrHotkeys%A_Index%, strMouseButtons
 		, strModifiers%A_Index%, strOptionsKey%A_Index%, strMouseButton%A_Index%, strMouseButtonsWithDefault%A_Index%)
 	; example: Hotkey, $MButton, PopupMenuMouse
-	if (arrHotkeyVarNames%A_Index% = "None") ; do not compare with lOptionsMouseNone because it is translated
+	if (arrHotkeys%A_Index% = "None") ; do not compare with lOptionsMouseNone because it is translated
 		Hotkey, % "$" . strHotkeyNoneModifiers . strHotkeyNoneKey, % arrHotkeyLabels%A_Index%, On UseErrorLevel
 	else
-		Hotkey, % "$" . arrHotkeyVarNames%A_Index%, % arrHotkeyLabels%A_Index%, On UseErrorLevel
+		Hotkey, % "$" . arrHotkeys%A_Index%, % arrHotkeyLabels%A_Index%, On UseErrorLevel
 	if (ErrorLevel)
 		Oops(lDialogInvalidHotkey, Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%), strAppName, arrOptionsTitles%A_Index%)
 }
@@ -2824,23 +2825,23 @@ if (blnDisplaySpecialFolders) and (A_OSVersion = "WIN_XP")
 
 if (blnDisplayFoldersInExplorerMenu)
 {
-	AddMenuIcon(lMainMenuName, lMenuFoldersInExplorer, ":menuFoldersInExplorer", "lMenuFoldersInExplorer")
+	AddMenuIcon(lMainMenuName, lMenuFoldersInExplorer . " (" . Hotkey2Text(strModifiers6, strMouseButton6, strOptionsKey6) . ")", ":menuFoldersInExplorer", "lMenuFoldersInExplorer")
 	if (blnUseColors)
 		Menu, menuFoldersInExplorer, Color, %strMenuBackgroundColor%
 }
 
 if (blnDisplayGroupMenu)
 {
-	AddMenuIcon(lMainMenuName, lMenuGroup, ":menuGroups", "lMenuGroup")
+	AddMenuIcon(lMainMenuName, lMenuGroup . " (" . Hotkey2Text(strModifiers7, strMouseButton7, strOptionsKey7) . ")", ":menuGroups", "lMenuGroup")
 	if (blnUseColors)
 		Menu, menuGroups, Color, %strMenuBackgroundColor%
 }
 
 if (blnDisplayRecentFolders)
-	AddMenuIcon(lMainMenuName, lMenuRecentFolders . "...", "RefreshRecentFolders", "lMenuRecentFolders")
+	AddMenuIcon(lMainMenuName, lMenuRecentFolders . " (" . Hotkey2Text(strModifiers8, strMouseButton8, strOptionsKey8) . ") ...", "RefreshRecentFolders", "lMenuRecentFolders")
 
 if (blnDisplayClipboardMenu)
-	AddMenuIcon(lMainMenuName, lMenuClipboard . "...", ":menuClipboard", "Clipboard")
+	AddMenuIcon(lMainMenuName, lMenuClipboard . " (" . Hotkey2Text(strModifiers9, strMouseButton9, strOptionsKey9) . ")", ":menuClipboard", "Clipboard")
 
 if ((blnDisplaySpecialFolders and A_OSVersion = "WIN_XP") or blnDisplayRecentFolders or blnDisplayFoldersInExplorerMenu or blnDisplayGroupMenu or blnDisplayClipboardMenu)
 	Menu, %lMainMenuName%, Add
@@ -3197,7 +3198,7 @@ if (blnDisplayFoldersInExplorerMenu)
 if (blnDisplayFoldersInExplorerMenu)
 	Menu, %lMainMenuName%
 		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Folders in Explorer menu if no Explorer
-		, %lMenuFoldersInExplorer%
+		, % lMenuFoldersInExplorer . " (" . Hotkey2Text(strModifiers6, strMouseButton6, strOptionsKey6) . ")"
 
 if (blnDisplayGroupMenu)
 	Menu, menuGroups
@@ -3207,7 +3208,7 @@ if (blnDisplayGroupMenu)
 if (blnDisplayClipboardMenu)
 {
 	Gosub, RefreshClipboardMenu
-	Menu, %lMainMenuName%, % (blnClipboardMenuEnable ? "Enable" : "Disable"), %lMenuClipboard%...
+	Menu, %lMainMenuName%, % (blnClipboardMenuEnable ? "Enable" : "Disable"), % lMenuClipboard . " (" . Hotkey2Text(strModifiers9, strMouseButton9, strOptionsKey9) . ")"
 }
 
 ; Enable "Add This Folder" only if the target window is an Explorer, TotalCommander,
@@ -7875,7 +7876,7 @@ strHotkey := Trim(strOptionsKey . strOptionsMouse)
 if StrLen(strHotkey)
 	if (strHotkey = "None") ; do not compare with lOptionsMouseNone because it is translated
 	{
-		Hotkey, % "$" . arrHotkeyVarNames%intIndex%, Off, UseErrorLevel ; UseErrorLevel in case we had an invalid key name in the ini file
+		Hotkey, % "$" . arrHotkeys%intIndex%, Off, UseErrorLevel ; UseErrorLevel in case we had an invalid key name in the ini file
 		IniWrite, None, %strIniFile%, Global, % arrIniVarNames%intIndex% ; do not write lOptionsMouseNone because it is translated
 	}
 	else
@@ -7896,7 +7897,7 @@ if StrLen(strHotkey)
 			return
 		}
 
-		Hotkey, % "$" . arrHotkeyVarNames%intIndex%, Off, UseErrorLevel ; UseErrorLevel in case we had an invalid key name in the ini file
+		Hotkey, % "$" . arrHotkeys%intIndex%, Off, UseErrorLevel ; UseErrorLevel in case we had an invalid key name in the ini file
 		IniWrite, %strHotkey%, %strIniFile%, Global, % arrIniVarNames%intIndex%
 	}
 else
@@ -8533,13 +8534,13 @@ GetMouseButton4Text(strSource)
 
 ;------------------------------------------------------------
 GetIniName4Hotkey(strSource)
-; Returns the string in arrIniKeyNames at the same position of strSource in arrHotkeyVarNames content
+; Returns the string in arrIniKeyNames at the same position of strSource in arrHotkeys array
 ;------------------------------------------------------------
 {
 	global
 
 	loop, %arrHotkeyVarNames0%
-		if (strSource = "$" . arrHotkeyVarNames%A_Index%)
+		if (strSource = "$" . arrHotkeys%A_Index%)
 			return arrIniKeyNames%A_Index%
 }
 ;------------------------------------------------------------
