@@ -18,7 +18,11 @@ To-do:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.9.5 (2015-03-??)
+	Version: 4.9.6.1 (2015-03-20)
+	* addition of debugging ccode around OpenClipboard
+	* fix a bug introduced in v4.9.2 breaking the creation of default menu at first run
+	
+	Version: 4.9.6 (2015-03-19) (no v4.9.5)
 	* change default hotkleys for Settings (+#s), Current Folders (+#f) and Clipboard (+#s)
 	* review hotkeys array naming
 	* add hotkey reminders in special menu labels in main menus
@@ -702,7 +706,7 @@ To-do:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.9.5 BETA
+;@Ahk2Exe-SetVersion 4.9.6.1 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -748,7 +752,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.9.5" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.9.6.1" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 
@@ -782,8 +786,6 @@ else if InStr(A_ComputerName, "STIC") ; for my work hotkeys
 ; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
 
-IniWrite, %strCurrentVersion%, %strIniFile%, Global, % "LastVersionUsed" . (strCurrentBranch = "beta" ? "Beta" : "Prod")
-
 ; Keep gosubs in this order
 Gosub, InitSystemArrays
 Gosub, InitLanguage
@@ -791,6 +793,9 @@ Gosub, InitLanguageArrays
 Gosub, InitSpecialFolders
 Gosub, InitGuiControls
 Gosub, LoadIniFile
+; must be after LoadIniFile
+IniWrite, %strCurrentVersion%, %strIniFile%, Global, % "LastVersionUsed" . (strCurrentBranch = "beta" ? "Beta" : "Prod")
+
 if (blnDiagMode)
 	Gosub, InitDiagMode
 if (blnUseColors)
@@ -3534,9 +3539,11 @@ else ; this is a favorite
 if (blnDiagMode)
 {
 	Diag("A_ThisHotkey", A_ThisHotkey)
-	Diag("Navigate", "OpenFavorite")
-	Diag("Path", strLocation)
+	Diag("Label", A_ThisLabel)
+	Diag("Location", strLocation)
 	Diag("FavoriteType", strFavoriteType)
+	Diag("TargetWinId", strTargetWinId)
+	Diag("TargetClass", strTargetClass)
 }
 
 objThisSpecialFolder := objSpecialFolders[strLocation] ; save objThisSpecialFolder before expanding EnvVars
