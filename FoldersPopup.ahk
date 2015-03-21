@@ -18,6 +18,9 @@ To-do:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 4.9.6.2 (2015-03-21)
+	* fix a bug in OpenFavorite (and OpenClipboard) in situations where the target window could not be detected
+	
 	Version: 4.9.6.1 (2015-03-20)
 	* addition of debugging ccode around OpenClipboard
 	* fix a bug introduced in v4.9.2 breaking the creation of default menu at first run
@@ -706,7 +709,7 @@ To-do:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.9.6.1 BETA
+;@Ahk2Exe-SetVersion 4.9.6.2 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -752,7 +755,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.9.6.1" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.9.6.2" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 
@@ -3577,7 +3580,8 @@ if (strFavoriteType = "A") ; this is an application
 
 ; else this is a folder
 
-if InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
+if !StrLen(strTargetClass) or (strTargetWinId = 0) ; for situations where the target window could not be detected
+	or InStr(GetIniName4Hotkey(A_ThisHotkey), "New") or WindowIsDesktop(strTargetClass)
 	or ((strFavoriteType = "P") and objThisSpecialFolder.Use4NavigateExplorer = "NEW")
 	
 	Gosub, OpenFavoriteInNewWindow
