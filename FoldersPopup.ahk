@@ -870,7 +870,7 @@ DllCall("CreateMutex", "uint", 0, "int", false, "str", strAppName . "Mutex")
 ; Gosub, BuildClipboardMenu
 ; Gosub, GuiGroupSaveFromMenu
 ; Gosub, GuiGroupsManage
-; Gosub, ShowFoldersInExplorerMenu
+; Gosub, FoldersInExplorerMenuShortcut
 
 return
 
@@ -995,7 +995,7 @@ strIniKeyNames := "PopupHotkeyMouse|PopupHotkeyNewMouse|PopupHotkeyKeyboard|Popu
 StringSplit, arrIniKeyNames, strIniKeyNames, |
 strHotkeyDefaults := "MButton|+MButton|#a|+#a|+#s|+#f|+#g|+#r|+#c"
 StringSplit, arrHotkeyDefaults, strHotkeyDefaults, |
-strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|GuiShow|ShowFoldersInExplorerMenu|ShowGroupsMenu|RefreshRecentFolders|ShowClipboardMenu"
+strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|GuiShow|FoldersInExplorerMenuShortcut|GroupsMenuShortcut|RecentFoldersShortcut|ClipboardMenuShortcut"
 StringSplit, arrHotkeyLabels, strHotkeyLabels, |
 strMouseButtons := "None|LButton|MButton|RButton|XButton1|XButton2|WheelUp|WheelDown|WheelLeft|WheelRight|"
 ; leave last | to enable default value on the last item
@@ -2504,7 +2504,7 @@ NameIsInObject(strName, obj)
 
 
 ;------------------------------------------------------------
-ShowFoldersInExplorerMenu:
+FoldersInExplorerMenuShortcut:
 ;------------------------------------------------------------
 
 if !(blnDisplayFoldersInExplorerMenu)
@@ -2550,7 +2550,7 @@ return
 
 
 ;------------------------------------------------------------
-ShowGroupsMenu:
+GroupsMenuShortcut:
 ;------------------------------------------------------------
 
 if !(blnDisplayGroupMenu)
@@ -2644,6 +2644,7 @@ return
 
 ;------------------------------------------------------------
 RefreshRecentFolders:
+RecentFoldersShortcut:
 ;------------------------------------------------------------
 
 ToolTip, %lMenuRefreshRecent%...
@@ -2794,20 +2795,20 @@ return
 
 
 ;------------------------------------------------------------
-ShowClipboardMenu:
+ClipboardMenuShortcut:
 ;------------------------------------------------------------
 
 if !(blnDisplayClipboardMenu)
-	return
+    return
 
 Gosub, RefreshClipboardMenu
 if (blnClipboardMenuEnable)
 {
-	CoordMode, Menu, % (intPopupMenuPosition = 2 ? "Window" : "Screen")
-	Menu, menuClipboard, Show, %intMenuPosX%, %intMenuPosY% ; same position as the calling popup menu
+    CoordMode, Menu, % (intPopupMenuPosition = 2 ? "Window" : "Screen")
+    Menu, menuClipboard, Show, %intMenuPosX%, %intMenuPosY% ; same position as the calling popup menu
 }
 else
-	TrayTip, % L(lTrayTipNoClipboardMenuTitle, strAppName), %lTrayTipNoClipboardMenuDetail%, , 2
+    TrayTip, % L(lTrayTipNoClipboardMenuTitle, strAppName), %lTrayTipNoClipboardMenuDetail%, , 2
 
 return
 ;------------------------------------------------------------
