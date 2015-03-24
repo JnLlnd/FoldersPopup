@@ -254,6 +254,7 @@ lOptionsDisplayMenuShortcuts	Mostra scorciatoie &numeriche nei Menù
 lOptionsDisplayRecentFolders	Cartelle R&ecenti
 lOptionsDisplaySpecialFolders	Cartelle S&peciali
 lOptionsGuiTitle	Opzioni - ~1~ ~2~
+lOptionsHotkeys	Altre scorciatoie
 lOptionsIconSize	Dimensione delle icone
 lOptionsKeyboard	Tastiera
 lOptionsLanguage	Lingua
@@ -263,6 +264,7 @@ lOptionsMenuFixPosition	In posizione prefissata
 lOptionsMenuNearMouse	Vicino al puntatore del mouse
 lOptionsMenuPositionPrompt	Apri il menù popup:
 lOptionsMouse	Mouse
+lOptionsMouseAndKeyboard	Menù scorciatoie
 lOptionsMouseButtonsText	Tasto Sinistro del Mouse|Tasto Centrale del Mouse|Tasto Destro del Mouse|Tasto Speciale 1 del Mouse|Tasto Speciale 2 del Mouse|Rotellina SU|Rotellina GIU'|Rotellina a Sinistra|Rotellina a Destra|
 lOptionsMouseCheckLButton	Non è possibile assegnare il "Tasto Sinistro del Mouse" da solo, senza modificatore.
 lOptionsMouseNone	Nessuno
@@ -278,7 +280,8 @@ lOptionsRunAtStartup	&Esegui all'avvio
 lOptionsShift	Shift
 lOptionsSpacebar	usa la barra spaziatrice
 lOptionsTabFileManagersIntro	Per utenti di file manager di terze parti
-lOptionsTabMouseAndKeyboardIntro	Definisci i tasti del mouse e scorciatoie da tastiera per lanciare ~1~.
+lOptionsTabHotkeysIntro	Definisci i tasti del mouse e/o le scorciatoie da tastiera che attivano queste finestre o menù.
+lOptionsTabMouseAndKeyboardIntro	Definisci i tasti del mouse e le scorciatoie da tastiera per lanciare il menù principale di ~1~ (FP).
 lOptionsTabOtherOptionsIntro	Adatta le funzioni di FoldersPopup alle tue esigenze!
 lOptionsTheme	Tema
 lOptionsThirdParty	Supporto ai File Manager di terze parti
@@ -287,6 +290,8 @@ lOptionsThirdPartyDetailFPconnect	Seleziona il file di programma (.exe) di FPcon
 lOptionsThirdPartyPrompt	File del programma:
 lOptionsThirdPartyTitle	~1~ utenti
 lOptionsThirdPartyTitleFPconnect	Utenti di altri file manager che usano FPconnect
+lOptionsTitles	Apri il menù di FP nell'Explorer corrente o su una casella di dialogo (mouse)|Apri il menù di FP su un nuovo Windows Explorer (mouse)|Apri il menù di FP nell'Explorer corrente o su una casella di dialogo (tastiera)|Apri il menù di FP su un nuovo Windows Explorer (tastiera)|Finestra Impostazioni|Menù delle Cartelle Correnti|Menù dei Gruppi|Menù delle Cartelle Recenti|Menù degli Appunti di Windows
+lOptionsTitlesSub	Questo tasto del mouse può aprire il menù di FP su Windows Explorer, File Manager di terze parti supportati e caselle di dialogo.|Questo tasto del mouse può aprire il menù di FP in un punto qualsiasi dello schermo.|Questa scorciatoia può aprire il menù di FP quando Windows Explorer, un File Manager di terze parti supportato o una casella di dialogo, è attiva/o.|Questa scorciatoia da tastiera può aprire il menù di FP in qualunque momento.|(configurazione del menù di FP e delle opzioni)|(lista delle cartelle attualmente aperte in Explorer)|(lista dei gruppi di cartelle)|(lista delle Cartelle Recenti di Windows)|(lista di percorsi e URL presenti negli Appunti)
 lOptionsTotalCommanderUseTabs	Usa i tab
 lOptionsTrayTip	All'avvio, &Mostra popup dall'area notifiche
 lOptionsTriggerFor	Per attivare:
@@ -300,6 +305,10 @@ lReloadPrompt	~1~ cambiato in ~2~. Vuoi ricaricare ~3~ in ~2~ ora? Le modifiche 
 lReloadPromptDefaultHotkey	Scorciatoia riportata al valore di default. Questa modifica sarà effettiva solo dopo aver ricaricato ~1~.`n`nVuoi ricaricare ~1~ ora? Le modifiche non salvate al menù delle cartelle verranno perse.
 lTrayTipInstalledDetail	Per mostrare il menù ~1~, premi:`n`n~2~ / ~3~`nin Windows Explorer o in una "Casella di Dialogo"`n`n~4~ / ~5~`nper aprire una nuova finestra di Explorer
 lTrayTipInstalledTitle	~1~ ~2~ è pronto!
+lTrayTipNoClipboardMenuDetail	Al momento non è presente alcuna cartella, documento, applicazione o URL nel Menù degli Appunti di Windows.
+lTrayTipNoClipboardMenuTitle	~1~ - Menù degli Appunti di Windows
+lTrayTipNoFoldersInExplorerMenuDetail	Al momento non c'è nessuna cartella da mostrare nel menù delle Cartelle Correnti.
+lTrayTipNoFoldersInExplorerMenuTitle	Cartelle Correnti
 lTrayTipWorkingDetail	Menù in costruzione...
 lTrayTipWorkingDetailFinished	Il menù è stato aggiornato.
 lTrayTipWorkingTitle	~1~ ~2~ in esecuzione...

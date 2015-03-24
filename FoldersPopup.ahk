@@ -2,6 +2,9 @@
 Bug:
 
 To-do:
+- mask special menu shortcuts when it is None.
+- why diag file is shown twice on exit
+- retranslate lOptionsTitles in IT, KO and SV
 
 */
 ;===============================================
@@ -18,6 +21,11 @@ To-do:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 4.9.7 (2015-03-??)
+	* fix a bug with Shift-MMB not opening in a new Explorer when mouse over an Explorer
+	* review of English Options text
+	* Italian, Swedish and French language update
+	
 	Version: 4.9.6.2 (2015-03-21)
 	* fix a bug in OpenFavorite (and OpenClipboard) in situations where the target window could not be detected
 	
@@ -3479,6 +3487,7 @@ OpenFolderInExplorer:
 OpenClipboard:
 ;------------------------------------------------------------
 
+/* ####
 if (A_ThisLabel <> "OpenFavorite")
 ; If we arrive here with OpenFavorite, strTargetWinId and strTargetClass were set by CanOpenFavorite in PopupMenuMouse (...).
 ; If not, we need to set theses variables here.
@@ -3486,7 +3495,8 @@ if (A_ThisLabel <> "OpenFavorite")
 	strTargetWinId := WinExist("A")
 	WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
 }
-	
+*/
+
 if (A_ThisLabel = "OpenRecentFolder")
 {
 	strLocation := objRecentFolders[A_ThisMenuItemPos]
@@ -3539,6 +3549,13 @@ else ; this is a favorite
 		strThisMenu := A_ThisMenuItem
 	GetFavoriteProperties(A_ThisMenu, strThisMenu, strLocation, strFavoriteType, strAppArguments, strAppWorkingDir)
 }
+###_D("Label: " . A_ThisLabel . "`n"
+	. "A_ThisHotkey: " . A_ThisHotkey . "`n"
+	. "strLocation: " . strLocation . "`n"
+	. "strFavoriteType: " . strFavoriteType . "`n"
+	. "strTargetWinId: " . strTargetWinId . "`n"
+	. "strTargetClass: " . strTargetClass . "`n"
+	. "")
 if (blnDiagMode)
 {
 	Diag("A_ThisHotkey", A_ThisHotkey)
@@ -8549,8 +8566,8 @@ GetIniName4Hotkey(strSource)
 ;------------------------------------------------------------
 {
 	global
-
-	loop, %arrHotkeyVarNames0%
+	
+	loop, %arrIniKeyNames0%
 		if (strSource = "$" . arrHotkeys%A_Index%)
 			return arrIniKeyNames%A_Index%
 }

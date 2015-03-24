@@ -253,6 +253,7 @@ lOptionsDisplayMenuShortcuts	Afficher les raccourcis numériques
 lOptionsDisplayRecentFolders	Emplacements récents
 lOptionsDisplaySpecialFolders	Dossiers spéciaux
 lOptionsGuiTitle	Options - ~1~ ~2~
+lOptionsHotkeys	Autres déclencheurs
 lOptionsIconSize	Taille des icones de menu
 lOptionsKeyboard	Clavier
 lOptionsLanguage	Langue
@@ -262,6 +263,7 @@ lOptionsMenuFixPosition	À une position fixe
 lOptionsMenuNearMouse	Près du pointeur de la souris
 lOptionsMenuPositionPrompt	Afficher le menu popup:
 lOptionsMouse	Souris
+lOptionsMouseAndKeyboard	Déclencheurs du menu
 lOptionsMouseButtonsText	Bouton de gauche de la souris|Bouton du milieu de la souris|Bouton de droite de la souris|Bouton spécial 1 de la souris|Bouton spécial 2 de la souris|Molette vers le haut|Molette vers le bas|Molette à gauche|Molette à droite|
 lOptionsMouseCheckLButton	Vous ne pouvez pas attribuer le "Bouton de gauche de la souris" sans touche de modification.
 lOptionsMouseNone	Aucun
@@ -277,15 +279,19 @@ lOptionsRunAtStartup	Exécuter au démarrage
 lOptionsShift	Maj
 lOptionsSpacebar	utiliser la barre d'espace
 lOptionsTabFileManagersIntro	Pour les utilisateurs de gestionnaires de fichiers de développeurs tiers
+lOptionsTabHotkeysIntro	Choisir les boutons de la souris et les raccourcis du clavier déclenchant ces fenêtres et menus.
+lOptionsTabMouseAndKeyboardIntro	Choisir les boutons de la souris et les raccourcis du clavier déclenchant le menu principal de ~1~.
 lOptionsTabMouseAndKeyboardIntro	Choisisr les boutons de la souris et les raccourcis du clavier déclenchant ~1~.
 lOptionsTabOtherOptionsIntro	Adaptez ~1~ à vos préférences!
 lOptionsTheme	Thème
-lOptionsThirdParty	Autres gestionnaires de fichiers
+lOptionsThirdParty	Gestionnaires de fichiers
 lOptionsThirdPartyDetail	Pour activer l'intégration avec ~1~, localisez le programme .exe sous votre dossier Program Files.
 lOptionsThirdPartyDetailFPconnect	Pour activer l'intégration avec d'autres gestionnaires de fichiers, localisez le programme FPconnect.exe.
 lOptionsThirdPartyPrompt	Fichier:
 lOptionsThirdPartyTitle	Utilisateurs de ~1~
 lOptionsThirdPartyTitleFPconnect	Utilisateurs d'autres gestionnaires de fichiers avec FPconnect
+lOptionsTitles	Menu de FP pour ouvrir les dossiers dans l'Explorateur ou la boîte de dialogue actif (souris)|Menu de FP pour ouvrir les dossiers dans un nouvel Explorateur (souris)|Menu de FP pour ouvrir les dossiers dans la fenêtre de l'Explorateur ou la boîte de dialogue active (clavier)|Menu de FP pour ouvrir les dossiers dans un nouvel Explorateur (clavier)|Paramêtres|Menu des Dossiers dans l'Explorateur|Menu des groupes|Menu des Emplacements récents|Menu du Presse-papiers
+lOptionsTitlesSub	Ce bouton de la souris peut ouvrir le menu dans les fenêtres de l'Explorateur (et autres gestionnaires de fichiers supportés) et les boîtes de dialogue.|Ce bouton de la souris peut ouvrir le menu en cliquant n'importe où sur l'écran.|Ce raccourcis clavier peut ouvrir le menu lorsqu'une fenêtre de l'Explorateur (et autres gestionnaires de fichiers supportés) ou une boîte de dialogue est active.|Ce raccourcis clavier peut ouvrir le menu en tout temps.|(configuration du menu et options)|(liste des dossiers actuellement ouverts dans l'Explorrateur)|(liste des groupes de dossiers)|(liste des emplacements récents de Windows)|(liste des dossiers, fichiers et adresses web dans le Presse-papiers)
 lOptionsTotalCommanderUseTabs	Utiliser les onglets
 lOptionsTrayTip	Afficher la notification au démarrage
 lOptionsTriggerFor	Déclencheur pour:
@@ -299,6 +305,10 @@ lReloadPrompt	Changement de ~1~ enregistré: ~2~. Voulez-vous relancer ~3~ en ~2~
 lReloadPromptDefaultHotkey	La valeur par défaut pour ce déclencheur a été rétablie. Ceci ne sera effectif qu'après la relance de ~1~.`n`nVoulez-vous relancer ~1~ maintenant? Les changements non sauvegardés dans le menu des dossiers seront perdus.
 lTrayTipInstalledDetail	Pour afficher le menu de ~1~, appuyez sur:`n`n~2~ / ~3~`ndans un Explorateur de fichiers ou dans une boîte de dialogue`n`n~4~ / ~5~`npour ouvrir un nouvel Explorateur
 lTrayTipinstalledTitle	~1~ ~2~ est prêt!
+lTrayTipNoClipboardMenuDetail	Il n'y a aucun dossier, document, application ou adresse web (URL) dans le Presse-papiers
+lTrayTipNoClipboardMenuTitle	~1~ - Menu du Presse-papiers
+lTrayTipNoFoldersInExplorerMenuDetail	Il n'y a aucun dossier ouvert à afficher dans le menu des Dossiers dans l'Explorateur
+lTrayTipNoFoldersInExplorerMenuTitle	Dossiers dans l'Explorateur
 lTrayTipWorkingDetail	Préparation des menus
 lTrayTipWorkingDetailFinished	Le menu a été mis à jour.
 lTrayTipWorkingTitle	~1~ ~2~ se prépare...
