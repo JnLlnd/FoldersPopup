@@ -23,14 +23,17 @@ To-do:
 
 	Version: 4.9.7 (2015-03-??)
 	* fix a bug with Shift-MMB not opening in a new Explorer when mouse over an Explorer
-	* review of English Options text
+	* review of English Options text and improve Hotkeys tab layout
 	* Italian, Swedish and French language update
+	* improve target window identification when special menu are called using their shortcuts (if target window can open favorite, then navigate, if not new window)
+	* sets menu position correctly when special menu are called using their shortcuts
+	* protect target window identification if target window id or class is unknown (in WindowIsFPconnect)
 	
 	Version: 4.9.6.2 (2015-03-21)
 	* fix a bug in OpenFavorite (and OpenClipboard) in situations where the target window could not be detected
 	
 	Version: 4.9.6.1 (2015-03-20)
-	* addition of debugging ccode around OpenClipboard
+	* addition of debugging code around OpenClipboard
 	* fix a bug introduced in v4.9.2 breaking the creation of default menu at first run
 	
 	Version: 4.9.6 (2015-03-19) (no v4.9.5)
@@ -717,7 +720,7 @@ To-do:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.9.6.2 BETA
+;@Ahk2Exe-SetVersion 4.9.7 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -763,7 +766,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.9.6.2" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.9.7" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 
@@ -2510,11 +2513,14 @@ FoldersInExplorerMenuShortcut:
 if !(blnDisplayFoldersInExplorerMenu)
 	return
 
+blnNewWindow := !CanOpenFavorite("", strTargetWinId, strTargetClass, strTargetControl)
+Gosub, SetMenuPosition ; sets strTargetWinId or activate the window strTargetWinId set by CanOpenFavorite
+
 Gosub, BuildFoldersInExplorerMenu
 if (intExplorersIndex) ; there are Folders in Explorer menu
 {
 	CoordMode, Menu, % (intPopupMenuPosition = 2 ? "Window" : "Screen")
-	Menu, menuFoldersInExplorer, Show, %intMenuPosX%, %intMenuPosY% ; same position as the calling popup menu
+	Menu, menuFoldersInExplorer, Show, %intMenuPosX%, %intMenuPosY%
 }
 else
 	TrayTip, % L(lTrayTipNoFoldersInExplorerMenuTitle, strAppName), %lTrayTipNoFoldersInExplorerMenuDetail%, , 2
@@ -2556,12 +2562,13 @@ GroupsMenuShortcut:
 if !(blnDisplayGroupMenu)
 	return
 
-Gosub, BuildFoldersInExplorerMenu
+Gosub, SetMenuPosition
+
 Menu, menuGroups
 	, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Save group menu if no Explorer
 	, %lMenuGroupSave%
 CoordMode, Menu, % (intPopupMenuPosition = 2 ? "Window" : "Screen")
-Menu, menuGroups, Show, %intMenuPosX%, %intMenuPosY% ; same position as the calling popup menu
+Menu, menuGroups, Show, %intMenuPosX%, %intMenuPosY%
 
 return
 ;------------------------------------------------------------
@@ -2647,11 +2654,14 @@ RefreshRecentFolders:
 RecentFoldersShortcut:
 ;------------------------------------------------------------
 
+blnNewWindow := !CanOpenFavorite("", strTargetWinId, strTargetClass, strTargetControl)
+Gosub, SetMenuPosition ; sets strTargetWinId or activate the window strTargetWinId set by CanOpenFavorite
+
 ToolTip, %lMenuRefreshRecent%...
 Gosub, BuildRecentFoldersMenu
 ToolTip
 CoordMode, Menu, % (intPopupMenuPosition = 2 ? "Window" : "Screen")
-Menu, menuRecentFolders, Show, %intMenuPosX%, %intMenuPosY% ; same position as the calling popup menu
+Menu, menuRecentFolders, Show, %intMenuPosX%, %intMenuPosY%
 
 return
 ;------------------------------------------------------------
@@ -2801,11 +2811,14 @@ ClipboardMenuShortcut:
 if !(blnDisplayClipboardMenu)
     return
 
+blnNewWindow := !CanOpenFavorite("", strTargetWinId, strTargetClass, strTargetControl)
+Gosub, SetMenuPosition ; sets strTargetWinId or activate the window strTargetWinId set by CanOpenFavorite
+
 Gosub, RefreshClipboardMenu
 if (blnClipboardMenuEnable)
 {
     CoordMode, Menu, % (intPopupMenuPosition = 2 ? "Window" : "Screen")
-    Menu, menuClipboard, Show, %intMenuPosX%, %intMenuPosY% ; same position as the calling popup menu
+    Menu, menuClipboard, Show, %intMenuPosX%, %intMenuPosY%
 }
 else
     TrayTip, % L(lTrayTipNoClipboardMenuTitle, strAppName), %lTrayTipNoClipboardMenuDetail%, , 2
@@ -3155,7 +3168,7 @@ if !(blnNewWindow)
 
 Gosub, SetMenuPosition ; sets strTargetWinId or activate the window strTargetWinId set by CanOpenFavorite
 
-if (blnNewWindow) ;  must be placed after SetMenuPosition to have a fresh strTargetWinId
+if (blnNewWindow) ; must be placed after SetMenuPosition to have a fresh strTargetWinId
 	WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
 
 if (blnMouse) and (WindowIsDirectoryOpus(strTargetClass) or WindowIsTotalCommander(strTargetClass))
@@ -3411,20 +3424,9 @@ WindowIsTreeview(strWinId)
 	if (blnIsTreeView)
 		TrayTip, %lWindowIsTreeviewTitle%, % L(lWindowIsTreeviewText, strAppName), , 2
 	
-	return, blnIsTreeView
+	return blnIsTreeView
 }
 ;------------------------------------------------------------
-
-
-/* removed for FPconnect: 
-;------------------------------------------------------------
-WindowIsFreeCommander(strClass)
-;------------------------------------------------------------
-{
-	return InStr(strClass, "FreeCommanderXE")
-}
-;------------------------------------------------------------
-*/
 
 
 ;------------------------------------------------------------
@@ -3451,6 +3453,9 @@ WindowIsFPconnect(strWinId)
 {
 	global strFPconnectAppPathFilename
 	global strFPconnectTargetPathFilename
+
+	if !StrLen(strTargetClass) or (strTargetWinId = 0)
+		return false
 	
     intPID := 0
     DllCall("GetWindowThreadProcessId", "UInt", strWinId, "UInt *", intPID)
@@ -3487,16 +3492,6 @@ OpenRecentFolder:
 OpenFolderInExplorer:
 OpenClipboard:
 ;------------------------------------------------------------
-
-/* ####
-if (A_ThisLabel <> "OpenFavorite")
-; If we arrive here with OpenFavorite, strTargetWinId and strTargetClass were set by CanOpenFavorite in PopupMenuMouse (...).
-; If not, we need to set theses variables here.
-{
-	strTargetWinId := WinExist("A")
-	WinGetClass strTargetClass, % "ahk_id " . strTargetWinId
-}
-*/
 
 if (A_ThisLabel = "OpenRecentFolder")
 {
@@ -3550,6 +3545,8 @@ else ; this is a favorite
 		strThisMenu := A_ThisMenuItem
 	GetFavoriteProperties(A_ThisMenu, strThisMenu, strLocation, strFavoriteType, strAppArguments, strAppWorkingDir)
 }
+
+/*
 ###_D("Label: " . A_ThisLabel . "`n"
 	. "A_ThisHotkey: " . A_ThisHotkey . "`n"
 	. "strLocation: " . strLocation . "`n"
@@ -3557,6 +3554,7 @@ else ; this is a favorite
 	. "strTargetWinId: " . strTargetWinId . "`n"
 	. "strTargetClass: " . strTargetClass . "`n"
 	. "")
+*/
 if (blnDiagMode)
 {
 	Diag("A_ThisHotkey", A_ThisHotkey)
@@ -7429,13 +7427,13 @@ Gui, 2:Add, Text, x10 y+10 w595 center, % L(lOptionsTabMouseAndKeyboardIntro, st
 loop, 4
 {
 	Gui, 2:Font, s8 w700
-	Gui, 2:Add, Text, Section x15 y+20, % arrOptionsTitles%A_Index%
+	Gui, 2:Add, Text, x15 y+20 w610, % arrOptionsTitles%A_Index%
 	Gui, 2:Font, s9 w500, Courier New
-	Gui, 2:Add, Text, x260 ys+20 w280 h23 center 0x1000 vlblHotkeyText%A_Index% gButtonOptionsChangeHotkey%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
+	Gui, 2:Add, Text, Section x260 y+5 w280 h23 center 0x1000 vlblHotkeyText%A_Index% gButtonOptionsChangeHotkey%A_Index%, % Hotkey2Text(strModifiers%A_Index%, strMouseButton%A_Index%, strOptionsKey%A_Index%)
 	Gui, 2:Font
 	Gui, 2:Add, Button, yp x555 vbtnChangeHotkey%A_Index% gButtonOptionsChangeHotkey%A_Index%, %lOptionsChangeHotkey%
 	Gui, 2:Font, s8 w500
-	Gui, 2:Add, Text, x15 ys+20 w240, % arrOptionsTitlesSub%A_Index%
+	Gui, 2:Add, Text, x15 ys w240, % arrOptionsTitlesSub%A_Index%
 }
 
 ;---------------------------------------

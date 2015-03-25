@@ -280,8 +280,7 @@ lOptionsShift	Maj
 lOptionsSpacebar	utiliser la barre d'espace
 lOptionsTabFileManagersIntro	Pour les utilisateurs de gestionnaires de fichiers de développeurs tiers
 lOptionsTabHotkeysIntro	Choisir les boutons de la souris et les raccourcis du clavier déclenchant ces fenêtres et menus.
-lOptionsTabMouseAndKeyboardIntro	Choisir les boutons de la souris et les raccourcis du clavier déclenchant le menu principal de ~1~.
-lOptionsTabMouseAndKeyboardIntro	Choisisr les boutons de la souris et les raccourcis du clavier déclenchant ~1~.
+lOptionsTabMouseAndKeyboardIntro	Choisir les boutons de la souris et les raccourcis du clavier déclenchant le menu principal de ~1~ (FP).
 lOptionsTabOtherOptionsIntro	Adaptez ~1~ à vos préférences!
 lOptionsTheme	Thème
 lOptionsThirdParty	Gestionnaires de fichiers
@@ -290,7 +289,7 @@ lOptionsThirdPartyDetailFPconnect	Pour activer l'intégration avec d'autres gesti
 lOptionsThirdPartyPrompt	Fichier:
 lOptionsThirdPartyTitle	Utilisateurs de ~1~
 lOptionsThirdPartyTitleFPconnect	Utilisateurs d'autres gestionnaires de fichiers avec FPconnect
-lOptionsTitles	Menu de FP pour ouvrir les dossiers dans l'Explorateur ou la boîte de dialogue actif (souris)|Menu de FP pour ouvrir les dossiers dans un nouvel Explorateur (souris)|Menu de FP pour ouvrir les dossiers dans la fenêtre de l'Explorateur ou la boîte de dialogue active (clavier)|Menu de FP pour ouvrir les dossiers dans un nouvel Explorateur (clavier)|Paramêtres|Menu des Dossiers dans l'Explorateur|Menu des groupes|Menu des Emplacements récents|Menu du Presse-papiers
+lOptionsTitles	Bouton de la souris pour le menu de FP ouvrant les dossiers dans l'Explorateur actif ou la boîte de dialogue|Bouton de la souris pour le menu de FP ouvrant les dossiers dans un nouvel Explorateur|Raccourci pour le menu ouvrant les dossiers dans la fenêtre de l'Explorateur actif ou la boîte de dialogue|Raccourci pour le menu ouvrant les dossiers dans un nouvel Explorateur|Paramêtres|Menu des Dossiers dans l'Explorateur|Menu des groupes|Menu des Emplacements récents|Menu du Presse-papiers
 lOptionsTitlesSub	Ce bouton de la souris peut ouvrir le menu dans les fenêtres de l'Explorateur (et autres gestionnaires de fichiers supportés) et les boîtes de dialogue.|Ce bouton de la souris peut ouvrir le menu en cliquant n'importe où sur l'écran.|Ce raccourcis clavier peut ouvrir le menu lorsqu'une fenêtre de l'Explorateur (et autres gestionnaires de fichiers supportés) ou une boîte de dialogue est active.|Ce raccourcis clavier peut ouvrir le menu en tout temps.|(configuration du menu et options)|(liste des dossiers actuellement ouverts dans l'Explorrateur)|(liste des groupes de dossiers)|(liste des emplacements récents de Windows)|(liste des dossiers, fichiers et adresses web dans le Presse-papiers)
 lOptionsTotalCommanderUseTabs	Utiliser les onglets
 lOptionsTrayTip	Afficher la notification au démarrage
