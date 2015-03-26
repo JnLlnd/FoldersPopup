@@ -22,12 +22,12 @@ To-do:
 
 
 	Version: 4.9.7 (2015-03-??)
-	* fix a bug with Shift-MMB not opening in a new Explorer when mouse over an Explorer
-	* review of English Options text and improve Hotkeys tab layout
-	* Italian, Swedish and French language update
+	* fix a bug with "New window" (Shift-MMB or Shift-Win-A) not opening in a new Explorer when mouse over an Explorer
 	* improve target window identification when special menu are called using their shortcuts (if target window can open favorite, then navigate, if not new window)
 	* sets menu position correctly when special menu are called using their shortcuts
-	* protect target window identification if target window id or class is unknown (in WindowIsFPconnect)
+	* fix bug in WindowIsFPconnect when target window id or class is unknown
+	* review of English text in Menu hotkeys Options tab and improve Menu hotkeys tab layout
+	* Italian, Swedish, French and Korean language update
 	
 	Version: 4.9.6.2 (2015-03-21)
 	* fix a bug in OpenFavorite (and OpenClipboard) in situations where the target window could not be detected
