@@ -280,18 +280,18 @@ lOptionsRunAtStartup	&Esegui all'avvio
 lOptionsShift	Shift
 lOptionsSpacebar	usa la barra spaziatrice
 lOptionsTabFileManagersIntro	Per utenti di file manager di terze parti
-lOptionsTabHotkeysIntro	Definisci i tasti del mouse e/o le scorciatoie da tastiera che attivano queste finestre o menù.
-lOptionsTabMouseAndKeyboardIntro	Definisci i tasti del mouse e le scorciatoie da tastiera per lanciare il menù principale di ~1~ (FP).
+lOptionsTabHotkeysIntro	Definisci i tasti del mouse e/o le combinazioni da tastiera che attivano queste finestre o menù.
+lOptionsTabMouseAndKeyboardIntro	Definisci i tasti del mouse e le combinazioni da tastiera per lanciare il menù principale di ~1~ (FP).
 lOptionsTabOtherOptionsIntro	Adatta le funzioni di FoldersPopup alle tue esigenze!
 lOptionsTheme	Tema
-lOptionsThirdParty	Supporto ai File Manager di terze parti
+lOptionsThirdParty	File Manager di terze parti
 lOptionsThirdPartyDetail	Seleziona il file del programma (.exe) ~1~ per abilitare l'integrazione di ~1~ .
 lOptionsThirdPartyDetailFPconnect	Seleziona il file di programma (.exe) di FPconnect per abilitare l'integrazione di altri file manager.
 lOptionsThirdPartyPrompt	File del programma:
 lOptionsThirdPartyTitle	~1~ utenti
 lOptionsThirdPartyTitleFPconnect	Utenti di altri file manager che usano FPconnect
-lOptionsTitles	Apri il menù di FP nell'Explorer corrente o su una casella di dialogo (mouse)|Apri il menù di FP su un nuovo Windows Explorer (mouse)|Apri il menù di FP nell'Explorer corrente o su una casella di dialogo (tastiera)|Apri il menù di FP su un nuovo Windows Explorer (tastiera)|Finestra Impostazioni|Menù delle Cartelle Correnti|Menù dei Gruppi|Menù delle Cartelle Recenti|Menù degli Appunti di Windows
-lOptionsTitlesSub	Questo tasto del mouse può aprire il menù di FP su Windows Explorer, File Manager di terze parti supportati e caselle di dialogo.|Questo tasto del mouse può aprire il menù di FP in un punto qualsiasi dello schermo.|Questa scorciatoia può aprire il menù di FP quando Windows Explorer, un File Manager di terze parti supportato o una casella di dialogo, è attiva/o.|Questa scorciatoia da tastiera può aprire il menù di FP in qualunque momento.|(configurazione del menù di FP e delle opzioni)|(lista delle cartelle attualmente aperte in Explorer)|(lista dei gruppi di cartelle)|(lista delle Cartelle Recenti di Windows)|(lista di percorsi e URL presenti negli Appunti)
+lOptionsTitles	Apri il menù di FP nell'Explorer corrente o casella di dialogo attiva (mouse)|Apri le cartelle, dal menù di FP, in una nuova finestra di Explorer (mouse)|Apri il menù di FP nell'Explorer corrente o casella di dialogo attiva (tastiera)|Apri le cartelle, dal menù di FP, in una nuova finestra di Explorer (tastiera)|Finestra Impostazioni|Menù delle Cartelle Correnti|Menù dei Gruppi|Menù delle Cartelle Recenti|Menù degli Appunti di Windows
+lOptionsTitlesSub	Questo tasto del mouse apre il menù di FP su Windows Explorer, caselle di dialogo e sugli altri File Manager supportati.|Questa combinazione col mouse apre il menù di FP in un punto qualsiasi dello schermo.|Questa combinazione apre il menù di FP quando Windows Explorer, una casella di dialogo o uno dei File Manager supportati, è attivo/a.|Questa combinazione da tastiera apre il menù di FP in qualunque momento sia necessario all'utente.|(configurazione del menù di FP e delle opzioni)|(lista delle cartelle attualmente aperte in Explorer)|(lista dei gruppi di cartelle)|(lista delle Cartelle Recenti di Windows)|(lista di percorsi e URL presenti negli Appunti)
 lOptionsTotalCommanderUseTabs	Usa i tab
 lOptionsTrayTip	All'avvio, &Mostra popup dall'area notifiche
 lOptionsTriggerFor	Per attivare:
