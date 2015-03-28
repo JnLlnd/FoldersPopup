@@ -2,9 +2,7 @@
 Bug:
 
 To-do:
-- mask special menu shortcuts when it is None.
 - why diag file is shown twice on exit
-- retranslate lOptionsTitles in IT, KO and SV
 
 */
 ;===============================================
@@ -21,7 +19,16 @@ To-do:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.9.7 (2015-03-??)
+	Version: 4.9.8 (2015-03-??)
+	* add an option in third tab to display or not special menu shortcut
+	* adjust layout ot Options tab 3
+	* save and load display special menu shortcut option to ini file
+	* function to build main menu with special menu shortcuts text
+	* shorten button names in Hotkey2Text
+	* fix bug in group load for special folders
+	* Italian and Swedish Options language updates
+	
+	Version: 4.9.7 (2015-03-25)
 	* fix a bug with "New window" (Shift-MMB or Shift-Win-A) not opening in a new Explorer when mouse over an Explorer
 	* improve target window identification when special menu are called using their shortcuts (if target window can open favorite, then navigate, if not new window)
 	* sets menu position correctly when special menu are called using their shortcuts
@@ -720,7 +727,7 @@ To-do:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.9.7 BETA
+;@Ahk2Exe-SetVersion 4.9.8 BETA
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -766,7 +773,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.9.7" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.9.8" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 
@@ -1148,6 +1155,7 @@ if (blnPopupFix >= 0)
 IniRead, blnDisplayTrayTip, %strIniFile%, Global, DisplayTrayTip, 1
 IniRead, blnDisplayIcons, %strIniFile%, Global, DisplayIcons, 1
 blnDisplayIcons := (blnDisplayIcons and OSVersionIsWorkstation())
+IniRead, blnDisplaySpecialMenusShortcuts, %strIniFile%, Global, DisplaySpecialMenusShortcuts, 1
 IniRead, blnDisplaySpecialFolders, %strIniFile%, Global, DisplaySpecialFolders, 1
 IniRead, blnDisplayRecentFolders, %strIniFile%, Global, DisplayRecentFolders, 1
 IniRead, blnDisplayFoldersInExplorerMenu, %strIniFile%, Global, DisplayFoldersInExplorerMenu, 1
@@ -2099,7 +2107,7 @@ Menu, Tray, Add
 ; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
 ; Menu, Tray, Add, % L(lMenuFPMenu, strAppName, lMenuMenu), :%lMainMenuName% ; REMOVED seems to cause a BUG in submenu display (first display only) - unexplained...
-Menu, Tray, Add, % L(lMenuSettings, strAppName), GuiShow
+Menu, Tray, Add, %  BuildSpecialMenuItemName(5, L(lMenuSettings, strAppName)), GuiShow
 Menu, Tray, Add, % strAppName . ".ini", ShowIniFile
 Menu, Tray, Add
 Menu, Tray, Add, %lMenuRunAtStartup%, RunAtStartup
@@ -2111,7 +2119,7 @@ Menu, Tray, Add, %lMenuAbout%, GuiAbout
 Menu, Tray, Add, %lDonateMenu%, GuiDonate
 Menu, Tray, Add
 Menu, Tray, Add, % L(lMenuExitFoldersPopup, strAppName), CleanUpBeforeExit
-Menu, Tray, Default, % L(lMenuSettings, strAppName)
+Menu, Tray, Default, %  BuildSpecialMenuItemName(5, L(lMenuSettings, strAppName))
 if (blnUseColors)
 	Menu, Tray, Color, %strMenuBackgroundColor%
 Menu, Tray, Tip, % strAppName . " " . strAppVersion . " (" . str32or64 . "-bit)`n" . (blnDonor ? lDonateThankyou : lDonateButton)
@@ -2855,29 +2863,29 @@ if (blnDisplaySpecialFolders) and (A_OSVersion = "WIN_XP")
 
 if (blnDisplayFoldersInExplorerMenu)
 {
-	AddMenuIcon(lMainMenuName, lMenuFoldersInExplorer . " (" . Hotkey2Text(strModifiers6, strMouseButton6, strOptionsKey6) . ")", ":menuFoldersInExplorer", "lMenuFoldersInExplorer")
+	AddMenuIcon(lMainMenuName, BuildSpecialMenuItemName(6, lMenuFoldersInExplorer), ":menuFoldersInExplorer", "lMenuFoldersInExplorer")
 	if (blnUseColors)
 		Menu, menuFoldersInExplorer, Color, %strMenuBackgroundColor%
 }
 
 if (blnDisplayGroupMenu)
 {
-	AddMenuIcon(lMainMenuName, lMenuGroup . " (" . Hotkey2Text(strModifiers7, strMouseButton7, strOptionsKey7) . ")", ":menuGroups", "lMenuGroup")
+	AddMenuIcon(lMainMenuName, BuildSpecialMenuItemName(7, lMenuGroup), ":menuGroups", "lMenuGroup")
 	if (blnUseColors)
 		Menu, menuGroups, Color, %strMenuBackgroundColor%
 }
 
 if (blnDisplayRecentFolders)
-	AddMenuIcon(lMainMenuName, lMenuRecentFolders . " (" . Hotkey2Text(strModifiers8, strMouseButton8, strOptionsKey8) . ") ...", "RefreshRecentFolders", "lMenuRecentFolders")
+	AddMenuIcon(lMainMenuName, BuildSpecialMenuItemName(8, lMenuRecentFolders), "RefreshRecentFolders", "lMenuRecentFolders")
 
 if (blnDisplayClipboardMenu)
-	AddMenuIcon(lMainMenuName, lMenuClipboard . " (" . Hotkey2Text(strModifiers9, strMouseButton9, strOptionsKey9) . ")", ":menuClipboard", "Clipboard")
+	AddMenuIcon(lMainMenuName, BuildSpecialMenuItemName(9, lMenuClipboard), ":menuClipboard", "Clipboard")
 
 if ((blnDisplaySpecialFolders and A_OSVersion = "WIN_XP") or blnDisplayRecentFolders or blnDisplayFoldersInExplorerMenu or blnDisplayGroupMenu or blnDisplayClipboardMenu)
 	Menu, %lMainMenuName%, Add
 
-AddMenuIcon(lMainMenuName, L(lMenuSettings, strAppName) . "...", "GuiShow", "lMenuSettings")
-Menu, %lMainMenuName%, Default, % L(lMenuSettings, strAppName) . "..."
+AddMenuIcon(lMainMenuName, BuildSpecialMenuItemName(5, L(lMenuSettings, strAppName) . "..."), "GuiShow", "lMenuSettings")
+Menu, %lMainMenuName%, Default, %  BuildSpecialMenuItemName(5, L(lMenuSettings, strAppName) . "...")
 AddMenuIcon(lMainMenuName, lMenuAddThisFolder . "...", "AddThisFolder", "lMenuAddThisFolder")
 
 if !(blnDonor)
@@ -3226,9 +3234,11 @@ if (blnDisplayFoldersInExplorerMenu)
 	Gosub, BuildFoldersInExplorerMenu
 
 if (blnDisplayFoldersInExplorerMenu)
+{
 	Menu, %lMainMenuName%
 		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Folders in Explorer menu if no Explorer
-		, % lMenuFoldersInExplorer . " (" . Hotkey2Text(strModifiers6, strMouseButton6, strOptionsKey6) . ")"
+		, % BuildSpecialMenuItemName(6, lMenuFoldersInExplorer)
+}
 
 if (blnDisplayGroupMenu)
 	Menu, menuGroups
@@ -3238,7 +3248,9 @@ if (blnDisplayGroupMenu)
 if (blnDisplayClipboardMenu)
 {
 	Gosub, RefreshClipboardMenu
-	Menu, %lMainMenuName%, % (blnClipboardMenuEnable ? "Enable" : "Disable"), % lMenuClipboard . " (" . Hotkey2Text(strModifiers9, strMouseButton9, strOptionsKey9) . ")"
+	Menu, %lMainMenuName%
+		, % (blnClipboardMenuEnable ? "Enable" : "Disable")
+		, %  BuildSpecialMenuItemName(9, lMenuClipboard)
 }
 
 ; Enable "Add This Folder" only if the target window is an Explorer, TotalCommander,
@@ -4761,7 +4773,17 @@ GetExplorerIdIfContains(strLocationURL)
 		strWindowID := ""
 		try strWindowID := objExplorer.HWND ; Try to get the handle of the window. Some ghost Explorer in the ComObjCreate may return an empty handle
 		if !StrLen(strType) and StrLen(strWindowID) ; strType must be empty and strWindowID must not be empty
-			if (objExplorer.LocationURL = strLocationURL)
+		{
+			if !StrLen(objExplorer.LocationURL) ; empty for special folders like Recycle bin
+			{
+				if (objExplorer.Document.Folder.Self.Path = strLocationURL)
+				{
+					strExplorerID := strWindowID
+					DiagGroupLoad("Special folder LocationURL Is", objExplorer.Document.Folder.Self.Path)
+					break
+				}
+			}
+			else if (objExplorer.LocationURL = strLocationURL)
 			{
 				strExplorerID := strWindowID
 				DiagGroupLoad("LocationURL Is", objExplorer.LocationURL)
@@ -4769,6 +4791,7 @@ GetExplorerIdIfContains(strLocationURL)
 			}
 			else
 				DiagGroupLoad("LocationURL Is Not", objExplorer.LocationURL)
+		}
 	}
 	return strExplorerID
 }
@@ -7454,8 +7477,12 @@ loop, 5
 	Gui, 2:Font
 	Gui, 2:Add, Button, yp x555 vbtnChangeHotkey%intIndex% gButtonOptionsChangeHotkey%intIndex%, %lOptionsChangeHotkey%
 	Gui, 2:Font, s8 w500
-	Gui, 2:Add, Text, x15 ys+15, % arrOptionsTitlesSub%intIndex%
+	Gui, 2:Add, Text, x15 ys+15 w240, % arrOptionsTitlesSub%intIndex%
 }
+
+Gui, 2:Add, CheckBox, y+35 x20 vblnDisplaySpecialMenusShortcuts, %lOptionsDisplaySpecialMenusShortcuts%
+GuiControl, , blnDisplaySpecialMenusShortcuts, %blnDisplaySpecialMenusShortcuts%
+
 
 ;---------------------------------------
 ; Tab 4: File Managers
@@ -7617,6 +7644,7 @@ IniWrite, %blnDisplayTrayTip%, %strIniFile%, Global, DisplayTrayTip
 IniWrite, %blnDisplayIcons%, %strIniFile%, Global, DisplayIcons
 if (A_OSVersion = "WIN_XP")
 	IniWrite, %blnDisplaySpecialFolders%, %strIniFile%, Global, DisplaySpecialFolders
+IniWrite, %blnDisplaySpecialMenusShortcuts%, %strIniFile%, Global, DisplaySpecialMenusShortcuts
 IniWrite, %blnDisplayRecentFolders%, %strIniFile%, Global, DisplayRecentFolders
 IniWrite, %intRecentFolders%, %strIniFile%, Global, RecentFolders
 IniWrite, %blnDisplayFoldersInExplorerMenu%, %strIniFile%, Global, DisplayFoldersInExplorerMenu
@@ -8493,6 +8521,24 @@ GuiCenterButtons(strWindow, intInsideHorizontalMargin := 10, intInsideVerticalMa
 			, % "x" . intLeftMargin + ((intIndex - 1) * intMaxControlWidth) + ((intIndex - 1) * intDistanceBetweenButtons)
 			. " w" . intMaxControlWidth
 			. " h" . intMaxControlHeight + intInsideVerticalMargin
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+BuildSpecialMenuItemName(intHotkeyIndex, strMenuItemName)
+;------------------------------------------------------------
+{
+	global
+	
+	if (blnDisplaySpecialMenusShortcuts)
+	{
+		strHotkey := Hotkey2Text(strModifiers%intHotkeyIndex%, strMouseButton%intHotkeyIndex%, strOptionsKey%intHotkeyIndex%)
+		if (strHotkey <> lOptionsMouseNone)
+			strMenuItemName := strMenuItemName . " (" . strHotkey . ")"
+	}
+
+	return strMenuItemName
 }
 ;------------------------------------------------------------
 

@@ -265,7 +265,7 @@ lOptionsMenuNearMouse	Vicino al puntatore del mouse
 lOptionsMenuPositionPrompt	Apri il menù popup:
 lOptionsMouse	Mouse
 lOptionsMouseAndKeyboard	Menù scorciatoie
-lOptionsMouseButtonsText	Tasto Sinistro del Mouse|Tasto Centrale del Mouse|Tasto Destro del Mouse|Tasto Speciale 1 del Mouse|Tasto Speciale 2 del Mouse|Rotellina SU|Rotellina GIU'|Rotellina a Sinistra|Rotellina a Destra|
+lOptionsMouseButtonsText	Tasto Sinistro|Tasto Centrale|Tasto Destro|Tasto Speciale 1|Tasto Speciale 2|Rotellina SU|Rotellina GIU'|Rotellina a Sinistra|Rotellina a Destra|
 lOptionsMouseCheckLButton	Non è possibile assegnare il "Tasto Sinistro del Mouse" da solo, senza modificatore.
 lOptionsMouseNone	Nessuno
 lOptionsNoKeyOrMouseSpecified	Non è stato specificato alcun tasto (per il mouse o tastiera). La scorciatoia preesistente "~1~" non verrà modificata.
@@ -284,13 +284,13 @@ lOptionsTabHotkeysIntro	Definisci i tasti del mouse e/o le combinazioni da tasti
 lOptionsTabMouseAndKeyboardIntro	Definisci i tasti del mouse e le combinazioni da tastiera per lanciare il menù principale di ~1~ (FP).
 lOptionsTabOtherOptionsIntro	Adatta le funzioni di FoldersPopup alle tue esigenze!
 lOptionsTheme	Tema
-lOptionsThirdParty	File Manager di terze parti
+lOptionsThirdParty	Altri File Manager
 lOptionsThirdPartyDetail	Seleziona il file del programma (.exe) ~1~ per abilitare l'integrazione di ~1~ .
 lOptionsThirdPartyDetailFPconnect	Seleziona il file di programma (.exe) di FPconnect per abilitare l'integrazione di altri file manager.
 lOptionsThirdPartyPrompt	File del programma:
 lOptionsThirdPartyTitle	~1~ utenti
 lOptionsThirdPartyTitleFPconnect	Utenti di altri file manager che usano FPconnect
-lOptionsTitles	Apri il menù di FP nell'Explorer corrente o casella di dialogo attiva (mouse)|Apri le cartelle, dal menù di FP, in una nuova finestra di Explorer (mouse)|Apri il menù di FP nell'Explorer corrente o casella di dialogo attiva (tastiera)|Apri le cartelle, dal menù di FP, in una nuova finestra di Explorer (tastiera)|Finestra Impostazioni|Menù delle Cartelle Correnti|Menù dei Gruppi|Menù delle Cartelle Recenti|Menù degli Appunti di Windows
+lOptionsTitles	Apri le cartelle, dal menù di FP, nell'Explorer corrente o Casella di dialogo attiva (mouse)|Apri le cartelle, dal menù di FP, in una nuova finestra di Explorer (mouse)|Apri le cartelle, dal menù di FP, nell'Explorer corrente o Casella di dialogo attiva (tastiera)|Apri le cartelle, dal menù di FP, in una nuova finestra di Explorer (tastiera)|Finestra Impostazioni|Menù delle Cartelle Correnti|Menù dei Gruppi|Menù delle Cartelle Recenti|Menù degli Appunti di Windows
 lOptionsTitlesSub	Questo tasto del mouse apre il menù di FP su Windows Explorer, caselle di dialogo e sugli altri File Manager supportati.|Questa combinazione col mouse apre il menù di FP in un punto qualsiasi dello schermo.|Questa combinazione apre il menù di FP quando Windows Explorer, una casella di dialogo o uno dei File Manager supportati, è attivo/a.|Questa combinazione da tastiera apre il menù di FP in qualunque momento sia necessario all'utente.|(configurazione del menù di FP e delle opzioni)|(lista delle cartelle attualmente aperte in Explorer)|(lista dei gruppi di cartelle)|(lista delle Cartelle Recenti di Windows)|(lista di percorsi e URL presenti negli Appunti)
 lOptionsTotalCommanderUseTabs	Usa i tab
 lOptionsTrayTip	All'avvio, &Mostra popup dall'area notifiche
