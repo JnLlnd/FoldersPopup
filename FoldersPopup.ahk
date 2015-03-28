@@ -8498,7 +8498,7 @@ GuiCenterButtons(strWindow, intInsideHorizontalMargin := 10, intInsideVerticalMa
 ; This is a variadic function. See: http://ahkscript.org/docs/Functions.htm#Variadic
 ;------------------------------------------------------------
 {
-	Gui, Show, Hide ; ### why?
+	Gui, Show, Hide ; why?
 	WinGetPos, , , intWidth, , %strWindow%
 
 	intMaxControlWidth := 0
