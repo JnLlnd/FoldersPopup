@@ -211,7 +211,6 @@ lMenuReservedShortcutsDonate	S
 lMenuRunAtStartup	Exécuter au démarrage
 lMenuSeparator	----------------
 lMenuSettings	&Paramètres de ~1~
-lMenuSpecialExplorer	Fenêtre spéciale de l'Explorateur
 lMenuSpecialFolders	&Dossiers spéciaux
 lMenuStartMenu	Menu Démarrer
 lMenuStartup	Démarrage

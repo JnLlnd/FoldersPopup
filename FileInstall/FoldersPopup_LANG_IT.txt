@@ -213,7 +213,6 @@ lMenuReservedShortcutsDonate	U
 lMenuRunAtStartup	&Esegui all'Avvio
 lMenuSeparator	----------------
 lMenuSettings	&Impostazioni di ~1~
-lMenuSpecialExplorer	Finestra Speciale di Explorer
 lMenuSpecialFolders	Cartelle &Speciali
 lMenuStartMenu	Menù Avvio
 lMenuStartup	Esecuzione Automatica

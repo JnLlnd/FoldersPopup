@@ -207,7 +207,6 @@ lMenuReservedShortcutsDonate	U
 lMenuRunAtStartup	&Beim Start von Windows ausführen
 lMenuSeparator	----------------
 lMenuSettings	&~1~ Einstellungen
-lMenuSpecialExplorer	Spezielles Explorer-Fenster
 lMenuSpecialFolders	&Spezielle Ordner
 lMenuStartMenu	Startmenü
 lMenuStartup	Startup

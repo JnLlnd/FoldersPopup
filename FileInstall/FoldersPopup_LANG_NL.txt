@@ -207,7 +207,6 @@ lMenuReservedShortcutsDonate	T
 lMenuRunAtStartup	Uitvoe&ren bij opstarten
 lMenuSeparator	----------------
 lMenuSettings	&~1~ Instellingen
-lMenuSpecialExplorer	Speciaal verkenner venster
 lMenuSpecialFolders	&Speciale Mappen
 lMenuStartMenu	Start Menu
 lMenuStartup	Startup
