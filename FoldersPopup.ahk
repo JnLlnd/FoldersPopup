@@ -1,10 +1,3 @@
-/*
-Bug:
-
-To-do:
-- why diag file is shown twice on exit
-
-*/
 ;===============================================
 /*
 	FoldersPopup
@@ -19,7 +12,16 @@ To-do:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 4.9.8 (2015-03-??)
+	Version: 5.0 (2015-??-??)
+	(see history for v4.9.1 to 4.9.9)
+	
+	Version: 4.9.9 (2015-03-30)
+	* keep current position of add favorite window when changing favorite type
+	* fix bug making the exit routine running twice
+	* moving OnExit before InitFileInstall to ensure deletion of temporary files
+	* unused language variable removed
+	
+	Version: 4.9.8 (2015-03-28)
 	* add an option in third tab to display or not special menu shortcut
 	* adjust layout ot Options tab 3
 	* save and load display special menu shortcut option to ini file
@@ -727,7 +729,7 @@ To-do:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.9.8 BETA
+;@Ahk2Exe-SetVersion 4.9.9 beta
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -769,11 +771,13 @@ ListLines, On
 ; / Piece of code for developement phase only - won't be compiled
 ;@Ahk2Exe-IgnoreEnd
 
+OnExit, CleanUpBeforeExit ; must be positioned before InitFileInstall to ensure deletion of temporary files
+
 Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.9.8" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.9.9" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 
@@ -795,7 +799,7 @@ if InStr(A_ScriptDir, A_Temp) ; must be positioned after strAppName is created
 ; if the app runs from a zip file, the script directory is created under the system Temp folder
 {
 	Oops(lOopsZipFileError, strAppName)
-	Gosub, CleanUpBeforeExit
+	ExitApp
 }
 
 ;@Ahk2Exe-IgnoreBegin
@@ -851,8 +855,6 @@ if (blnDisplayTrayTip)
 			, Hotkey2Text(strModifiers2, strMouseButton2, strOptionsKey2)
 			, Hotkey2Text(strModifiers4, strMouseButton4, strOptionsKey4))
 		, , 17 ; 1 info icon + 16 no sound)
-
-OnExit, CleanUpBeforeExit
 
 blnMenuReady := true
 
@@ -1331,7 +1333,7 @@ Loop
 IfNotExist, %strIniFile%
 {
 	Oops(lOopsWriteProtectedError, strAppName)
-	Gosub, CleanUpBeforeExit
+	ExitApp
 }
 
 return
@@ -2060,6 +2062,14 @@ AHK_NOTIFYICON(wParam, lParam)
 
 
 ;-----------------------------------------------------------
+TrayMenuExitApp:
+;-----------------------------------------------------------
+
+ExitApp
+;-----------------------------------------------------------
+
+
+;-----------------------------------------------------------
 CleanUpBeforeExit:
 ;-----------------------------------------------------------
 
@@ -2118,7 +2128,7 @@ Menu, Tray, Add, %lMenuHelp%, GuiHelp
 Menu, Tray, Add, %lMenuAbout%, GuiAbout
 Menu, Tray, Add, %lDonateMenu%, GuiDonate
 Menu, Tray, Add
-Menu, Tray, Add, % L(lMenuExitFoldersPopup, strAppName), CleanUpBeforeExit
+Menu, Tray, Add, % L(lMenuExitFoldersPopup, strAppName), TrayMenuExitApp
 Menu, Tray, Default, %  BuildSpecialMenuItemName(5, L(lMenuSettings, strAppName))
 if (blnUseColors)
 	Menu, Tray, Color, %strMenuBackgroundColor%
@@ -5610,7 +5620,10 @@ if !(blnDonor)
 	Gui, 1:Add, Text, vlblGuiDonate center gGuiDonate x0 y+1, %lGuiDonate% ; Static26
 }
 
-Gui, 1:Show, % "Hide " . (arrSettingsPosition1 = -1 ? "center w636 h538" : "x" . arrSettingsPosition1 . " y" . arrSettingsPosition2)
+Gui, 1:Show, % "Hide "
+	. (arrSettingsPosition1 = -1 or arrSettingsPosition1 = "" or arrSettingsPosition2 = ""
+	? "center w636 h538"
+	: "x" . arrSettingsPosition1 . " y" . arrSettingsPosition2)
 sleep, 100
 if (arrSettingsPosition1 <> -1)
 	WinMove, ahk_id %strAppHwnd%, , , , %arrSettingsPosition3%, %arrSettingsPosition4%
@@ -6826,7 +6839,7 @@ if (blnAddMode) ; move buttons considering app properties fields
 	GuiControl, Move, btnAddFolderAdd, % "y" . (blnRadioApplication ? intMaxButtonY : intMinButtonY)
 	GuiControl, Move, btnAddFolderCancel, % "y" . (blnRadioApplication ? intMaxButtonY : intMinButtonY)
 }
-Gui, Show, AutoSize Center ; resize window considering app properties fields
+Gui, Show, AutoSize ; resize window considering app properties fields, but do not Center
 
 Gosub, GuiFavoriteIconDefault
 if (blnAddMode)
