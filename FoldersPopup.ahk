@@ -15,6 +15,9 @@
 	Version: 5.0 (2015-??-??)
 	(see history for v4.9.1 to 4.9.9)
 	
+	Version: 4.9.9.1 (2015-03-??)
+	* Italian and Korean language update
+	
 	Version: 4.9.9 (2015-03-30)
 	* keep current position of add favorite window when changing favorite type
 	* fix bug making the exit routine running twice
@@ -729,7 +732,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.9.9 beta
+;@Ahk2Exe-SetVersion 4.9.9.1 beta
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -777,7 +780,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.9.9" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "4.9.9.1" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 

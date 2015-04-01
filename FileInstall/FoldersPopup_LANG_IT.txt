@@ -252,6 +252,7 @@ lOptionsDisplayMenus	Mostra i Menù:
 lOptionsDisplayMenuShortcuts	Mostra scorciatoie &numeriche nei Menù
 lOptionsDisplayRecentFolders	Cartelle R&ecenti
 lOptionsDisplaySpecialFolders	Cartelle S&peciali
+lOptionsDisplaySpecialMenusShortcuts	Mostra queste scorciatoie nel menù principale
 lOptionsGuiTitle	Opzioni - ~1~ ~2~
 lOptionsHotkeys	Altre scorciatoie
 lOptionsIconSize	Dimensione delle icone
