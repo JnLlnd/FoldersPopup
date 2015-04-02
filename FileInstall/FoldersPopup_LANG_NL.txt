@@ -85,7 +85,7 @@ lDialogURLShortName	Korte naam voor de webkoppeling (voor in het menu)
 lDonateButton	Steun Freeware!
 lDonateCheckPrompt	Ben je tevreden over ~1~?`n`n~1~ is niet alleen GRATIS maar bevat ook GEEN vervelende reclame of adware (waarvan je nooit zeker weet of ze geen spyware of malware bevatten)`n`nTot nog toe heeft ~1~ jou ~2~ maal geholpen tijdens je dagelijkse werkzaamheden. Wat zou je er van denken om freeware te steunen?
 lDonateCheckTitle	~1~ maal! - ~2~
-lDonateMenu	S&teun Freeware!
+lDonateMenu	Steun Freeware!
 lDonatePlatformComment1	De meest flexibele manier door je PayPal account of kredietkaart te gebruiken
 lDonatePlatformComment2	Met een officiële factuur voor het geval je het wil terugvorderen.
 lDonatePlatformName1	Met Paypal
@@ -161,7 +161,7 @@ lHelpTextLead	FoldersPopup laat je snel wisselen tussen de mappen, documenten en
 lHelpTitle	Hulp - ~1~ ~2~
 lMainMenuName	Hoofdmenu
 lMenuAbout	Over
-lMenuAddThisFolder	Deze m&ap toevoegen
+lMenuAddThisFolder	Deze map toevoegen
 lMenuAppData	Applicatiegegevens
 lMenuCache	Cache
 lMenuColumnBreak	kolom
@@ -177,10 +177,10 @@ lMenuDocuments	Documenten
 lMenuDownloads	Downloads
 lMenuExitFoldersPopup	Exit ~1~
 lMenuFavoritesInternet	Favorieten (Internet)
-lMenuFoldersInExplorer	&Huidige Mappen
+lMenuFoldersInExplorer	Huidige Mappen
 lMenuFonts	Lettertypen
 lMenuFPMenu	~1~ ~2~
-lMenuGroup	&Mapgroepen
+lMenuGroup	Mapgroepen
 lMenuGroupAdd	toevoegen
 lMenuGroupLoad	Laad een groep
 lMenuGroupReplace	vervangen
@@ -198,16 +198,14 @@ lMenuProgramFiles	Programmabestanden
 lMenuProgramsFolderStartMenu	Startmenuprogramma's
 lMenuPublicLibraries	Gemeenschappelijke Templates (sjablonen)
 lMenuQuickLaunch	Snelkoppelingen
-lMenuRecentFolders	&Recente bezochte mappen
+lMenuRecentFolders	Recente bezochte mappen
 lMenuRecentItems	Onlangs geopend
 lMenuRecycleBin	Prullenbak
 lMenuRefreshRecent	Vernieuwen van het menu met de recent bezochten mappen
-lMenuReservedShortcuts	SHMRKFA
-lMenuReservedShortcutsDonate	T
 lMenuRunAtStartup	Uitvoe&ren bij opstarten
 lMenuSeparator	----------------
-lMenuSettings	&~1~ Instellingen
-lMenuSpecialFolders	&Speciale Mappen
+lMenuSettings	~1~ Instellingen
+lMenuSpecialFolders	Speciale Mappen
 lMenuStartMenu	Start Menu
 lMenuStartup	Startup
 lMenuSuspendHotkeys	Pauzeer Hotkeys

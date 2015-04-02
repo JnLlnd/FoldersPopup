@@ -85,7 +85,7 @@ lDialogURLShortName	Link short name (for menu)
 lDonateButton	Unterstützen Sie Freeware!
 lDonateCheckPrompt	Sind Sie zufrieden mit ~1~?`n`n~1~ ist nicht nur kostenlos, sondern enthält auch keine Werbung, bei der Sie nie wissen, ob diese Spyware oder Schadsoftware enthält.`n`n~2~ mal bisher, hat Ihnen ~1~ bei der täglichen Arbeit geholfen. Wie wär's jetzt mit ein wenig Unterstützung für Freeware?
 lDonateCheckTitle	~1~ mal! - ~2~
-lDonateMenu	&Unterstützen Sie Freeware!
+lDonateMenu	Unterstützen Sie Freeware!
 lDonatePlatformComment1	Die flexibelste Möglichkeit ist Ihr PayPal-Konto oder Ihre Kreditkarte zu nutzen
 lDonatePlatformComment2	Sie könen eine offizielle Rechnung für die Steuer bekommen
 lDonatePlatformName1	Mit Paypal
@@ -161,7 +161,7 @@ lHelpTextLead	FoldersPopup ermöglicht es Ihnen, schnell zwischen häufig benutzte
 lHelpTitle	Hilfe - ~1~ ~2~
 lMainMenuName	Haupt
 lMenuAbout	Ü&ber
-lMenuAddThisFolder	&Diesen Ordner hinzufügen
+lMenuAddThisFolder	Diesen Ordner hinzufügen
 lMenuAppData	Anwendungsdaten
 lMenuCache	Cache
 lMenuColumnBreak	Spalte
@@ -180,7 +180,7 @@ lMenuFavoritesInternet	Favoriten (Internet)
 lMenuFoldersInExplorer	&Ordner im Explorer
 lMenuFonts	Fonts
 lMenuFPMenu	~1~ ~2~
-lMenuGroup	Ordner &Gruppen
+lMenuGroup	Ordner Gruppen
 lMenuGroupAdd	hinzufügen
 lMenuGroupLoad	Gruppe laden
 lMenuGroupReplace	ersetzen
@@ -190,7 +190,7 @@ lMenuHistory	History
 lMenuMenu	Menü
 lMenuMyComputer	&Mein Computer
 lMenuMyMusic	Eigene Musik
-lMenuMySystemMenu	Meine &Systemordner
+lMenuMySystemMenu	Meine Systemordner
 lMenuMyVideo	Eigene Videos
 lMenuNetworkNeighborhood	&Netzwerkumgebung
 lMenuPictures	Bilder
@@ -198,16 +198,14 @@ lMenuProgramFiles	Programme
 lMenuProgramsFolderStartMenu	Programme (Startmenü)
 lMenuPublicLibraries	Public Libraries
 lMenuQuickLaunch	Schnellstart
-lMenuRecentFolders	&Kürzlich verwendete Ordner
+lMenuRecentFolders	Kürzlich verwendete Ordner
 lMenuRecentItems	Zuletzt verwendet
 lMenuRecycleBin	&Papierkorb
 lMenuRefreshRecent	Menü der kürzlich verwendeten Ordner wird aktualisiert
-lMenuReservedShortcuts	SOGKZFD
-lMenuReservedShortcutsDonate	U
 lMenuRunAtStartup	&Beim Start von Windows ausführen
 lMenuSeparator	----------------
-lMenuSettings	&~1~ Einstellungen
-lMenuSpecialFolders	&Spezielle Ordner
+lMenuSettings	~1~ Einstellungen
+lMenuSpecialFolders	Spezielle Ordner
 lMenuStartMenu	Startmenü
 lMenuStartup	Startup
 lMenuSuspendHotkeys	Suspend Hotkeys
