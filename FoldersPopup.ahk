@@ -12,6 +12,9 @@
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 5.0.9 (2015-??-??)
+	*
+	
 	Version: 5.0 (2015-??-??)
 	(see history for v4.9.1 to 4.9.9)
 	
@@ -732,7 +735,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 4.9.9.1 beta
+;@Ahk2Exe-SetVersion 5.0.9 beta
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -780,7 +783,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "4.9.9.1" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "5.0.9" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 
@@ -886,6 +889,7 @@ DllCall("CreateMutex", "uint", 0, "int", false, "str", strAppName . "Mutex")
 ; Gosub, GuiGroupSaveFromMenu
 ; Gosub, GuiGroupsManage
 ; Gosub, FoldersInExplorerMenuShortcut
+; Gosub, ShowPasteMenu
 
 return
 
@@ -1006,12 +1010,13 @@ InitSystemArrays:
 ;-----------------------------------------------------------
 
 ; Hotkeys: ini names, hotkey variables name, default values, gosub label and Gui hotkey titles
-strIniKeyNames := "PopupHotkeyMouse|PopupHotkeyNewMouse|PopupHotkeyKeyboard|PopupHotkeyNewKeyboard|SettingsHotkey|FoldersInExplorerHotkey|GroupsHotkey|RecentsHotkey|ClipboardHotkey"
+strIniKeyNames := "PopupHotkeyMouse|PopupHotkeyNewMouse|PopupHotkeyKeyboard|PopupHotkeyNewKeyboard|SettingsHotkey|FoldersInExplorerHotkey|GroupsHotkey|RecentsHotkey|ClipboardHotkey|PasteHotkey"
 StringSplit, arrIniKeyNames, strIniKeyNames, |
-strHotkeyDefaults := "MButton|+MButton|#a|+#a|+#s|+#f|+#g|+#r|+#c"
+strHotkeyDefaults := "MButton|+MButton|#a|+#a|+#s|+#f|+#g|+#r|+#c|+#v"
 StringSplit, arrHotkeyDefaults, strHotkeyDefaults, |
-strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|GuiShow|FoldersInExplorerMenuShortcut|GroupsMenuShortcut|RecentFoldersShortcut|ClipboardMenuShortcut"
+strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|GuiShow|FoldersInExplorerMenuShortcut|GroupsMenuShortcut|RecentFoldersShortcut|ClipboardMenuShortcut|ShowPasteMenu"
 StringSplit, arrHotkeyLabels, strHotkeyLabels, |
+
 strMouseButtons := "None|LButton|MButton|RButton|XButton1|XButton2|WheelUp|WheelDown|WheelLeft|WheelRight|"
 ; leave last | to enable default value on the last item
 StringSplit, arrMouseButtons, strMouseButtons, |
@@ -2849,6 +2854,18 @@ return
 
 
 ;------------------------------------------------------------
+ShowPasteMenu:
+;------------------------------------------------------------
+
+; ####
+blnPasteFavorite := true
+Menu, %lMainMenuName%, Show
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
 BuildMainMenu:
 BuildMainMenuWithStatus:
 ;------------------------------------------------------------
@@ -3571,15 +3588,14 @@ else ; this is a favorite
 	GetFavoriteProperties(A_ThisMenu, strThisMenu, strLocation, strFavoriteType, strAppArguments, strAppWorkingDir)
 }
 
-/*
 ###_D("Label: " . A_ThisLabel . "`n"
 	. "A_ThisHotkey: " . A_ThisHotkey . "`n"
 	. "strLocation: " . strLocation . "`n"
 	. "strFavoriteType: " . strFavoriteType . "`n"
 	. "strTargetWinId: " . strTargetWinId . "`n"
 	. "strTargetClass: " . strTargetClass . "`n"
+	. "blnPasteFavorite: " . blnPasteFavorite . "`n"
 	. "")
-*/
 if (blnDiagMode)
 {
 	Diag("A_ThisHotkey", A_ThisHotkey)
@@ -3588,10 +3604,18 @@ if (blnDiagMode)
 	Diag("FavoriteType", strFavoriteType)
 	Diag("TargetWinId", strTargetWinId)
 	Diag("TargetClass", strTargetClass)
+	Diag("blnPasteFavorite", blnPasteFavorite)
 }
 
 objThisSpecialFolder := objSpecialFolders[strLocation] ; save objThisSpecialFolder before expanding EnvVars
 strLocation := EnvVars(strLocation)
+
+if (blnPasteFavorite) ; before or after expanding EnvVars?
+{
+	###_D(strLocation)
+	blnPasteFavorite := false
+	return
+}
 
 if (blnDiagMode)
 	Diag("EnvVars(Path)", strLocation)
