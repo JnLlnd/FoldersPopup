@@ -890,7 +890,7 @@ DllCall("CreateMutex", "uint", 0, "int", false, "str", strAppName . "Mutex")
 ; Gosub, GuiGroupSaveFromMenu
 ; Gosub, GuiGroupsManage
 ; Gosub, FoldersInExplorerMenuShortcut
-; Gosub, ShowPasteMenu
+; Gosub, PopupMenuPaste
 
 return
 
@@ -1013,9 +1013,9 @@ InitSystemArrays:
 ; Hotkeys: ini names, hotkey variables name, default values, gosub label and Gui hotkey titles
 strIniKeyNames := "PopupHotkeyMouse|PopupHotkeyNewMouse|PopupHotkeyKeyboard|PopupHotkeyNewKeyboard|SettingsHotkey|FoldersInExplorerHotkey|GroupsHotkey|RecentsHotkey|ClipboardHotkey|PasteHotkey"
 StringSplit, arrIniKeyNames, strIniKeyNames, |
-strHotkeyDefaults := "MButton|+MButton|#a|+#a|+#s|+#f|+#g|+#r|+#c|+#v"
+strHotkeyDefaults := "MButton|+MButton|#A|+#A|+#S|+#F|+#G|+#R|+#C|+#V"
 StringSplit, arrHotkeyDefaults, strHotkeyDefaults, |
-strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|GuiShow|FoldersInExplorerMenuShortcut|GroupsMenuShortcut|RecentFoldersShortcut|ClipboardMenuShortcut|ShowPasteMenu"
+strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|GuiShow|FoldersInExplorerMenuShortcut|GroupsMenuShortcut|RecentFoldersShortcut|ClipboardMenuShortcut|PopupMenuPaste"
 StringSplit, arrHotkeyLabels, strHotkeyLabels, |
 
 strMouseButtons := "None|LButton|MButton|RButton|XButton1|XButton2|WheelUp|WheelDown|WheelLeft|WheelRight|"
@@ -2540,6 +2540,8 @@ FoldersInExplorerMenuShortcut:
 if !(blnDisplayFoldersInExplorerMenu)
 	return
 
+blnPasteFavorite := false
+
 blnNewWindow := !CanOpenFavorite("", strTargetWinId, strTargetClass, strTargetControl)
 Gosub, SetMenuPosition ; sets strTargetWinId or activate the window strTargetWinId set by CanOpenFavorite
 
@@ -2588,6 +2590,8 @@ GroupsMenuShortcut:
 
 if !(blnDisplayGroupMenu)
 	return
+
+blnPasteFavorite := false
 
 Gosub, SetMenuPosition
 
@@ -2680,6 +2684,8 @@ return
 RefreshRecentFolders:
 RecentFoldersShortcut:
 ;------------------------------------------------------------
+
+blnPasteFavorite := false
 
 blnNewWindow := !CanOpenFavorite("", strTargetWinId, strTargetClass, strTargetControl)
 Gosub, SetMenuPosition ; sets strTargetWinId or activate the window strTargetWinId set by CanOpenFavorite
@@ -2838,6 +2844,8 @@ ClipboardMenuShortcut:
 if !(blnDisplayClipboardMenu)
     return
 
+blnPasteFavorite := false
+
 blnNewWindow := !CanOpenFavorite("", strTargetWinId, strTargetClass, strTargetControl)
 Gosub, SetMenuPosition ; sets strTargetWinId or activate the window strTargetWinId set by CanOpenFavorite
 
@@ -2849,18 +2857,6 @@ if (blnClipboardMenuEnable)
 }
 else
     TrayTip, % L(lTrayTipNoClipboardMenuTitle, strAppName), %lTrayTipNoClipboardMenuDetail%, , 2
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-ShowPasteMenu:
-;------------------------------------------------------------
-
-; ####
-blnPasteFavorite := true
-Menu, %lMainMenuName%, Show
 
 return
 ;------------------------------------------------------------
@@ -3177,18 +3173,21 @@ GetMenuHandle(strMenuName)
 
 ;------------------------------------------------------------
 PopupMenuMouse: ; default MButton
-PopupMenuKeyboard: ; default #a
+PopupMenuKeyboard: ; default #A
 PopupMenuNewWindowMouse: ; default +MButton::
-PopupMenuNewWindowKeyboard: ; default +#a
+PopupMenuNewWindowKeyboard: ; default +#A
+PopupMenuPaste: ; default +#V
 ;------------------------------------------------------------
 
 if !(blnMenuReady)
 	return
 
+blnPasteFavorite := (A_ThisLabel = "PopupMenuPaste")
+
 blnMouse := InStr(A_ThisLabel, "Mouse")
 blnNewWindow := InStr(A_ThisLabel, "New") ; used in SetMenuPosition and BuildFoldersInExplorerMenu
 
-if !(blnNewWindow)
+if !(blnNewWindow) and !(blnPasteFavorite)
 	If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass, strTargetControl)
 	{
 		StringReplace, strThisHotkey, A_ThisHotkey, $ ; remove $ from hotkey
@@ -3218,7 +3217,7 @@ if (blnMouse) and (WindowIsDirectoryOpus(strTargetClass) or WindowIsTotalCommand
 
 if (blnDiagMode)
 {
-	Diag("MouseOrKeyboard", A_ThisLabel)
+	Diag("A_ThisLabel", A_ThisLabel)
 	WinGetTitle strDiag, % "ahk_id " . strTargetWinId
 	Diag("WinTitle", strDiag)
 	Diag("WinId", strTargetWinId)
@@ -3272,9 +3271,14 @@ if (blnDisplayFoldersInExplorerMenu)
 }
 
 if (blnDisplayGroupMenu)
+{
 	Menu, menuGroups
 		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Save group menu if no Explorer
 		, %lMenuGroupSave%
+	Menu, %lMainMenuName%
+		, % (blnPasteFavorite ? "Disable" : "Enable") ; disable if in Paste menu
+		, % BuildSpecialMenuItemName(7, lMenuGroup)
+}
 
 if (blnDisplayClipboardMenu)
 {
@@ -3287,6 +3291,7 @@ if (blnDisplayClipboardMenu)
 ; Enable "Add This Folder" only if the target window is an Explorer, TotalCommander,
 ; Directory Opus or a dialog box under WIN_7 (does not work under WIN_XP). Tested on WIN_XP and WIN_7.
 ; Other tests shown that WIN_8 behaves like WIN_7.
+; Disable if blnPasteFavorite
 if (blnDiagMode)
 	Diag("ShowMenu", "Favorites Menu " 
 		. (WindowIsAnExplorer(strTargetClass) ; removed for FPconnect: or WindowIsFreeCommander(strTargetClass)
@@ -3296,8 +3301,12 @@ if (blnDiagMode)
 Menu, %lMainMenuName%
 	, % WindowIsAnExplorer(strTargetClass) ; removed for FPconnect: or WindowIsFreeCommander(strTargetClass)
 	or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
-	or (WindowIsDialog(strTargetClass, strTargetWinId) and WindowsIsVersion7OrMore()) ? "Enable" : "Disable"
+	or (WindowIsDialog(strTargetClass, strTargetWinId) and WindowsIsVersion7OrMore() and !(blnPasteFavorite)) ? "Enable" : "Disable"
 	, %lMenuAddThisFolder%...
+
+Menu, %lMainMenuName%
+	, % (blnPasteFavorite ? "Disable" : "Enable") ; disable if in Paste menu
+	, % lDonateMenu . "..."
 
 Gosub, InsertColumnBreaks
 
