@@ -19,7 +19,8 @@
 	(see history for v4.9.1 to 4.9.9)
 	
 	Version: 4.9.9.1 (2015-03-??)
-	* Italian and Korean language update
+	* removed menu shortcuts in main menu to let user select menu item by their name first letter
+	* Dutch, Italian and Korean language update
 	
 	Version: 4.9.9 (2015-03-30)
 	* keep current position of add favorite window when changing favorite type

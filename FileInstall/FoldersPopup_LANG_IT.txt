@@ -90,7 +90,7 @@ lDialogWorkingDirLabel	Avvia in
 lDonateButton	Supporta il Freeware!
 lDonateCheckPrompt	Sei soddisfatto di ~1~?`n`n~1~ non solo è GRATUITO ma anche PRIVO di fastidiosi annunci o adware, che non si è mai sicuri che non nascondano spyware o malware.`n`nAl momento, per ~2~ volte ~1~ ti ha aiutato nelle tue attività quotidiane. Che ne diresti adesso di fare un'offerta a titolo di supporto del programma?
 lDonateCheckTitle	~1~ volte! - ~2~
-lDonateMenu	S&upporta il Freeware!
+lDonateMenu	Supporta il Freeware!
 lDonatePlatformComment1	Nel modo più flessibile, usando il tuo account PayPal o la tua carta di credito.
 lDonatePlatformComment2	Ricevi un invio ufficiale, se ne hai bisogno per fartelo rimborsare.
 lDonatePlatformName1	Usando Paypal
@@ -166,11 +166,10 @@ lHelpTextLead	FoldersPopup ti consente di spostarti come una scheggia tra le car
 lHelpTitle	Aiuto - ~1~ ~2~
 lMainMenuName	Principale
 lMenuAbout	C&rediti
-lMenuAddThisDialog	&Aggiungi Questa Casella di Dialogo all'elenco supportato
-lMenuAddThisFolder	&Aggiungi Questa Cartella
+lMenuAddThisFolder	Aggiungi Questa Cartella
 lMenuAppData	Dati Applicazioni
 lMenuCache	Cache
-lMenuClipboard	A&ppunti di Windows
+lMenuClipboard	Appunti di Windows
 lMenuColumnBreak	colonna
 lMenuCommonAppData	Dati Applicazioni (pubblica)
 lMenuCommonDesktop	Desktop pubblico
@@ -184,10 +183,10 @@ lMenuDocuments	Documenti
 lMenuDownloads	Download
 lMenuExitFoldersPopup	Esci da ~1~
 lMenuFavoritesInternet	Preferiti (Internet)
-lMenuFoldersInExplorer	Cartelle &Correnti
+lMenuFoldersInExplorer	Cartelle Correnti
 lMenuFonts	Font di caratteri
 lMenuFPMenu	~1~ ~2~
-lMenuGroup	&Gruppi di Cartelle
+lMenuGroup	Gruppi di Cartelle
 lMenuGroupAdd	aggiungi
 lMenuGroupLoad	Apri un gruppo
 lMenuGroupReplace	sostituisci
@@ -204,16 +203,14 @@ lMenuProgramFiles	Programmi
 lMenuProgramsFolderStartMenu	Programmi (Menù Avvio)
 lMenuPublicLibraries	Raccolte Pubbliche
 lMenuQuickLaunch	Avvio veloce
-lMenuRecentFolders	Cartelle &Recenti
+lMenuRecentFolders	Cartelle Recenti
 lMenuRecentItems	Oggetti Recenti
 lMenuRecycleBin	&Cestino
 lMenuRefreshRecent	Aggiorna Menù delle Cartelle Recenti
-lMenuReservedShortcuts	SCGRPIA
-lMenuReservedShortcutsDonate	U
 lMenuRunAtStartup	&Esegui all'Avvio
 lMenuSeparator	----------------
-lMenuSettings	&Impostazioni di ~1~
-lMenuSpecialFolders	Cartelle &Speciali
+lMenuSettings	Impostazioni di ~1~
+lMenuSpecialFolders	Cartelle Speciali
 lMenuStartMenu	Menù Avvio
 lMenuStartup	Esecuzione Automatica
 lMenuSuspendHotkeys	Sospendi Scorciatoie

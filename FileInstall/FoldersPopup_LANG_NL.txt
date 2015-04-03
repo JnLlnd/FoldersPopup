@@ -17,6 +17,9 @@ lDialogAddFileSelect	Selecteer het nieuwe document:
 lDialogAddFolderManuallyPrompt	Sorry, we kunnen de huidige map niet ontdekken in dit venstertype.`n`nWil je het handmatig toevoegen?
 lDialogAddFolderManuallyTitle	Voeg deze map toe - ~1~ ~2~
 lDialogAddFolderSelect	Kies of maak een nieuwe map:
+lDialogApplicationLabel	Applicatie
+lDialogApplicationShortName	Applicatienaam (voor in het menu)
+lDialogArgumentsLabel	Parameters
 lDialogBrowseButton	Bladeren
 lDialogCancelButton	Annuleren
 lDialogCancelPrompt	Wijzigingen negeren?
@@ -82,10 +85,11 @@ lDialogTabNext	Volgende
 lDialogThirdPartyDetected	~1~ heeft gemerkt dat ~2~ geinstalleerd is op jouw computer.`n`nWil je de ~2~ integratie activeren?
 lDialogURLLabel	URL
 lDialogURLShortName	Korte naam voor de webkoppeling (voor in het menu)
+lDialogWorkingDirLabel	Start in
 lDonateButton	Steun Freeware!
 lDonateCheckPrompt	Ben je tevreden over ~1~?`n`n~1~ is niet alleen GRATIS maar bevat ook GEEN vervelende reclame of adware (waarvan je nooit zeker weet of ze geen spyware of malware bevatten)`n`nTot nog toe heeft ~1~ jou ~2~ maal geholpen tijdens je dagelijkse werkzaamheden. Wat zou je er van denken om freeware te steunen?
 lDonateCheckTitle	~1~ maal! - ~2~
-lDonateMenu	S&teun Freeware!
+lDonateMenu	Steun Freeware!
 lDonatePlatformComment1	De meest flexibele manier door je PayPal account of kredietkaart te gebruiken
 lDonatePlatformComment2	Met een officiële factuur voor het geval je het wil terugvorderen.
 lDonatePlatformName1	Met Paypal
@@ -161,9 +165,10 @@ lHelpTextLead	FoldersPopup laat je snel wisselen tussen de mappen, documenten en
 lHelpTitle	Hulp - ~1~ ~2~
 lMainMenuName	Hoofdmenu
 lMenuAbout	Over
-lMenuAddThisFolder	Deze m&ap toevoegen
+lMenuAddThisFolder	Deze map toevoegen
 lMenuAppData	Applicatiegegevens
 lMenuCache	Cache
+lMenuClipboard	&Klembord
 lMenuColumnBreak	kolom
 lMenuCommonAppData	Gemeenschappelijke Applicatiegegevens
 lMenuCommonDesktop	Gemeenschappelijk Bureaublad
@@ -177,10 +182,10 @@ lMenuDocuments	Documenten
 lMenuDownloads	Downloads
 lMenuExitFoldersPopup	Exit ~1~
 lMenuFavoritesInternet	Favorieten (Internet)
-lMenuFoldersInExplorer	&Huidige Mappen
+lMenuFoldersInExplorer	Huidige Mappen
 lMenuFonts	Lettertypen
 lMenuFPMenu	~1~ ~2~
-lMenuGroup	&Mapgroepen
+lMenuGroup	Mapgroepen
 lMenuGroupAdd	toevoegen
 lMenuGroupLoad	Laad een groep
 lMenuGroupReplace	vervangen
@@ -198,16 +203,14 @@ lMenuProgramFiles	Programmabestanden
 lMenuProgramsFolderStartMenu	Startmenuprogramma's
 lMenuPublicLibraries	Gemeenschappelijke Templates (sjablonen)
 lMenuQuickLaunch	Snelkoppelingen
-lMenuRecentFolders	&Recente bezochte mappen
+lMenuRecentFolders	Recente bezochte mappen
 lMenuRecentItems	Onlangs geopend
 lMenuRecycleBin	Prullenbak
 lMenuRefreshRecent	Vernieuwen van het menu met de recent bezochten mappen
-lMenuReservedShortcuts	SHMRKFA
-lMenuReservedShortcutsDonate	T
 lMenuRunAtStartup	Uitvoe&ren bij opstarten
 lMenuSeparator	----------------
-lMenuSettings	&~1~ Instellingen
-lMenuSpecialFolders	&Speciale Mappen
+lMenuSettings	~1~ Instellingen
+lMenuSpecialFolders	Speciale Mappen
 lMenuStartMenu	Start Menu
 lMenuStartup	Startup
 lMenuSuspendHotkeys	Pauzeer Hotkeys
@@ -238,6 +241,7 @@ lOptionsChangeHotkeyTitle	Wijzig sneltoets - ~1~ ~2~
 lOptionsCheck4Update	Controleren op nieuwe versies
 lOptionsCtrl	Ctrl
 lOptionsDirectoryOpusUseTabs	Gebruik tabbladen
+lOptionsDisplayClipboardMenu	Klembord
 lOptionsDisplayFoldersInExplorerMenu	Huidige Mappen
 lOptionsDisplayGroupMenu	Groep van mappen
 lOptionsDisplayIcons	Toon Menu Iconen
@@ -245,7 +249,9 @@ lOptionsDisplayMenus	Toon Menus:
 lOptionsDisplayMenuShortcuts	Toon de &Numerieke Menu Sneltoetsen
 lOptionsDisplayRecentFolders	Recente bezochte mappen
 lOptionsDisplaySpecialFolders	S&peciale Mappen
+lOptionsDisplaySpecialMenusShortcuts	Toon deze sneltoetsen in het hoofdmenu
 lOptionsGuiTitle	Opties - ~1~ ~2~
+lOptionsHotkeys	Andere sneltoetsen
 lOptionsIconSize	Menu iconen grootte
 lOptionsKeyboard	Toetsenbord
 lOptionsLanguage	Taal
@@ -255,6 +261,7 @@ lOptionsMenuFixPosition	Op een vaste positie
 lOptionsMenuNearMouse	In de buurt van de muisaanwijzer
 lOptionsMenuPositionPrompt	Toon het:
 lOptionsMouse	Muis
+lOptionsMouseAndKeyboard	Menu sneltoetsen
 lOptionsMouseButtonsText	Linkermuisknop|Middenste muisknop|Rechtermuisknop|Speciale muisknop 1|Speciale muisknop 2|Muiswiel omhoog|Muiswiel omlaag|Muiswiel links|Muiswiel rechts|
 lOptionsMouseCheckLButton	Je kan de linkermuisknop niet toewijzen zonder een extra speciale toets erbij.
 lOptionsMouseNone	Geen
@@ -270,7 +277,8 @@ lOptionsRunAtStartup	&Uitvoeren bij Opstarten
 lOptionsShift	Shift
 lOptionsSpacebar	gebruik de spatiebalk
 lOptionsTabFileManagersIntro	Voor de gebruikers van andere programma's voor bestandsbeheer
-lOptionsTabMouseAndKeyboardIntro	Definieer de muisknoppen en sneltoetsen die ~1~ zullen triggeren.
+lOptionsTabHotkeysIntro	Definieer de muisknoppen en sneltoetsen die deze vensters of menu's zullen activeren.
+lOptionsTabMouseAndKeyboardIntro	Definieer de muisknoppen en sneltoetsen die ~1~  (FP) zullen activeren.
 lOptionsTabOtherOptionsIntro	Laat ~1~ functioneren zoals jij wil!
 lOptionsTheme	Thema
 lOptionsThirdParty	Add-on voor de support van andere programma's voor bestandsbeheer
@@ -279,6 +287,8 @@ lOptionsThirdPartyDetailFPconnect	Selecteer het FPconnect programma (.exe) om de
 lOptionsThirdPartyPrompt	Programma:
 lOptionsThirdPartyTitle	~1~ gebruikers
 lOptionsThirdPartyTitleFPconnect	Gebruikers van andere programma's voor bestandsbeheer gebruiken FPconnect
+lOptionsTitles	Muisknop voor het FP menu om mappen te openen vanuit het huidige verkennervenster of dialoogvenster|Muisknop voor het FP menu om mappen te openen in een nieuwe verkenner|Sneltoets voor het FP menu om mappen te openen vanuit het huidige verkennervenster of dialoogvenster|Sneltoets voor het FP menu om mappen te openen in een nieuwe verkenner|Instellingen|Huidige mappen|Groepen|Recente mappen|Klembord
+lOptionsTitlesSub	Deze muisknop opent het menu in de Windows verkenner, een ander ondersteund bestandsbeheersprogramma of een dialoogvenster.|Deze muisknop opent het menu op een willekeurige plaats op het scherm.|Deze sneltoets opent het menu in de Windows verkenner, een ander ondersteund bestandsbeheersprogramma of een dialoogvenster.|Deze sneltoets opent het menu op een willekeurige plaats op het scherm.|(menu configuratie and opties)|(lijst met mappen die op dit ogenblik geopend zijn in de Windows verkenner)|(lijst met mapgroepen)|(lijst met recent bezochte Windows locaties)|(lijst met paden en URLs op het klembord)
 lOptionsTotalCommanderUseTabs	Gebruik tabs
 lOptionsTrayTip	Toon &Startup Systeembalk Tip
 lOptionsTriggerFor	Trigger voor:
@@ -286,18 +296,25 @@ lOptionsWin	Win
 lPickIconButtonCustom	Aangepast
 lPickIconButtonDefault	Standaard
 lPickIconDocumentPrompt	Wil je een aangepast icoon gebruiken of liever het standaard icoon voor dit type document? 
+lPickIconNoLocation	Kies eerst een favoriet voordat je een icoon te kiest.
 lPickIconTitle	Selecteer ~1~ Icoon - ~2~
 lReloadPrompt	~1~ werd gewijzigd naar ~2~. Wil je ~3~ laden in het ~2~ nu? Niet bewaarde wijzigingen gaan verloren.
 lReloadPromptDefaultHotkey	Hotkey changed to default value. This change will be effective only after you reload ~1~.`n`nDo you want to reload ~1~ now? Unsaved changes to the folders menu will be lost.
 lReloadPromptDefaultHotkey	Standaard sneltoets werd terug gezet op de standaard waarde. Deze wijziging gaat pas in als je ~1~ opnieuw laadt. Wil je ~1~ nu opnieuw laden? Niet bewaarde wijzigingen aan het menu gaan dan verloren. 
 lTrayTipInstalledDetail	Om het ~1~ menu te tonen, druk:`n`n~2~ / ~3~`nin Windows Verkenner of in een dialoogvenster`n`n~4~ / ~5~`nom een nieuw Verkenner venster te openen
 lTrayTipinstalledTitle	~1~ ~2~ klaar!
+lTrayTipNoClipboardMenuDetail	Er staat op dit ogenblik geen map, document, applicatie of URL op het klembord
+lTrayTipNoClipboardMenuTitle	~1~ - Klembord menu
+lTrayTipNoFoldersInExplorerMenuDetail	Geen map beschikbaar om te tonen in het menu 'Huidige mappen'
+lTrayTipNoFoldersInExplorerMenuTitle	Huidige mappen
 lTrayTipWorkingDetail	Menus aan het opbouwen
 lTrayTipWorkingDetailFinished	Het menu is bijgewerkt.
 lTrayTipWorkingTitle	~1~ ~2~ opbouwen...
 lUpdateButtonRemind	Herinner me
 lUpdateError	Een fout trad op bij het controleren van het versienummer. De controle voor een update wordt stopgezet.
 lUpdatePrompt	Update ~1~ van v~2~ naar v~3~?
+lUpdatePromptBeta	Er is een nieuwe ~1~ BETA versie beschikbaar.`n`nWil je ~1~ updaten van v~2~ naar v~3~?
+lUpdatePromptBetaContinue	Wil je nog steeds geinformeerd worden over toekomstige beta versies?
 lUpdateTitle	Update ~1~?
 lUpdateYouHaveLatest	Je hebt reeds de meest recente versie: ~1~.`n`nWil je de ~2~ pagina toch bezoeken?
 lWindowIsTreeviewText	Sorry... maar door een beperking in Windows is dit type venster (TreeView) nog niet ondersteund.
