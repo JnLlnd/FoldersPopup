@@ -7517,7 +7517,7 @@ Gui, 2:Tab, 3
 Gui, 2:Font
 Gui, 2:Add, Text, x10 y+10 w595 center, %lOptionsTabHotkeysIntro%
 
-loop, 5
+loop, 6
 {
 	intIndex := A_Index + 4
 	Gui, 2:Font, s8 w700
@@ -7824,6 +7824,7 @@ ButtonOptionsChangeHotkey6:
 ButtonOptionsChangeHotkey7:
 ButtonOptionsChangeHotkey8:
 ButtonOptionsChangeHotkey9:
+ButtonOptionsChangeHotkey10:
 ;------------------------------------------------------------
 
 StringReplace, intIndex, A_ThisLabel, ButtonOptionsChangeHotkey
@@ -7964,6 +7965,7 @@ ButtonChangeHotkeySave6:
 ButtonChangeHotkeySave7:
 ButtonChangeHotkeySave8:
 ButtonChangeHotkeySave9:
+ButtonChangeHotkeySave10:
 ;------------------------------------------------------------
 Gui, 3:Submit
 
@@ -8028,6 +8030,7 @@ ButtonResetHotkey6:
 ButtonResetHotkey7:
 ButtonResetHotkey8:
 ButtonResetHotkey9:
+ButtonResetHotkey10:
 ;------------------------------------------------------------
 
 StringReplace, intIndex, A_ThisLabel, ButtonResetHotkey
