@@ -281,7 +281,7 @@ lOptionsTabHotkeysIntro	Definieer de muisknoppen en sneltoetsen die deze venster
 lOptionsTabMouseAndKeyboardIntro	Definieer de muisknoppen en sneltoetsen die ~1~  (FP) zullen activeren.
 lOptionsTabOtherOptionsIntro	Laat ~1~ functioneren zoals jij wil!
 lOptionsTheme	Thema
-lOptionsThirdParty	Add-on voor de support van andere programma's voor bestandsbeheer
+lOptionsThirdParty	Andere programma's voor bestandsbeheer
 lOptionsThirdPartyDetail	Selecteer het ~1~ programma (.exe) om de ~1~ integratie te activeren.
 lOptionsThirdPartyDetailFPconnect	Selecteer het FPconnect programma (.exe) om de integratie met jouw bestandsbeheerprogramma te activeren.
 lOptionsThirdPartyPrompt	Programma:
