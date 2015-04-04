@@ -17,6 +17,9 @@ lDialogAddFileSelect	Neue Datei wählen:
 lDialogAddFolderManuallyPrompt	Entschuldigung, der aktuelle Ordner kann in diesem Fenstertyp nicht ermittelt werden.`n`nWollen Sie es jetzt von Hand hinzufügen?
 lDialogAddFolderManuallyTitle	Diesen Dokumente hinzufügen - ~1~ ~2~
 lDialogAddFolderSelect	Auswählen oder Erstellen des neuen Ordners:
+lDialogApplicationLabel	Anwendung
+lDialogApplicationShortName	Anwendungsname (für Menü)
+lDialogArgumentsLabel	Parameter
 lDialogBrowseButton	Durchsuchen
 lDialogCancelButton	Abbrechen
 lDialogCancelPrompt	Änderungen verwerfen?
@@ -65,8 +68,8 @@ lDialogIcon	Symbol
 lDialogInvalidHotkey	Mit dem derzeitigen Tastaturlayout kann das Tastenkürzel "~1~" nicht verwendet werden, um das Popup-Menü aufzurufen (kein gültiger Tasten Name).`n`nBitte öffnen Sie das "~2~ Einstellungen" aus dem Tray-Menü und klicken Sie auf "Optionen". Wählen Sie in diesem Dialog ein anderes Tastenkürzel für "~3~".
 lDialogMaximized	Maximiert
 lDialogMenuNotMoveUnderItself	Menü "~1~" kann nicht in sich selbst verschoben werden
-lDialogMoveFavoritesTitle	Favoriten verschieben - ~1~ ~2~
 lDialogMinimized	Minimiert
+lDialogMoveFavoritesTitle	Favoriten verschieben - ~1~ ~2~
 lDialogNormal	Normal
 lDialogOpenThisMenu	Dieses Menü öffnen
 lDialogRemoveMultipleFavorites	Wollen Sie wirklich ~1~ entfernen?
@@ -82,6 +85,7 @@ lDialogTabNext	Nächste
 lDialogThirdPartyDetected	~1~ hat festgestellt, daÃŸ ~2~ auf diesem System installiert ist.`n`nWollen Sie die ~2~ Integration einschalten?
 lDialogURLLabel	URL
 lDialogURLShortName	Link short name (for menu)
+lDialogWorkingDirLabel	Starte in
 lDonateButton	Unterstützen Sie Freeware!
 lDonateCheckPrompt	Sind Sie zufrieden mit ~1~?`n`n~1~ ist nicht nur kostenlos, sondern enthält auch keine Werbung, bei der Sie nie wissen, ob diese Spyware oder Schadsoftware enthält.`n`n~2~ mal bisher, hat Ihnen ~1~ bei der täglichen Arbeit geholfen. Wie wär's jetzt mit ein wenig Unterstützung für Freeware?
 lDonateCheckTitle	~1~ mal! - ~2~
@@ -131,8 +135,8 @@ lGuiGroupSaveSelectAll	Alles auswählen
 lGuiGroupSaveSelectExisting	oder wählen Sie eine bestehende Gruppe zum Überschreiben:
 lGuiGroupSaveShortName	Kurzname der Gruppe (für das Menü)
 lGuiHelp	Hilfe
-lGuiHotkeysHelpText	Runter: Nächster Favorit`nRauf: Vorhergehender Favorit`nStrg-N: Neuen Favoriten hinzufügen`nEnter: Favorit bearbeiten`n`nShift-Rauf/Runter: Zusammenhängende Favoriten auswählen`nStrg-Click: Unzusammenhängende Favoriten auswählen`nStrg-A: Alle Favoriten auswählen`n`nStrg-Runter: Favorit(en) nach unten verschieben`nStrg-Hoch: Favorit(en) nach Oben verschieben`nEntf: Favorit(en) entfernen`n`nStrg-Rechts: Untermenü öffnen`nStrg-Links: Elternmenü öffnen
 lGuiHotkeysHelp	Favoriten Shortcuts Hilfe
+lGuiHotkeysHelpText	Runter: Nächster Favorit`nRauf: Vorhergehender Favorit`nStrg-N: Neuen Favoriten hinzufügen`nEnter: Favorit bearbeiten`n`nShift-Rauf/Runter: Zusammenhängende Favoriten auswählen`nStrg-Click: Unzusammenhängende Favoriten auswählen`nStrg-A: Alle Favoriten auswählen`n`nStrg-Runter: Favorit(en) nach unten verschieben`nStrg-Hoch: Favorit(en) nach Oben verschieben`nEntf: Favorit(en) entfernen`n`nStrg-Rechts: Untermenü öffnen`nStrg-Links: Elternmenü öffnen
 lGuiLvDialogsHeader	Unterstützte Dialoge`n(Teile der Namen)
 lGuiLvFavoritesHeader	Name|Ort
 lGuiMove	Verschieben
@@ -164,6 +168,7 @@ lMenuAbout	Ü&ber
 lMenuAddThisFolder	Diesen Ordner hinzufügen
 lMenuAppData	Anwendungsdaten
 lMenuCache	Cache
+lMenuClipboard	&Zwischenablage
 lMenuColumnBreak	Spalte
 lMenuCommonAppData	Common Application Data
 lMenuCommonDesktop	Common Desktop
@@ -236,6 +241,7 @@ lOptionsChangeHotkeyTitle	Tastenkürzel ändern - ~1~ ~2~
 lOptionsCheck4Update	Nach Update suchen
 lOptionsCtrl	Strg
 lOptionsDirectoryOpusUseTabs	Verwende Registerkarten
+lOptionsDisplayClipboardMenu	Zwischenablage
 lOptionsDisplayFoldersInExplorerMenu	Ordner im Explorer
 lOptionsDisplayGroupMenu	Gruppe der Ordnermenüs
 lOptionsDisplayIcons	Zeige Icons im Menü
@@ -243,7 +249,9 @@ lOptionsDisplayMenus	Anzuzeigende Menüs:
 lOptionsDisplayMenuShortcuts	Zeige &numerische Menü-Tastenkürzel
 lOptionsDisplayRecentFolders	Kürzlich verwendete Ordner
 lOptionsDisplaySpecialFolders	S&pezielle Ordner
+lOptionsDisplaySpecialMenusShortcuts	Zeige diese Kurztasten im Hauptmenü
 lOptionsGuiTitle	Optionen - ~1~ ~2~
+lOptionsHotkeys	Andere Hotkeys
 lOptionsIconSize	Symbolgröße im Menü
 lOptionsKeyboard	Tastatur
 lOptionsLanguage	Sprache
@@ -253,6 +261,7 @@ lOptionsMenuFixPosition	An fester Position
 lOptionsMenuNearMouse	Nahe des Mauszeigers
 lOptionsMenuPositionPrompt	Menü aufpoppen:
 lOptionsMouse	Maus
+lOptionsMouseAndKeyboard	Menü Hotkeys
 lOptionsMouseButtonsText	Linke Maustaste|Mittlere Maustaste|Rechte Maustaste|Maus-Spezialtaste 1|Maus-Spezialtaste 2|Mausrad hoch|Mausrad runter|Mausrad nach links|Mausrad nach rechts|
 lOptionsMouseCheckLButton	Die linke Maustaste kann nicht ohne Zusatztaste definiert werden.
 lOptionsMouseNone	Keine
@@ -268,7 +277,8 @@ lOptionsRunAtStartup	Beim Sta&rt ausführen
 lOptionsShift	Shift
 lOptionsSpacebar	verwende Leertaste
 lOptionsTabFileManagersIntro	Für Nutzer von Dateimanagern von Drittanbietern
-lOptionsTabMouseAndKeyboardIntro	Legen Sie die Maustasten und Tastenkürzel fest, welche ~1~ auslösen.
+lOptionsTabHotkeysIntro	Legen Sie die Maustasten oder Tastaturkürzel fest, welche dieses Fenster oder Menü ansprechen.
+lOptionsTabMouseAndKeyboardIntro	Legen Sie die Maustasten und Tastaturkürzel fest, welche das ~1~ (FP) Hauptmenü ansprechen.
 lOptionsTabOtherOptionsIntro	Lassen Sie ~1~ funktionieren, wie Sie es wollen!
 lOptionsTheme	Thema
 lOptionsThirdParty	Unterstützung anderer Dateimananger
@@ -277,6 +287,8 @@ lOptionsThirdPartyDetailFPconnect	Wählen Sie die ausführbare Datei von FPconnect
 lOptionsThirdPartyPrompt	Programmdatei:
 lOptionsThirdPartyTitle	~1~ Benutzer
 lOptionsThirdPartyTitleFPconnect	Andere Benutzer weiterer Dateimanager, die FPconnect verwenden
+lOptionsTitles	Maustaste für FP Menü um Ordner in aktuellem Explorerfenster oder Dialogbox zu öffnen|Maustaste für FP Menü um Ordner in einem neuen Explorerfenster zu öffnen|Tastaturkürzel für FP Menü um Ordner in aktuellem Explorerfenster oder Dialogbox zu öffnen|Tastaturkürzel für FP Menü um Ordner in einem neuen Explorerfenster zu öffnen|Einstellungsfenster|Aktueller Ordner Menü|Gruppen-Menü|Kürzliche Ordner Menü|Zwischenablage-Menü
+lOptionsTitlesSub	Diese Maustaste kann das Menü über Windows Explorer, unterstützte Dateimanager von Drittanbietern und Dialogboxen anzeigen.|Diese Maustaste zeigt das Menü überall anzeigen.|Diese Kurztaste zeigt das Menü im Windows Explorer, unterstützten Dateimanagern von Drittanbietern und Dialogboxen an.|Dieses Tastenkürzel zeigt das Menü jederzeit.|(Menü-Einstellungen und Optionen)|(Liste der aktuell im Explorer geöffneten Ordner)|(Liste der Ordnergruppen)|(Liste der Windows häufigen Orte)|(Liste der Pfade und URLs in der Zwischenablage)
 lOptionsTotalCommanderUseTabs	Verwende Registerkarten
 lOptionsTrayTip	Beim Start &Tray-Tip anzeigen
 lOptionsTriggerFor	Auslöser für:
@@ -284,17 +296,24 @@ lOptionsWin	Win
 lPickIconButtonCustom	Angepasst
 lPickIconButtonDefault	Standard
 lPickIconDocumentPrompt	Angepasstes oder Standard-Symbol für diese Art von Dokument verwenden?
+lPickIconNoLocation	Bitte zuerst einen Favoriten auswählen, bevor ein Icon gewählt wird.
 lPickIconTitle	Auswahl ~1~ Symbol - ~2~
 lReloadPrompt	~1~  wurde in ~2~ geändert. Wollen Sie jetzt ~3~ in ~2~ neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
 lReloadPromptDefaultHotkey	Schnelltaste auf Standard zurückgesetzt. Diese Änderung tritt erst durch erneutes Laden von ~1~ in Kraft.`n`nWollen Sie ~1~ jetzt neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
 lTrayTipInstalledDetail	Zur Anzeige des ~1~ Menüs`nim Windows Explorer oder einer Dialogbox`n~2~ oder ~3~ drücken.`n`n~4~ oder ~5~`num ein neues Explorer-Fenster zu öffnen.
 lTrayTipinstalledTitle	~1~ ~2~ bereit!
+lTrayTipNoClipboardMenuDetail	Es gibt zur Zeit keine Ordner, Dokumente, Anwendungen oder URLs im Zwischenablage-Menü
+lTrayTipNoClipboardMenuTitle	~1~ - Zwischenablage-Menü
+lTrayTipNoFoldersInExplorerMenuDetail	Es gibt zur Zeit keinen anzeigbaren Ordner im aktuellen Folders-Menü
+lTrayTipNoFoldersInExplorerMenuTitle	Aktuelle Ordner
 lTrayTipWorkingDetail	Erzeuge Menüs
 lTrayTipWorkingDetailFinished	Das Menü wurde aktualisiert.
 lTrayTipWorkingTitle	~1~ ~2~ arbeite...
 lUpdateButtonRemind	Erinnere mich
 lUpdateError	Beim Zugriff auf die letzte Versionsnummer trat ein Fehler auf. Prüfe auf unterbrochene Updates.
 lUpdatePrompt	Update ~1~ von v~2~ auf v~3~?
+lUpdatePromptBeta	Es gibt eine neue ~1~ BETA-Version.`n`nUpdate ~1~ von v~2~ auf v~3~?
+lUpdatePromptBetaContinue	Wollen Sie weiterhin über zukünftige Beta-Versionen informiert werden?
 lUpdateTitle	Update ~1~?
 lUpdateYouHaveLatest	Sie verwenden die aktuellste Version: ~1~.`n`nTrotzdem die ~2~ Webseite besuchen?
 lWindowIsTreeviewText	Entschuldigung... Aufgrund einer Beschränkung von Windows wird diese Art Dialogbox (Baumstruktur) momentan nicht von ~1~ unterstützt.
