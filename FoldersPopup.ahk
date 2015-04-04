@@ -1173,6 +1173,7 @@ IniRead, blnDisplayRecentFolders, %strIniFile%, Global, DisplayRecentFolders, 1
 IniRead, blnDisplayFoldersInExplorerMenu, %strIniFile%, Global, DisplayFoldersInExplorerMenu, 1
 IniRead, blnDisplayGroupMenu, %strIniFile%, Global, DisplaySwitchMenu, 1 ; keep "Switch" in label instead of "Group" for backward compatibility
 IniRead, blnDisplayClipboardMenu, %strIniFile%, Global, DisplayClipboardMenu, 1
+IniRead, blnDisplayPasteLocationMenu, %strIniFile%, Global, DisplayPasteLocationMenu, 1
 IniRead, intPopupMenuPosition, %strIniFile%, Global, PopupMenuPosition, 1
 IniRead, strPopupFixPosition, %strIniFile%, Global, PopupFixPosition, 20,20
 StringSplit, arrPopupFixPosition, strPopupFixPosition, `,
@@ -2917,6 +2918,9 @@ AddMenuIcon(lMainMenuName, BuildSpecialMenuItemName(5, L(lMenuSettings, strAppNa
 Menu, %lMainMenuName%, Default, %  BuildSpecialMenuItemName(5, L(lMenuSettings, strAppName) . "...")
 AddMenuIcon(lMainMenuName, lMenuAddThisFolder . "...", "AddThisFolder", "lMenuAddThisFolder")
 
+if (blnDisplayPasteLocationMenu)
+	AddMenuIcon(lMainMenuName, lMenuPasteLocation . "...", "PopupMenuPaste", "Clipboard")
+
 if !(blnDonor)
 {
 	Menu, %lMainMenuName%, Add
@@ -3185,6 +3189,8 @@ if !(blnMenuReady)
 	return
 
 blnPasteFavorite := (A_ThisLabel = "PopupMenuPaste")
+if (blnPasteFavorite)
+	TrayTip, %strAppName%, %lPopupMenuPasteTrayTip%
 
 blnMouse := InStr(A_ThisLabel, "Mouse")
 blnNewWindow := InStr(A_ThisLabel, "New") ; used in SetMenuPosition and BuildFoldersInExplorerMenu
@@ -3290,6 +3296,10 @@ if (blnDisplayClipboardMenu)
 		, %  BuildSpecialMenuItemName(9, lMenuClipboard)
 }
 
+Menu, %lMainMenuName%
+	, % (blnPasteFavorite ? "Disable" : "Enable") ; disable if in Paste menu
+	, % BuildSpecialMenuItemName(5, L(lMenuSettings, strAppName) . "...")
+
 ; Enable "Add This Folder" only if the target window is an Explorer, TotalCommander,
 ; Directory Opus or a dialog box under WIN_7 (does not work under WIN_XP). Tested on WIN_XP and WIN_7.
 ; Other tests shown that WIN_8 behaves like WIN_7.
@@ -3300,15 +3310,22 @@ if (blnDiagMode)
 		or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
 		or (WindowIsDialog(strTargetClass, strTargetWinId) and WindowsIsVersion7OrMore()) ? "WITH" : "WITHOUT")
 		. " Add this folder")
+
 Menu, %lMainMenuName%
 	, % WindowIsAnExplorer(strTargetClass) ; removed for FPconnect: or WindowIsFreeCommander(strTargetClass)
 	or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
 	or (WindowIsDialog(strTargetClass, strTargetWinId) and WindowsIsVersion7OrMore() and !(blnPasteFavorite)) ? "Enable" : "Disable"
 	, %lMenuAddThisFolder%...
 
-Menu, %lMainMenuName%
-	, % (blnPasteFavorite ? "Disable" : "Enable") ; disable if in Paste menu
-	, % lDonateMenu . "..."
+if (blnDisplayPasteLocationMenu)
+	Menu, %lMainMenuName%
+		, % (blnPasteFavorite ? "Disable" : "Enable") ; disable if in Paste menu
+		, % lMenuPasteLocation . "..."
+
+if !(blnDonor)
+	Menu, %lMainMenuName%
+		, % (blnPasteFavorite ? "Disable" : "Enable") ; disable if in Paste menu
+		, % lDonateMenu . "..."
 
 Gosub, InsertColumnBreaks
 
@@ -3600,14 +3617,6 @@ else ; this is a favorite
 	GetFavoriteProperties(A_ThisMenu, strThisMenu, strLocation, strFavoriteType, strAppArguments, strAppWorkingDir)
 }
 
-###_D("Label: " . A_ThisLabel . "`n"
-	. "A_ThisHotkey: " . A_ThisHotkey . "`n"
-	. "strLocation: " . strLocation . "`n"
-	. "strFavoriteType: " . strFavoriteType . "`n"
-	. "strTargetWinId: " . strTargetWinId . "`n"
-	. "strTargetClass: " . strTargetClass . "`n"
-	. "blnPasteFavorite: " . blnPasteFavorite . "`n"
-	. "")
 if (blnDiagMode)
 {
 	Diag("A_ThisHotkey", A_ThisHotkey)
@@ -7488,6 +7497,9 @@ GuiControl, , blnDisplayGroupMenu, %blnDisplayGroupMenu%
 Gui, 2:Add, CheckBox, y+10 xs w180 vblnDisplayClipboardMenu, %lOptionsDisplayClipboardMenu%
 GuiControl, , blnDisplayClipboardMenu, %blnDisplayClipboardMenu%
 
+Gui, 2:Add, CheckBox, y+10 xs w180 vblnDisplayPasteLocationMenu, %lOptionsDisplayPasteLocationdMenu%
+GuiControl, , blnDisplayPasteLocationMenu, %blnDisplayPasteLocationMenu%
+
 Gui, 2:Add, CheckBox, y+10 xs w180 vblnDisplayRecentFolders gDisplayRecentFoldersClicked, %lOptionsDisplayRecentFolders%
 GuiControl, , blnDisplayRecentFolders, %blnDisplayRecentFolders%
 
@@ -7725,6 +7737,7 @@ IniWrite, %intRecentFolders%, %strIniFile%, Global, RecentFolders
 IniWrite, %blnDisplayFoldersInExplorerMenu%, %strIniFile%, Global, DisplayFoldersInExplorerMenu
 IniWrite, %blnDisplayGroupMenu%, %strIniFile%, Global, DisplaySwitchMenu ; keep "Switch" for backward compatibility
 IniWrite, %blnDisplayClipboardMenu%, %strIniFile%, Global, DisplayClipboardMenu
+IniWrite, %blnDisplayPasteLocationMenu%, %strIniFile%, Global, DisplayPasteLocationMenu
 IniWrite, %blnDisplayMenuShortcuts%, %strIniFile%, Global, DisplayMenuShortcuts
 IniWrite, %blnCheck4Update%, %strIniFile%, Global, Check4Update
 IniWrite, %blnOpenMenuOnTaskbar%, %strIniFile%, Global, OpenMenuOnTaskbar
