@@ -13,9 +13,12 @@
 
 
 	Version: 5.0.9 (2015-??-??)
-	* paste favorite's location to keyboard or clipboard, according to destination selected in Options
 	* new radio button options for paste location destination in Options tab 1
-	
+	* paste favorite's location to keyboard or clipboard, according to destination selected in Options
+	* new checkbox option in Options tab 1 to display or not the Paste Favorite's Location menu
+	* add tray top when showing the Paste Favorite's Location
+	* disable Groups, Settings, Add this folder and Support freeware menus when showing Paste menu
+
 	Version: 5.0 (2015-??-??)
 	(see history for v4.9.1 to 4.9.9)
 	
@@ -3626,6 +3629,7 @@ if (blnDiagMode)
 	Diag("TargetWinId", strTargetWinId)
 	Diag("TargetClass", strTargetClass)
 	Diag("blnPasteFavorite", blnPasteFavorite)
+	Diag("strPasteLocationPreference", strPasteLocationPreference)
 }
 
 objThisSpecialFolder := objSpecialFolders[strLocation] ; save objThisSpecialFolder before expanding EnvVars
