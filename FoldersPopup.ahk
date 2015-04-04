@@ -13,7 +13,8 @@
 
 
 	Version: 5.0.9 (2015-??-??)
-	*
+	* paste favorite's location to keyboard or clipboard, according to destination selected in Options
+	* new radio button options for paste location destination in Options tab 1
 	
 	Version: 5.0 (2015-??-??)
 	(see history for v4.9.1 to 4.9.9)
@@ -1188,7 +1189,7 @@ IniRead, strGroups, %strIniFile%, Global, Groups, %A_Space% ; empty string if no
 IniRead, blnCheck4Update, %strIniFile%, Global, Check4Update, 1
 IniRead, blnOpenMenuOnTaskbar, %strIniFile%, Global, OpenMenuOnTaskbar, 1
 IniRead, blnRememberSettingsPosition, %strIniFile%, Global, RememberSettingsPosition, 1
-IniRead, strPasteLocationPreference, %strIniFile%, Global, PasteLocationPreference, %A_Space% ; empty string if not found
+IniRead, strPasteLocationPreference, %strIniFile%, Global, PasteLocationPreference, C ; C for "Clipboard" (default) or K for "Keyboard"
 
 IniRead, strSettingsPosition, %strIniFile%, Global, SettingsPosition, -1 ; center at minimal size
 StringSplit, arrSettingsPosition, strSettingsPosition, |
@@ -3623,13 +3624,9 @@ strLocation := EnvVars(strLocation)
 
 if (blnPasteFavorite) ; before or after expanding EnvVars?
 {
-	###_D("strPasteLocationPreference: " . strPasteLocationPreference)
-	if (StrLen(strPasteLocationPreference) = 0)
-		gosub, GuiPasteLocation
-	else
-		gosub, PasteLocation
-		
+	gosub, PasteLocation
 	blnPasteFavorite := false
+	
 	return
 }
 
@@ -3876,82 +3873,18 @@ return
 
 
 ;------------------------------------------------------------
-GuiPasteLocation:
-;------------------------------------------------------------
-; ####
-
-lPasteLocationTitle := "Paste Location"
-lPasteLocationPrompt := "Where do you want to paste the location?"
-lPasteLocationRadioKeyboard := "At the current &keyboard insert point"
-lPasteLocationRadioClipboard := "&In the Clipboard"
-lPasteLocationOptionRemember := "&Always do that"
-lGuiPaste := "&Paste"
-
-Gui, New, , %lPasteLocationTitle%
-if (blnUseColors)
-	Gui, 2:Color, %strGuiWindowColor%
-Gui, Add, Text, x10 y10, %lPasteLocationPrompt%
-Gui, Add, Radio, % "x10 y+10 vblnRadioPasteLocationKeyboard " . (blnRadioPasteLocationKeyboard ? "checked" : ""), %lPasteLocationRadioKeyboard%
-Gui, Add, Radio, % "x10 y+5 vblnRadioPasteLocationClipboard " . (blnRadioPasteLocationClipboard ? "checked" : ""), %lPasteLocationRadioClipboard%
-Gui, Add, Checkbox, x10 y+10 vblnPasteLocationRemember, %lPasteLocationOptionRemember%
-Gui, Add, Button, y+15 vbtnPasteLocationPaste gButtonPasteLocationPaste, %lGuiPaste%
-Gui, Add, Button, yp vbtnPasteLocationCancel gButtonPasteLocationCancel, %lGuiCancel%
-
-GuiCenterButtons(lPasteLocationTitle, , , , "btnPasteLocationPaste", "btnPasteLocationCancel")
-
-Gui, Show, AutoSize Center
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-ButtonPasteLocationPaste:
-;------------------------------------------------------------
-Gui, Submit
-
-Gui, Cancel
-
-if (blnRadioPasteLocationKeyboard)
-	strPasteLocationPreference := "Keyboard"
-else if (blnRadioPasteLocationClipboard)
-	strPasteLocationPreference := "Clipboard"
-else
-	return
-
-if (blnPasteLocationRemember)
-	IniWrite, %strPasteLocationPreference%, %strIniFile%, Global, PasteLocationPreference
-
-gosub, PasteLocation
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
-ButtonPasteLocationCancel:
-;------------------------------------------------------------
-
-Gui, Cancel
-
-return
-;------------------------------------------------------------
-
-
-;------------------------------------------------------------
 PasteLocation:
 ;------------------------------------------------------------
 
-lPasteLocationCopiedToClipboard := "Location copied to the Clipboard"
+if (strPasteLocationPreference = "K")
+	
+	SendInput, {Raw}%strLocation%
 
-if (strPasteLocationPreference = "Keyboard")
-	SendInput, %strLocation%
 else
 {
 	Clipboard := strLocation
-	TrayTip, %strAppName%, %lPasteLocationCopiedToClipboard%, 2
+	TrayTip, %strAppName%, %lPasteLocationCopiedToClipboard%, 1
 }
-; ###_D("Paste location:`n" . strLocation)
 
 return
 ;------------------------------------------------------------
@@ -7509,49 +7442,53 @@ Gui, 2:Add, Text, y+10 x15 Section, %lOptionsLanguage%
 Gui, 2:Add, DropDownList, ys x+10 w120 vdrpLanguage Sort, %lOptionsLanguageLabels%
 GuiControl, ChooseString, drpLanguage, %strLanguageLabel%
 
-Gui, 2:Add, CheckBox, y+10 xs vblnOptionsRunAtStartup, %lOptionsRunAtStartup%
+Gui, 2:Add, CheckBox, y+10 xs w220 vblnOptionsRunAtStartup, %lOptionsRunAtStartup%
 GuiControl, , blnOptionsRunAtStartup, % FileExist(A_Startup . "\" . strAppName . ".lnk") ? 1 : 0
 
-Gui, 2:Add, CheckBox, y+10 xs vblnDisplayMenuShortcuts, %lOptionsDisplayMenuShortcuts%
+Gui, 2:Add, CheckBox, y+10 xs w220 vblnDisplayMenuShortcuts, %lOptionsDisplayMenuShortcuts%
 GuiControl, , blnDisplayMenuShortcuts, %blnDisplayMenuShortcuts%
 
-Gui, 2:Add, CheckBox, y+10 xs vblnDisplayTrayTip, %lOptionsTrayTip%
+Gui, 2:Add, CheckBox, y+10 xs w220 vblnDisplayTrayTip, %lOptionsTrayTip%
 GuiControl, , blnDisplayTrayTip, %blnDisplayTrayTip%
 
-Gui, 2:Add, CheckBox, y+10 xs vblnDisplayIcons, %lOptionsDisplayIcons%
+Gui, 2:Add, CheckBox, y+10 xs w220 vblnDisplayIcons, %lOptionsDisplayIcons%
 GuiControl, , blnDisplayIcons, %blnDisplayIcons%
 if !OSVersionIsWorkstation()
 	GuiControl, Disable, blnDisplayIcons
 
-Gui, 2:Add, CheckBox, y+10 xs vblnCheck4Update, %lOptionsCheck4Update%
+Gui, 2:Add, CheckBox, y+10 xs w220 vblnCheck4Update, %lOptionsCheck4Update%
 GuiControl, , blnCheck4Update, %blnCheck4Update%
 
-Gui, 2:Add, CheckBox, y+10 xs vblnOpenMenuOnTaskbar, %lOptionsOpenMenuOnTaskbar%
+Gui, 2:Add, CheckBox, y+10 xs w220 vblnOpenMenuOnTaskbar, %lOptionsOpenMenuOnTaskbar%
 GuiControl, , blnOpenMenuOnTaskbar, %blnOpenMenuOnTaskbar%
+
+Gui, 2:Add, Text, y+12 xs w220 , % L(lOptionsPasteLocation, Hotkey2Text(strModifiers10, strMouseButton10, strOptionsKey10))
+Gui, 2:Add, Radio, % "y+5 xs w200 vblnPasteLocationClipboard " . (strPasteLocationPreference = "C" ? "checked" : ""), %lOptionsPasteLocationRadioClipboard%
+Gui, 2:Add, Radio, % "y+5 xs w200 vblnPasteLocationKeyboard " . (strPasteLocationPreference = "K" ? "checked" : ""), %lOptionsPasteLocationRadioKeyboard%
 
 ; column 2
 Gui, 2:Add, Text, ys x240 Section, %lOptionsIconSize%
 Gui, 2:Add, DropDownList, ys x+10 w40 vdrpIconSize Sort, 16|24|32|48|64
 GuiControl, ChooseString, drpIconSize, %intIconSize%
 
-Gui, 2:Add, Text, y+7 x240, %lOptionsDisplayMenus%
+Gui, 2:Add, Text, y+7 x240 w200, %lOptionsDisplayMenus%
 
 if (A_OSVersion = "WIN_XP")
 {
-	Gui, 2:Add, CheckBox, y+10 xs vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
+	Gui, 2:Add, CheckBox, y+10 xs w180 vblnDisplaySpecialFolders, %lOptionsDisplaySpecialFolders%
 	GuiControl, , blnDisplaySpecialFolders, %blnDisplaySpecialFolders%
 }
 
-Gui, 2:Add, CheckBox, y+10 xs vblnDisplayFoldersInExplorerMenu, %lOptionsDisplayFoldersInExplorerMenu%
+Gui, 2:Add, CheckBox, y+10 xs w180 vblnDisplayFoldersInExplorerMenu, %lOptionsDisplayFoldersInExplorerMenu%
 GuiControl, , blnDisplayFoldersInExplorerMenu, %blnDisplayFoldersInExplorerMenu%
 
-Gui, 2:Add, CheckBox, y+10 xs vblnDisplayGroupMenu, %lOptionsDisplayGroupMenu%
+Gui, 2:Add, CheckBox, y+10 xs w180 vblnDisplayGroupMenu, %lOptionsDisplayGroupMenu%
 GuiControl, , blnDisplayGroupMenu, %blnDisplayGroupMenu%
 
-Gui, 2:Add, CheckBox, y+10 xs vblnDisplayClipboardMenu, %lOptionsDisplayClipboardMenu%
+Gui, 2:Add, CheckBox, y+10 xs w180 vblnDisplayClipboardMenu, %lOptionsDisplayClipboardMenu%
 GuiControl, , blnDisplayClipboardMenu, %blnDisplayClipboardMenu%
 
-Gui, 2:Add, CheckBox, y+10 xs vblnDisplayRecentFolders gDisplayRecentFoldersClicked, %lOptionsDisplayRecentFolders%
+Gui, 2:Add, CheckBox, y+10 xs w180 vblnDisplayRecentFolders gDisplayRecentFoldersClicked, %lOptionsDisplayRecentFolders%
 GuiControl, , blnDisplayRecentFolders, %blnDisplayRecentFolders%
 
 Gui, 2:Add, Edit, % "y+5 xs+15 w36 h17 vintRecentFolders center " . (blnDisplayRecentFolders ? "" : "hidden"), %intRecentFolders%
@@ -7563,14 +7500,14 @@ Gui, 2:Add, Text, ys x430 Section, %lOptionsTheme%
 Gui, 2:Add, DropDownList, ys x+10 w120 vdrpTheme, %strAvailableThemes%
 GuiControl, ChooseString, drpTheme, %strTheme%
 
-Gui, 2:Add, CheckBox, y+10 xs vblnRememberSettingsPosition, %lOptionsRememberSettingsPosition%
+Gui, 2:Add, CheckBox, y+10 xs w190 vblnRememberSettingsPosition, %lOptionsRememberSettingsPosition%
 GuiControl, , blnRememberSettingsPosition, %blnRememberSettingsPosition%
 
-Gui, 2:Add, Text, y+12 xs Section, %lOptionsMenuPositionPrompt%
+Gui, 2:Add, Text, y+12 xs w190 Section, %lOptionsMenuPositionPrompt%
 
-Gui, 2:Add, Radio, % "y+5 xs vradPopupMenuPosition1 gPopupMenuPositionClicked Group " . (intPopupMenuPosition = 1 ? "Checked" : ""), %lOptionsMenuNearMouse%
-Gui, 2:Add, Radio, % "y+5 xs vradPopupMenuPosition2 gPopupMenuPositionClicked " . (intPopupMenuPosition = 2 ? "Checked" : ""), %lOptionsMenuActiveWindow%
-Gui, 2:Add, Radio, % "y+5 xs vradPopupMenuPosition3 gPopupMenuPositionClicked " . (intPopupMenuPosition = 3 ? "Checked" : ""), %lOptionsMenuFixPosition%
+Gui, 2:Add, Radio, % "y+5 xs w190 vradPopupMenuPosition1 gPopupMenuPositionClicked Group " . (intPopupMenuPosition = 1 ? "Checked" : ""), %lOptionsMenuNearMouse%
+Gui, 2:Add, Radio, % "y+5 xs w190 vradPopupMenuPosition2 gPopupMenuPositionClicked " . (intPopupMenuPosition = 2 ? "Checked" : ""), %lOptionsMenuActiveWindow%
+Gui, 2:Add, Radio, % "y+5 xs w190 vradPopupMenuPosition3 gPopupMenuPositionClicked " . (intPopupMenuPosition = 3 ? "Checked" : ""), %lOptionsMenuFixPosition%
 
 Gui, 2:Add, Text, % "y+5 xs+18 vlblPopupFixPositionX " . (intPopupMenuPosition = 3 ? "" : "hidden"), %lOptionsPopupFixPositionX%
 Gui, 2:Add, Edit, % "yp x+5 w36 h17 vstrPopupFixPositionX center " . (intPopupMenuPosition = 3 ? "" : "hidden"), %arrPopupFixPosition1%
@@ -7804,6 +7741,12 @@ IniWrite, %intPopupMenuPosition%, %strIniFile%, Global, PopupMenuPosition
 IniWrite, %strPopupFixPositionX%`,%strPopupFixPositionY%, %strIniFile%, Global, PopupFixPosition
 arrPopupFixPosition1 := strPopupFixPositionX
 arrPopupFixPosition2 := strPopupFixPositionY
+
+if (blnPasteLocationKeyboard)
+	strPasteLocationPreference := "K"
+else
+	strPasteLocationPreference := "C"
+IniWrite, %strPasteLocationPreference%, %strIniFile%, Global, PasteLocationPreference
 
 strLanguageCodePrev := strLanguageCode
 strLanguageLabel := drpLanguage
