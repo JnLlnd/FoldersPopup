@@ -1188,6 +1188,7 @@ IniRead, strGroups, %strIniFile%, Global, Groups, %A_Space% ; empty string if no
 IniRead, blnCheck4Update, %strIniFile%, Global, Check4Update, 1
 IniRead, blnOpenMenuOnTaskbar, %strIniFile%, Global, OpenMenuOnTaskbar, 1
 IniRead, blnRememberSettingsPosition, %strIniFile%, Global, RememberSettingsPosition, 1
+IniRead, strPasteLocationPreference, %strIniFile%, Global, PasteLocationPreference, %A_Space% ; empty string if not found
 
 IniRead, strSettingsPosition, %strIniFile%, Global, SettingsPosition, -1 ; center at minimal size
 StringSplit, arrSettingsPosition, strSettingsPosition, |
@@ -3622,7 +3623,12 @@ strLocation := EnvVars(strLocation)
 
 if (blnPasteFavorite) ; before or after expanding EnvVars?
 {
-	###_D(strLocation)
+	###_D("strPasteLocationPreference: " . strPasteLocationPreference)
+	if (StrLen(strPasteLocationPreference) = 0)
+		gosub, GuiPasteLocation
+	else
+		gosub, PasteLocation
+		
 	blnPasteFavorite := false
 	return
 }
@@ -3864,6 +3870,88 @@ else ; we open the folder in a new window
 
 if (blnDiagMode)
 	Diag("NavigateResult", ErrorLevel)
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GuiPasteLocation:
+;------------------------------------------------------------
+; ####
+
+lPasteLocationTitle := "Paste Location"
+lPasteLocationPrompt := "Where do you want to paste the location?"
+lPasteLocationRadioKeyboard := "At the current &keyboard insert point"
+lPasteLocationRadioClipboard := "&In the Clipboard"
+lPasteLocationOptionRemember := "&Always do that"
+lGuiPaste := "&Paste"
+
+Gui, New, , %lPasteLocationTitle%
+if (blnUseColors)
+	Gui, 2:Color, %strGuiWindowColor%
+Gui, Add, Text, x10 y10, %lPasteLocationPrompt%
+Gui, Add, Radio, % "x10 y+10 vblnRadioPasteLocationKeyboard " . (blnRadioPasteLocationKeyboard ? "checked" : ""), %lPasteLocationRadioKeyboard%
+Gui, Add, Radio, % "x10 y+5 vblnRadioPasteLocationClipboard " . (blnRadioPasteLocationClipboard ? "checked" : ""), %lPasteLocationRadioClipboard%
+Gui, Add, Checkbox, x10 y+10 vblnPasteLocationRemember, %lPasteLocationOptionRemember%
+Gui, Add, Button, y+15 vbtnPasteLocationPaste gButtonPasteLocationPaste, %lGuiPaste%
+Gui, Add, Button, yp vbtnPasteLocationCancel gButtonPasteLocationCancel, %lGuiCancel%
+
+GuiCenterButtons(lPasteLocationTitle, , , , "btnPasteLocationPaste", "btnPasteLocationCancel")
+
+Gui, Show, AutoSize Center
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ButtonPasteLocationPaste:
+;------------------------------------------------------------
+Gui, Submit
+
+Gui, Cancel
+
+if (blnRadioPasteLocationKeyboard)
+	strPasteLocationPreference := "Keyboard"
+else if (blnRadioPasteLocationClipboard)
+	strPasteLocationPreference := "Clipboard"
+else
+	return
+
+if (blnPasteLocationRemember)
+	IniWrite, %strPasteLocationPreference%, %strIniFile%, Global, PasteLocationPreference
+
+gosub, PasteLocation
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+ButtonPasteLocationCancel:
+;------------------------------------------------------------
+
+Gui, Cancel
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+PasteLocation:
+;------------------------------------------------------------
+
+lPasteLocationCopiedToClipboard := "Location copied to the Clipboard"
+
+if (strPasteLocationPreference = "Keyboard")
+	SendInput, %strLocation%
+else
+{
+	Clipboard := strLocation
+	TrayTip, %strAppName%, %lPasteLocationCopiedToClipboard%, 2
+}
+; ###_D("Paste location:`n" . strLocation)
 
 return
 ;------------------------------------------------------------
