@@ -19,10 +19,10 @@
 	* add tray top when showing the Paste Favorite's Location
 	* disable Groups, Settings, Add this folder and Support freeware menus when showing Paste menu
 
-	Version: 5.0 (2015-??-??)
+	Version: 5.0 (2015-04-05)
 	(see history for v4.9.1 to 4.9.9)
 	
-	Version: 4.9.9.1 (2015-04-??)
+	Version: 4.9.9.1 (2015-04-04)
 	* removed menu shortcuts in main menu to let user select menu item by their name first letter
 	* German, Dutch, Italian and Korean language update
 	
