@@ -15,7 +15,7 @@
 	Version: 5.0 (2015-04-05)
 	(see history for v4.9.1 to 4.9.9.1)
 	
-	Version: 4.9.9.1 (2015-04-??)
+	Version: 4.9.9.1 (2015-04-03)
 	* removed menu shortcuts in main menu to let user select menu item by their name first letter
 	* German, Dutch, Italian and Korean language update
 	

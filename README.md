@@ -13,6 +13,81 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### Version: 5.0 (2015-04-05)
+(see history for v4.9.1 to 4.9.9.1)
+	
+### Version: 4.9.9.1 (2015-04-03)
+* removed menu shortcuts in main menu to let user select menu item by their name first letter
+* German, Dutch, Italian and Korean language update
+	
+### Version: 4.9.9 (2015-03-30)
+* keep current position of add favorite window when changing favorite type
+* fix bug making the exit routine running twice
+* moving OnExit before InitFileInstall to ensure deletion of temporary files
+* unused language variable removed
+	
+### Version: 4.9.8 (2015-03-28)
+* add an option in third tab to display or not special menu shortcut
+* adjust layout ot Options tab 3
+* save and load display special menu shortcut option to ini file
+* function to build main menu with special menu shortcuts text
+* shorten button names in Hotkey2Text
+* fix bug in group load for special folders
+* Italian and Swedish Options language updates
+	
+### Version: 4.9.7 (2015-03-25)
+* fix a bug with "New window" (Shift-MMB or Shift-Win-A) not opening in a new Explorer when mouse over an Explorer
+* improve target window identification when special menu are called using their shortcuts (if target window can open favorite, then navigate, if not new window)
+* sets menu position correctly when special menu are called using their shortcuts
+* fix bug in WindowIsFPconnect when target window id or class is unknown
+* review of English text in Menu hotkeys Options tab and improve Menu hotkeys tab layout
+* Italian, Swedish, French and Korean language update
+	
+### Version: 4.9.6.2 (2015-03-21)
+* fix a bug in OpenFavorite (and OpenClipboard) in situations where the target window could not be detected
+	
+### Version: 4.9.6.1 (2015-03-20)
+* addition of debugging code around OpenClipboard
+* fix a bug introduced in v4.9.2 breaking the creation of default menu at first run
+	
+### Version: 4.9.6 (2015-03-19) (no v4.9.5)
+* change default hotkleys for Settings (+#s), Current Folders (+#f) and Clipboard (+#s)
+* review hotkeys array naming
+* add hotkey reminders in special menu labels in main menus
+	
+### Version: 4.9.4 (2015-03-18)
+* add a hotkey to open directly the Current folders menu (by default Ctrl-Win-C)
+* add a hotkey to open directly the Groups menu (by default Ctrl-Win-G)
+* add a hotkey to open directly the Clipboard menu (by default Ctrl-Win-V)
+* redesign the Options dialog box splitting hotkeys in two tabs: one for popup menu hotkeys and one for other hotkeys
+* review hotkeys language in Options
+* fix a bug from v4.2 when opening a special folder (Libraries, My Computer, etc.) from the Current Folders menu
+
+### Version: 4.9.3 (2015-03-14)
+* add URL parsing in Clipboard submenu
+* keep only URLs shorter than 260 chars
+* fix icon bug inside Clipboard menu (using only Folder and URL icons for now)
+* filter out illegal characters in paths / ? : * " > < | (in addition to space, tab and line-feed) from the beginning and the end of each clipboard line
+* fix two bugs in OpenClipboard making folders always opening in new window
+
+### Version: 4.9.2 (2015-03-12)
+* check for beta versions updates
+* enabled only for users who ran a beta version previously and who enabled the Check for update option
+	
+### Version: 4.9.1 (2015-03-10)
+* add the favorite type Application
+* add Arguments and Working directory fields to Application favorites
+* execute the Application favorites passing properly the arguments and setting the working directory
+* make room in the Add Favorite window for additional property fields
+* support default and custom icons for Application favorites
+* add the Clipboard menu item in the main menu and add to the submenu folders, documents or applications paths found in the Clipboard
+* if no path is found in the current Clipboard, the previous submenu content is preserved
+* add an option to determine if the Clipboard menu is shown (default true)
+* disable clipboard submenu if empty
+* add clipboard icon to Clipboard menu
+* remove arguments double quotes when there is no argument
+* process environment vars for app favorites and clipboard paths
+
 ### Version: 4.3 (2015-02-22)
 * make the Settings window resizable
 * save Settings Gui size state to ini file on quit
