@@ -12,11 +12,13 @@
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 5.0.9 (2015-??-??)
+	Version: 5.0.9 (2015-04-05)
+	* new Paste Favorite's Location in the main menu
+	* new shortcut (default Shift-Windows-V) to open the Paste Location menu
 	* new radio button options for paste location destination in Options tab 1
 	* paste favorite's location to keyboard or clipboard, according to destination selected in Options
 	* new checkbox option in Options tab 1 to display or not the Paste Favorite's Location menu
-	* add tray top when showing the Paste Favorite's Location
+	* add tray tip when showing the Paste Favorite's Location
 	* disable Groups, Settings, Add this folder and Support freeware menus when showing Paste menu
 
 	Version: 5.0 (2015-04-05)
