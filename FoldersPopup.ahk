@@ -12,6 +12,9 @@
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 5.0.1 (2015-04-??)
+	* change default hotkleys for Current Folders (+^f), Groups (+^g), Recent Foldwers (+^r), Clipboard (+^s) and Settings (+^s) for Windows 8.1 compatibility
+	
 	Version: 5.0 (2015-04-05)
 	(see history for v4.9.1 to 4.9.9.1)
 	
@@ -733,7 +736,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 5.0.0 prod
+;@Ahk2Exe-SetVersion 5.0.1 prod
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -781,7 +784,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "5.0" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "5.0.1" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 
@@ -1009,7 +1012,7 @@ InitSystemArrays:
 ; Hotkeys: ini names, hotkey variables name, default values, gosub label and Gui hotkey titles
 strIniKeyNames := "PopupHotkeyMouse|PopupHotkeyNewMouse|PopupHotkeyKeyboard|PopupHotkeyNewKeyboard|SettingsHotkey|FoldersInExplorerHotkey|GroupsHotkey|RecentsHotkey|ClipboardHotkey"
 StringSplit, arrIniKeyNames, strIniKeyNames, |
-strHotkeyDefaults := "MButton|+MButton|#a|+#a|+#s|+#f|+#g|+#r|+#c"
+strHotkeyDefaults := "MButton|+MButton|#a|+#a|+^s|+^f|+^g|+^r|+^c"
 StringSplit, arrHotkeyDefaults, strHotkeyDefaults, |
 strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|GuiShow|FoldersInExplorerMenuShortcut|GroupsMenuShortcut|RecentFoldersShortcut|ClipboardMenuShortcut"
 StringSplit, arrHotkeyLabels, strHotkeyLabels, |
@@ -1095,11 +1098,11 @@ IfNotExist, %strIniFile%
 	strPopupHotkeyMouseNewDefault := arrHotkeyDefaults2 ; "+MButton"
 	strPopupHotkeyKeyboardDefault := arrHotkeyDefaults3 ; "#a"
 	strPopupHotkeyKeyboardNewDefault := arrHotkeyDefaults4 ; "+#a"
-	strSettingsHotkeyDefault := arrHotkeyDefaults5 ; "+#s"
-	strFoldersInExplorerHotkeyDefault := arrHotkeyDefaults6 ; "+#f"
-	strGroupsHotkeyDefault := arrHotkeyDefaults7 ; "+#g"
-	strRecentsHotkeyDefault := arrHotkeyDefaults8 ; "+#r"
-	strClipboardHotkeyDefault := arrHotkeyDefaults9 ; "+#c"
+	strSettingsHotkeyDefault := arrHotkeyDefaults5 ; "+^s"
+	strFoldersInExplorerHotkeyDefault := arrHotkeyDefaults6 ; "+^f"
+	strGroupsHotkeyDefault := arrHotkeyDefaults7 ; "+^g"
+	strRecentsHotkeyDefault := arrHotkeyDefaults8 ; "+^r"
+	strClipboardHotkeyDefault := arrHotkeyDefaults9 ; "+^c"
 	
 	intIconSize := (A_OSVersion = "WIN_XP" ? 16 : 24)
 	
