@@ -1,3 +1,10 @@
+/*
+
+Todo:
+- keep localized names for folders Pictures, Favorites, Templates, My Video and My Music when language is changed (Win7+)
+- localize names of theme names
+*/
+
 ;===============================================
 /*
 	FoldersPopup
@@ -1351,8 +1358,6 @@ return
 AddToIniMySystemFoldersMenu:
 ;------------------------------------------------------------
 
-global strDownloadPath
-
 strInstance := ""
 Loop
 {
@@ -1371,7 +1376,7 @@ AddToIniOneSystemFolderMenu(intNextFolderNumber + 0, lMenuSeparator, lMenuSepara
 AddToIniOneSystemFolderMenu(intNextFolderNumber + 1, strMySystemMenu, lGuiSubmenuSeparator, , lGuiSubmenuSeparator . strMySystemMenu, "S")
 AddToIniOneSystemFolderMenu(intNextFolderNumber + 2, lMenuDesktop, A_Desktop, lGuiSubmenuSeparator . strMySystemMenu)
 AddToIniOneSystemFolderMenu(intNextFolderNumber + 3, , "{450D8FBA-AD25-11D0-98A8-0800361B1103}", lGuiSubmenuSeparator . strMySystemMenu)
-AddToIniOneSystemFolderMenu(intNextFolderNumber + 4, , strPathUsername . "\Pictures", lGuiSubmenuSeparator . strMySystemMenu)
+AddToIniOneSystemFolderMenu(intNextFolderNumber + 4, , strMyPicturesPath, lGuiSubmenuSeparator . strMySystemMenu)
 AddToIniOneSystemFolderMenu(intNextFolderNumber + 5, , strDownloadPath, lGuiSubmenuSeparator . strMySystemMenu)
 AddToIniOneSystemFolderMenu(intNextFolderNumber + 6, lMenuSeparator, lMenuSeparator . lMenuSeparator, lGuiSubmenuSeparator . strMySystemMenu, , "F")
 AddToIniOneSystemFolderMenu(intNextFolderNumber + 7, , "{20D04FE0-3AEA-1069-A2D8-08002B30309D}", lGuiSubmenuSeparator . strMySystemMenu)
@@ -1388,7 +1393,7 @@ return
 
 ;------------------------------------------------------------
 AddToIniOneSystemFolderMenu(intNumber, strSpecialFolderName := "", strSpecialFolderLocation := "", strMenuName := "", strSubmenuFullName := "", strFavoriteType := "P")
-; 0 Folder number, 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource (, 7 AppArguments, 8 AppWorkingDir)
+; 0 Folder number, 1 FavoriteName, 2 FavoriteLocation, 3 MenuName, 4 SubmenuFullName, 5 FavoriteType, 6 IconResource, 7 AppArguments, 8 AppWorkingDir)
 ;------------------------------------------------------------
 {
 	if (strFavoriteType = "S")
@@ -1647,6 +1652,14 @@ RegRead, strException, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVers
 InitSpecialFolderObject(strException, "", -1, "", "templates", ""
 	, lMenuTemplates, "Templates"
 	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
+RegRead, strMyPicturesPath, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Pictures
+InitSpecialFolderObject(strMyPicturesPath, "", 39, "", "mypictures", ""
+	, lMenuPictures, "lMenuPictures"
+	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
+RegRead, strException, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, Favorites
+InitSpecialFolderObject(strException, "", -1, "", "", ""
+	, lMenuFavoritesInternet, "Favorites"
+	, "CLS", "CLS", "CLS", "CLS", "CLS", "CLS", "CLS")
 
 ;---------------------
 ; Path under %APPDATA% (no CLSID), localized name and icon provided, no Shell Command - to be tested with DOpus, TC and FPc
@@ -1703,7 +1716,7 @@ InitSpecialFolderObject("%PUBLIC%\Libraries", "", -1, "", "", ""
 	, "CLS", "CLS", "CLS", "CLS", "CLS", "CLS", "CLS")
 
 ;---------------------
-; Path under the Users folder (no CLSID), localized name and icon provided, no Shell Command - to be tested with DOpus, TC and FPc
+; Path under the Users folder (no CLSID, localized name and icon provided), no Shell Command
 
 StringReplace, strPathUsername, A_AppData, \AppData\Roaming
 StringReplace, strPathUsers, strPathUsername, \%A_UserName%
@@ -1712,12 +1725,6 @@ InitSpecialFolderObject(strPathUsers . "\Public", "Public", -1, "", "common", ""
 	, "Public Folder", "" ; Public
 	, "SCT", "SCT", "SCT", "CLS", "DOA", "CLS", "CLS")
 	; OK     OK      OK     OK    OK      OK
-InitSpecialFolderObject(strPathUsername . "\Pictures", "", 39, "", "mypictures", ""
-	, lMenuPictures, "lMenuPictures"
-	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
-InitSpecialFolderObject(strPathUsername . "\Favorites", "", -1, "", "", ""
-	, lMenuFavoritesInternet, "Favorites"
-	, "CLS", "CLS", "CLS", "CLS", "CLS", "CLS", "CLS")
 
 ;---------------------
 ; Path using AHK constants (no CLSID), localized name and icon provided, no Shell Command - to be tested with DOpus, TC and FPc
@@ -2147,37 +2154,8 @@ return
 
 ;------------------------------------------------------------
 BuildSpecialFoldersMenu:
+; Windows XP only
 ;------------------------------------------------------------
-
-/*
-Additions
-
-/common
-A_DesktopCommon en enlevant le dernier dossier
-
-/downloads
-RegRead, str, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, {374DE290-123F-4565-9164-39C4925E467B}
-
-/mymusic
-A_Desktop et remplacer Desktop par Music
-RegRead, str, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Music
-
-/myvideo
-A_Desktop et remplacer Desktop par Video
-RegRead, str, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, My Video
-
-/recent
-RegRead, str, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, Recent
-
-/temp
-A_Temp
-
-/favorites
-RegRead, str, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, Favorites
-
-/templates
-RegRead, str, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, Templates
-*/
 
 Menu, menuSpecialFolders, Add
 Menu, menuSpecialFolders, DeleteAll ; had problem with DeleteAll making the Special menu to disappear 1/2 times - now OK
@@ -2187,8 +2165,6 @@ if (blnUseColors)
 AddMenuIcon("menuSpecialFolders", lMenuDesktop, "OpenSpecialFolder", "lMenuDesktop")
 AddMenuIcon("menuSpecialFolders", lMenuDocuments, "OpenSpecialFolder", "lMenuDocuments")
 AddMenuIcon("menuSpecialFolders", lMenuPictures, "OpenSpecialFolder", "lMenuPictures")
-if (A_OSVersion <> "WIN_XP")
-	AddMenuIcon("menuSpecialFolders", lMenuDownloads, "OpenSpecialFolder", "lMenuDownloads")
 Menu, menuSpecialFolders, Add
 AddMenuIcon("menuSpecialFolders", lMenuMyComputer, "OpenSpecialFolder", "lMenuMyComputer")
 AddMenuIcon("menuSpecialFolders", lMenuNetworkNeighborhood, "OpenSpecialFolder", "lMenuNetworkNeighborhood")
