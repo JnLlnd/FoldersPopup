@@ -21,7 +21,7 @@ Todo:
 
 	Version: 5.0.1 (2015-04-??)
 	* change default hotkleys for Current Folders (+^f), Groups (+^g), Recent Foldwers (+^r), Clipboard (+^s) and Settings (+^s) for Windows 8.1 compatibility
-	* fix bug with special folders Pictures and Downloads when user change these folders default location
+	* fix bug with special folders Pictures and Favorites (Internet) when user change these folders default location
 	
 	Version: 5.0 (2015-04-05)
 	(see history for v4.9.1 to 4.9.9.1)
