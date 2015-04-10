@@ -1030,7 +1030,7 @@ InitSystemArrays:
 ; Hotkeys: ini names, hotkey variables name, default values, gosub label and Gui hotkey titles
 strIniKeyNames := "PopupHotkeyMouse|PopupHotkeyNewMouse|PopupHotkeyKeyboard|PopupHotkeyNewKeyboard|SettingsHotkey|FoldersInExplorerHotkey|GroupsHotkey|RecentsHotkey|ClipboardHotkey|PasteHotkey"
 StringSplit, arrIniKeyNames, strIniKeyNames, |
-strHotkeyDefaults := "MButton|+MButton|#a|+#a|+^s|+^f|+^g|+^r|+^c"
+strHotkeyDefaults := "MButton|+MButton|#a|+#a|+^s|+^f|+^g|+^r|+^c|+^v"
 StringSplit, arrHotkeyDefaults, strHotkeyDefaults, |
 strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|GuiShow|FoldersInExplorerMenuShortcut|GroupsMenuShortcut|RecentFoldersShortcut|ClipboardMenuShortcut|PopupMenuPaste"
 StringSplit, arrHotkeyLabels, strHotkeyLabels, |
