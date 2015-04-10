@@ -19,7 +19,7 @@ Todo:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 5.0.1 (2015-04-??)
+	Version: 5.0.1 (2015-04-10)
 	* change default hotkleys for Current Folders (+^f), Groups (+^g), Recent Foldwers (+^r), Clipboard (+^s) and Settings (+^s) for Windows 8.1 compatibility
 	* fix bug with special folders Pictures and Favorites (Internet) when user change these folders default location
 	
