@@ -19,6 +19,9 @@ Todo:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 5.0.9.1 (2015-04-10)
+	* merge changes in v5.0.1
+	
 	Version: 5.0.9 (2015-04-05)
 	* new Paste Favorite's Location in the main menu
 	* new shortcut (default Shift-Windows-V) to open the Paste Location menu
@@ -29,7 +32,7 @@ Todo:
 	* disable Groups, Settings, Add this folder and Support freeware menus when showing Paste menu
 
 	Version: 5.0.1 (2015-04-10)
-	* change default hotkleys for Current Folders (+^f), Groups (+^g), Recent Foldwers (+^r), Clipboard (+^s) and Settings (+^s) for Windows 8.1 compatibility
+	* change default hotkeys for Current Folders (+^f), Groups of Folders (+^g), Recent Folders (+^r), Clipboard (+^c) and Settings (+^s) for Windows 8.1 compatibility
 	* fix bug with special folders Pictures and Favorites (Internet) when user change these folders default location
 	
 	Version: 5.0 (2015-04-05)
@@ -753,7 +756,7 @@ Todo:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 5.0.9 beta
+;@Ahk2Exe-SetVersion 5.0.9.1 beta
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -801,7 +804,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "5.0.9" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "5.0.9.1" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 
