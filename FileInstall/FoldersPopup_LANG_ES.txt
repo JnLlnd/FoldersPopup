@@ -1,0 +1,320 @@
+lAboutText1	~1~ ~2~ (~3~ bits)
+lAboutText2	~1~ ha sido desarrollado por Jean Lalonde`nsobre la plataforma <a href="http://ahkscript.org/">AutoHotkey</a>.`n`ntraducción al español: kiketrucker`nTraducción al Francés: Jean Lalonde`nTraducción al alemán: Edgar ""Fast Edi"" Hoffmann`nTraducción al holandés: Pieter Dejonghe`nTraducción al coreano: Om Il-Sung`nTraducción al sueco: Åke Engelbrektson`nTraducción al italiano: Riccardo Leone`nRevisión del ingles: (bienvenida la ayuda)`n`nIconos por: <a href="http://www.visualpharm.com">Visual Pharm</a>`nInstalador: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> por jrsoftware.org`nSources AutoHotkey_L v1.1: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText3	~1~ Jean Lalonde 2013-2014. Gratuiciel.
+lAboutText4	Soporte en línea: <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
+lAboutTitle	Acerca de - ~1~ ~2~
+lAppTagline	Accede de un vistazo a tus favoritos y carpetas!
+lDiagModeCaution	~1~ función en modo diagnóstico.`n`nLa información acerca de la ejecución de esta aplicación será recogida en el archivo:`n~2~`n`nNinguna información será transmitida sin su consentimiento.`n`nDesea continuar en modo diagnóstico?
+lDiagModeExit	~1~ tiene información recopilada para fines de diagnóstico en el archivo ~2~.
+lDiagModeIntro	Enviar este fichero a ahk@jeanlalonde.ca con una descripción de la situación que requiere un diagnóstico.
+lDiagModeSee	Quiere consultar el fichero de diagnóstico?
+lDialogAdd	Añadir
+lDialogAddDialogAlready	Este tipo de diálogo ya está soportado.
+lDialogAddDialogPrompt	Escriba el nombre de una nueva caja de diálogo`n(o una parte del nombre):
+lDialogAddDialogTitle	Añadir caja de diálogo - ~1~ ~2~
+lDialogAddEditFavoriteTitle	~1~ un favorito - ~2~ ~3~
+lDialogAddFileSelect	elegir un nuevo documento:
+lDialogAddFolderManuallyPrompt	Lo sentimos, no podemos detectar automáticamente la carpeta actual en este tipo de ventana.`n`nQuiere añadir este fichero manualmente?
+lDialogAddFolderManuallyTitle	Agregar carpeta - ~1~ ~2~
+lDialogAddFolderSelect	Elegir donde crear una nueva carpeta:
+lDialogApplicationLabel	Aplicación
+lDialogApplicationShortName	Nombre de la aplicación (para los menús)
+lDialogArgumentsLabel	Parametros
+lDialogBrowseButton	Revisar
+lDialogCancelButton	Anular
+lDialogCancelPrompt	Anular los cambios?
+lDialogCancelTitle	Anular - ~1~ ~2~
+lDialogEdit	Modificar
+lDialogEditDialogPrompt	Escriba el nuevo nombre de la caja de diálogo`n(o una parte del nombre):
+lDialogEditDialogTitle	Modificar Caja de diálogo - ~1~ ~2~
+lDialogEndOfMenu	fin del menú
+lDialogFavoriteDoesNotExistPrompt	Favorito "~1~" no existe o no está disponible.`n`nSi este favorito está en una unidad de red, por favor inténtalo de nuevo después de la autenticación de red.`n`nSi uno de los favoritos es un enlace a una página web, elegir la opción "Link (URL)" Cuando se agrega un favorito.
+lDialogFavoriteDoesNotExistTitle	Favorito no encontrado - ~1~
+lDialogFavoriteLocationEmpty	La ubicación está vacía. Quiere indicar la ubicación de la carpeta.
+lDialogFavoriteMenuPosition	Inserte nuevos favoritos antes de este artículo
+lDialogFavoriteNameEmpty	El nombre del favorito está vacio. Quiere indicar un nombre corto para este favorito.
+lDialogFavoriteNameNoColumnBreak	El nombre del sub-menú no puede comenzar con los caracteres reservados "~1~" utilizados como indicador de salto de columna.
+lDialogFavoriteNameNoPipe	El nombre del favorito o el submenú, no deben incluir carácter reservado "|" (barra vertical).
+lDialogFavoriteNameNoSeparator	El nombre del submenú, no debe incluir carácter reservado "~1~".
+lDialogFavoriteNameNotNew	El nombre "~1~" ya está presente en este menú. Quiere elegir un nuevo nombre.
+lDialogFavoriteParentMenu	Inserte nuevos favoritos en este menú
+lDialogFavoriteRemovePrompt	Suprimir el sub-menú "~1~"`incluyendo todos los contenidos (carpetas y sub-menús)?
+lDialogFavoriteRemoveTitle	Suprimir un favorito - ~1~
+lDialogFavoritesParentMenuMove	Mover ~1~ favoritos hacia este menú
+lDialogFileLabel	Documento
+lDialogFileShortName	Nombre del documento(para los menús)
+lDialogFolderLabel	Carpeta
+lDialogFolderShortName	Nombre corto de la carpeta (para los menús)
+lDialogGroupDelete	Suprimir
+lDialogGroupDeleteError	suprimir
+lDialogGroupDeletePrompt	Suprimir el grupo "~1~"?
+lDialogGroupEdit	Modificar
+lDialogGroupEditError	modificar
+lDialogGroupLoad	Restaurar
+lDialogGroupManageAbout	Acerca de los grupos
+lDialogGroupManageCannotSave	Advertencia: No existe una carpeta para guardar un grupo. Abra una ventana del Explorador de archivos o Directory Opus e inténtelo de nuevo para guardar un grupo.
+lDialogGroupManageCreatingPrompt	Para crear un grupo clique el botón "~1~" o seleccione el menú "~2~" en cualquier momento.
+lDialogGroupManageCreatingTitle	Crear un grupo
+lDialogGroupManageGroupsTitle	Gestionar grupos- ~1~ ~2~
+lDialogGroupManageIntro	Con los "Grupos", puede guardar y restaurar el entorno de trabajo al cambiar efectivamente de una sesión de trabajo a otro. Los "Grupos" almacenan el archivo, el tamaño, la ubicación y el estado (normal, minimizado o maximizado) ventanas Explorer y Directory Opus (próximo soporte Total Commander).
+lDialogGroupManageManagingTitle	Gestion de los grupos
+lDialogGroupNew	Registrar nuevo grupo
+lDialogGroups	Grupos
+lDialogGroupSelect	Seleccione un grupo
+lDialogGroupSelectError	Por favor, seleccione el grupo ~1~.
+lDialogIcon	Icono
+lDialogInvalidHotkey	Con la configuración actual de la tecla de acceso directo del teclado "~1~" no se puede utilizar como un disparador para el menú emergente.`n`nPor favor, abra la "Configuración ~2~" en el área de notificación y haga clic en "Opciones". En este cuadro de diálogo, elija otra tecla de acceso directo a"~3~".
+lDialogMaximized	Maximizado
+lDialogMenuNotMoveUnderItself	El menú "~1~" no se pueden mover sobre sí mismo.
+lDialogMinimized	Minimizado
+lDialogMoveFavoritesTitle	Mueva los favoritos - ~1~ ~2~
+lDialogNormal	Normal
+lDialogOpenThisMenu	Abrir este menú
+lDialogRemoveMultipleFavorites	Realmente quiere suprimir ~1~ favoritos o sub-menús?
+lDialogSave	Registrar
+lDialogSelectItemToEdit	Por favor seleccione la parte a editar.
+lDialogSelectItemToRemove	Por favor seleccione la parte a suprimir.
+lDialogSpecialLabel	Carpeta especial
+lDialogSubmenuLabel	Sub-menú
+lDialogSubmenuNameEmpty	El nombre del sub-menú está vacio. Porfavor indique un nombre corto para esta carpeta.
+lDialogSubmenuParentMenu	Menú contiene este sub-menú
+lDialogSubmenuShortName	Nombre del sub-menú (para los menús)
+lDialogTabNext	Suite
+lDialogThirdPartyDetected	~1~ hemos detectado que ~2~ está instalado en su ordenador.`n`nPorfavor active la integración con ~2~?
+lDialogURLLabel	Link (URL)
+lDialogURLShortName	Nombre del link (para los menús)
+lDialogWorkingDirLabel	Empezar con
+lDonateButton	Apoyar este programa gratuito!
+lDonateCheckPrompt	Es de su agrado ~1~?`n`n~1~ no sólo es gratuito, sino que también se distribuye sin basura publicitaria que nunca se sabe si son portadores de virus o spyware o malware.`n`nEs por esto ~2~ que ~1~ esta hecho para facilitar su trabajo diario. Que te parecería apoyar nuestro proyecto?
+lDonateCheckTitle	~1~ vez! - ~2~
+lDonateMenu	Apoyar este programa gratuito!
+lDonatePlatformComment1	La forma más flexible con su cuenta o tarjeta de crédito de PayPal
+lDonatePlatformComment2	Reciba una factura oficial, si lo necesita para un reembolso
+lDonatePlatformName1	Con Paypal
+lDonatePlatformName2	Con Share-it
+lDonateReviewNameLeft1	Download.com
+lDonateReviewNameLeft2	PortableFreeware.com
+lDonateReviewNameLeft3	Softpedia.com
+lDonateReviewNameRight1	BetaNews.com
+lDonateReviewNameRight2	FileCluster.com
+lDonateReviewNameRight3	Freewares && Tutos (FR)
+lDonateText1	Apoyar el desarrollo de ~1~ !
+lDonateText2	<a href="~1~">Por qué apoyar este programa gratuito?</a>
+lDonateText3	... o apoyar este freeware gratis !
+lDonateText4	Escribe una opinión a favor ~1~ a :
+lDonateText5	Enviadme vuestro link
+lDonateThankyou	Gracias por esta señal de aprecio!
+lDonateTitle	Apoyar este programa gratuito! - ~1~ ~2~
+lGui2Close	Cerrar
+lGuiAbout	Acerca de
+lGuiAddDialog	Añadir
+lGuiAddFavorite	Añadir
+lGuiCancel	Anular
+lGuiClose	Cerrar
+lGuiDonate	Apoyar
+lGuiDropFilesHelp	Uso de arrastrar y soltar
+lGuiDropFilesIncentive	Puede arrastrar y soltar los tipos de favoritos`nsiguiente en la ventana ~1~:`n`n- ~2~`n- ~3~
+lGuiEditFavorite	Modicar
+lGuiGroupClosing	Cerrar ventanas
+lGuiGroupOf	de
+lGuiGroupSaveAddWindowsLabel	Añadir a ventanas existentes
+lGuiGroupSaved	El grupo "~1~" ha sido registrado.`n`nClicar el menú "~2~" para restaurar este grupo.
+lGuiGroupSaveDeselectAll	Deseleccionar todo
+lGuiGroupSaveEditPrompt	~1~ este grupo
+lGuiGroupSaveEditTitle	~1~ este grupo - ~2~ ~3~
+lGuiGroupSaveLvHeader	Carpeta|Aplicación|Estado|Izquierda|Arriba|Ancho|Altura|Lado
+lGuiGroupSaveNameEmpty	El nombre del grupo está vacio. Porfavor indique el nombre del grupo.
+lGuiGroupSaveNewGroup	Nuevo grupo
+lGuiGroupSaveReplaceGroup	El grupo "~1~" existe. Quiere reemplazarlo?
+lGuiGroupSaveReplaceWindowsLabel	Reemplazar las ventanas existentes
+lGuiGroupSaveRestoreOption	Durante la restauración del grupo:
+lGuiGroupSaveSelect	Seleccione las carpetas para registrar en este grupo
+lGuiGroupSaveSelectAll	Seleccionar todo
+lGuiGroupSaveSelectExisting	ou elegir un grupo para reemplazar:
+lGuiGroupSaveShortName	Nombre del grupo (para los menús)
+lGuiHelp	Ayuda
+lGuiHotkeysHelp	Ayuda con atajos favoritos
+lGuiHotkeysHelpText	Flecha Hacia Abajo: Seleccionar los próximos favoritos`nFlecha Hacia arriba: Sleccionar los favoritos anteriores`nCtrl-N: Añadir nuevo favorito`nEntrada: Modificar un favorito`n`nMay-Arriba/Abajo: Seleccionar favoritos contiguos`nCtrl-Clic: Seleccionar favoritos no-contiguos`nCtrl-A: Seleccionar todos los favoritos`n`nCtrl-Bas: Mueva uno o más marcadores abajo`nCtrl-Haut: Mueva uno o más marcadores arriba`nSuppr: Suprimir uno o más favoritos`n`nCtrl-Droite: Abrir un sub-menú`nCtrl-Gauche: Abra el submenú con este menú
+lGuiLvDialogsHeader	Diálogos compatibles`n(parte del nombre es suficiente)
+lGuiLvFavoritesHeader	Nombre|Ubicación
+lGuiMove	Mover
+lGuiMoveFavoriteDown	Abajo
+lGuiMoveFavoriteUp	Arriba
+lGuiOptions	Opciones
+lGuiRemoveFavorite	Suprimir
+lGuiResetDefault	Restaurar el lanzador por defecto
+lGuiSave	Registrar
+lGuiSeparator	Separación
+lGuiSubmenuDropdownLabel	Menú a modificar:
+lGuiSubmenuLocation	>
+lGuiSubmenuSeparator	>
+lGuiTitle	Parametros - ~1~ ~2~
+lHelpTabAddingFavorite	Añadir favoritos
+lHelpTabGettingStarted	Primer paso
+lHelpTabTitlesTipsAndTricks	Trucos y astucias
+lHelpText1	Al abrir FoldersPopup, un icono espera sus órdenes en el área de notificaciones. Cuando se quiere cambiar la carpeta en Windows File Explorer o en un cuadro de diálogo de archivos, sólo tiene que pulsar el botón central del ratón o la tecla de Windows-A y un menú emergente muestra sus carpetas favoritas. Haga clic en la carpeta deseada y FoldersPopup al instante le lleva allí! O para abrir rápidamente un documento o página web.
+lHelpText2	Elija "Parametros" para abrir la caja de configuración de FoldersPopup donde usted podrá añadir a su menú CARPETAS, DOCUMENTOS o LINKS. A continuación, puede borrar, mover o cambiar el nombre. También puede añadir, mover, renombrar o borrar SUB-MENÚS. Elija la opción "Cambio de menú" en la lista desplegable. Haga clic en "Guardar" para guardar los cambios.
+lHelpText3	Para añadir rápidamente una CARPETA a su menú:`n1) Ir a una carpeta de uso frecuente.`n2) Haga clic en el botón central del ratón (Windows-A) y elija "Añadir esta carpeta".`n3) Atribuir un nombre corto a esta carpeta, haga clic "Añadir", y despues "Guardar" en la ventana de parámetros.
+lHelpText4	Para añadir a su menú un DOCUMENTO o un LINK WEB:`n1) Abra el menú de Folders Popup y elija "Parámetres" (May-Windows-F).`n2) Clique ssobre el botón "Añadir" y elija la opción "Documento" o "Link (URL)".`n3) Elija un nombre corto para ese favorito, indique la ubicación del documento (botón "Revisar") o la dirección URL del link, clique sobre "Añadir" y "Guardar" en la ventana de parámetros.
+lHelpText5	- En la zona de Notificaciones, clique sobre el icono de Folders Popup con el botón derecho y seleccione la opción "Ejecutar al inicio" para lanzar FoldersPopup automaticamente con el arranque de Windows.`n- Necesita abrir un archivo mientras está trabajando en una aplicación? Sin importar que ventana, pulse May a la vez que clica sobre el botón central de su ratón (May-Windows-A) o también clique simplemente sobre el icono de Folders Popup en la zona de Notificaciones, y despues elija su carpeta favorita.`n- Elija el menú "Ubicaciones recientes..." (May-Windows-R) para ver una versión actualizada de los archivos recientes en Windows.`n-Utilice el menú "Carpetas en el Explorador" para abrir una carpeta ya presente en una ventana del explorador de ficheros o el menú "Grupos de carpetas" para guardar y restaurar los grupos de carpetas`n- Elija las combinaciones de botones del ratón y atajos de teclado que abren el menú popup en "Parámetros, Opciones".`n- Tambien en las "Opciones": elija su idioma, el tamaño de los iconos del menú, los colores de las ventanas. Elija para mostrar en el menú "Ubicaciones Recientes, atajos de teclado numérico o ubique el menú popup en la posición deseada.`n-Usuarios de Directory Opus, consultar <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/">esta página</a> (en inglés) para instrucciones adicionales.`n-Usuarios de Total Commander, consultar <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/">esta página</a> (en inglés) para instrucciones adicionales.
+lHelpText6	El soporte de FoldersPopup esta disponible en <a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a> (en francés o inglés).
+lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware.
+lHelpTextLead	Con FoldersPopup, podrá navegar de un vistazo por sus archivos, páginas web y documentos favoritos!
+lHelpTitle	Ayuda - ~1~ ~2~
+lMainMenuName	Principal
+lMenuAbout	Acerca de
+lMenuAddThisFolder	Añadir esta carpeta al menú
+lMenuAppData	Datos de la aplicación
+lMenuCache	Cache
+lMenuClipboard	Portapapeles
+lMenuColumnBreak	columna
+lMenuCommonAppData	Datos de la aplicación (común)
+lMenuCommonDesktop	Oficina (común)
+lMenuCommonStartMenu	Menu De Inicio (común)
+lMenuCommonStartupMenu	Inicio (común)
+lMenuControlPanel	Panel de configuración
+lMenuCookies	Cookies
+lMenuDesktop	Oficina
+lMenuDialogNotSupported	Este tipo de diálogo aún no es compatible
+lMenuDocuments	Documentos
+lMenuDownloads	Descarga
+lMenuExitFoldersPopup	Cerrar ~1~
+lMenuFavoritesInternet	Favoritos (Internet)
+lMenuFoldersInExplorer	Carpetas en el explorador
+lMenuFonts	Fuentes
+lMenuFPMenu	~2~ ~1~
+lMenuGroup	Grupos de carpetas
+lMenuGroupAdd	añadir
+lMenuGroupDOpus	Listas Directory Opus y
+lMenuGroupLoad	Abrir un grupo
+lMenuGroupReplace	Sustituir
+lMenuGroupSave	Guardar archivos en el Explorador de un grupo
+lMenuHelp	Ayuda
+lMenuHistory	Historial
+lMenuMenu	Menú
+lMenuMyComputer	Ordenador
+lMenuMyMusic	Mi música
+lMenuMySystemMenu	Mis carpetas especiales
+lMenuMyVideo	Mis videos
+lMenuNetworkNeighborhood	Red
+lMenuPictures	Imágenes
+lMenuProgramFiles	Programas
+lMenuProgramsFolderStartMenu	Carpeta Programas (menú Inicio)
+lMenuPublicLibraries	Bibliotecas (publico)
+lMenuQuickLaunch	Lanzador rápido
+lMenuRecentFolders	Ubicaciones recientes
+lMenuRecentItems	Documentos recientes
+lMenuRecycleBin	Papelera
+lMenuRefreshRecent	Actualización de carpetas recientes en curso
+lMenuRunAtStartup	Ejecutar al Inicio
+lMenuSeparator	----------------
+lMenuSettings	Parámetros de ~1~
+lMenuSpecialFolders	Carpetas especiales
+lMenuStartMenu	Menú de Inicio
+lMenuStartup	Inicio
+lMenuSuspendHotkeys	Suspender atajos de teclado (Hotkeys)
+lMenuSystemCertificates	Certificados de Sistema
+lMenuTemplates	Modelos
+lMenuTemplates	Modelos
+lMenuTemporaryFiles	Ficheros temporales
+lMenuUpdate	Compruebe Actualización
+lMenuUserFolder	Carpeta de Usuario
+lMenuUserPinned	Adherido al Usuario
+lNavigateFileError	Se produjo un error al abrir la carpeta:`n~1~.
+lNavigateSpecialError	Se produjo un error al abrir la carpeta especial #~1~.
+lOopsCouldNotOpenSpecialFolder	~1~ no se puede abrir la carpeta especial: "~2~".
+lOopsDialogBox	Caja de dialogo
+lOopsTitle	~1~ (~2~)
+lOopsWriteProtectedError	Parece ser que ~1~ fué lanzado desde una carpeta SOLO DE ESCRITURA de forma que es imposible crear el archivo de configuración "~1~.ini".`n`nMueva el archivo .EXE de ~1~ a una carpeta REGULAR a vuestra elección, a continuación, ejecute de nuevo la aplicación de esta carpeta.`n`n~1~ estará cerrada.
+lOopsWrongFPconnectAppPathFilename	Ruta o nombre de archivo incorrecto para el parámetro "AppPath" en el fichero de configuración de FPconnect:`n~1~.`n`nVerifique el nombre y la ruta del archivo .exe para "AppPath" en el archivo ini de FCConnect:`n~2~
+lOopsWrongThirdPartyPath	Ruta o nombre de archivo incorrecto para ~1~:`n~2~.`n`nVerifique el archivo .exe seleccionado para ~1~ en las "Opciones", pestaña "~3~".
+lOopsZipFileError	Parece ser que ~1~ se puso en marcha directamente desde un archivo comprimido (ZIP).`n`nDebe extraer el archivo .EXE de ~1~ del comprimido ZIP a una carpeta de su elección, a continuación, ejecute de nuevo la aplicación de esta carpeta.`n`n~1~ será cerrada.
+lOptionsAlt	Alt
+lOptionsArrDescriptions1	Elija el botón del ratón y combinación de teclas que abrirá el menú emergente en el explorador d Windows o en diálogos de archivo. De forma predeterminada, es el botón del ratón central (mbutton) sin tecla modificadora.
+lOptionsArrDescriptions2	Elija el botón del ratón y combinación de teclas que abrirá el menú popup en CUALQUIER VENTANA y abrira la carpeta seleccionada en una NUEVA ventana del explorador de Windows. De forma predeterminada, es el botón del ratón central (mbutton) con el Shift tecla de modificación May. (Shift).
+lOptionsArrDescriptions3	Elija la combinación de teclas del teclado que abrirán el menú emergente en el explorador de Windows o en diálogos de archivo. De forma predeterminada, es la combinación Win-K (la letra K mientras se pulsa la tecla de Windows).
+lOptionsArrDescriptions4	Elija la combinación de teclas del teclado que abren el menú popup en CUALQUIER ventana y abrirá la carpeta seleccionada en una NUEVA ventana del explrorador de Windows. De forma predeterminada, es la combinación Shift-Win-K (la letra K, mientras que las teclas de Windows y Shift son presionadas).
+lOptionsArrDescriptions5	Elija la combinación de teclas del teclado o el botón del ratón que abrirá el menú "UBICACIONES RECIENTES". De forma predeterminada, esto es Shift + Windows + R.
+lOptionsArrDescriptions6	Elija la combinación de teclas en el botón del teclado o el ratón que abrirá el cuadro de diálogo Configuración FoldersPopup. De forma predeterminada, esto es Shift + Windows + F.
+lOptionsChangeHotkey	Modificar
+lOptionsChangeHotkeyTitle	Modificar lanzador - ~1~ ~2~
+lOptionsCheck4Update	Compruebe Actualización
+lOptionsCtrl	Ctrl
+lOptionsDirectoryOpusUseTabs	Usar las pestañas
+lOptionsDisplayClipboardMenu	Portapapeles
+lOptionsDisplayFoldersInExplorerMenu	Las carpetas en el Explorador
+lOptionsDisplayGroupMenu	Grupos de carpetas
+lOptionsDisplayIcons	Mostrar los iconos del menú
+lOptionsDisplayMenus	Mostrar los menús:
+lOptionsDisplayMenuShortcuts	Mostrar atajos numéricos
+lOptionsDisplayRecentFolders	Ubicaciones recientes
+lOptionsDisplaySpecialMenusShortcuts	Mostrar accesos directos en el menú principal
+lOptionsDisplaySpecialFolders	Carpetas especiales
+lOptionsGuiTitle	Opciones - ~1~ ~2~
+lOptionsHotkeys	Otros lanzadores
+lOptionsIconSize	Tamaño de iconos del menú
+lOptionsKeyboard	Teclado
+lOptionsLanguage	Idioma
+lOptionsLanguageLabels	Inglés|Francés|Alemán|Holandés|Coreano|Sueco|Italiano|Español
+lOptionsMenuActiveWindow	En la ventana activa
+lOptionsMenuFixPosition	En una posición fija
+lOptionsMenuNearMouse	Cerca del puntero del ratón
+lOptionsMenuPositionPrompt	Mostrar el menú popup:
+lOptionsMouse	Ratón
+lOptionsMouseAndKeyboard	Lanzadores de menú
+lOptionsMouseButtonsText	Botón izquierdo|Botón del medio|Botón derecho|Botón especial 1|Botón especial 2|Marcar hacia arriba|Marcar hacia abajo|Marcar a izquierda|Marcar a derecha|
+lOptionsMouseCheckLButton	No se puede asignar el "botón izquierdo del ratón" con ninguna tecla modificadora.
+lOptionsMouseNone	Ninguno
+lOptionsNoKeyOrMouseSpecified	No se ha seleccionado ningún botón del teclado o el ratón. La selección actual ~1~ no tiene cambios.
+lOptionsOpenMenuOnTaskbar	Abrir el menú en la barra de tareas
+lOptionsOtherOptions	General
+lOptionsPopupFix	Menú popup en una posición fija
+lOptionsPopupFixPositionX	Posición X:
+lOptionsPopupFixPositionY	Y:
+lOptionsRecentFolders	Ubucaciones recientes
+lOptionsRememberSettingsPosition	Memorizar la posición de la ventana
+lOptionsRunAtStartup	Ejecutar al inicio
+lOptionsShift	May
+lOptionsSpacebar	utilizar la barra de espacio
+lOptionsTabFileManagersIntro	Para los usuarios de los desarrolladores de terceros de los administradores de archivos
+lOptionsTabHotkeysIntro	La elección de los botones del ratón y atajos de teclado lanzará estas ventanas y menús.
+lOptionsTabMouseAndKeyboardIntro	Elegir los botones del ratón y atajos de teclado que lanzarán el menú principal ~1~ (FP).
+lOptionsTabOtherOptionsIntro	Adaptar ~1~ a sus preferencias!
+lOptionsTheme	Tema
+lOptionsThirdParty	Gestores de archivos
+lOptionsThirdPartyDetail	Activar integración con ~1~, localizar el programa .exe en la carpeta de Archivos de programa.
+lOptionsThirdPartyDetailFPconnect	Para activar la integración con otros gestores de archivos, localizar el programa FPconnect.exe.
+lOptionsThirdPartyPrompt	Archivo:
+lOptionsThirdPartyTitle	Usuarios de ~1~
+lOptionsThirdPartyTitleFPconnect	Usuarios de otros gestores de archivos con FPconnect
+lOptionsTitles	Menú del botón del ratón para las carpetas de apertura de PF en el Explorador o el diálogo activo|Menú del botón del ratón para FP abrir carpetas en un nuevo Explorador|Menú contextual para la apertura de los archivos en la ventana del cuadro de diálogo activo o Explorador|Menú contextual para abrir las carpetas en un nuevo Explorador|Parámetros|Menú de Carpetas en el Explorador|Menú de los grupos|Menú de Ubicaciones recientes|Menú del Portapapeles|Coller l'emplacement
+lOptionsTitlesSub	Este botón del ratón puede abrir el menú en las ventanas del Explorador (y otros gestores de archivos soportados) y las cajas de diálogo.|Este botón del ratón puede abrir el menú haciendo clic en cualquier parte de la pantalla.|Este atajo de teclado puede abrir el menú cuando se abre una ventana del Explorador (y otros gestores de archivos soportados) o una caja de diálogo que esté activa.|Este atajo de teclado puede abrir el menú en todo momento.|(configuración de menú y opciones)|(lista de carpetas abiertas en el Explorador)|(lista de grupos de carpetas)|(lista de ubicaciones recientes de Windows)|(lista de carpetas, archivos y direcciones web en el Portapapeles)|(envoyer l'adresse du fichier ou de la page web au clavier ou au Presse-papiers)
+lOptionsTotalCommanderUseTabs	Utilizar las pestañas
+lOptionsTrayTip	Mostrar notificación al inicio
+lOptionsTriggerFor	Lanzador para:
+lOptionsWin	Win
+lPickIconButtonCustom	Personalizada
+lPickIconButtonDefault	Por defecto
+lPickIconDocumentPrompt	Quiere elegir un icono personalizado o el icono por defecto para este tipo de documento?
+lPickIconNoLocation	Por favor, primero elegir un favorito antes de seleccionar un icono.
+lPickIconTitle	Selección del Icono de ~1~ - ~2~
+lReloadPrompt	Cambio ~1~ guardado: ~2~. Desea reiniciar ~3~ en ~2~ ahora? Se perderán los cambios no guardados en el menú de carpetas.
+lReloadPromptDefaultHotkey	Se ha establecido el valor predeterminado para este lanzador. Esta será efectiva después de relanzar ~1~.`n`nQuiere relanzar ~1~ ahora? Se perderán los cambios no guardados en el menú de carpetas.
+lTrayTipInstalledDetail	Para marcar el menú de ~1~, clicar sobre:`n`n~2~ / ~3~`nen un explorador de archivos o en una caja de diálogo`n`n~4~ / ~5~`npara abrir un nuevo Explorador
+lTrayTipinstalledTitle	~1~ ~2~ Listo!
+lTrayTipNoClipboardMenuDetail	No hay ninguna carpeta, documento, aplicación o dirección web (URL) en el Portapapeles
+lTrayTipNoClipboardMenuTitle	~1~ - Menú del Portapapeles
+lTrayTipNoFoldersInExplorerMenuDetail	No hay archivo abierto para mostrar en el menú de carpetas en el Explorador
+lTrayTipNoFoldersInExplorerMenuTitle	Carpetas en el explorador
+lTrayTipWorkingDetail	Preparación de los menús
+lTrayTipWorkingDetailFinished	El menú ha sido actualizado.
+lTrayTipWorkingTitle	~1~ ~2~ en preparación...
+lUpdateButtonRemind	Recordarme
+lUpdateError	Se produjo un error al verificar el número de la última versión. La verificación de la actualización se ha interrumpido.
+lUpdatePrompt	Actualizar ~1~ de la versión v~2~ à la versión v~3~?
+lUpdatePromptBeta	Hay una nueva versión BETA de ~1~.`n`nActualizar ~1~ de la versión v~2~ à la versión v~3~?
+lUpdatePromptBetaContinue	Desea estar informado sobre futuras versiones BETA?
+lUpdateTitle	Actualizar ~1~?
+lUpdateYouHaveLatest	Usted tiene la versión más reciente: ~1~.`n`nVisitar la página de ~2~ todavía?
+lWindowIsTreeviewText	Lo sentimos... A causa de una limitación de Windows, este tipo de caja de diálogo (TreeView) no es compatible con ~1~ de momento.
+lWindowIsTreeviewTitle	Caja de diálogo incompatible

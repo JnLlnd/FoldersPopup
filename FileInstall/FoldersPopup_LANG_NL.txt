@@ -1,5 +1,5 @@
 lAboutText1	~1~ ~2~ (~3~ bits)
-lAboutText2	~1~ wordt ontwikkeld door Jean Lalonde gebruik`nmakend van <a href="http://ahkscript.org/">AutoHotkey</a> programmeertaal.`n`nNederlandse vertaling: Pieter Dejonghe`nDuitse vertaling: Edgar "Fast Edi" Hoffmann`nFranse vertaling: Jean Lalonde`nKoreaanse vertaling: Om Il-Sung`nZweedse vertaling: Åke Engelbrektson`nItaliaanse vertaling: Riccardo Leone`nAndere talen: (hulp is welkom)`nCorrectie Engelse vertaling: (hulp is welkom)`n`nOntwerp icons: <a href="http://www.visualpharm.com">Visual Pharm</a>`nInstaller: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> van jrsoftware.org`nAutoHotkey_L v1.1 bronbestanden: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText2	~1~ wordt ontwikkeld door Jean Lalonde gebruik`nmakend van <a href="http://ahkscript.org/">AutoHotkey</a> programmeertaal.`n`nNederlandse vertaling: Pieter Dejonghe`nDuitse vertaling: Edgar "Fast Edi" Hoffmann`nFranse vertaling: Jean Lalonde`nKoreaanse vertaling: Om Il-Sung`nZweedse vertaling: Åke Engelbrektson`nItaliaanse vertaling: Riccardo Leone`nSpanish translation: kiketrucker`nAndere talen: (hulp is welkom)`nCorrectie Engelse vertaling: (hulp is welkom)`n`nOntwerp icons: <a href="http://www.visualpharm.com">Visual Pharm</a>`nInstaller: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> van jrsoftware.org`nAutoHotkey_L v1.1 bronbestanden: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
 lAboutText4	Ondersteuning via <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	Over... - ~1~ ~2~
@@ -255,7 +255,7 @@ lOptionsHotkeys	Andere sneltoetsen
 lOptionsIconSize	Menu iconen grootte
 lOptionsKeyboard	Toetsenbord
 lOptionsLanguage	Taal
-lOptionsLanguageLabels	Engels|Frans|Duits|Nederlands|Koreaans|Zweeds|Italiaans
+lOptionsLanguageLabels	Engels|Frans|Duits|Nederlands|Koreaans|Zweeds|Italiaans|Spanish
 lOptionsMenuActiveWindow	In het actieve venster
 lOptionsMenuFixPosition	Op een vaste positie
 lOptionsMenuNearMouse	In de buurt van de muisaanwijzer

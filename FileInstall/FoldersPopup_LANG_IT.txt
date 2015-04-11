@@ -1,5 +1,5 @@
 lAboutText1	~1~ ~2~ (~3~ bit)
-lAboutText2	~1~ è stato scritto da Jean Lalonde usando il linguaggio di programmazione`n<a href="http://ahkscript.org/">AutoHotkey</a>.`n`nTraduzione in Italiano: Riccardo Leone`nTraduzione in Tedesco: Edgar "Fast Edi" Hoffmann`nTraduzione in Francese: Jean Lalonde`nTraduzione in Olandese: Pieter Dejonghe`nTraduzione in Coreano: Om Il-Sung`nTraduzione in Svedese:Åke Engelbrektson`nTraduzione in altre lingue: (se volete collaborare siete benvenuti)`nEnglish proof checking: (help welcomed)`n`nIcone realizzate da: <a href="http://www.visualpharm.com">Visual Pharm</a>`nProgramma di installazione: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> di jrsoftware.org`nAutoHotkey_L v1.1 (sorgenti): <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText2	~1~ è stato scritto da Jean Lalonde usando il linguaggio di programmazione`n<a href="http://ahkscript.org/">AutoHotkey</a>.`n`nTraduzione in Italiano: Riccardo Leone`nTraduzione in Tedesco: Edgar "Fast Edi" Hoffmann`nTraduzione in Francese: Jean Lalonde`nTraduzione in Olandese: Pieter Dejonghe`nTraduzione in Coreano: Om Il-Sung`nTraduzione in Svedese:Åke Engelbrektson`nSpanish translation: kiketrucker`nTraduzione in altre lingue: (se volete collaborare siete benvenuti)`nEnglish proof checking: (help welcomed)`n`nIcone realizzate da: <a href="http://www.visualpharm.com">Visual Pharm</a>`nProgramma di installazione: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> di jrsoftware.org`nAutoHotkey_L v1.1 (sorgenti): <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
 lAboutText4	Supporto:  <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	Crediti - ~1~ ~2~
@@ -255,7 +255,7 @@ lOptionsHotkeys	Altre scorciatoie
 lOptionsIconSize	Dimensione delle icone
 lOptionsKeyboard	Tastiera
 lOptionsLanguage	Lingua
-lOptionsLanguageLabels	Inglese|Francese|Tedesco|Olandese|Coreano|Svedese|Italiano
+lOptionsLanguageLabels	Inglese|Francese|Tedesco|Olandese|Coreano|Svedese|Italiano|Spanish
 lOptionsMenuActiveWindow	In alto a sinistra della finestra attiva
 lOptionsMenuFixPosition	In posizione prefissata
 lOptionsMenuNearMouse	Vicino al puntatore del mouse
