@@ -2,7 +2,7 @@
 
 Todo:
 - keep localized names for folders Pictures, Favorites, Templates, My Video and My Music when language is changed (Win7+)
-- localize names of theme names
+- localize names of theme
 */
 
 ;===============================================
@@ -998,6 +998,7 @@ FileInstall, FileInstall\FoldersPopup_LANG_NL.txt, %strTempDir%\FoldersPopup_LAN
 FileInstall, FileInstall\FoldersPopup_LANG_KO.txt, %strTempDir%\FoldersPopup_LANG_KO.txt, 1
 FileInstall, FileInstall\FoldersPopup_LANG_SV.txt, %strTempDir%\FoldersPopup_LANG_SV.txt, 1
 FileInstall, FileInstall\FoldersPopup_LANG_IT.txt, %strTempDir%\FoldersPopup_LANG_IT.txt, 1
+FileInstall, FileInstall\FoldersPopup_LANG_ES.txt, %strTempDir%\FoldersPopup_LANG_ES.txt, 1
 
 FileInstall, FileInstall\default_browser_icon.html, %strTempDir%\default_browser_icon.html, 1
 
@@ -1500,7 +1501,7 @@ InitLanguageArrays:
 StringSplit, arrOptionsTitles, lOptionsTitles, |
 StringSplit, arrOptionsTitlesSub, lOptionsTitlesSub, |
 StringSplit, arrOptionsTitlesLong, lOptionsTitlesLong, |
-strOptionsLanguageCodes := "EN|FR|DE|NL|KO|SV|IT"
+strOptionsLanguageCodes := "EN|FR|DE|NL|KO|SV|IT|ES"
 StringSplit, arrOptionsLanguageCodes, strOptionsLanguageCodes, |
 StringSplit, arrOptionsLanguageLabels, lOptionsLanguageLabels, |
 
@@ -7602,7 +7603,7 @@ Gui, 2:Tab
 
 GuiControlGet, arrTabPos, Pos, intOptionsTab
 
-Gui, 2:Add, Button, % "y" . arrTabPosY + arrTabPosH + 10. " vbtnOptionsSave gButtonOptionsSave Default", %lGuiSave%
+Gui, 2:Add, Button, % "y" . arrTabPosY + arrTabPosH + 10 . " x10 vbtnOptionsSave gButtonOptionsSave Default", %lGuiSave%
 Gui, 2:Add, Button, yp vbtnOptionsCancel gButtonOptionsCancel, %lGuiCancel%
 Gui, 2:Add, Button, yp vbtnOptionsDonate gGuiDonate, %lDonateButton%
 GuiCenterButtons(L(lOptionsGuiTitle, strAppName, strAppVersion), 10, 5, 20, "btnOptionsSave", "btnOptionsCancel", "btnOptionsDonate")
@@ -7881,7 +7882,7 @@ if InStr(arrIniKeyNames%intIndex%, "Keyboard")
 
 Gui, 3:Add, Text, y+15 x10 , %lOptionsTriggerFor%
 Gui, 3:Font, s8 w700
-Gui, 3:Add, Text, x+5 yp , % arrOptionsTitles%intIndex%
+Gui, 3:Add, Text, x+5 yp w300, % arrOptionsTitles%intIndex%
 Gui, 3:Font
 
 Gui, 3:Add, Text, x10 y+5 w350, % lOptionsArrDescriptions%intIndex%
