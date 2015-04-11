@@ -232,10 +232,10 @@ lOopsZipFileError	Sembra che ~1~ sia stato eseguito direttamente da un archivio 
 lOptionsAlt	Alt
 lOptionsArrDescriptions1	Scegli il tasto del MOUSE e la combinazione di modificatori da usare per aprire il menù popup in Windows Explorer o nelle caselle di dialogo. Per default, è il tasto centrale del mouse senza nessun tasto modificatore.
 lOptionsArrDescriptions2	Scegli il tasto del MOUSE e la combinazione di modificatori da usare per aprire il menù popup in QUALUNQUE finestra e spostarti alla cartella selezionata in una NUOVA finestra di Windows Explorer. Per default, è il tasto centrale del mouse tenendo premuto lo Shift.
-lOptionsArrDescriptions3	Scegli la scorciatoia da TASTIERA per aprire il menù popup nella finestra attiva di Windows Explorer o casella di dialogo attiva. Per default, è la combinazione Win+K (la lettera "K" tenendo premuto il tasto Windows).
-lOptionsArrDescriptions4	Scegli la scorciatoia da TASTIERA per aprire il menù popup in QUALUNQUE finestra e spostarti alla cartella selezionata in una NUOVA finestra di Windows Explorer. Per default, è la combinazione Shift+Win+K (la lettera "K" tenendo premuti i tasti Shift e Windows contemporaneamente).
-lOptionsArrDescriptions5	Scegli la scorciatoia o la combinazione di tasti del mouse per aprire il menù "Cartelle Recenti" di FoldersPopup. Per default, è Shift+Windows+R.
-lOptionsArrDescriptions6	Scegli la scorciatoia o la combinazione di tasti del mouse per aprire la casella di dialogo "Impostazioni" di FoldersPopup. Per default, è Shift+Windows+F.
+lOptionsArrDescriptions3	Scegli la scorciatoia da TASTIERA per aprire il menù popup nella finestra attiva di Windows Explorer o casella di dialogo attiva. Per default, è la combinazione Windows+A (la lettera "A" tenendo premuto il tasto Windows).
+lOptionsArrDescriptions4	Scegli la scorciatoia da TASTIERA per aprire il menù popup in QUALUNQUE finestra e spostarti alla cartella selezionata in una NUOVA finestra di Windows Explorer. Per default, è la combinazione Shift+Windows+A (la lettera "A" tenendo premuti i tasti Shift e Windows contemporaneamente).
+lOptionsArrDescriptions5	Scegli la scorciatoia o la combinazione di tasti del mouse per aprire il menù "Cartelle Recenti" di FoldersPopup. Per default, è Shift+Control+R.
+lOptionsArrDescriptions6	Scegli la scorciatoia o la combinazione di tasti del mouse per aprire la casella di dialogo "Impostazioni" di FoldersPopup. Per default, è Shift+Control+F.
 lOptionsChangeHotkey	Cambia
 lOptionsChangeHotkeyTitle	Cambia scorciatoia - ~1~ ~2~
 lOptionsCheck4Update	Cerca Aggiornamenti

@@ -232,10 +232,10 @@ lOopsZipFileError	Es scheint, daß ~1~ direkt aus einer .ZIP Datei ausgeführt wir
 lOptionsAlt	Alt
 lOptionsArrDescriptions1	Wählen Sie die MAUStaste und die Kombitasten, welche das FoldersPopup Menü im Windows Explorer oder Dateidialogboxen aufruft. Standardmäßig ist dies die mittlere Maustaste ohne zusätzliche Kombitaste.
 lOptionsArrDescriptions2	Wählen Sie die MAUStaste und die Kombitasten, welche das FoldersPopup Menü in JEDEM Fenster öffnet und zum gewählten Ordner in einem NEUEN Explorer-Fenster navigiert. Standardmäßig ist dies die mittlere Maustaste mit gedrückter Shift-Taste.
-lOptionsArrDescriptions3	Wählen Sie die TASTENkombination, welche das popup menü im Windows Explorer oder Dateidialogboxen aufruft. Standardmäßig ist dies Win+K (Taste K, während die Windows-Taste gdrückt wird).
-lOptionsArrDescriptions4	Wählen Sie die TASTENkombination, welche das popup menu Menü in JEDEM Fenster öffnet und zum gewählten Ordner in einem NEUEN Explorer-Fenster navigiert. Standardmäßig ist dies Shift+Win+K (Tasten Shift und K, während die Windows-Taste gedrückt wird).
-lOptionsArrDescriptions5	Wählen Sie die Schnelltaste oder Maustastenkombination, welche das FoldersPopup Menü "Kürzlich verwendete Ordner" öffnet. Standardmäßig ist dies Shift+Windows+R.
-lOptionsArrDescriptions6	Wählen Sie die Tastenkombination oder Maustasten-Kombination, welche den FoldersPopup Einstellungsdialog aufruft. Standardmäßig ist dies Shift+Windows+F.
+lOptionsArrDescriptions3	Wählen Sie die TASTENkombination, welche das popup menü im Windows Explorer oder Dateidialogboxen aufruft. Standardmäßig ist dies Windows+A (Taste A, während die Windows-Taste gdrückt wird).
+lOptionsArrDescriptions4	Wählen Sie die TASTENkombination, welche das popup menu Menü in JEDEM Fenster öffnet und zum gewählten Ordner in einem NEUEN Explorer-Fenster navigiert. Standardmäßig ist dies Shift+Windows+A (Tasten Shift und "A", während die Windows-Taste gedrückt wird).
+lOptionsArrDescriptions5	Wählen Sie die Schnelltaste oder Maustastenkombination, welche das FoldersPopup Menü "Kürzlich verwendete Ordner" öffnet. Standardmäßig ist dies Shift+Control+R.
+lOptionsArrDescriptions6	Wählen Sie die Tastenkombination oder Maustasten-Kombination, welche den FoldersPopup Einstellungsdialog aufruft. Standardmäßig ist dies Shift+Control+S.
 lOptionsChangeHotkey	Ändern
 lOptionsChangeHotkeyTitle	Tastenkürzel ändern - ~1~ ~2~
 lOptionsCheck4Update	Nach Update suchen

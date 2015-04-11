@@ -232,10 +232,10 @@ lOopsZipFileError	Parece ser que ~1~ se puso en marcha directamente desde un arc
 lOptionsAlt	Alt
 lOptionsArrDescriptions1	Elija el botón del ratón y combinación de teclas que abrirá el menú emergente en el explorador d Windows o en diálogos de archivo. De forma predeterminada, es el botón del ratón central (mbutton) sin tecla modificadora.
 lOptionsArrDescriptions2	Elija el botón del ratón y combinación de teclas que abrirá el menú popup en CUALQUIER VENTANA y abrira la carpeta seleccionada en una NUEVA ventana del explorador de Windows. De forma predeterminada, es el botón del ratón central (mbutton) con el Shift tecla de modificación May. (Shift).
-lOptionsArrDescriptions3	Elija la combinación de teclas del teclado que abrirán el menú emergente en el explorador de Windows o en diálogos de archivo. De forma predeterminada, es la combinación Win-K (la letra K mientras se pulsa la tecla de Windows).
-lOptionsArrDescriptions4	Elija la combinación de teclas del teclado que abren el menú popup en CUALQUIER ventana y abrirá la carpeta seleccionada en una NUEVA ventana del explrorador de Windows. De forma predeterminada, es la combinación Shift-Win-K (la letra K, mientras que las teclas de Windows y Shift son presionadas).
-lOptionsArrDescriptions5	Elija la combinación de teclas del teclado o el botón del ratón que abrirá el menú "UBICACIONES RECIENTES". De forma predeterminada, esto es Shift + Windows + R.
-lOptionsArrDescriptions6	Elija la combinación de teclas en el botón del teclado o el ratón que abrirá el cuadro de diálogo Configuración FoldersPopup. De forma predeterminada, esto es Shift + Windows + F.
+lOptionsArrDescriptions3	Elija la combinación de teclas del teclado que abrirán el menú emergente en el explorador de Windows o en diálogos de archivo. De forma predeterminada, es la combinación Windows-A (la letra "A" mientras se pulsa la tecla de Windows).
+lOptionsArrDescriptions4	Elija la combinación de teclas del teclado que abren el menú popup en CUALQUIER ventana y abrirá la carpeta seleccionada en una NUEVA ventana del explrorador de Windows. De forma predeterminada, es la combinación Shift-Windows-A (la letra "A", mientras que las teclas de Windows y Shift son presionadas).
+lOptionsArrDescriptions5	Elija la combinación de teclas del teclado o el botón del ratón que abrirá el menú "UBICACIONES RECIENTES". De forma predeterminada, esto es Shift + Control + R.
+lOptionsArrDescriptions6	Elija la combinación de teclas en el botón del teclado o el ratón que abrirá el cuadro de diálogo Configuración FoldersPopup. De forma predeterminada, esto es Shift + Control + S.
 lOptionsChangeHotkey	Modificar
 lOptionsChangeHotkeyTitle	Modificar lanzador - ~1~ ~2~
 lOptionsCheck4Update	Compruebe Actualización

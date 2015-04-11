@@ -232,10 +232,10 @@ lOopsZipFileError	Blijkbaar heb je ~1~ direct gestart vanuit een .ZIP bestand.`n
 lOptionsAlt	Alt
 lOptionsArrDescriptions1	Kies de combinatie van MUISknop en speciale toetsen (CTRL/ALT/SHIFT/WIN) die het popup menu voor mappen opent in Windows Verkenner of in bestandsdialoogvensters. Standaard is dit de middenste muisknop zonder een speciale toets.
 lOptionsArrDescriptions2	Kies de combinatie van MUISknop en speciale toetsen (CTRL/ALT/SHIFT/WIN) die het popup menu voor mappen opent in elk willekeurig venster en die navigeert naar de geselecteerde map in een NIEUW venster van Windows Verkenner. Standaard is dit de middenste muisknop terwijl de Shift toets wordt ingedrukt.
-lOptionsArrDescriptions3	Kies de TOETSENBORD sneltoets combinatie die er voor zorgt dat het popup menu voor mappen opent in Windows Verkenner of in bestandsdialoogvensters. Standaard is dit de Win+K combinatie (de letter "K" terwijl de Windows toets wordt ingedrukt).
-lOptionsArrDescriptions4	Kies de TOETSENBORD sneltoets combinatie die er voor zorgt dat het popup menu voor mappen opent in elk willekeurig venster en die navigeert naar de geselecteerde map in een NIEUW venster van Windows Verkenner. Standaard is dit de Shift+Win+K combinatie (de letter "K" terwijl de Shift toets en de Windows toets worden ingedrukt).
-lOptionsArrDescriptions5	Kies een sneltoets of een muisknop combinatie die het "Recente Mappen" menu dient te openen. Standaard is dit Shift+Windows+R.
-lOptionsArrDescriptions6	Kies de sneltoets of muisknop combinatie die er voor zorgt dat de FoldersPopup instellingen geopend worden. Standaard is dit de toetsencombinatie Shift+Windows+F.
+lOptionsArrDescriptions3	Kies de TOETSENBORD sneltoets combinatie die er voor zorgt dat het popup menu voor mappen opent in Windows Verkenner of in bestandsdialoogvensters. Standaard is dit de Windows+A combinatie (de letter "A" terwijl de Windows toets wordt ingedrukt).
+lOptionsArrDescriptions4	Kies de TOETSENBORD sneltoets combinatie die er voor zorgt dat het popup menu voor mappen opent in elk willekeurig venster en die navigeert naar de geselecteerde map in een NIEUW venster van Windows Verkenner. Standaard is dit de Shift+Windows+A combinatie (de letter "A" terwijl de Shift toets en de Windows toets worden ingedrukt).
+lOptionsArrDescriptions5	Kies een sneltoets of een muisknop combinatie die het "Recente Mappen" menu dient te openen. Standaard is dit Shift+Control+R.
+lOptionsArrDescriptions6	Kies de sneltoets of muisknop combinatie die er voor zorgt dat de FoldersPopup instellingen geopend worden. Standaard is dit de toetsencombinatie Shift+Control+S.
 lOptionsChangeHotkey	Wijzigen
 lOptionsChangeHotkeyTitle	Wijzig sneltoets - ~1~ ~2~
 lOptionsCheck4Update	Controleren op nieuwe versies

@@ -232,10 +232,10 @@ lOopsZipFileError	Il semble que ~1~ a été lancé directement depuis un fichier co
 lOptionsAlt	Alt
 lOptionsArrDescriptions1	Choisissez le bouton de la SOURIS et la touche de combinaison qui ouvrira le menu popup dans l'Explorateur de fichier de Windows ou dans des boîtes de dialogue de fichier. Par défaut, il s'agit du bouton central de la souris (MButton) sans touche de modification.
 lOptionsArrDescriptions2	Choisissez le bouton de la SOURIS et la touche de combinaison qui ouvrira le menu popup dans N'IMPORTE QUELLE fenêtre et ouvrira le dossier sélectionné dans une NOUVELLE fenêtre de l'Explorateur de fichiers. Par défaut, il s'agit du bouton central de la souris (MButton) avec la touche de modification Maj (Shift).
-lOptionsArrDescriptions3	Choisissez la combinaison de touches du CLAVIER qui ouvrira le menu popup dans l'Explorateur de fichier de Windows ou dans des boîtes de dialogue de fichier. Par défaut, il s'agit de la combinaisons Win-K (la lettre K pendant que la touche Windows est pressée).
-lOptionsArrDescriptions4	Choisissez la combinaison de touches du CLAVIER qui ouvrira le menu popup dans N'IMPORTE QUELLE fenêtre et ouvrira le dossier sélectionné dans une NOUVELLE fenêtre de l'Explorateur de fichiers. Par défaut, il s'agit de la combinaisons Maj-Win-K (la lettre K pendant que les touches Windows et Maj sont presséee).
-lOptionsArrDescriptions5	Choisissez la combinaison de touches du clavier ou le bouton de la souris qui ouvrira le menu "Emplacements récents". Par défaut, il s'agit de Maj+Windows+R.
-lOptionsArrDescriptions6	Choisissez la combinaison de touches du clavier ou le bouton de la souris qui ouvrira la boîte de dialogue Paramètres de FoldersPopup. Par défaut, il s'agit de Maj+Windows+F.
+lOptionsArrDescriptions3	Choisissez la combinaison de touches du CLAVIER qui ouvrira le menu popup dans l'Explorateur de fichier de Windows ou dans des boîtes de dialogue de fichier. Par défaut, il s'agit de la combinaisons Windows-A (la lettre "A" pendant que la touche Windows est pressée).
+lOptionsArrDescriptions4	Choisissez la combinaison de touches du CLAVIER qui ouvrira le menu popup dans N'IMPORTE QUELLE fenêtre et ouvrira le dossier sélectionné dans une NOUVELLE fenêtre de l'Explorateur de fichiers. Par défaut, il s'agit de la combinaisons Maj-Windows-A (la lettre A pendant que les touches Windows et Maj sont presséee).
+lOptionsArrDescriptions5	Choisissez la combinaison de touches du clavier ou le bouton de la souris qui ouvrira le menu "Emplacements récents". Par défaut, il s'agit de Maj+Control+R.
+lOptionsArrDescriptions6	Choisissez la combinaison de touches du clavier ou le bouton de la souris qui ouvrira la boîte de dialogue Paramètres de FoldersPopup. Par défaut, il s'agit de Maj+Control+S.
 lOptionsChangeHotkey	Modifier
 lOptionsChangeHotkeyTitle	Modification de déclencheur - ~1~ ~2~
 lOptionsCheck4Update	Vérifier la mise à jour
