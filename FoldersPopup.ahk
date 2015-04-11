@@ -1,10 +1,3 @@
-/*
-
-Todo:
-- keep localized names for folders Pictures, Favorites, Templates, My Video and My Music when language is changed (Win7+)
-- localize names of theme
-*/
-
 ;===============================================
 /*
 	FoldersPopup
@@ -19,6 +12,16 @@ Todo:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 5.0.9.2 (2015-04-??)
+	* support comments starting with ";" in language files
+
+	Version: 5.0.9.2 (2015-04-11)
+	* addition of spanish language
+	* fix Change hotkey description text for hotkeys 3 to 6
+	* Add English description text in Change hotkey for hotkeys 7 to 10
+	* fix buttons centering bug in Option GUI
+	* fix text layout in Change hotkey GUI
+	
 	Version: 5.0.9.1 (2015-04-10)
 	* merge changes in v5.0.1
 	
@@ -756,7 +759,7 @@ Todo:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 5.0.9.1 beta
+;@Ahk2Exe-SetVersion 5.0.9.2 beta
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -804,7 +807,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "5.0.9.1" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "5.0.9.2" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 
@@ -1482,10 +1485,13 @@ if FileExist(strLanguageFile)
 	FileRead, strLanguageStrings, %strLanguageFile%
 	Loop, Parse, strLanguageStrings, `n, `r
 	{
-		StringSplit, arrLanguageBit, A_LoopField, `t
-		if SubStr(arrLanguageBit1, 1, 1) = "l"
-			%arrLanguageBit1% := arrLanguageBit2
-		StringReplace, %arrLanguageBit1%, %arrLanguageBit1%, ``n, `n, All
+		if (SubStr(A_LoopField, 1, 1) <> ";")
+		{
+			StringSplit, arrLanguageBit, A_LoopField, `t
+			if SubStr(arrLanguageBit1, 1, 1) = "l"
+				%arrLanguageBit1% := arrLanguageBit2
+			StringReplace, %arrLanguageBit1%, %arrLanguageBit1%, ``n, `n, All
+		}
 	}
 }
 else
