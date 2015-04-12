@@ -19,7 +19,7 @@ lDialogAddFolderManuallyTitle	Agregar carpeta - ~1~ ~2~
 lDialogAddFolderSelect	Elegir donde crear una nueva carpeta:
 lDialogApplicationLabel	Aplicación
 lDialogApplicationShortName	Nombre de la aplicación (para los menús)
-lDialogArgumentsLabel	Parametros
+lDialogArgumentsLabel	Parámetros
 lDialogBrowseButton	Revisar
 lDialogCancelButton	Anular
 lDialogCancelPrompt	Anular los cambios?
@@ -148,12 +148,12 @@ lGuiSeparator	Separación
 lGuiSubmenuDropdownLabel	Menú a modificar:
 lGuiSubmenuLocation	>
 lGuiSubmenuSeparator	>
-lGuiTitle	Parametros - ~1~ ~2~
+lGuiTitle	Parámetros - ~1~ ~2~
 lHelpTabAddingFavorite	Añadir favoritos
 lHelpTabGettingStarted	Primer paso
 lHelpTabTitlesTipsAndTricks	Trucos y astucias
 lHelpText1	Al abrir FoldersPopup, un icono espera sus órdenes en el área de notificaciones. Cuando se quiere cambiar la carpeta en Windows File Explorer o en un cuadro de diálogo de archivos, sólo tiene que pulsar el botón central del ratón o la tecla de Windows-A y un menú emergente muestra sus carpetas favoritas. Haga clic en la carpeta deseada y FoldersPopup al instante le lleva allí! O para abrir rápidamente un documento o página web.
-lHelpText2	Elija "Parametros" para abrir la caja de configuración de FoldersPopup donde usted podrá añadir a su menú CARPETAS, DOCUMENTOS o LINKS. A continuación, puede borrar, mover o cambiar el nombre. También puede añadir, mover, renombrar o borrar SUB-MENÚS. Elija la opción "Cambio de menú" en la lista desplegable. Haga clic en "Guardar" para guardar los cambios.
+lHelpText2	Elija "Parámetros" para abrir la caja de configuración de FoldersPopup donde usted podrá añadir a su menú CARPETAS, DOCUMENTOS o LINKS. A continuación, puede borrar, mover o cambiar el nombre. También puede añadir, mover, renombrar o borrar SUB-MENÚS. Elija la opción "Cambio de menú" en la lista desplegable. Haga clic en "Guardar" para guardar los cambios.
 lHelpText3	Para añadir rápidamente una CARPETA a su menú:`n1) Ir a una carpeta de uso frecuente.`n2) Haga clic en el botón central del ratón (Windows-A) y elija "Añadir esta carpeta".`n3) Atribuir un nombre corto a esta carpeta, haga clic "Añadir", y despues "Guardar" en la ventana de parámetros.
 lHelpText4	Para añadir a su menú un DOCUMENTO o un LINK WEB:`n1) Abra el menú de Folders Popup y elija "Parámetres" (May-Windows-F).`n2) Clique ssobre el botón "Añadir" y elija la opción "Documento" o "Link (URL)".`n3) Elija un nombre corto para ese favorito, indique la ubicación del documento (botón "Revisar") o la dirección URL del link, clique sobre "Añadir" y "Guardar" en la ventana de parámetros.
 lHelpText5	- En la zona de Notificaciones, clique sobre el icono de Folders Popup con el botón derecho y seleccione la opción "Ejecutar al inicio" para lanzar FoldersPopup automaticamente con el arranque de Windows.`n- Necesita abrir un archivo mientras está trabajando en una aplicación? Sin importar que ventana, pulse May a la vez que clica sobre el botón central de su ratón (May-Windows-A) o también clique simplemente sobre el icono de Folders Popup en la zona de Notificaciones, y despues elija su carpeta favorita.`n- Elija el menú "Ubicaciones recientes..." (May-Windows-R) para ver una versión actualizada de los archivos recientes en Windows.`n-Utilice el menú "Carpetas en el Explorador" para abrir una carpeta ya presente en una ventana del explorador de ficheros o el menú "Grupos de carpetas" para guardar y restaurar los grupos de carpetas`n- Elija las combinaciones de botones del ratón y atajos de teclado que abren el menú popup en "Parámetros, Opciones".`n- Tambien en las "Opciones": elija su idioma, el tamaño de los iconos del menú, los colores de las ventanas. Elija para mostrar en el menú "Ubicaciones Recientes, atajos de teclado numérico o ubique el menú popup en la posición deseada.`n-Usuarios de Directory Opus, consultar <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/">esta página</a> (en inglés) para instrucciones adicionales.`n-Usuarios de Total Commander, consultar <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/">esta página</a> (en inglés) para instrucciones adicionales.
@@ -262,7 +262,7 @@ lOptionsMenuNearMouse	Cerca del puntero del ratón
 lOptionsMenuPositionPrompt	Mostrar el menú popup:
 lOptionsMouse	Ratón
 lOptionsMouseAndKeyboard	Lanzadores de menú
-lOptionsMouseButtonsText	Botón izquierdo|Botón del medio|Botón derecho|Botón especial 1|Botón especial 2|Marcar hacia arriba|Marcar hacia abajo|Marcar a izquierda|Marcar a derecha|
+lOptionsMouseButtonsText	Botón izquierdo|Botón central|Botón derecho|Botón especial 1|Botón especial 2|Marcar hacia arriba|Marcar hacia abajo|Marcar a izquierda|Marcar a derecha|
 lOptionsMouseCheckLButton	No se puede asignar el "botón izquierdo del ratón" con ninguna tecla modificadora.
 lOptionsMouseNone	Ninguno
 lOptionsNoKeyOrMouseSpecified	No se ha seleccionado ningún botón del teclado o el ratón. La selección actual ~1~ no tiene cambios.
@@ -271,7 +271,7 @@ lOptionsOtherOptions	General
 lOptionsPopupFix	Menú popup en una posición fija
 lOptionsPopupFixPositionX	Posición X:
 lOptionsPopupFixPositionY	Y:
-lOptionsRecentFolders	Ubucaciones recientes
+lOptionsRecentFolders	Ubicaciones recientes
 lOptionsRememberSettingsPosition	Memorizar la posición de la ventana
 lOptionsRunAtStartup	Ejecutar al inicio
 lOptionsShift	May

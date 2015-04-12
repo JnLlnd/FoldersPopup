@@ -12,8 +12,9 @@
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 5.0.9.2 (2015-04-??)
+	Version: 5.0.9.3 (2015-04-??)
 	* support comments starting with ";" in language files
+	* sort URLs in Clipboard menu
 
 	Version: 5.0.9.2 (2015-04-11)
 	* addition of spanish language
@@ -759,7 +760,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 5.0.9.2 beta
+;@Ahk2Exe-SetVersion 5.0.9.3 beta
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -807,7 +808,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "5.0.9.2" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "5.0.9.3" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 
@@ -2721,6 +2722,7 @@ RefreshClipboardMenu:
 
 blnPreviousClipboardMenuDeleted := 0
 intShortcutClipboardMenu := 0
+strURLsInClipboard := ""
 
 ; Parse Clipboard for folder, document or application filenames (filenames alone on one line)
 Loop, parse, Clipboard, `n, `r%A_Space%%A_Tab%/?:*`"><|
@@ -2752,7 +2754,31 @@ Loop, parse, Clipboard, `n, `r%A_Space%%A_Tab%/?:*`"><|
 
 	; Parse Clipboard line for URLs (anywhere on the line)
 	strURLSearchString := strClipboardLine
-	Gosub, RefreshClipboardMenuURLs
+	Gosub, GetURLsInClipboard
+}
+
+Sort, strURLsInClipboard
+
+Loop, parse, strURLsInClipboard, `n
+{
+	if !StrLen(A_LoopField)
+		break
+	
+	; if we get here, we have at least one URL, check if we need to delete previous menu
+	if !(blnPreviousClipboardMenuDeleted)
+	{
+		Menu, menuClipboard, Add
+		Menu, menuClipboard, DeleteAll
+		blnPreviousClipboardMenuDeleted := 1
+	}
+	blnClipboardMenuEnable := 1
+
+	strMenuName := (blnDisplayMenuShortcuts and (intShortcutFoldersInExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutClipboardMenu, false) . " " : "") . A_LoopField
+	if StrLen(strMenuName) < 260 ; skip too long URLs
+	{
+		Menu, menuClipboard, Add, %strMenuName%, OpenClipboard
+		Menu, menuClipboard, Icon, %strMenuName%, %strThisIconFile%, %intThisIconIndex%, %intIconSize%
+	}
 }
 
 return
@@ -2760,7 +2786,7 @@ return
 
 
 ;------------------------------------------------------------
-RefreshClipboardMenuURLs:
+GetURLsInClipboard:
 ;------------------------------------------------------------
 ; Adapted from AHK help file: http://ahkscript.org/docs/commands/LoopReadFile.htm
 ; It's done this particular way because some URLs have other URLs embedded inside them:
@@ -2790,7 +2816,7 @@ Loop
 }
 
 if (intURLStart = -1) ; No URLs exist in strURLSearchString.
-	return
+	return ; (exit loop)
 
 ; Otherwise, extract this strURL:
 StringTrimLeft, strURL, strURLSearchString, %intURLStart% ; Omit the beginning/irrelevant part.
@@ -2807,28 +2833,15 @@ Loop, parse, strURL, %A_Tab%%A_Space%<> ; Find the first space, tab, or angle (i
 ; might damage them:
 StringReplace, strURLCleansed, strURL, ",, All
 
-; if we get here, we have at least one URL, check if we need to delete previous menu
-if !(blnPreviousClipboardMenuDeleted)
-{
-	Menu, menuClipboard, Add
-	Menu, menuClipboard, DeleteAll
-	blnPreviousClipboardMenuDeleted := 1
-}
-blnClipboardMenuEnable := 1
-
-strMenuName := (blnDisplayMenuShortcuts and (intShortcutFoldersInExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutClipboardMenu, false) . " " : "") . strURLCleansed
-if StrLen(strMenuName) < 260 ; skip too long URLs
-{
-	Menu, menuClipboard, Add, %strMenuName%, OpenClipboard
-	Menu, menuClipboard, Icon, %strMenuName%, %strThisIconFile%, %intThisIconIndex%, %intIconSize%
-}
 
 ; See if there are any other URLs in this line:
 StringLen, intCharactersToOmit, strURL
 intCharactersToOmit := intCharactersToOmit + intURLStart
 StringTrimLeft, strURLSearchString, strURLSearchString, %intCharactersToOmit%
 
-Gosub, RefreshClipboardMenuURLs ; Recursive call to self.
+Gosub, GetURLsInClipboard ; Recursive call to self (end of loop)
+
+strURLsInClipboard := strURLsInClipboard . strURLCleansed . "`n"
 
 return
 
