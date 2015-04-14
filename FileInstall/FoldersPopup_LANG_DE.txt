@@ -239,7 +239,8 @@ lOptionsArrDescriptions6	Wählen Sie die Tastenkombination oder Maustasten-Kombin
 lOptionsChangeHotkey	Ändern
 lOptionsChangeHotkeyTitle	Tastenkürzel ändern - ~1~ ~2~
 lOptionsCheck4Update	Nach Update suchen
-lOptionsCtrl	Strg
+lOptionsCtrl	Steuerung
+lOptionsCtrlShort	Strg
 lOptionsDirectoryOpusUseTabs	Verwende Registerkarten
 lOptionsDisplayClipboardMenu	Zwischenablage
 lOptionsDisplayFoldersInExplorerMenu	Ordner im Explorer
@@ -292,7 +293,8 @@ lOptionsTitlesSub	Diese Maustaste kann das Menü über Windows Explorer, unterstüt
 lOptionsTotalCommanderUseTabs	Verwende Registerkarten
 lOptionsTrayTip	Beim Start &Tray-Tip anzeigen
 lOptionsTriggerFor	Auslöser für:
-lOptionsWin	Win
+lOptionsWin	Windows
+lOptionsWinShort	Win
 lPickIconButtonCustom	Angepasst
 lPickIconButtonDefault	Standard
 lPickIconDocumentPrompt	Angepasstes oder Standard-Symbol für diese Art von Dokument verwenden?

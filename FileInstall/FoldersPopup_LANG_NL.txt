@@ -239,7 +239,8 @@ lOptionsArrDescriptions6	Kies de sneltoets of muisknop combinatie die er voor zo
 lOptionsChangeHotkey	Wijzigen
 lOptionsChangeHotkeyTitle	Wijzig sneltoets - ~1~ ~2~
 lOptionsCheck4Update	Controleren op nieuwe versies
-lOptionsCtrl	Ctrl
+lOptionsCtrl	Control
+lOptionsCtrlShort	Ctrl
 lOptionsDirectoryOpusUseTabs	Gebruik tabbladen
 lOptionsDisplayClipboardMenu	Klembord
 lOptionsDisplayFoldersInExplorerMenu	Huidige Mappen
@@ -292,7 +293,8 @@ lOptionsTitlesSub	Deze muisknop opent het menu in de Windows verkenner, een ande
 lOptionsTotalCommanderUseTabs	Gebruik tabs
 lOptionsTrayTip	Toon &Startup Systeembalk Tip
 lOptionsTriggerFor	Trigger voor:
-lOptionsWin	Win
+lOptionsWin	Windows
+lOptionsWinShort	Win
 lPickIconButtonCustom	Aangepast
 lPickIconButtonDefault	Standaard
 lPickIconDocumentPrompt	Wil je een aangepast icoon gebruiken of liever het standaard icoon voor dit type document? 

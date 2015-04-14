@@ -8651,7 +8651,7 @@ BuildSpecialMenuItemName(intHotkeyIndex, strMenuItemName)
 	
 	if (blnDisplaySpecialMenusShortcuts)
 	{
-		strHotkey := Hotkey2Text(strModifiers%intHotkeyIndex%, strMouseButton%intHotkeyIndex%, strOptionsKey%intHotkeyIndex%)
+		strHotkey := Hotkey2Text(strModifiers%intHotkeyIndex%, strMouseButton%intHotkeyIndex%, strOptionsKey%intHotkeyIndex%, true)
 		if (strHotkey <> lOptionsMouseNone)
 			strMenuItemName := strMenuItemName . " (" . strHotkey . ")"
 	}
@@ -8662,7 +8662,7 @@ BuildSpecialMenuItemName(intHotkeyIndex, strMenuItemName)
 
 
 ;------------------------------------------------------------
-Hotkey2Text(strModifiers, strMouseButton, strOptionKey)
+Hotkey2Text(strModifiers, strMouseButton, strOptionKey, blnShort := false)
 ;------------------------------------------------------------
 {
 	if (strMouseButton = "None") ; do not compare with lOptionsMouseNone because it is translated
@@ -8675,11 +8675,11 @@ Hotkey2Text(strModifiers, strMouseButton, strOptionKey)
 			if (A_LoopField = "!")
 				str := str . lOptionsAlt . "+"
 			if (A_LoopField = "^")
-				str := str . lOptionsCtrl . "+"
+				str := str . (blnShort ? lOptionsCtrlShort : lOptionsCtrl) . "+"
 			if (A_LoopField = "+")
 				str := str . lOptionsShift . "+"
 			if (A_LoopField = "#")
-				str := str . lOptionsWin . "+"
+				str := str . (blnShort ? lOptionsWinShort : lOptionsWin) . "+"
 		}
 		if StrLen(strMouseButton)
 			str := str . GetText4MouseButton(strMouseButton)

@@ -240,7 +240,8 @@ lOptionsArrDescriptions6	Choisissez la combinaison de touches du clavier ou le b
 lOptionsChangeHotkey	Modifier
 lOptionsChangeHotkeyTitle	Modification de déclencheur - ~1~ ~2~
 lOptionsCheck4Update	Vérifier la mise à jour
-lOptionsCtrl	Ctrl
+lOptionsCtrl	Control
+lOptionsCtrlShort	Ctrl
 lOptionsDirectoryOpusUseTabs	Utiliser les onglets
 lOptionsDisplayClipboardMenu	Presse-papiers
 lOptionsDisplayFoldersInExplorerMenu	Dossiers dans l'Explorateur
@@ -264,7 +265,7 @@ lOptionsMenuNearMouse	Près du pointeur de la souris
 lOptionsMenuPositionPrompt	Afficher le menu popup:
 lOptionsMouse	Souris
 lOptionsMouseAndKeyboard	Déclencheurs du menu
-lOptionsMouseButtonsText	Bouton de gauche|Bouton du milieu|Bouton de droite|Bouton spécial 1|Bouton spécial 2|Molette vers le haut|Molette vers le bas|Molette à gauche|Molette à droite|
+lOptionsMouseButtonsText	Bouton de gauche de la souris|Bouton du milieu de la souris|Bouton de droite de la souris|Bouton spécial 1 de la souris|Bouton spécial 2 de la souris|Molette vers le haut|Molette vers le bas|Molette à gauche|Molette à droite|
 lOptionsMouseCheckLButton	Vous ne pouvez pas attribuer le "Bouton de gauche de la souris" sans touche de modification.
 lOptionsMouseNone	Aucun
 lOptionsNoKeyOrMouseSpecified	Aucune touche du clavier ou bouton de la souris n'a été sélectionné. La sélection actuelle ~1~ est inchangée.
@@ -297,7 +298,8 @@ lOptionsTitlesSub	Ce bouton de la souris peut ouvrir le menu dans les fenêtres d
 lOptionsTotalCommanderUseTabs	Utiliser les onglets
 lOptionsTrayTip	Afficher la notification au démarrage
 lOptionsTriggerFor	Déclencheur pour:
-lOptionsWin	Win
+lOptionsWin	Windows
+lOptionsWinShort	Win
 lPasteLocationCopiedToClipboard	Emplacement copié dans le Presse-papiers
 lPickIconButtonCustom	Personnalisé
 lPickIconButtonDefault	Par défaut

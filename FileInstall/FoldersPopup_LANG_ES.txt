@@ -239,7 +239,8 @@ lOptionsArrDescriptions6	Elija la combinación de teclas en el botón del teclado 
 lOptionsChangeHotkey	Modificar
 lOptionsChangeHotkeyTitle	Modificar lanzador - ~1~ ~2~
 lOptionsCheck4Update	Compruebe Actualización
-lOptionsCtrl	Ctrl
+lOptionsCtrl	Control
+lOptionsCtrlShort	Ctrl
 lOptionsDirectoryOpusUseTabs	Usar las pestañas
 lOptionsDisplayClipboardMenu	Portapapeles
 lOptionsDisplayFoldersInExplorerMenu	Las carpetas en el Explorador
@@ -292,7 +293,8 @@ lOptionsTitlesSub	Este botón del ratón puede abrir el menú en las ventanas del E
 lOptionsTotalCommanderUseTabs	Utilizar las pestañas
 lOptionsTrayTip	Mostrar notificación al inicio
 lOptionsTriggerFor	Lanzador para:
-lOptionsWin	Win
+lOptionsWin	Windows
+lOptionsWinShort	Win
 lPickIconButtonCustom	Personalizada
 lPickIconButtonDefault	Por defecto
 lPickIconDocumentPrompt	Quiere elegir un icono personalizado o el icono por defecto para este tipo de documento?

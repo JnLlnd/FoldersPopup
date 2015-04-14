@@ -239,7 +239,8 @@ lOptionsArrDescriptions6	Scegli la scorciatoia o la combinazione di tasti del mo
 lOptionsChangeHotkey	Cambia
 lOptionsChangeHotkeyTitle	Cambia scorciatoia - ~1~ ~2~
 lOptionsCheck4Update	Cerca Aggiornamenti
-lOptionsCtrl	Ctrl
+lOptionsCtrl	Control
+lOptionsCtrlShort	Ctrl
 lOptionsDirectoryOpusUseTabs	Usa i tab
 lOptionsDisplayClipboardMenu	Appunti di Windows
 lOptionsDisplayFoldersInExplorerMenu	Cartelle Correnti
@@ -292,7 +293,8 @@ lOptionsTitlesSub	Questo tasto del mouse apre il menù di FP su Windows Explorer,
 lOptionsTotalCommanderUseTabs	Usa i tab
 lOptionsTrayTip	All'avvio, &Mostra popup dall'area notifiche
 lOptionsTriggerFor	Per attivare:
-lOptionsWin	Win
+lOptionsWin	Windows
+lOptionsWinShort	Win
 lPickIconButtonCustom	Personalizzato
 lPickIconButtonDefault	Default
 lPickIconDocumentPrompt	Selezionare un'icona a scelta o usare l'icona di default per questo tipo di documento?
