@@ -13,8 +13,11 @@
 
 
 	Version: 5.0.9.3 (2015-04-??)
-	* support comments starting with ";" in language files
 	* sort URLs in Clipboard menu
+	* Spanish, Dutch and French text updates
+	* help text updates, addition of help text about Clipboard and Paste Favorite's Location menus
+	* display current customized shortcuts in Help text (English only for now)
+	* support comments starting with ";" in language files
 
 	Version: 5.0.9.2 (2015-04-11)
 	* addition of spanish language
@@ -8242,21 +8245,30 @@ Gui, 2:Add, Link, x10 w%intWidth%, %lHelpTextLead%
 Gui, 2:Font, s8 w600, Verdana
 Gui, 2:Add, Tab2, vintHelpTab w640 h350 AltSubmit, %A_Space%%lHelpTabGettingStarted% | %lHelpTabAddingFavorite% | %lHelpTabTitlesTipsAndTricks%%A_Space%
 
+; Hotkeys: 1) PopupHotkeyMouse 2) PopupHotkeyNewMouse 3) PopupHotkeyKeyboard 4) PopupHotkeyNewKeyboard
+; 5) SettingsHotkey 6) FoldersInExplorerHotkey 7) GroupsHotkey 8) RecentsHotkey 9) ClipboardHotkey 10) PasteHotkey
 Gui, 2:Font, s8 w400, Verdana
 Gui, 2:Tab, 1
-Gui, 2:Add, Link, w%intWidth%, % lHelpText1
+Gui, 2:Add, Link, w%intWidth%, % L(lHelpText1, Hotkey2Text(strModifiers1, strMouseButton1, strOptionsKey1), Hotkey2Text(strModifiers3, strMouseButton3, strOptionsKey3))
 Gui, 2:Add, Link, w%intWidth%, % lHelpText2
 Gui, 2:Add, Button, vbtnNext1 gNextHelpButtonClicked, %lDialogTabNext%
 GuiCenterButtons(L(lHelpTitle, strAppName, strAppVersion), 10, 5, 20, "btnNext1")
 
 Gui, 2:Tab, 2
-Gui, 2:Add, Link, w%intWidth%, % lHelpText3
-Gui, 2:Add, Link, w%intWidth%, % lHelpText4
+Gui, 2:Add, Link, w%intWidth%, % L(lHelpText3, Hotkey2Text(strModifiers1, strMouseButton1, strOptionsKey1), Hotkey2Text(strModifiers3, strMouseButton3, strOptionsKey3))
+Gui, 2:Add, Link, w%intWidth%, % L(lHelpText4, Hotkey2Text(strModifiers5, strMouseButton5, strOptionsKey5))
 Gui, 2:Add, Button, vbtnNext2 gNextHelpButtonClicked, %lDialogTabNext%
 GuiCenterButtons(L(lHelpTitle, strAppName, strAppVersion), 10, 5, 20, "btnNext2")
 
 Gui, 2:Tab, 3
-Gui, 2:Add, Link, w%intWidth%, % lHelpText5
+Gui, 2:Add, Link, w%intWidth%, % L(lHelpText5
+	, Hotkey2Text(strModifiers2, strMouseButton2, strOptionsKey2)
+	, Hotkey2Text(strModifiers4, strMouseButton4, strOptionsKey4)
+	, Hotkey2Text(strModifiers8, strMouseButton8, strOptionsKey8)
+	, Hotkey2Text(strModifiers6, strMouseButton6, strOptionsKey6)
+	, Hotkey2Text(strModifiers7, strMouseButton7, strOptionsKey7)
+	, Hotkey2Text(strModifiers9, strMouseButton9, strOptionsKey9)
+	, Hotkey2Text(strModifiers10, strMouseButton10, strOptionsKey10))
 Gui, 2:Add, Link, w%intWidth%, % lHelpText6
 
 Gui, 2:Tab

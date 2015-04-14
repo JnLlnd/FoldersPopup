@@ -152,11 +152,11 @@ lGuiTitle	Paramètres - ~1~ ~2~
 lHelpTabAddingFavorite	Ajouter des favoris
 lHelpTabGettingStarted	Premier pas
 lHelpTabTitlesTipsAndTricks	Trucs et astuces
-lHelpText1	Au lancement de FoldersPopup, une icône attend vos ordres dans la zone de Notifications. Lorsque vous voudrez changer de dossier dans l'Explorateur de fichier Windows ou dans une boîte de dialogue de fichiers, vous n'aurez qu'à appuyer sur le bouton central de la souris ou sur la touche Windows-A pour qu'un menu popup affiche vos dossiers préférés. Cliquez le dossier désiré et FoldersPopup vous y mènera instantanément ! Ou encore ouvrez-y rapidement un document ou une page web.
+lHelpText1	Au lancement de FoldersPopup, une icône attend vos ordres dans la zone de Notifications. Lorsque vous voudrez changer de dossier dans l'Explorateur de fichier Windows ou dans une boîte de dialogue de fichiers, sur la souris, vous n'aurez qu'à appuyer sur ~1~ ou sur la touche ~2~ pour qu'un menu popup affiche vos dossiers préférés. Cliquez le dossier désiré et FoldersPopup vous y mènera instantanément ! Ou encore ouvrez-y rapidement un document ou une page web.
 lHelpText2	Choisissez "Paramètres" pour ouvrir la boîte de configuration de FoldersPopup où vous pourrez ajouter à votre menu des DOSSIERS, des DOCUMENTS ou des LIENS. Vous pourrez ensuite les effacer, déplacer ou renommer. Vous pourrez aussi ajouter, déplacer, renommer ou effacer des SOUS-MENUS. Choisissez le "Menu à modifier:" dans la liste déroulante. Cliquez sur "Enregistrer" pour sauvegarder vos modifications.
-lHelpText3	Pour ajouter rapidement un DOSSIER à votre menu:`n1) Allez dans un dossier fréquemment utilisé.`n2) Cliquez sur le bouton central de la souris (Windows-A) et choisissez "Ajouter ce dossier".`n3) Attribuez un nom court à ce dossier, cliquez "Ajouter", puis "Enregistrer" dans la fenêtre des paramètres.
-lHelpText4	Pour ajouter à votre menu un DOCUMENTS ou un LIEN WEB:`n1) Ouvrez le menu de Folders Popup et choisissez "Paramètres" (Maj-Windows-F).`n2) Cliquez sur le bouton "Ajouter" et choisissez l'option "Document" ou "Lien (URL)".`n3) Attribuez un nom court à ce favori, indiquez l'emplacement du document (bouton "Parcourir") ou l'adresse URL du lien, cliquez sur "Ajouter" et "Enregistrer" dans la fenêtre des paramètres.
-lHelpText5	- Dans la zone de Notifications, cliquez sur l'icône de Folders Popup avec le bouton de droite et sélectionnez l'option "Exécuter au démarrage" pour lancer FoldersPopup automatiquement au lancement de Windows.`n- Besoin d'ouvrir un dossier alors que vous travaillez dans une application? De n'importe quelle fenêtre, appuyez sur Maj pendant que vous cliquez sur le Bouton central de la souris (Maj-Windows-A) ou encore cliquez simplement sur l'icône de Folders Popup dans la zone de Notifications, puis choisissez votre dossier favori.`n- Choisissez le menu "Emplacements récents..." (Maj-Windows-R) pour afficher une version à jour des dossiers récents de Windows.`n-Utilisez le menu "Dossiers dans l'Explorateur" pour ouvrir un dossier déjà présent dans une fenêtre de l'Explorateur de fichiers ou le menu "Groupes de dossiers" pour enregistrer et restaurer des groupes de dossiers`n- Choisissez les combinaisons de bouton de la souris et de touches du clavier qui ouvrent le menu popup dans les  "Paramètres, Options".`n- Aussi dans les "Options": choisissez votre langue d'utilisation, la taille des icônes de menu, les couleurs des fenêtres. Décidez d'afficher le menu des Emplacements récents, les raccourcis clavier numériques ou fixez le menu popup à une position de votre choix.`n-Utilisateurs de Directory Opus, consultez <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/">cette page</a> (en anglais) pour des renseignements additionnels.`n-Utilisateurs de Total Commander, consultez <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/">cette page</a> (en anglais) pour des renseignements additionnels.
+lHelpText3	Pour ajouter rapidement un DOSSIER à votre menu:`n1) Allez dans un dossier fréquemment utilisé.`n2) Sur votre souris, cliquez sur ~1~ (~2~) et choisissez "Ajouter ce dossier".`n3) Attribuez un nom court à ce dossier, cliquez "Ajouter", puis "Enregistrer" dans la fenêtre des paramètres.
+lHelpText4	Pour ajouter à votre menu un DOCUMENTS ou un LIEN WEB:`n1) Ouvrez le menu de Folders Popup et choisissez "Paramètres" (~1~).`n2) Cliquez sur le bouton "Ajouter" et choisissez l'option "Document" ou "Lien (URL)".`n3) Attribuez un nom court à ce favori, indiquez l'emplacement du document (bouton "Parcourir") ou l'adresse URL du lien, cliquez sur "Ajouter" et "Enregistrer" dans la fenêtre des paramètres.
+lHelpText5	- Dans la zone de Notifications, cliquez sur l'icône de Folders Popup avec le bouton de droite et sélectionnez l'option "Exécuter au démarrage" pour lancer FoldersPopup automatiquement au lancement de Windows.`n- Besoin d'ouvrir un dossier alors que vous travaillez dans une application? De n'importe quelle fenêtre, sur votre souris, appuyez sur ~1~ (~2~) ou encore cliquez simplement sur l'icône de Folders Popup dans la zone de Notifications, puis choisissez votre dossier favori.`n- Choisissez le menu "Emplacements récents..." (~3~) pour afficher une version à jour des dossiers récents de Windows.`n-Utilisez le menu "Dossiers dans l'Explorateur" (~4~) pour ouvrir un dossier déjà présent dans une fenêtre de l'Explorateur de fichiers ou le menu "Groupes de dossiers" (~5~) pour enregistrer et restaurer des groupes de dossiers.`n- Ouvrez les dossiers, fichiers ou URLs dont l'adresse est dans votre Presse-papiers avec le menu ""Presse-papiers"" (~6~) ou collez l'emplacement d'un favori dans le Presse-papiers avec le menu "Coller l'emplacement d'un favori" (~7~).`n- Choisissez les combinaisons de bouton de la souris et de touches du clavier qui ouvrent le menu popup dans les  "Paramètres, Options".`n- Aussi dans les "Options": choisissez votre langue d'utilisation, la taille des icônes de menu, les couleurs des fenêtres. Décidez d'afficher le menu des Emplacements récents, les raccourcis clavier numériques ou fixez le menu popup à une position de votre choix.`n-Utilisateurs de Directory Opus, consultez <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/">cette page</a> (en anglais) pour des renseignements additionnels.`n-Utilisateurs de Total Commander, consultez <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/">cette page</a> (en anglais) pour des renseignements additionnels.
 lHelpText6	Le soutien sur FoldersPopup est disponible à <a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a> (en français ou en anglais).
 lHelpText7	~1~ Jean Lalonde 2013-2014. Gratuiciel.
 lHelpTextLead	Avec FoldersPopup, navigez en un clin d'oeil parmi vos dossiers, pages web et documents favoris!
@@ -197,6 +197,7 @@ lMenuMyMusic	Ma musique
 lMenuMySystemMenu	Mes dossiers spéciaux
 lMenuMyVideo	Mes vidéos
 lMenuNetworkNeighborhood	Réseau
+lMenuPasteLocation	Coller l'emplacement du favori
 lMenuPictures	Images
 lMenuProgramFiles	Programmes
 lMenuProgramsFolderStartMenu	Dossier Programmes (menu Démarrer)
@@ -247,9 +248,10 @@ lOptionsDisplayGroupMenu	Groupes de dossiers
 lOptionsDisplayIcons	Afficher les icônes des menus
 lOptionsDisplayMenus	Afficher les menus:
 lOptionsDisplayMenuShortcuts	Afficher les raccourcis numériques
+lOptionsDisplayPasteLocationdMenu	Coller l'emplacement du favori
 lOptionsDisplayRecentFolders	Emplacements récents
-lOptionsDisplaySpecialMenusShortcuts	Afficher ces raccourcis dans le menu principal
 lOptionsDisplaySpecialFolders	Dossiers spéciaux
+lOptionsDisplaySpecialMenusShortcuts	Afficher ces raccourcis dans le menu principal
 lOptionsGuiTitle	Options - ~1~ ~2~
 lOptionsHotkeys	Autres déclencheurs
 lOptionsIconSize	Taille des icones de menu
@@ -268,6 +270,9 @@ lOptionsMouseNone	Aucun
 lOptionsNoKeyOrMouseSpecified	Aucune touche du clavier ou bouton de la souris n'a été sélectionné. La sélection actuelle ~1~ est inchangée.
 lOptionsOpenMenuOnTaskbar	Ouvrir le menu sur la barre des tâches
 lOptionsOtherOptions	Général
+lOptionsPasteLocation	~1~ colle l'emplacement d'un favori:
+lOptionsPasteLocationRadioClipboard	Dans le Presse-papiers
+lOptionsPasteLocationRadioKeyboard	Au point d'insertion du clavier
 lOptionsPopupFix	Menu popup à une position fixe
 lOptionsPopupFixPositionX	Position X:
 lOptionsPopupFixPositionY	Y:
@@ -293,11 +298,13 @@ lOptionsTotalCommanderUseTabs	Utiliser les onglets
 lOptionsTrayTip	Afficher la notification au démarrage
 lOptionsTriggerFor	Déclencheur pour:
 lOptionsWin	Win
+lPasteLocationCopiedToClipboard	Emplacement copié dans le Presse-papiers
 lPickIconButtonCustom	Personnalisé
 lPickIconButtonDefault	Par défaut
 lPickIconDocumentPrompt	Voulez-vous choisir une icône personnalisée ou l'icône par défaut pour ce type de document?
 lPickIconNoLocation	Veuillez d'abord choisisr un favori avant de sélectionner une icône.
 lPickIconTitle	Selection Icône de ~1~ - ~2~
+lPopupMenuPasteTrayTip	Choisissez le favori à coller
 lReloadPrompt	Changement de ~1~ enregistré: ~2~. Voulez-vous relancer ~3~ en ~2~ maintenant? Les changements non sauvegardés dans le menu des dossiers seront perdus.
 lReloadPromptDefaultHotkey	La valeur par défaut pour ce déclencheur a été rétablie. Ceci ne sera effectif qu'après la relance de ~1~.`n`nVoulez-vous relancer ~1~ maintenant? Les changements non sauvegardés dans le menu des dossiers seront perdus.
 lTrayTipInstalledDetail	Pour afficher le menu de ~1~, appuyez sur:`n`n~2~ / ~3~`ndans un Explorateur de fichiers ou dans une boîte de dialogue`n`n~4~ / ~5~`npour ouvrir un nouvel Explorateur
