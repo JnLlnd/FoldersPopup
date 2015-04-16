@@ -18,6 +18,7 @@
 	* help text updates, addition of help text about Clipboard and Paste Favorite's Location menus
 	* display current customized shortcuts in Help text (English only for now)
 	* support comments starting with ";" in language files
+	* support comments at end of lines after ";" in language files
 
 	Version: 5.0.9.2 (2015-04-11)
 	* addition of spanish language
@@ -1495,6 +1496,13 @@ if FileExist(strLanguageFile)
 			if SubStr(arrLanguageBit1, 1, 1) = "l"
 				%arrLanguageBit1% := arrLanguageBit2
 			StringReplace, %arrLanguageBit1%, %arrLanguageBit1%, ``n, `n, All
+			
+			if InStr(%arrLanguageBit1%, ";;")
+				StringReplace, %arrLanguageBit1%, %arrLanguageBit1%, % ";;", % "!r4nd0mt3xt!"
+			if InStr(%arrLanguageBit1%, ";")
+				%arrLanguageBit1% := Trim(SubStr(%arrLanguageBit1%, 1, InStr(%arrLanguageBit1%, ";") - 1)) ; trim from ; and trim spaces and tabs
+			if InStr(%arrLanguageBit1%, "!r4nd0mt3xt!")
+				StringReplace, %arrLanguageBit1%, %arrLanguageBit1%, % "!r4nd0mt3xt!", % ";"
 		}
 	}
 }
