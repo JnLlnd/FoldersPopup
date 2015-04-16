@@ -12,7 +12,7 @@
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 5.0.9.3 (2015-04-??)
+	Version: 5.0.9.3 (2015-04-15)
 	* sort URLs in Clipboard menu
 	* Spanish, Dutch and French text updates
 	* help text updates, addition of help text about Clipboard and Paste Favorite's Location menus
