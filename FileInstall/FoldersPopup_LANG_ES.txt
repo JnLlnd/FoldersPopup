@@ -152,11 +152,11 @@ lGuiTitle	Parámetros - ~1~ ~2~
 lHelpTabAddingFavorite	Añadir favoritos
 lHelpTabGettingStarted	Primer paso
 lHelpTabTitlesTipsAndTricks	Trucos y astucias
-lHelpText1	Al abrir FoldersPopup, un icono espera sus órdenes en el área de notificaciones. Cuando se quiere cambiar la carpeta en Windows File Explorer o en un cuadro de diálogo de archivos, sólo tiene que pulsar el botón central del ratón o la tecla de Windows-A y un menú emergente muestra sus carpetas favoritas. Haga clic en la carpeta deseada y FoldersPopup al instante le lleva allí! O para abrir rápidamente un documento o página web.
+lHelpText1	Al iniciar FoldersPopup un icono espera sus órdenes en el área de notificaciones. Cuando desea cambiar el archivo de carpeta en el Explorador de Windows o en un diálogo de archivo, pulse sobre [~1~] o presione el botón [~2~] de manera que un menú emergente muestre sus carpetas favoritas. Haga clic en la carpeta deseada y FoldersPopup la abrirá de inmediato ! O para abrir rápidamente un documento o página web.
 lHelpText2	Elija "Parámetros" para abrir la caja de configuración de FoldersPopup donde usted podrá añadir a su menú CARPETAS, DOCUMENTOS o LINKS. A continuación, puede borrar, mover o cambiar el nombre. También puede añadir, mover, renombrar o borrar SUB-MENÚS. Elija la opción "Cambio de menú" en la lista desplegable. Haga clic en "Guardar" para guardar los cambios.
-lHelpText3	Para añadir rápidamente una CARPETA a su menú:`n1) Ir a una carpeta de uso frecuente.`n2) Haga clic en el botón central del ratón (Windows-A) y elija "Añadir esta carpeta".`n3) Atribuir un nombre corto a esta carpeta, haga clic "Añadir", y despues "Guardar" en la ventana de parámetros.
-lHelpText4	Para añadir a su menú un DOCUMENTO o un LINK WEB:`n1) Abra el menú de Folders Popup y elija "Parámetres" (May-Windows-F).`n2) Clique ssobre el botón "Añadir" y elija la opción "Documento" o "Link (URL)".`n3) Elija un nombre corto para ese favorito, indique la ubicación del documento (botón "Revisar") o la dirección URL del link, clique sobre "Añadir" y "Guardar" en la ventana de parámetros.
-lHelpText5	- En la zona de Notificaciones, clique sobre el icono de Folders Popup con el botón derecho y seleccione la opción "Ejecutar al inicio" para lanzar FoldersPopup automaticamente con el arranque de Windows.`n- Necesita abrir un archivo mientras está trabajando en una aplicación? Sin importar que ventana, pulse May a la vez que clica sobre el botón central de su ratón (May-Windows-A) o también clique simplemente sobre el icono de Folders Popup en la zona de Notificaciones, y despues elija su carpeta favorita.`n- Elija el menú "Ubicaciones recientes..." (May-Windows-R) para ver una versión actualizada de los archivos recientes en Windows.`n-Utilice el menú "Carpetas en el Explorador" para abrir una carpeta ya presente en una ventana del explorador de ficheros o el menú "Grupos de carpetas" para guardar y restaurar los grupos de carpetas`n- Elija las combinaciones de botones del ratón y atajos de teclado que abren el menú popup en "Parámetros, Opciones".`n- Tambien en las "Opciones": elija su idioma, el tamaño de los iconos del menú, los colores de las ventanas. Elija para mostrar en el menú "Ubicaciones Recientes, atajos de teclado numérico o ubique el menú popup en la posición deseada.`n-Usuarios de Directory Opus, consultar <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/">esta página</a> (en inglés) para instrucciones adicionales.`n-Usuarios de Total Commander, consultar <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/">esta página</a> (en inglés) para instrucciones adicionales.
+lHelpText3	Para añadir rápidamente una CARPETA a su menú:`n1) Vaya a una carpeta de uso frecuente.`n2) En el ratín clicque [~1~] (o pulse sobre [~2~]) y elija "Añadir esta carpeta".`n3) Introduzca un nombre corto para esta carpeta, clique en "Añadir", y despues "Guardar" en la ventana de parámetros.
+lHelpText4	Para añadir a su menú un DOCUMENTO o un LINK WEB:`n1) Abra el menú de Folders Popup y elija"Parámetros" (o pulse sobre [~1~]).`n2) Clique en el botón "Añadir" y elija la opción "Documento" o  "Link (URL)".`n3) Introduzca un nombre corto para este favorito, indique la ubicación del documento (botón "Examinar") o la dirección URL del link, clique sobre "Añadir" y "Guardar" en la ventana de parámetros.
+lHelpText5	- En la zona de Notificaciones clique sobre el icono de Folders Popup con el botón derecho y seleccione "Ejecutar al Inicio" para lanzar FoldersPopup al inicio de Windows.`n- Necesita abrir un archivo mientras está trabajando en una aplicación? Desde cualquier ventana, clique en [~1~] (o pulse sobre [~2~]) o tambien puede clicar en el icono de Folders Popup en la barra de Notifications, y despues elija su carpeta favorita.`n- Elija el menú "Ubicaciones recientes..." (o pulse sobre [~3~]) para ver una versión actualizada de los archivos recientes en Windows.`n-Utilice el menú "Carpetas en el Explorador" (o pulse sobre [~4~]) para abrir un archivo ya existente en la ventana del explorador de archivos o el menú "Grupos de carpetas" (o pulse sobre [~5~]) para guardar y restaurar grupos de carpetas.`n- Abra las carpetas, archivos o direcciones URL cuya dirección está en el portapapeles con el menú "Portapapeles" (o pulse sobre [~6~]) pegue la ubicación de un favorito en el Portapapeles con el menú "Pegar la ubicación de un favorito" (o pulse sobre [~7~]).`n- Elija las combinaciones de botón del ratón y de atajos de teclado que abren el menú emergente en los  "Parámetros, Opciones".`n- Tambien en "Opciones": elija su idioma, el tamaño de iconos del menú, los coores de las ventanas. Elija para mostrar el menú Ubicaciones recientes, los atajos de teclado numérico o fijar el menú emergente en una posición de su elección.`n-Usuarios de Directory Opus, consultar <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/">esta página</a> (en inglés) para instrucciones adicionales.`n-Usuarios de Total Commander, consultar <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/">esta página</a> (en inglés) para más instrucciones.
 lHelpText6	El soporte de FoldersPopup esta disponible en <a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
 lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware.
 lHelpTextLead	Con FoldersPopup, podrá navegar de un vistazo por sus archivos, páginas web y documentos favoritos!
@@ -197,6 +197,7 @@ lMenuMyMusic	Mi música
 lMenuMySystemMenu	Mis carpetas especiales
 lMenuMyVideo	Mis videos
 lMenuNetworkNeighborhood	Red
+lMenuPasteLocation	Pegar la ubicación de un favorito
 lMenuPictures	Imágenes
 lMenuProgramFiles	Programas
 lMenuProgramsFolderStartMenu	Carpeta Programas (menú Inicio)
@@ -234,8 +235,8 @@ lOptionsArrDescriptions1	Elija el botón del ratón y combinación de teclas que ab
 lOptionsArrDescriptions2	Elija el botón del ratón y combinación de teclas que abrirá el menú popup en CUALQUIER VENTANA y abrira la carpeta seleccionada en una NUEVA ventana del explorador de Windows. De forma predeterminada, es el botón del ratón central (mbutton) con el Shift tecla de modificación May. (Shift).
 lOptionsArrDescriptions3	Elija la combinación de teclas del teclado que abrirán el menú emergente en el explorador de Windows o en diálogos de archivo. De forma predeterminada, es la combinación Windows-A (la letra "A" mientras se pulsa la tecla de Windows).
 lOptionsArrDescriptions4	Elija la combinación de teclas del teclado que abren el menú popup en CUALQUIER ventana y abrirá la carpeta seleccionada en una NUEVA ventana del explrorador de Windows. De forma predeterminada, es la combinación Shift-Windows-A (la letra "A", mientras que las teclas de Windows y Shift son presionadas).
-lOptionsArrDescriptions5	Elija la combinación de teclas del teclado o el botón del ratón que abrirá el menú "UBICACIONES RECIENTES". De forma predeterminada, esto es Shift + Control + R.
-lOptionsArrDescriptions6	Elija la combinación de teclas en el botón del teclado o el ratón que abrirá el cuadro de diálogo Configuración FoldersPopup. De forma predeterminada, esto es Shift + Control + S.
+lOptionsArrDescriptions8	Elija la combinación de teclas del teclado o el botón del ratón que abrirá el menú "UBICACIONES RECIENTES". De forma predeterminada, esto es Shift + Control + R.
+lOptionsArrDescriptions5	Elija la combinación de teclas en el botón del teclado o el ratón que abrirá el cuadro de diálogo Configuración FoldersPopup. De forma predeterminada, esto es Shift + Control + S.
 lOptionsChangeHotkey	Modificar
 lOptionsChangeHotkeyTitle	Modificar lanzador - ~1~ ~2~
 lOptionsCheck4Update	Compruebe Actualización
@@ -248,9 +249,10 @@ lOptionsDisplayGroupMenu	Grupos de carpetas
 lOptionsDisplayIcons	Mostrar los iconos del menú
 lOptionsDisplayMenus	Mostrar los menús:
 lOptionsDisplayMenuShortcuts	Mostrar atajos numéricos
+lOptionsDisplayPasteLocationMenu	Pegar la ubicación de un favorito
 lOptionsDisplayRecentFolders	Ubicaciones recientes
-lOptionsDisplaySpecialMenusShortcuts	Mostrar accesos directos en el menú principal
 lOptionsDisplaySpecialFolders	Carpetas especiales
+lOptionsDisplaySpecialMenusShortcuts	Mostrar accesos directos en el menú principal
 lOptionsGuiTitle	Opciones - ~1~ ~2~
 lOptionsHotkeys	Otros lanzadores
 lOptionsIconSize	Tamaño de iconos del menú
@@ -263,12 +265,15 @@ lOptionsMenuNearMouse	Cerca del puntero del ratón
 lOptionsMenuPositionPrompt	Mostrar el menú popup:
 lOptionsMouse	Ratón
 lOptionsMouseAndKeyboard	Lanzadores de menú
-lOptionsMouseButtonsText	Botón izquierdo|Botón central|Botón derecho|Botón especial 1|Botón especial 2|Marcar hacia arriba|Marcar hacia abajo|Marcar a izquierda|Marcar a derecha|
+lOptionsMouseButtonsText	Botón izquierdo del ratón|Botón central del ratón|Botón derecho del ratón|Botón especial 1 del ratón|Botón especial 2 del ratón|Mover hacia arriba|Mover hacia abajo|Mover a la izquierda|Mover a la derecha|
 lOptionsMouseCheckLButton	No se puede asignar el "botón izquierdo del ratón" con ninguna tecla modificadora.
 lOptionsMouseNone	Ninguno
 lOptionsNoKeyOrMouseSpecified	No se ha seleccionado ningún botón del teclado o el ratón. La selección actual ~1~ no tiene cambios.
 lOptionsOpenMenuOnTaskbar	Abrir el menú en la barra de tareas
 lOptionsOtherOptions	General
+lOptionsPasteLocation	~1~ pegar la ubicación del favorito:
+lOptionsPasteLocationRadioClipboard	En el Portapapeles
+lOptionsPasteLocationRadioKeyboard	En el punto del teclado de inserción
 lOptionsPopupFix	Menú popup en una posición fija
 lOptionsPopupFixPositionX	Posición X:
 lOptionsPopupFixPositionY	Y:
@@ -288,18 +293,20 @@ lOptionsThirdPartyDetailFPconnect	Para activar la integración con otros gestores
 lOptionsThirdPartyPrompt	Archivo:
 lOptionsThirdPartyTitle	Usuarios de ~1~
 lOptionsThirdPartyTitleFPconnect	Usuarios de otros gestores de archivos con FPconnect
-lOptionsTitles	Menú del botón del ratón para las carpetas de apertura de PF en el Explorador o el diálogo activo|Menú del botón del ratón para FP abrir carpetas en un nuevo Explorador|Menú contextual para la apertura de los archivos en la ventana del cuadro de diálogo activo o Explorador|Menú contextual para abrir las carpetas en un nuevo Explorador|Parámetros|Menú de Carpetas en el Explorador|Menú de los grupos|Menú de Ubicaciones recientes|Menú del Portapapeles|Coller l'emplacement
-lOptionsTitlesSub	Este botón del ratón puede abrir el menú en las ventanas del Explorador (y otros gestores de archivos soportados) y las cajas de diálogo.|Este botón del ratón puede abrir el menú haciendo clic en cualquier parte de la pantalla.|Este atajo de teclado puede abrir el menú cuando se abre una ventana del Explorador (y otros gestores de archivos soportados) o una caja de diálogo que esté activa.|Este atajo de teclado puede abrir el menú en todo momento.|(configuración de menú y opciones)|(lista de carpetas abiertas en el Explorador)|(lista de grupos de carpetas)|(lista de ubicaciones recientes de Windows)|(lista de carpetas, archivos y direcciones web en el Portapapeles)|(envoyer l'adresse du fichier ou de la page web au clavier ou au Presse-papiers)
+lOptionsTitles	Menú del botón del ratón para las carpetas de apertura de PF en el Explorador o el diálogo activo|Menú del botón del ratón para FP abrir carpetas en un nuevo Explorador|Menú contextual para la apertura de los archivos en la ventana del cuadro de diálogo activo o Explorador|Menú contextual para abrir las carpetas en un nuevo Explorador|Parámetros|Menú de Carpetas en el Explorador|Menú de los grupos|Menú de Ubicaciones recientes|Menú del Portapapeles|Pegar la ubicación
+lOptionsTitlesSub	Este botón del ratón puede abrir el menú en las ventanas del Explorador (y otros gestores de archivos soportados) y las cajas de diálogo.|Este botón del ratón puede abrir el menú haciendo clic en cualquier parte de la pantalla.|Este atajo de teclado puede abrir el menú cuando se abre una ventana del Explorador (y otros gestores de archivos soportados) o una caja de diálogo que esté activa.|Este atajo de teclado puede abrir el menú en todo momento.|(configuración de menú y opciones)|(lista de carpetas abiertas en el Explorador)|(lista de grupos de carpetas)|(lista de ubicaciones recientes de Windows)|(lista de carpetas, archivos y direcciones web en el Portapapeles)|(pegar la ruta o la URL del favorito al portapapeles o al teclado)
 lOptionsTotalCommanderUseTabs	Utilizar las pestañas
 lOptionsTrayTip	Mostrar notificación al inicio
 lOptionsTriggerFor	Lanzador para:
 lOptionsWin	Windows
 lOptionsWinShort	Win
+lPasteLocationCopiedToClipboard	Ubicación copiada al portapapeles
 lPickIconButtonCustom	Personalizada
 lPickIconButtonDefault	Por defecto
 lPickIconDocumentPrompt	Quiere elegir un icono personalizado o el icono por defecto para este tipo de documento?
 lPickIconNoLocation	Por favor, primero elegir un favorito antes de seleccionar un icono.
 lPickIconTitle	Selección del Icono de ~1~ - ~2~
+lPopupMenuPasteTrayTip	Elija el favorito a pegar
 lReloadPrompt	Cambio ~1~ guardado: ~2~. Desea reiniciar ~3~ en ~2~ ahora? Se perderán los cambios no guardados en el menú de carpetas.
 lReloadPromptDefaultHotkey	Se ha establecido el valor predeterminado para este lanzador. Esta será efectiva después de relanzar ~1~.`n`nQuiere relanzar ~1~ ahora? Se perderán los cambios no guardados en el menú de carpetas.
 lTrayTipInstalledDetail	Para marcar el menú de ~1~, clicar sobre:`n`n~2~ / ~3~`nen un explorador de archivos o en una caja de diálogo`n`n~4~ / ~5~`npara abrir un nuevo Explorador

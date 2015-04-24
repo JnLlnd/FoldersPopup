@@ -154,11 +154,11 @@ lGuiTitle	Einstellungen - ~1~ ~2~
 lHelpTabAddingFavorite	Favorit hinzufügen
 lHelpTabGettingStarted	Anfangen
 lHelpTabTitlesTipsAndTricks	Tips und Tricks
-lHelpText1	Beim Start fügt FoldersPopup ein Symbol im System Tray hinzu und wartet auf den Einsatz. Wenn Sie das aktuelle Verzeichnis im Windows Explorer oder in einem Dateiauswahlfenster wechseln möchten, klicken Sie einfach mit der mittleren Maustaste oder drücken Sie Windows-A und wählen Sie im Popup-Menü das gewünschte Verzeichnis. FoldersPopup wechselt dann sofort dorthin! Oder nutzen Sie die Möglichkeit, schnell ein bestimmtes Dokument oder eine Webseite zu öffnen.
+lHelpText1	Beim Start fügt FoldersPopup ein Symbol im System Tray ein und erwartet Anweisungen. Wenn Sie im Explorer oder einer Dateiauswahlbox das Verzeichnis wechseln müssen, klicken Sie einfach [~1~] oder drücken [~2~] und wählen im Popup-Menü den gewünschten Ordner. FoldersPopup führt Sie so schnell dorthin! Oder verwenden Sie es zum Öffnen favorisierter Dokumente oder Webseiten.
 lHelpText2	Wählen Sie "Einstellungen" um das Einstellungsfenster zu öffnen, wo Sie favorisierte ORDNER, DOKUMENTE oder WEBSEITEN zum Menü hinzufügen können. Sie können diese verschieben, umbenennen oder löschen. Sie können ebenfalls UNTERMENÜS hinzufügen, verschieben oder löschen. Wählen Sie hierzu "Zu bearbeitendes Menü:" in der Dropdown-Auswahl. Klicken Sie auf "Speichern" um die Änderungen zu sichern.
-lHelpText3	Um schnell einen neuen Favoriten zum Popup-Menü hinzuzufügen:`n1) Navigieren Sie zu einem oft benutzten Ordner.`n2) Klicken Sie mit der mittleren Maustaste (oder drücken Sie Windows-A) und wählen Sie "Diesen Ordner hinzufügen".`n3) Vergeben Sie einen kurzen, sprechenden Namen, klicken sie "Hinzufügen" und "Speichern" im Einstellungsfenster.
-lHelpText4	Um schnell ein neues DOKUMENT oder einen WEBLINK zum Popup-Menü hinzuzufügen:`n1) Öffnen Sie das Popup-Menü des Ordners und wählen Sie "Einstellungen" (Shift-Windows-F).`n2) Klicken Sie "Hinzufügen" und wählen Sie die Option "Dokument" oder "Link (URL)".`n3) Vergeben Sie einen kurzen, sprechenden Namen, navigieren Sie zum Dokument oder geben Sie die URL der Webseite ein, klicken Sie "Hinzufügen" und "Speichern" im Einstellungsfenster.
-lHelpText5	- Aktivieren Sie  die Option "Beim Starten ausführen" im Tray-Menü, um FoldersPopup automatisch beim Systemstart auszuführen.`n- Soll ein bevorzugter Ordner in einem neuen Explorer-Fenster geöffnet werden? Drücken Sie einfach die Shift-Taste zusammen mit der linken und mittleren Maustaste (oder Shift-Windows-A). Dies erlaubt es, einen bevorzugten Ordner aus jedem Fenster heraus zu öffnen.`n- Wählen Sie das "Kürzlich geöffnete Ordner..." Menü (Shift-Windows-R) um eine aktualisierte Liste der kürzlich geöffneten Ordner zu sehen.`n- Benutzen Sie "Aktuelle Ordner" um einen Ordner zu öffnen, der bereits in einem Explorer-Fenster geöffnet ist, oder "Ordnergruppen" um Gruppen von Ordnern wiederherzustellen.`n- Konfigurieren Sie die Popup-Menü Trigger: wählen Sie die bevorzugte Maustaste oder das Tastaturkürzel unter "Einstellungen, Optionen".`n- Ebenfalls unter "Optionen": wählen Sie die bevorzugte Sprache, Symbolgröße oder Fensterfarbe. Wählen Sie die Optionen zur Anzeige der bevorzugten Ordner, fügen Sie dem Ordner-Menü numerische Tastenkürzel hinzu oder geben Sie dem Popup-Menü eine feste Position.`n- Directory Opus Benutzer, lesen Sie bitte <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/">Diese Seite</a> für weitere Informationen.`n- Total Commander Benutzer, lesen Sie bitte <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/">Diese Seite</a> für weitere Informationen.
+lHelpText3	Um schnell einen neuen ORDNER zum Popup-Menü HINZUZUFÜGEN:`n1) Wechseln Sie in einen oft benötigten Ordner.`n2) Klicken Sie mit der Maus [~1~] (oder drücken [~2~]) und wählen "Diesen Ordner hinzufügen".`n3) Vergeben Sie einen kurzen Namen, klicken Sie "Hinzufügen", danach "Speichern" im Einstellungsdialog.
+lHelpText4	Um dem Popup-Menü ein neues DOKUMENT oder eine WEBSEITE hinzuzufügen:`n1) Öffnen Sie das Folders Popup Menü und wählen "Einstellungen" (oder drücken [~1~]).`n2) Klicken Sie auf "Hinzufügen" und wählen die Option "Dokument" oder "Link (URL)".`n3) Vergeben Sie einen kurzen Namen, wechseln Sie zum Dokument oder geben Sie die URL ein, klicken "Hinzufügen", danach "Speichern" im Einstellungsdialog.
+lHelpText5	- Klicken Sie im Traymenü mit der rechten Maustaste auf das Symbol und aktivieren Sie "Beim Start ausführen" um FoldersPopup automatisch zu starten.`n- Benötigen Sie ein neues Explorerfenster während Sie in einer Anwendung arbeiten? Klicken Sie aus jedem Fenster heraus mit [~1~] (oder drücken [~2~]), oder klicken Sie einfach auf das Folders Popup Symbol im Systembereich und wählen Sie das gewünschte Verzeichnis.`n- Wählen Sie das "Kürzliche Ordner..." Menü (oder drücken [~3~]) um eine aktualisierte Liste der kürzlich verwendeten Ordner anzuzeigen.`n- Verwenden Sie das "Kürzlich verwendete Ordner" Menü (oder drücken [~4~]) um ein bereits geöffnetes Verzeichnis oder das "Ordnergruppen" Menü (oder drücken [~5~]) um Verzeichnisgruppen wiederherzustellen oder zu speichern.`n- Erreichen Sie Ordner, Dateien oder URLs in der Zwischenablage aus dem "Zwischenablage" Menü (oder drücken [~6~]) oder übertragen Sie die Position beliebiger Favoriten in die Zwischenablage mittels des "Position des Favoriten einfügen" Menüs (oder [~7~]).`n- Stellen Sie die Kurztasten des Popup-Menüs ein: Wählen Sie Ihre bevorzugten Maustasten oder Tastaturkürzel in "Einstellungen, Optionen".`n- Auch unter "Optionen": Wählen Sie die bevorzugte Sprache, Symbolgröße in den Menüs, Fensterfarben. Wählen Sie die Optionen für die Darstellung der Ordner, fügen Sie Tastaturkürzel auf dem numerischen Tastenfeld hinzu oder heften Sie das Popup Menü an eine bestimmte Stelle.`n-Nutzer von Directory Opus, siehe <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/">diese Webseite</a> für weitere Informationen.`n-Nutzer von Total Commander, siehe <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/">diese Webseite</a> für weitere Informationen.
 lHelpText6	Support für FoldersPopup gibt es auf`n<a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
 lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware!
 lHelpTextLead	FoldersPopup ermöglicht es Ihnen, schnell zwischen häufig benutzten Ordnern, Dokumenten und Webseiten zu wechseln!
@@ -198,6 +198,7 @@ lMenuMyMusic	Eigene Musik
 lMenuMySystemMenu	Meine Systemordner
 lMenuMyVideo	Eigene Videos
 lMenuNetworkNeighborhood	&Netzwerkumgebung
+lMenuPasteLocation	Bevorzugte Position einfügen
 lMenuPictures	Bilder
 lMenuProgramFiles	Programme
 lMenuProgramsFolderStartMenu	Programme (Startmenü)
@@ -234,8 +235,8 @@ lOptionsArrDescriptions1	Wählen Sie die MAUStaste und die Kombitasten, welche da
 lOptionsArrDescriptions2	Wählen Sie die MAUStaste und die Kombitasten, welche das FoldersPopup Menü in JEDEM Fenster öffnet und zum gewählten Ordner in einem NEUEN Explorer-Fenster navigiert. Standardmäßig ist dies die mittlere Maustaste mit gedrückter Shift-Taste.
 lOptionsArrDescriptions3	Wählen Sie die TASTENkombination, welche das popup menü im Windows Explorer oder Dateidialogboxen aufruft. Standardmäßig ist dies Windows+A (Taste A, während die Windows-Taste gdrückt wird).
 lOptionsArrDescriptions4	Wählen Sie die TASTENkombination, welche das popup menu Menü in JEDEM Fenster öffnet und zum gewählten Ordner in einem NEUEN Explorer-Fenster navigiert. Standardmäßig ist dies Shift+Windows+A (Tasten Shift und "A", während die Windows-Taste gedrückt wird).
-lOptionsArrDescriptions5	Wählen Sie die Schnelltaste oder Maustastenkombination, welche das FoldersPopup Menü "Kürzlich verwendete Ordner" öffnet. Standardmäßig ist dies Shift+Control+R.
-lOptionsArrDescriptions6	Wählen Sie die Tastenkombination oder Maustasten-Kombination, welche den FoldersPopup Einstellungsdialog aufruft. Standardmäßig ist dies Shift+Control+S.
+lOptionsArrDescriptions8	Wählen Sie die Schnelltaste oder Maustastenkombination, welche das FoldersPopup Menü "Kürzlich verwendete Ordner" öffnet. Standardmäßig ist dies Shift+Control+R.
+lOptionsArrDescriptions5	Wählen Sie die Tastenkombination oder Maustasten-Kombination, welche den FoldersPopup Einstellungsdialog aufruft. Standardmäßig ist dies Shift+Control+S.
 lOptionsChangeHotkey	Ändern
 lOptionsChangeHotkeyTitle	Tastenkürzel ändern - ~1~ ~2~
 lOptionsCheck4Update	Nach Update suchen
@@ -248,6 +249,7 @@ lOptionsDisplayGroupMenu	Gruppe der Ordnermenüs
 lOptionsDisplayIcons	Zeige Icons im Menü
 lOptionsDisplayMenus	Anzuzeigende Menüs:
 lOptionsDisplayMenuShortcuts	Zeige &numerische Menü-Tastenkürzel
+lOptionsDisplayPasteLocationMenu	Position des Favoriten einfügen
 lOptionsDisplayRecentFolders	Kürzlich verwendete Ordner
 lOptionsDisplaySpecialFolders	S&pezielle Ordner
 lOptionsDisplaySpecialMenusShortcuts	Zeige diese Kurztasten im Hauptmenü
@@ -256,19 +258,22 @@ lOptionsHotkeys	Andere Hotkeys
 lOptionsIconSize	Symbolgröße im Menü
 lOptionsKeyboard	Tastatur
 lOptionsLanguage	Sprache
-lOptionsLanguageLabels	Englisch|Französisch|Deutsch|Holländisch|Koreanisch|Schwedisch|Italienisch|Spanish
+lOptionsLanguageLabels	Englisch|Französisch|Deutsch|Holländisch|Koreanisch|Schwedisch|Italienisch|Spanisch
 lOptionsMenuActiveWindow	Im aktiven Fenster
 lOptionsMenuFixPosition	An fester Position
 lOptionsMenuNearMouse	Nahe des Mauszeigers
 lOptionsMenuPositionPrompt	Menü aufpoppen:
 lOptionsMouse	Maus
 lOptionsMouseAndKeyboard	Menü Hotkeys
-lOptionsMouseButtonsText	Linke Maustaste|Mittlere Maustaste|Rechte Maustaste|Maus-Spezialtaste 1|Maus-Spezialtaste 2|Mausrad hoch|Mausrad runter|Mausrad nach links|Mausrad nach rechts|
+lOptionsMouseButtonsText	Linke Maustaste|Mittlere Maustaste|Rechte Maustaste|Spezielle Maustaste 1|Spezielle Maustaste 2|Mausrad hoch|Mausrad runter|Wheel Left|Wheel Right|
 lOptionsMouseCheckLButton	Die linke Maustaste kann nicht ohne Zusatztaste definiert werden.
 lOptionsMouseNone	Keine
 lOptionsNoKeyOrMouseSpecified	Kein Tastenkürzel oder Maustaste definiert. Der bestehende Hotkey ~1~ ist unverändert.
 lOptionsOpenMenuOnTaskbar	Menü in der Taskleiste öffnen
 lOptionsOtherOptions	Allgemein
+lOptionsPasteLocation	~1~ fügt bevorzugte Position ein:
+lOptionsPasteLocationRadioClipboard	&In der Zwischenablage
+lOptionsPasteLocationRadioKeyboard	Am derzeitigen Tastatur Einfügepunkt
 lOptionsPopupFix	Popup-&Menü an fester Position
 lOptionsPopupFixPositionX	Position X:
 lOptionsPopupFixPositionY	Y:
@@ -288,18 +293,20 @@ lOptionsThirdPartyDetailFPconnect	Wählen Sie die ausführbare Datei von FPconnect
 lOptionsThirdPartyPrompt	Programmdatei:
 lOptionsThirdPartyTitle	~1~ Benutzer
 lOptionsThirdPartyTitleFPconnect	Andere Benutzer weiterer Dateimanager, die FPconnect verwenden
-lOptionsTitles	Maustaste für FP Menü um Ordner in aktuellem Explorerfenster oder Dialogbox zu öffnen|Maustaste für FP Menü um Ordner in einem neuen Explorerfenster zu öffnen|Tastaturkürzel für FP Menü um Ordner in aktuellem Explorerfenster oder Dialogbox zu öffnen|Tastaturkürzel für FP Menü um Ordner in einem neuen Explorerfenster zu öffnen|Einstellungsfenster|Aktueller Ordner Menü|Gruppen-Menü|Kürzliche Ordner Menü|Zwischenablage-Menü
-lOptionsTitlesSub	Diese Maustaste kann das Menü über Windows Explorer, unterstützte Dateimanager von Drittanbietern und Dialogboxen anzeigen.|Diese Maustaste zeigt das Menü überall anzeigen.|Diese Kurztaste zeigt das Menü im Windows Explorer, unterstützten Dateimanagern von Drittanbietern und Dialogboxen an.|Dieses Tastenkürzel zeigt das Menü jederzeit.|(Menü-Einstellungen und Optionen)|(Liste der aktuell im Explorer geöffneten Ordner)|(Liste der Ordnergruppen)|(Liste der Windows häufigen Orte)|(Liste der Pfade und URLs in der Zwischenablage)
+lOptionsTitles	Maustaste für FP Menü um Ordner in aktuellem Explorerfenster oder Dialogbox zu öffnen|Maustaste für FP Menü um Ordner in einem neuen Explorerfenster zu öffnen|Tastaturkürzel für FP Menü um Ordner in aktuellem Explorerfenster oder Dialogbox zu öffnen|Tastaturkürzel für FP Menü um Ordner in einem neuen Explorerfenster zu öffnen|Einstellungsfenster|Aktueller Ordner Menü|Gruppen-Menü|Kürzliche Ordner Menü|Zwischenablage-Menü|Position einfügen
+lOptionsTitlesSub	Diese Maustaste kann das Menü über Windows Explorer, unterstützte Dateimanager von Drittanbietern und Dialogboxen anzeigen.|Diese Maustaste zeigt das Menü überall anzeigen.|Diese Kurztaste zeigt das Menü im Windows Explorer, unterstützten Dateimanagern von Drittanbietern und Dialogboxen an.|Dieses Tastenkürzel zeigt das Menü jederzeit.|(Menü-Einstellungen und Optionen)|(Liste der aktuell im Explorer geöffneten Ordner)|(Liste der Ordnergruppen)|(Liste der Windows häufigen Orte)|(Liste der Pfade und URLs in der Zwischenablage)|(Pfad oder URL des Fovoriten an Tastatur oder Zwischenablage einfügen)
 lOptionsTotalCommanderUseTabs	Verwende Registerkarten
 lOptionsTrayTip	Beim Start &Tray-Tip anzeigen
 lOptionsTriggerFor	Auslöser für:
 lOptionsWin	Windows
 lOptionsWinShort	Win
+lPasteLocationCopiedToClipboard	Position in Zwischenablage kopiert
 lPickIconButtonCustom	Angepasst
 lPickIconButtonDefault	Standard
 lPickIconDocumentPrompt	Angepasstes oder Standard-Symbol für diese Art von Dokument verwenden?
 lPickIconNoLocation	Bitte zuerst einen Favoriten auswählen, bevor ein Icon gewählt wird.
 lPickIconTitle	Auswahl ~1~ Symbol - ~2~
+lPopupMenuPasteTrayTip	Einzufügenden Fovoriten wählen
 lReloadPrompt	~1~  wurde in ~2~ geändert. Wollen Sie jetzt ~3~ in ~2~ neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
 lReloadPromptDefaultHotkey	Schnelltaste auf Standard zurückgesetzt. Diese Änderung tritt erst durch erneutes Laden von ~1~ in Kraft.`n`nWollen Sie ~1~ jetzt neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
 lTrayTipInstalledDetail	Zur Anzeige des ~1~ Menüs`nim Windows Explorer oder einer Dialogbox`n~2~ oder ~3~ drücken.`n`n~4~ oder ~5~`num ein neues Explorer-Fenster zu öffnen.

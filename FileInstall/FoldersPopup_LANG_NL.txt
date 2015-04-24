@@ -154,11 +154,11 @@ lGuiTitle	Instellingen - ~1~ ~2~
 lHelpTabAddingFavorite	Favoriet toevoegen
 lHelpTabGettingStarted	Er mee beginnen
 lHelpTabTitlesTipsAndTricks	Tips && Tricks
-lHelpText1	Wanneer FoldersPopup gestart wordt dan verschijnt er een icoontje in de systeembalk en FoldersPopup wacht dan op taken van jou. Als je naar een andere map wil springen in Windows Verkenner of in een ander bestandsdialoogvenster, druk dan op de middenste muisknop of druk de Windows-A toetsencombinatie. Vervolgens kan je de gewenste map selecteren en FoldersPopup brengt je er direct naar toe! Of gebruik FoldersPopup om snel 1 van jouw favoriete documenten of webpagina's te openen.
+lHelpText1	Wanneer FoldersPopup gestart wordt dan verschijnt er een icoontje in de systeembalk en FoldersPopup wacht dan op taken van jou. Als je naar een andere map wil springen in Windows Verkenner of in een ander bestandsdialoogvenster, druk dan op de [~1~] of druk de [~2~] toetsencombinatie. Vervolgens kan je de gewenste map selecteren en FoldersPopup brengt je er direct naar toe! Of gebruik FoldersPopup om snel 1 van jouw favoriete documenten of webpagina's te openen.
 lHelpText2	Kies "Instellingen" om het FoldersPopup instellingsvenster te openen waar je MAPPEN, DOCUMENTEN of WEBKOPPELINGEN kan toevoegen aan jouw menu. Uiteraard kan je deze ook hernoemen, verplaatsen of verwijderen. Je kan ook SUBMENU's toevoegen, die je ook weer kan hernoemen, verplaatsen of verwijderen. Selecteer het submenu dat je wil aanpassen in de "Te wijzigen menu" uitklaplijst (dropdown list). Klik vervolgens op "Bewaren" om jouw wijzigingen te bewaren.
-lHelpText3	Je kan snel nieuwe favoriete MAP toevoegen aan het popup menu:`n1) Ga naar een vaak gebruikte map.`n2) Druk op de middenste muisknop (of druk Windows-A) en kies voor "Voeg deze map toe".`n3) Geef deze map een korte naam, druk "OK" en "Bewaren" in het instellingsvenster.
-lHelpText4	Om een nieuw favoriet DOCUMENT of WEBKOPPELING (ook wel WEBLINK genaamd) toe te voegen aan het popup menu:`n1) Open het FoldersPopup menu en kies "Instellingen" (Shift-Windows-F).`n2) Klik op "Toevoegen" en kies vervolgens de optie "Document" of "Link (URL)".`n3) Geef de favoriet een korte naam, navigeer naar het document of voeg de URL van de webpagina toe en klik vervolgens op "Toevoegen". Uiteindelijk bewaar je alles in FoldersPopup door op de knop "Bewaren" te klikken in het instellingsvenster.
-lHelpText5	- Via rechtermuisklik op het FoldersPopup icoontje in de systeembalk kan je de optie "Uitvoeren bij opstarten" activeren om FoldersPopup automatisch te starten tijdens het opstarten van Windwos.`n- Wil je een favoriete map openen in een nieuw Windows verkenner venster?  Druk dan op de middenste muisknop of gebruik de Windows-A toetsencombinatie. Dit laat je ook toe om je favoriete map te openen vanuit een willekeurig ander programma.`n- Gebruik "Huidige Mappen" om een van de mappen te openen die al in een Verkenner venster geopend zijn. Gebruik "Mapgroepen" om groepen van mappen te bewaren of te herstellen.`n- Stel je popup menu triggers in: kies muis knoppen naar jouw voorkeur of sneltoetsen in "Instellingen, Opties".`n- Eveneens in "Opties": kies de taal van jouw voorkeur, de mogelijkheid om ook recente mappen weer te geven, voeg numerieke sneltoetsen toe aan het mapmenu of prik het popup menu vast op een vaste positie.`n-Directory Opus gebruikers, raadpleeg <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/">deze pagina</a> voor bijkomende informatie.`n-Total Commander gebruikers, raadpleeg <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/">deze pagina</a> voor bijkomende informatie.
+lHelpText3	Je kan snel nieuwe favoriete MAP toevoegen aan het popup menu:`n1) Ga naar een vaak gebruikte map.`n2) Druk op de [~1~] (of druk [~2~]) en kies voor "Voeg deze map toe".`n3) Geef deze map een korte naam, druk "OK" en "Bewaren" in het instellingsvenster.
+lHelpText4	Om een nieuw favoriet DOCUMENT of WEBKOPPELING (ook wel WEBLINK genaamd) toe te voegen aan het popup menu:`n1) Open het FoldersPopup menu en kies "Instellingen" (of druk [~1~]).`n2) Klik op "Toevoegen" en kies vervolgens de optie "Document" of "Link (URL)".`n3) Geef de favoriet een korte naam, navigeer naar het document of voeg de URL van de webpagina toe en klik vervolgens op "Toevoegen". Uiteindelijk bewaar je alles in FoldersPopup door op de knop "Bewaren" te klikken in het instellingsvenster.
+lHelpText5	- Via rechtermuisklik op het FoldersPopup icoontje in de systeembalk kan je de optie "Uitvoeren bij opstarten" activeren om FoldersPopup automatisch te starten tijdens het opstarten van Windows.`n- Wil je een favoriete map openen in een nieuw Windows verkenner venster?  Druk dan op de [~1~] of gebruik de [~2~] toetsencombinatie. Je kan ook op het Folders Popup icoontje klikken in de System Tray en van daaruit jouw favoriete map selecteren.`n- Gebruik het "Recente mappen..." menu (of druk [~3~]) om een actueel overzicht te krijgen van de recent gebruikte Windows mappen.`n- Gebruik "Huidige Mappen" (of druk [~4~]) om een van de mappen te openen die al in een Verkenner venster geopend zijn. Gebruik "Mapgroepen" (of druk [~5~]) om groepen van mappen te bewaren of te herstellen.`n- Benader de mappen, bestanden of URLs op je Klembord vanuit het "Klembord" menu (of druk [~6~]) of plak de locatie van een favoriet op het Klembord door gebruik te maken van het "Plak favorietlocatie" menu (of druk [~7~]).`n- Stel je popup menu triggers in: kies muis knoppen naar jouw voorkeur of sneltoetsen in "Instellingen, Opties".`n- Eveneens in "Opties": kies de taal van jouw voorkeur, de mogelijkheid om ook recente mappen weer te geven, voeg numerieke sneltoetsen toe aan het mapmenu of prik het popup menu vast op een vaste positie.`n-Directory Opus gebruikers, raadpleeg <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/">deze pagina</a> voor bijkomende informatie.`n-Total Commander gebruikers, raadpleeg <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/">deze pagina</a> voor bijkomende informatie.
 lHelpText6	Ondersteuning voor FoldersPopup is beschikbaar via <a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
 lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware.
 lHelpTextLead	FoldersPopup laat je snel wisselen tussen de mappen, documenten en webpagina's die je vaak gebruikt!
@@ -198,6 +198,7 @@ lMenuMyMusic	Mijn Muziek
 lMenuMySystemMenu	Mijn speciale mappen
 lMenuMyVideo	Mijn Video's
 lMenuNetworkNeighborhood	Mijn &Netwerklocaties
+lMenuPasteLocation	Plak favorietlocatie
 lMenuPictures	Afbeeldingen
 lMenuProgramFiles	Programmabestanden
 lMenuProgramsFolderStartMenu	Startmenuprogramma's
@@ -234,8 +235,8 @@ lOptionsArrDescriptions1	Kies de combinatie van MUISknop en speciale toetsen (CT
 lOptionsArrDescriptions2	Kies de combinatie van MUISknop en speciale toetsen (CTRL/ALT/SHIFT/WIN) die het popup menu voor mappen opent in elk willekeurig venster en die navigeert naar de geselecteerde map in een NIEUW venster van Windows Verkenner. Standaard is dit de middenste muisknop terwijl de Shift toets wordt ingedrukt.
 lOptionsArrDescriptions3	Kies de TOETSENBORD sneltoets combinatie die er voor zorgt dat het popup menu voor mappen opent in Windows Verkenner of in bestandsdialoogvensters. Standaard is dit de Windows+A combinatie (de letter "A" terwijl de Windows toets wordt ingedrukt).
 lOptionsArrDescriptions4	Kies de TOETSENBORD sneltoets combinatie die er voor zorgt dat het popup menu voor mappen opent in elk willekeurig venster en die navigeert naar de geselecteerde map in een NIEUW venster van Windows Verkenner. Standaard is dit de Shift+Windows+A combinatie (de letter "A" terwijl de Shift toets en de Windows toets worden ingedrukt).
-lOptionsArrDescriptions5	Kies een sneltoets of een muisknop combinatie die het "Recente Mappen" menu dient te openen. Standaard is dit Shift+Control+R.
-lOptionsArrDescriptions6	Kies de sneltoets of muisknop combinatie die er voor zorgt dat de FoldersPopup instellingen geopend worden. Standaard is dit de toetsencombinatie Shift+Control+S.
+lOptionsArrDescriptions5	Kies de sneltoets of muisknop combinatie die er voor zorgt dat de FoldersPopup instellingen geopend worden. Standaard is dit de toetsencombinatie Shift+Control+S.
+lOptionsArrDescriptions8	Kies een sneltoets of een muisknop combinatie die het "Recente Mappen" menu dient te openen. Standaard is dit Shift+Control+R.
 lOptionsChangeHotkey	Wijzigen
 lOptionsChangeHotkeyTitle	Wijzig sneltoets - ~1~ ~2~
 lOptionsCheck4Update	Controleren op nieuwe versies
@@ -248,6 +249,7 @@ lOptionsDisplayGroupMenu	Groep van mappen
 lOptionsDisplayIcons	Toon Menu Iconen
 lOptionsDisplayMenus	Toon Menus:
 lOptionsDisplayMenuShortcuts	Toon de &Numerieke Menu Sneltoetsen
+lOptionsDisplayPasteLocationMenu	Plak favorietlocatie
 lOptionsDisplayRecentFolders	Recente bezochte mappen
 lOptionsDisplaySpecialFolders	S&peciale Mappen
 lOptionsDisplaySpecialMenusShortcuts	Toon deze sneltoetsen in het hoofdmenu
@@ -256,7 +258,7 @@ lOptionsHotkeys	Andere sneltoetsen
 lOptionsIconSize	Menu iconen grootte
 lOptionsKeyboard	Toetsenbord
 lOptionsLanguage	Taal
-lOptionsLanguageLabels	Engels|Frans|Duits|Nederlands|Koreaans|Zweeds|Italiaans|Spanish
+lOptionsLanguageLabels	Engels|Frans|Duits|Nederlands|Koreaans|Zweeds|Italiaans|Spaans
 lOptionsMenuActiveWindow	In het actieve venster
 lOptionsMenuFixPosition	Op een vaste positie
 lOptionsMenuNearMouse	In de buurt van de muisaanwijzer
@@ -269,6 +271,9 @@ lOptionsMouseNone	Geen
 lOptionsNoKeyOrMouseSpecified	Geen toets of muisknop werd gespecifieerd. De bestaande "~1~" combinatie blijft ongewijzigd.
 lOptionsOpenMenuOnTaskbar	Open menu via de taakbalk
 lOptionsOtherOptions	Algemeen
+lOptionsPasteLocation	~1~ plakt de locatie van de favoriet:
+lOptionsPasteLocationRadioClipboard	&Op het klembord
+lOptionsPasteLocationRadioKeyboard	Op het huidige toetsenbord insertiepunt
 lOptionsPopupFix	Popup &Menu op een Vaste Positie
 lOptionsPopupFixPositionX	Positie X:
 lOptionsPopupFixPositionY	Y:
@@ -288,18 +293,20 @@ lOptionsThirdPartyDetailFPconnect	Selecteer het FPconnect programma (.exe) om de
 lOptionsThirdPartyPrompt	Programma:
 lOptionsThirdPartyTitle	~1~ gebruikers
 lOptionsThirdPartyTitleFPconnect	Gebruikers van andere programma's voor bestandsbeheer gebruiken FPconnect
-lOptionsTitles	Muisknop voor het FP menu om mappen te openen vanuit het huidige verkennervenster of dialoogvenster|Muisknop voor het FP menu om mappen te openen in een nieuwe verkenner|Sneltoets voor het FP menu om mappen te openen vanuit het huidige verkennervenster of dialoogvenster|Sneltoets voor het FP menu om mappen te openen in een nieuwe verkenner|Instellingen|Huidige mappen|Groepen|Recente mappen|Klembord
-lOptionsTitlesSub	Deze muisknop opent het menu in de Windows verkenner, een ander ondersteund bestandsbeheersprogramma of een dialoogvenster.|Deze muisknop opent het menu op een willekeurige plaats op het scherm.|Deze sneltoets opent het menu in de Windows verkenner, een ander ondersteund bestandsbeheersprogramma of een dialoogvenster.|Deze sneltoets opent het menu op een willekeurige plaats op het scherm.|(menu configuratie and opties)|(lijst met mappen die op dit ogenblik geopend zijn in de Windows verkenner)|(lijst met mapgroepen)|(lijst met recent bezochte Windows locaties)|(lijst met paden en URLs op het klembord)
+lOptionsTitles	Muisknop voor het FP menu om mappen te openen vanuit het huidige verkennervenster of dialoogvenster|Muisknop voor het FP menu om mappen te openen in een nieuwe verkenner|Sneltoets voor het FP menu om mappen te openen vanuit het huidige verkennervenster of dialoogvenster|Sneltoets voor het FP menu om mappen te openen in een nieuwe verkenner|Instellingen|Huidige mappen|Groepen|Recente mappen|Klembord|Plak locatie
+lOptionsTitlesSub	Deze muisknop opent het menu in de Windows verkenner, een ander ondersteund bestandsbeheersprogramma of een dialoogvenster.|Deze muisknop opent het menu op een willekeurige plaats op het scherm.|Deze sneltoets opent het menu in de Windows verkenner, een ander ondersteund bestandsbeheersprogramma of een dialoogvenster.|Deze sneltoets opent het menu op een willekeurige plaats op het scherm.|(menu configuratie and opties)|(lijst met mappen die op dit ogenblik geopend zijn in de Windows verkenner)|(lijst met mapgroepen)|(lijst met recent bezochte Windows locaties)|(lijst met paden en URLs op het klembord)|(plak het pad of URL van de favoriet op het klembord of toetsenbord)
 lOptionsTotalCommanderUseTabs	Gebruik tabs
 lOptionsTrayTip	Toon &Startup Systeembalk Tip
 lOptionsTriggerFor	Trigger voor:
 lOptionsWin	Windows
 lOptionsWinShort	Win
+lPasteLocationCopiedToClipboard	Locatie werd gecopieerd naar het klembord
 lPickIconButtonCustom	Aangepast
 lPickIconButtonDefault	Standaard
 lPickIconDocumentPrompt	Wil je een aangepast icoon gebruiken of liever het standaard icoon voor dit type document? 
 lPickIconNoLocation	Kies eerst een favoriet voordat je een icoon te kiest.
 lPickIconTitle	Selecteer ~1~ Icoon - ~2~
+lPopupMenuPasteTrayTip	Selecteer de favoriet die je wil plakken
 lReloadPrompt	~1~ werd gewijzigd naar ~2~. Wil je ~3~ laden in het ~2~ nu? Niet bewaarde wijzigingen gaan verloren.
 lReloadPromptDefaultHotkey	Hotkey changed to default value. This change will be effective only after you reload ~1~.`n`nDo you want to reload ~1~ now? Unsaved changes to the folders menu will be lost.
 lReloadPromptDefaultHotkey	Standaard sneltoets werd terug gezet op de standaard waarde. Deze wijziging gaat pas in als je ~1~ opnieuw laadt. Wil je ~1~ nu opnieuw laden? Niet bewaarde wijzigingen aan het menu gaan dan verloren. 

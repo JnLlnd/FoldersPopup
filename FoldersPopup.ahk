@@ -1,3 +1,8 @@
+/*
+Bug:
+
+Todo:
+*/
 ;===============================================
 /*
 	FoldersPopup
@@ -12,6 +17,12 @@
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 5.0.9.4 (2015-04-23)
+	* fix bug when adding folders using the drag-and-drop technique, these favorites being considered as application favorites
+	* re-wording of the language around the "Paste Location" feature to "Copy location"
+	* expand the relative path in favorite location, based on the current working directory, making the change folder support relative paths
+	* adjustments to all translation language files
+	
 	Version: 5.0.9.3 (2015-04-15)
 	* sort URLs in Clipboard menu
 	* Spanish, Dutch and French text updates
@@ -764,7 +775,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 5.0.9.3 beta
+;@Ahk2Exe-SetVersion 5.0.9.4 beta
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -812,7 +823,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "5.0.9.3" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "5.0.9.4" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 
@@ -918,7 +929,7 @@ DllCall("CreateMutex", "uint", 0, "int", false, "str", strAppName . "Mutex")
 ; Gosub, GuiGroupSaveFromMenu
 ; Gosub, GuiGroupsManage
 ; Gosub, FoldersInExplorerMenuShortcut
-; Gosub, PopupMenuPaste
+; Gosub, PopupMenuCopyLocation
 
 return
 
@@ -1044,7 +1055,7 @@ strIniKeyNames := "PopupHotkeyMouse|PopupHotkeyNewMouse|PopupHotkeyKeyboard|Popu
 StringSplit, arrIniKeyNames, strIniKeyNames, |
 strHotkeyDefaults := "MButton|+MButton|#a|+#a|+^s|+^f|+^g|+^r|+^c|+^v"
 StringSplit, arrHotkeyDefaults, strHotkeyDefaults, |
-strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|GuiShow|FoldersInExplorerMenuShortcut|GroupsMenuShortcut|RecentFoldersShortcut|ClipboardMenuShortcut|PopupMenuPaste"
+strHotkeyLabels := "PopupMenuMouse|PopupMenuNewWindowMouse|PopupMenuKeyboard|PopupMenuNewWindowKeyboard|GuiShow|FoldersInExplorerMenuShortcut|GroupsMenuShortcut|RecentFoldersShortcut|ClipboardMenuShortcut|PopupMenuCopyLocation"
 StringSplit, arrHotkeyLabels, strHotkeyLabels, |
 
 strMouseButtons := "None|LButton|MButton|RButton|XButton1|XButton2|WheelUp|WheelDown|WheelLeft|WheelRight|"
@@ -1201,7 +1212,7 @@ IniRead, blnDisplayRecentFolders, %strIniFile%, Global, DisplayRecentFolders, 1
 IniRead, blnDisplayFoldersInExplorerMenu, %strIniFile%, Global, DisplayFoldersInExplorerMenu, 1
 IniRead, blnDisplayGroupMenu, %strIniFile%, Global, DisplaySwitchMenu, 1 ; keep "Switch" in label instead of "Group" for backward compatibility
 IniRead, blnDisplayClipboardMenu, %strIniFile%, Global, DisplayClipboardMenu, 1
-IniRead, blnDisplayPasteLocationMenu, %strIniFile%, Global, DisplayPasteLocationMenu, 1
+IniRead, blnDisplayCopyLocationMenu, %strIniFile%, Global, DisplayCopyLocationMenu, 1
 IniRead, intPopupMenuPosition, %strIniFile%, Global, PopupMenuPosition, 1
 IniRead, strPopupFixPosition, %strIniFile%, Global, PopupFixPosition, 20,20
 StringSplit, arrPopupFixPosition, strPopupFixPosition, `,
@@ -1218,7 +1229,7 @@ IniRead, strGroups, %strIniFile%, Global, Groups, %A_Space% ; empty string if no
 IniRead, blnCheck4Update, %strIniFile%, Global, Check4Update, 1
 IniRead, blnOpenMenuOnTaskbar, %strIniFile%, Global, OpenMenuOnTaskbar, 1
 IniRead, blnRememberSettingsPosition, %strIniFile%, Global, RememberSettingsPosition, 1
-IniRead, strPasteLocationPreference, %strIniFile%, Global, PasteLocationPreference, C ; C for "Clipboard" (default) or K for "Keyboard"
+IniRead, strCopyLocationPreference, %strIniFile%, Global, CopyLocationPreference, C ; C for "Clipboard" (default) or K for "Keyboard"
 
 IniRead, strSettingsPosition, %strIniFile%, Global, SettingsPosition, -1 ; center at minimal size
 StringSplit, arrSettingsPosition, strSettingsPosition, |
@@ -2739,7 +2750,7 @@ strURLsInClipboard := ""
 Loop, parse, Clipboard, `n, `r%A_Space%%A_Tab%/?:*`"><|
 {
     strClipboardLine = %A_LoopField%
-	strClipboardLineExpanded := EnvVars(strClipboardLine)
+	strClipboardLineExpanded := EnvVars(strClipboardLine) ; only to test if file exist - will not be displayed in menu
 
 	if StrLen(FileExist(strClipboardLineExpanded))
 	{
@@ -2765,7 +2776,7 @@ Loop, parse, Clipboard, `n, `r%A_Space%%A_Tab%/?:*`"><|
 
 	; Parse Clipboard line for URLs (anywhere on the line)
 	strURLSearchString := strClipboardLine
-	Gosub, GetURLsInClipboard
+	Gosub, GetURLsInClipboardLine
 }
 
 Sort, strURLsInClipboard
@@ -2797,7 +2808,7 @@ return
 
 
 ;------------------------------------------------------------
-GetURLsInClipboard:
+GetURLsInClipboardLine:
 ;------------------------------------------------------------
 ; Adapted from AHK help file: http://ahkscript.org/docs/commands/LoopReadFile.htm
 ; It's done this particular way because some URLs have other URLs embedded inside them:
@@ -2850,7 +2861,7 @@ StringLen, intCharactersToOmit, strURL
 intCharactersToOmit := intCharactersToOmit + intURLStart
 StringTrimLeft, strURLSearchString, strURLSearchString, %intCharactersToOmit%
 
-Gosub, GetURLsInClipboard ; Recursive call to self (end of loop)
+Gosub, GetURLsInClipboardLine ; Recursive call to self (end of loop)
 
 strURLsInClipboard := strURLsInClipboard . strURLCleansed . "`n"
 
@@ -2937,8 +2948,8 @@ AddMenuIcon(lMainMenuName, BuildSpecialMenuItemName(5, L(lMenuSettings, strAppNa
 Menu, %lMainMenuName%, Default, %  BuildSpecialMenuItemName(5, L(lMenuSettings, strAppName) . "...")
 AddMenuIcon(lMainMenuName, lMenuAddThisFolder . "...", "AddThisFolder", "lMenuAddThisFolder")
 
-if (blnDisplayPasteLocationMenu)
-	AddMenuIcon(lMainMenuName, lMenuPasteLocation . "...", "PopupMenuPaste", "Clipboard")
+if (blnDisplayCopyLocationMenu)
+	AddMenuIcon(lMainMenuName, lMenuCopyLocation . "...", "PopupMenuCopyLocation", "Clipboard")
 
 if !(blnDonor)
 {
@@ -3201,15 +3212,15 @@ PopupMenuMouse: ; default MButton
 PopupMenuKeyboard: ; default #A
 PopupMenuNewWindowMouse: ; default +MButton::
 PopupMenuNewWindowKeyboard: ; default +#A
-PopupMenuPaste: ; default +#V
+PopupMenuCopyLocation: ; default +#V
 ;------------------------------------------------------------
 
 if !(blnMenuReady)
 	return
 
-blnPasteFavorite := (A_ThisLabel = "PopupMenuPaste")
+blnPasteFavorite := (A_ThisLabel = "PopupMenuCopyLocation")
 if (blnPasteFavorite)
-	TrayTip, %strAppName%, %lPopupMenuPasteTrayTip%
+	TrayTip, %strAppName%, %lPopupMenuCopyLocationTrayTip%
 
 blnMouse := InStr(A_ThisLabel, "Mouse")
 blnNewWindow := InStr(A_ThisLabel, "New") ; used in SetMenuPosition and BuildFoldersInExplorerMenu
@@ -3336,10 +3347,10 @@ Menu, %lMainMenuName%
 	or (WindowIsDialog(strTargetClass, strTargetWinId) and WindowsIsVersion7OrMore() and !(blnPasteFavorite)) ? "Enable" : "Disable"
 	, %lMenuAddThisFolder%...
 
-if (blnDisplayPasteLocationMenu)
+if (blnDisplayCopyLocationMenu)
 	Menu, %lMainMenuName%
 		, % (blnPasteFavorite ? "Disable" : "Enable") ; disable if in Paste menu
-		, % lMenuPasteLocation . "..."
+		, % lMenuCopyLocation . "..."
 
 if !(blnDonor)
 	Menu, %lMainMenuName%
@@ -3645,15 +3656,16 @@ if (blnDiagMode)
 	Diag("TargetWinId", strTargetWinId)
 	Diag("TargetClass", strTargetClass)
 	Diag("blnPasteFavorite", blnPasteFavorite)
-	Diag("strPasteLocationPreference", strPasteLocationPreference)
+	Diag("strCopyLocationPreference", strCopyLocationPreference)
 }
 
 objThisSpecialFolder := objSpecialFolders[strLocation] ; save objThisSpecialFolder before expanding EnvVars
-strLocation := EnvVars(strLocation)
+strLocation := EnvVars(strLocation) ; expand the environment variables inside location
+strLocation := PathCombine(A_WorkingDir, strLocation) ; expand the relative path, based on the current working directory
 
 if (blnPasteFavorite) ; before or after expanding EnvVars?
 {
-	gosub, PasteLocation
+	gosub, CopyLocation
 	blnPasteFavorite := false
 	
 	return
@@ -3902,17 +3914,17 @@ return
 
 
 ;------------------------------------------------------------
-PasteLocation:
+CopyLocation:
 ;------------------------------------------------------------
 
-if (strPasteLocationPreference = "K")
+if (strCopyLocationPreference = "K")
 	
 	SendInput, {Raw}%strLocation%
 
 else
 {
 	Clipboard := strLocation
-	TrayTip, %strAppName%, %lPasteLocationCopiedToClipboard%, 1
+	TrayTip, %strAppName%, %lCopyLocationCopiedToClipboard%, 1
 }
 
 return
@@ -6671,7 +6683,7 @@ else
 	else if (A_ThisLabel = "GuiAddFromDropFiles")
 	{
 		SplitPath, strCurrentLocation, , , strExtension
-		if InStr("exe.com.bat", strExtension)
+		if StrLen(strExtension) and InStr("exe|com|bat", strExtension)
 		{
 			blnRadioApplication := true
 			blnRadioFile := false
@@ -7491,9 +7503,9 @@ GuiControl, , blnCheck4Update, %blnCheck4Update%
 Gui, 2:Add, CheckBox, y+10 xs w220 vblnOpenMenuOnTaskbar, %lOptionsOpenMenuOnTaskbar%
 GuiControl, , blnOpenMenuOnTaskbar, %blnOpenMenuOnTaskbar%
 
-Gui, 2:Add, Text, y+12 xs w220 , % L(lOptionsPasteLocation, Hotkey2Text(strModifiers10, strMouseButton10, strOptionsKey10))
-Gui, 2:Add, Radio, % "y+5 xs w200 vblnPasteLocationClipboard " . (strPasteLocationPreference = "C" ? "checked" : ""), %lOptionsPasteLocationRadioClipboard%
-Gui, 2:Add, Radio, % "y+5 xs w200 vblnPasteLocationKeyboard " . (strPasteLocationPreference = "K" ? "checked" : ""), %lOptionsPasteLocationRadioKeyboard%
+Gui, 2:Add, Text, y+12 xs w220 , % L(lOptionsCopyLocation, Hotkey2Text(strModifiers10, strMouseButton10, strOptionsKey10))
+Gui, 2:Add, Radio, % "y+5 xs w200 vblnCopyLocationClipboard " . (strCopyLocationPreference = "C" ? "checked" : ""), %lOptionsCopyLocationRadioClipboard%
+Gui, 2:Add, Radio, % "y+5 xs w200 vblnCopyLocationKeyboard " . (strCopyLocationPreference = "K" ? "checked" : ""), %lOptionsCopyLocationRadioKeyboard%
 
 ; column 2
 Gui, 2:Add, Text, ys x240 Section, %lOptionsIconSize%
@@ -7517,8 +7529,8 @@ GuiControl, , blnDisplayGroupMenu, %blnDisplayGroupMenu%
 Gui, 2:Add, CheckBox, y+10 xs w180 vblnDisplayClipboardMenu, %lOptionsDisplayClipboardMenu%
 GuiControl, , blnDisplayClipboardMenu, %blnDisplayClipboardMenu%
 
-Gui, 2:Add, CheckBox, y+10 xs w180 vblnDisplayPasteLocationMenu, %lOptionsDisplayPasteLocationdMenu%
-GuiControl, , blnDisplayPasteLocationMenu, %blnDisplayPasteLocationMenu%
+Gui, 2:Add, CheckBox, y+10 xs w180 vblnDisplayCopyLocationMenu, %lOptionsDisplayCopyLocationMenu%
+GuiControl, , blnDisplayCopyLocationMenu, %blnDisplayCopyLocationMenu%
 
 Gui, 2:Add, CheckBox, y+10 xs w180 vblnDisplayRecentFolders gDisplayRecentFoldersClicked, %lOptionsDisplayRecentFolders%
 GuiControl, , blnDisplayRecentFolders, %blnDisplayRecentFolders%
@@ -7757,7 +7769,7 @@ IniWrite, %intRecentFolders%, %strIniFile%, Global, RecentFolders
 IniWrite, %blnDisplayFoldersInExplorerMenu%, %strIniFile%, Global, DisplayFoldersInExplorerMenu
 IniWrite, %blnDisplayGroupMenu%, %strIniFile%, Global, DisplaySwitchMenu ; keep "Switch" for backward compatibility
 IniWrite, %blnDisplayClipboardMenu%, %strIniFile%, Global, DisplayClipboardMenu
-IniWrite, %blnDisplayPasteLocationMenu%, %strIniFile%, Global, DisplayPasteLocationMenu
+IniWrite, %blnDisplayCopyLocationMenu%, %strIniFile%, Global, DisplayCopyLocationMenu
 IniWrite, %blnDisplayMenuShortcuts%, %strIniFile%, Global, DisplayMenuShortcuts
 IniWrite, %blnCheck4Update%, %strIniFile%, Global, Check4Update
 IniWrite, %blnOpenMenuOnTaskbar%, %strIniFile%, Global, OpenMenuOnTaskbar
@@ -7775,11 +7787,11 @@ IniWrite, %strPopupFixPositionX%`,%strPopupFixPositionY%, %strIniFile%, Global, 
 arrPopupFixPosition1 := strPopupFixPositionX
 arrPopupFixPosition2 := strPopupFixPositionY
 
-if (blnPasteLocationKeyboard)
-	strPasteLocationPreference := "K"
+if (blnCopyLocationKeyboard)
+	strCopyLocationPreference := "K"
 else
-	strPasteLocationPreference := "C"
-IniWrite, %strPasteLocationPreference%, %strIniFile%, Global, PasteLocationPreference
+	strCopyLocationPreference := "C"
+IniWrite, %strCopyLocationPreference%, %strIniFile%, Global, CopyLocationPreference
 
 strLanguageCodePrev := strLanguageCode
 strLanguageLabel := drpLanguage
@@ -8942,6 +8954,19 @@ WindowsIsVersion7OrMore()
 ;------------------------------------------------------------
 {
 	return !InStr("WIN_VISTA|WIN_2003|WIN_XP|WIN_2000", A_OSVersion)
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+PathCombine(strAbsolutePath, strRelativePath)
+; see http://www.autohotkey.com/board/topic/17922-func-relativepath-absolutepath/page-3#entry117355
+; and http://stackoverflow.com/questions/29783202/combine-absolute-path-with-a-relative-path-with-ahk/
+;------------------------------------------------------------
+{
+    VarSetCapacity(strCombined, (A_IsUnicode ? 2 : 1) * 260, 1) ; MAX_PATH
+    DllCall("Shlwapi.dll\PathCombine", "UInt", &strCombined, "UInt", &strAbsolutePath, "UInt", &strRelativePath)
+    Return, strCombined
 }
 ;------------------------------------------------------------
 
