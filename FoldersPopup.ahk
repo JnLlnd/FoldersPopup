@@ -1018,6 +1018,7 @@ FileInstall, FileInstall\FoldersPopup_LANG_KO.txt, %strTempDir%\FoldersPopup_LAN
 FileInstall, FileInstall\FoldersPopup_LANG_SV.txt, %strTempDir%\FoldersPopup_LANG_SV.txt, 1
 FileInstall, FileInstall\FoldersPopup_LANG_IT.txt, %strTempDir%\FoldersPopup_LANG_IT.txt, 1
 FileInstall, FileInstall\FoldersPopup_LANG_ES.txt, %strTempDir%\FoldersPopup_LANG_ES.txt, 1
+FileInstall, FileInstall\FoldersPopup_LANG_PT-BR.txt, %strTempDir%\FoldersPopup_LANG_PT-BR.txt, 1
 
 FileInstall, FileInstall\default_browser_icon.html, %strTempDir%\default_browser_icon.html, 1
 
@@ -1529,7 +1530,7 @@ InitLanguageArrays:
 StringSplit, arrOptionsTitles, lOptionsTitles, |
 StringSplit, arrOptionsTitlesSub, lOptionsTitlesSub, |
 StringSplit, arrOptionsTitlesLong, lOptionsTitlesLong, |
-strOptionsLanguageCodes := "EN|FR|DE|NL|KO|SV|IT|ES"
+strOptionsLanguageCodes := "EN|FR|DE|NL|KO|SV|IT|ES|PT-BR"
 StringSplit, arrOptionsLanguageCodes, strOptionsLanguageCodes, |
 StringSplit, arrOptionsLanguageLabels, lOptionsLanguageLabels, |
 
