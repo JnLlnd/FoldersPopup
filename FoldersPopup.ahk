@@ -775,7 +775,7 @@ Todo:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 5.0.9.4 beta
+;@Ahk2Exe-SetVersion 5.0.9.5 beta
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -823,7 +823,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "5.0.9.4" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "5.0.9.5" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 
@@ -1229,7 +1229,6 @@ IniRead, strGroups, %strIniFile%, Global, Groups, %A_Space% ; empty string if no
 IniRead, blnCheck4Update, %strIniFile%, Global, Check4Update, 1
 IniRead, blnOpenMenuOnTaskbar, %strIniFile%, Global, OpenMenuOnTaskbar, 1
 IniRead, blnRememberSettingsPosition, %strIniFile%, Global, RememberSettingsPosition, 1
-IniRead, strCopyLocationPreference, %strIniFile%, Global, CopyLocationPreference, C ; C for "Clipboard" (default) or K for "Keyboard"
 
 IniRead, strSettingsPosition, %strIniFile%, Global, SettingsPosition, -1 ; center at minimal size
 StringSplit, arrSettingsPosition, strSettingsPosition, |
@@ -3656,7 +3655,6 @@ if (blnDiagMode)
 	Diag("TargetWinId", strTargetWinId)
 	Diag("TargetClass", strTargetClass)
 	Diag("blnPasteFavorite", blnPasteFavorite)
-	Diag("strCopyLocationPreference", strCopyLocationPreference)
 }
 
 objThisSpecialFolder := objSpecialFolders[strLocation] ; save objThisSpecialFolder before expanding EnvVars
@@ -3917,15 +3915,8 @@ return
 CopyLocation:
 ;------------------------------------------------------------
 
-if (strCopyLocationPreference = "K")
-	
-	SendInput, {Raw}%strLocation%
-
-else
-{
-	Clipboard := strLocation
-	TrayTip, %strAppName%, %lCopyLocationCopiedToClipboard%, 1
-}
+Clipboard := strLocation
+TrayTip, %strAppName%, %lCopyLocationCopiedToClipboard%, 1
 
 return
 ;------------------------------------------------------------
@@ -7503,10 +7494,6 @@ GuiControl, , blnCheck4Update, %blnCheck4Update%
 Gui, 2:Add, CheckBox, y+10 xs w220 vblnOpenMenuOnTaskbar, %lOptionsOpenMenuOnTaskbar%
 GuiControl, , blnOpenMenuOnTaskbar, %blnOpenMenuOnTaskbar%
 
-Gui, 2:Add, Text, y+12 xs w220 , % L(lOptionsCopyLocation, Hotkey2Text(strModifiers10, strMouseButton10, strOptionsKey10))
-Gui, 2:Add, Radio, % "y+5 xs w200 vblnCopyLocationClipboard " . (strCopyLocationPreference = "C" ? "checked" : ""), %lOptionsCopyLocationRadioClipboard%
-Gui, 2:Add, Radio, % "y+5 xs w200 vblnCopyLocationKeyboard " . (strCopyLocationPreference = "K" ? "checked" : ""), %lOptionsCopyLocationRadioKeyboard%
-
 ; column 2
 Gui, 2:Add, Text, ys x240 Section, %lOptionsIconSize%
 Gui, 2:Add, DropDownList, ys x+10 w40 vdrpIconSize Sort, 16|24|32|48|64
@@ -7786,12 +7773,6 @@ IniWrite, %intPopupMenuPosition%, %strIniFile%, Global, PopupMenuPosition
 IniWrite, %strPopupFixPositionX%`,%strPopupFixPositionY%, %strIniFile%, Global, PopupFixPosition
 arrPopupFixPosition1 := strPopupFixPositionX
 arrPopupFixPosition2 := strPopupFixPositionY
-
-if (blnCopyLocationKeyboard)
-	strCopyLocationPreference := "K"
-else
-	strCopyLocationPreference := "C"
-IniWrite, %strCopyLocationPreference%, %strIniFile%, Global, CopyLocationPreference
 
 strLanguageCodePrev := strLanguageCode
 strLanguageLabel := drpLanguage
