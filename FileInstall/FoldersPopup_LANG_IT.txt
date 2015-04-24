@@ -258,7 +258,7 @@ lOptionsHotkeys	Altre scorciatoie
 lOptionsIconSize	Dimensione delle icone
 lOptionsKeyboard	Tastiera
 lOptionsLanguage	Lingua
-lOptionsLanguageLabels	Inglese|Francese|Tedesco|Olandese|Coreano|Svedese|Italiano|Spagnolo
+lOptionsLanguageLabels	Inglese|Francese|Tedesco|Olandese|Coreano|Svedese|Italiano|Spagnolo|Brazilian Portuguese
 lOptionsMenuActiveWindow	In alto a sinistra della finestra attiva
 lOptionsMenuFixPosition	In posizione prefissata
 lOptionsMenuNearMouse	Vicino al puntatore del mouse

@@ -17,6 +17,11 @@ Todo:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 5.0.9.5 (2015-04-24)
+	* simplified implementation of the copy location to clipboard feature; English language adapted
+	* addition of the Brazilian Portuguese language !
+	* update to Spanish language file
+	
 	Version: 5.0.9.4 (2015-04-23)
 	* fix bug when adding folders using the drag-and-drop technique, these favorites being considered as application favorites
 	* re-wording of the language around the "Paste Location" feature to "Copy location"

@@ -258,7 +258,7 @@ lOptionsHotkeys	Andere Hotkeys
 lOptionsIconSize	Symbolgröße im Menü
 lOptionsKeyboard	Tastatur
 lOptionsLanguage	Sprache
-lOptionsLanguageLabels	Englisch|Französisch|Deutsch|Holländisch|Koreanisch|Schwedisch|Italienisch|Spanisch
+lOptionsLanguageLabels	Englisch|Französisch|Deutsch|Holländisch|Koreanisch|Schwedisch|Italienisch|Spanisch|Brazilian Portuguese
 lOptionsMenuActiveWindow	Im aktiven Fenster
 lOptionsMenuFixPosition	An fester Position
 lOptionsMenuNearMouse	Nahe des Mauszeigers
