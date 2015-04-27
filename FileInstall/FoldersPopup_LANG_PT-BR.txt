@@ -1,5 +1,5 @@
 lAboutText1	~1~ ~2~ (~3~ bits)
-lAboutText2	O ~1~ é escrito por Jean Lalonde usando a linguagem de programação`n<a href="http://ahkscript.org/">AutoHotkey</a>.`n`nTradução para o Alemão: Edgar "Fast Edi" Hoffmann`nTradução para o Francês: Jean Lalonde`nTradução para o Holandês: Pieter Dejonghe`nTradução para o Coreano: Om Il-Sung`nTradução para o Sueco:Åke Engelbrektson`nTradução pata o Italiano: Riccardo Leone`nTradução para o Espanhol: kiketrucker`nOutras traduções de idioma: (ajuda sempre bem-vinda)`nVerificação de prova em ingês: (help welcomed)`n`nÍcones por: <a href="http://www.visualpharm.com">Visual Pharm</a>`nPrograma de instalação: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> por jrsoftware.org`nFontes AutoHotkey_L v1.1: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText2	O ~1~ é escrito por Jean Lalonde usando a linguagem de programação`n<a href="http://ahkscript.org/">AutoHotkey</a>.`n`nTradução para o Alemão: Edgar "Fast Edi" Hoffmann`nTradução para o Francês: Jean Lalonde`nTradução para o Holandês: Pieter Dejonghe`nTradução para o Coreano: Om Il-Sung`nTradução para o Sueco:Åke Engelbrektson`nTradução pata o Italiano: Riccardo Leone`nTradução para o Espanhol: kiketrucker`nTraduzione in Portoghese (BR): Igor Rückert`nOutras traduções de idioma: (ajuda sempre bem-vinda)`nVerificação de prova em ingês: (help welcomed)`n`nÍcones por: <a href="http://www.visualpharm.com">Visual Pharm</a>`nPrograma de instalação: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> por jrsoftware.org`nFontes AutoHotkey_L v1.1: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
 lAboutText4	Suporte em <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	Sobre - ~1~ ~2~
@@ -266,7 +266,7 @@ lOptionsHotkeys	Outras teclas de atalho
 lOptionsIconSize	Tamanho dos ícones no menu
 lOptionsKeyboard	Teclado
 lOptionsLanguage	Idioma
-lOptionsLanguageLabels	Inglês|Francês|Alemão||Holandês|Coreano|Sueco|Italiano|Espanhol|Brazilian Portuguese
+lOptionsLanguageLabels	Inglês|Francês|Alemão|Holandês|Coreano|Sueco|Italiano|Espanhol|Portoghese (BR)
 lOptionsMenuActiveWindow	Canto superior esquerdo da janela ativa
 lOptionsMenuFixPosition	Em uma posição fixa
 lOptionsMenuNearMouse	Próximo do ponteiro do mouse
@@ -279,9 +279,6 @@ lOptionsMouseNone	Nenhum
 lOptionsNoKeyOrMouseSpecified	Nenhuma Tecla ou Botão do Mouse especificado. A tecla de atalho "~1~" existente não foi alterada.
 lOptionsOpenMenuOnTaskbar	Abrir menu na barra de tarefas
 lOptionsOtherOptions	Geral
-lOptionsPasteLocation	~1~ - colar local do favorito:
-lOptionsPasteLocationRadioClipboard	&Na Área de Transferência
-lOptionsPasteLocationRadioKeyboard	No ponto de inserção atual do &teclado
 lOptionsPopupFix	&Menu Popup em Posição Fixa
 lOptionsPopupFixPositionX	Posição X:
 lOptionsPopupFixPositionY	Y:

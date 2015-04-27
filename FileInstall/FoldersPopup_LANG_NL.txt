@@ -198,7 +198,6 @@ lMenuMyMusic	Mijn Muziek
 lMenuMySystemMenu	Mijn speciale mappen
 lMenuMyVideo	Mijn Video's
 lMenuNetworkNeighborhood	Mijn &Netwerklocaties
-lMenuPasteLocation	Plak favorietlocatie
 lMenuPictures	Afbeeldingen
 lMenuProgramFiles	Programmabestanden
 lMenuProgramsFolderStartMenu	Startmenuprogramma's
@@ -249,7 +248,6 @@ lOptionsDisplayGroupMenu	Groep van mappen
 lOptionsDisplayIcons	Toon Menu Iconen
 lOptionsDisplayMenus	Toon Menus:
 lOptionsDisplayMenuShortcuts	Toon de &Numerieke Menu Sneltoetsen
-lOptionsDisplayPasteLocationMenu	Plak favorietlocatie
 lOptionsDisplayRecentFolders	Recente bezochte mappen
 lOptionsDisplaySpecialFolders	S&peciale Mappen
 lOptionsDisplaySpecialMenusShortcuts	Toon deze sneltoetsen in het hoofdmenu
@@ -271,9 +269,6 @@ lOptionsMouseNone	Geen
 lOptionsNoKeyOrMouseSpecified	Geen toets of muisknop werd gespecifieerd. De bestaande "~1~" combinatie blijft ongewijzigd.
 lOptionsOpenMenuOnTaskbar	Open menu via de taakbalk
 lOptionsOtherOptions	Algemeen
-lOptionsPasteLocation	~1~ plakt de locatie van de favoriet:
-lOptionsPasteLocationRadioClipboard	&Op het klembord
-lOptionsPasteLocationRadioKeyboard	Op het huidige toetsenbord insertiepunt
 lOptionsPopupFix	Popup &Menu op een Vaste Positie
 lOptionsPopupFixPositionX	Positie X:
 lOptionsPopupFixPositionY	Y:
@@ -300,13 +295,11 @@ lOptionsTrayTip	Toon &Startup Systeembalk Tip
 lOptionsTriggerFor	Trigger voor:
 lOptionsWin	Windows
 lOptionsWinShort	Win
-lPasteLocationCopiedToClipboard	Locatie werd gecopieerd naar het klembord
 lPickIconButtonCustom	Aangepast
 lPickIconButtonDefault	Standaard
 lPickIconDocumentPrompt	Wil je een aangepast icoon gebruiken of liever het standaard icoon voor dit type document? 
 lPickIconNoLocation	Kies eerst een favoriet voordat je een icoon te kiest.
 lPickIconTitle	Selecteer ~1~ Icoon - ~2~
-lPopupMenuPasteTrayTip	Selecteer de favoriet die je wil plakken
 lReloadPrompt	~1~ werd gewijzigd naar ~2~. Wil je ~3~ laden in het ~2~ nu? Niet bewaarde wijzigingen gaan verloren.
 lReloadPromptDefaultHotkey	Hotkey changed to default value. This change will be effective only after you reload ~1~.`n`nDo you want to reload ~1~ now? Unsaved changes to the folders menu will be lost.
 lReloadPromptDefaultHotkey	Standaard sneltoets werd terug gezet op de standaard waarde. Deze wijziging gaat pas in als je ~1~ opnieuw laadt. Wil je ~1~ nu opnieuw laden? Niet bewaarde wijzigingen aan het menu gaan dan verloren. 

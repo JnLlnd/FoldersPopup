@@ -17,7 +17,13 @@ Todo:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 5.0.9.5 (2015-04-24)
+	Version: 5.0.9.7 (2015-04-27)
+	* fix a bug with relative paths being combined wrongly when the location in an URL
+	* in change hotkey dialog box, make the selection of no hotkey (None) more obvious
+	* preserve standard order of modifiers in hotkey labels when changing hotkey
+	* updates of language files
+	
+	Version: 5.0.9.5/6 (2015-04-24)
 	* simplified implementation of the copy location to clipboard feature; English language adapted
 	* addition of the Brazilian Portuguese language !
 	* update to Spanish language file
@@ -780,7 +786,7 @@ Todo:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 5.0.9.5 beta
+;@Ahk2Exe-SetVersion 5.0.9.7 beta
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -828,7 +834,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "5.0.9.5" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "5.0.9.7" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 
@@ -1057,7 +1063,7 @@ InitSystemArrays:
 ;-----------------------------------------------------------
 
 ; Hotkeys: ini names, hotkey variables name, default values, gosub label and Gui hotkey titles
-strIniKeyNames := "PopupHotkeyMouse|PopupHotkeyNewMouse|PopupHotkeyKeyboard|PopupHotkeyNewKeyboard|SettingsHotkey|FoldersInExplorerHotkey|GroupsHotkey|RecentsHotkey|ClipboardHotkey|PasteHotkey"
+strIniKeyNames := "PopupHotkeyMouse|PopupHotkeyNewMouse|PopupHotkeyKeyboard|PopupHotkeyNewKeyboard|SettingsHotkey|FoldersInExplorerHotkey|GroupsHotkey|RecentsHotkey|ClipboardHotkey|CopyLocationHotkey"
 StringSplit, arrIniKeyNames, strIniKeyNames, |
 strHotkeyDefaults := "MButton|+MButton|#a|+#a|+^s|+^f|+^g|+^r|+^c|+^v"
 StringSplit, arrHotkeyDefaults, strHotkeyDefaults, |
@@ -2566,7 +2572,7 @@ FoldersInExplorerMenuShortcut:
 if !(blnDisplayFoldersInExplorerMenu)
 	return
 
-blnPasteFavorite := false
+blnCopyLocation := false
 
 blnNewWindow := !CanOpenFavorite("", strTargetWinId, strTargetClass, strTargetControl)
 Gosub, SetMenuPosition ; sets strTargetWinId or activate the window strTargetWinId set by CanOpenFavorite
@@ -2617,7 +2623,7 @@ GroupsMenuShortcut:
 if !(blnDisplayGroupMenu)
 	return
 
-blnPasteFavorite := false
+blnCopyLocation := false
 
 Gosub, SetMenuPosition
 
@@ -2711,7 +2717,7 @@ RefreshRecentFolders:
 RecentFoldersShortcut:
 ;------------------------------------------------------------
 
-blnPasteFavorite := false
+blnCopyLocation := false
 
 blnNewWindow := !CanOpenFavorite("", strTargetWinId, strTargetClass, strTargetControl)
 Gosub, SetMenuPosition ; sets strTargetWinId or activate the window strTargetWinId set by CanOpenFavorite
@@ -2882,7 +2888,7 @@ ClipboardMenuShortcut:
 if !(blnDisplayClipboardMenu)
     return
 
-blnPasteFavorite := false
+blnCopyLocation := false
 
 blnNewWindow := !CanOpenFavorite("", strTargetWinId, strTargetClass, strTargetControl)
 Gosub, SetMenuPosition ; sets strTargetWinId or activate the window strTargetWinId set by CanOpenFavorite
@@ -3223,14 +3229,14 @@ PopupMenuCopyLocation: ; default +#V
 if !(blnMenuReady)
 	return
 
-blnPasteFavorite := (A_ThisLabel = "PopupMenuCopyLocation")
-if (blnPasteFavorite)
+blnCopyLocation := (A_ThisLabel = "PopupMenuCopyLocation")
+if (blnCopyLocation)
 	TrayTip, %strAppName%, %lPopupMenuCopyLocationTrayTip%
 
 blnMouse := InStr(A_ThisLabel, "Mouse")
 blnNewWindow := InStr(A_ThisLabel, "New") ; used in SetMenuPosition and BuildFoldersInExplorerMenu
 
-if !(blnNewWindow) and !(blnPasteFavorite)
+if !(blnNewWindow) and !(blnCopyLocation)
 	If !CanOpenFavorite(A_ThisLabel, strTargetWinId, strTargetClass, strTargetControl)
 	{
 		StringReplace, strThisHotkey, A_ThisHotkey, $ ; remove $ from hotkey
@@ -3319,7 +3325,7 @@ if (blnDisplayGroupMenu)
 		, % (!intExplorersIndex ? "Disable" : "Enable") ; disable Save group menu if no Explorer
 		, %lMenuGroupSave%
 	Menu, %lMainMenuName%
-		, % (blnPasteFavorite ? "Disable" : "Enable") ; disable if in Paste menu
+		, % (blnCopyLocation ? "Disable" : "Enable") ; disable if in Copy location menu
 		, % BuildSpecialMenuItemName(7, lMenuGroup)
 }
 
@@ -3332,34 +3338,34 @@ if (blnDisplayClipboardMenu)
 }
 
 Menu, %lMainMenuName%
-	, % (blnPasteFavorite ? "Disable" : "Enable") ; disable if in Paste menu
+	, % (blnCopyLocation ? "Disable" : "Enable") ; disable if in Copy location menu
 	, % BuildSpecialMenuItemName(5, L(lMenuSettings, strAppName) . "...")
 
 ; Enable "Add This Folder" only if the target window is an Explorer, TotalCommander,
 ; Directory Opus or a dialog box under WIN_7 (does not work under WIN_XP). Tested on WIN_XP and WIN_7.
 ; Other tests shown that WIN_8 behaves like WIN_7.
-; Disable if blnPasteFavorite
+; Disable if blnCopyLocation
 if (blnDiagMode)
 	Diag("ShowMenu", "Favorites Menu " 
 		. (WindowIsAnExplorer(strTargetClass) ; removed for FPconnect: or WindowIsFreeCommander(strTargetClass)
 		or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
-		or (WindowIsDialog(strTargetClass, strTargetWinId) and WindowsIsVersion7OrMore()) ? "WITH" : "WITHOUT")
+		or (WindowIsDialog(strTargetClass, strTargetWinId) and WindowsIsVersion7OrMore() and !(blnCopyLocation)) ? "WITH" : "WITHOUT")
 		. " Add this folder")
 
 Menu, %lMainMenuName%
 	, % WindowIsAnExplorer(strTargetClass) ; removed for FPconnect: or WindowIsFreeCommander(strTargetClass)
 	or WindowIsTotalCommander(strTargetClass) or WindowIsDirectoryOpus(strTargetClass)
-	or (WindowIsDialog(strTargetClass, strTargetWinId) and WindowsIsVersion7OrMore() and !(blnPasteFavorite)) ? "Enable" : "Disable"
+	or (WindowIsDialog(strTargetClass, strTargetWinId) and WindowsIsVersion7OrMore() and !(blnCopyLocation)) ? "Enable" : "Disable"
 	, %lMenuAddThisFolder%...
 
 if (blnDisplayCopyLocationMenu)
 	Menu, %lMainMenuName%
-		, % (blnPasteFavorite ? "Disable" : "Enable") ; disable if in Paste menu
+		, % (blnCopyLocation ? "Disable" : "Enable") ; disable if in Copy location menu
 		, % lMenuCopyLocation . "..."
 
 if !(blnDonor)
 	Menu, %lMainMenuName%
-		, % (blnPasteFavorite ? "Disable" : "Enable") ; disable if in Paste menu
+		, % (blnCopyLocation ? "Disable" : "Enable") ; disable if in Copy location menu
 		, % lDonateMenu . "..."
 
 Gosub, InsertColumnBreaks
@@ -3660,17 +3666,16 @@ if (blnDiagMode)
 	Diag("FavoriteType", strFavoriteType)
 	Diag("TargetWinId", strTargetWinId)
 	Diag("TargetClass", strTargetClass)
-	Diag("blnPasteFavorite", blnPasteFavorite)
+	Diag("blnCopyLocation", blnCopyLocation)
 }
 
 objThisSpecialFolder := objSpecialFolders[strLocation] ; save objThisSpecialFolder before expanding EnvVars
 strLocation := EnvVars(strLocation) ; expand the environment variables inside location
-strLocation := PathCombine(A_WorkingDir, strLocation) ; expand the relative path, based on the current working directory
 
-if (blnPasteFavorite) ; before or after expanding EnvVars?
+if (blnCopyLocation) ; before or after expanding EnvVars?
 {
 	gosub, CopyLocation
-	blnPasteFavorite := false
+	blnCopyLocation := false
 	
 	return
 }
@@ -3679,6 +3684,10 @@ if (blnDiagMode)
 	Diag("EnvVars(Path)", strLocation)
 
 if !((strFavoriteType = "U") or (strFavoriteType = "P")) ; not URL or Special Folder, this strLocation should exist
+{
+	; make the location absolute based on the current working directory
+	strLocation := PathCombine(A_WorkingDir, strLocation) ; expand the relative path, based on the current working directory
+
 	if !FileExist(strLocation)
 		; this favorite does not exist and it is not a special folder or an URL
 		{
@@ -3688,6 +3697,7 @@ if !((strFavoriteType = "U") or (strFavoriteType = "P")) ; not URL or Special Fo
 				, 30
 			return
 		}
+}
 
 if (strFavoriteType = "D" or strFavoriteType = "U") ; this is a document or an URL
 {
@@ -7935,12 +7945,19 @@ if (intHotkeyType = 1)
 if (intHotkeyType <> 1)
 {
 	Gui, 3:Add, Text, % "y" . arrTopY . " x150 w60", %lOptionsKeyboard%
-	Gui, 3:Add, Hotkey, yp x+10 w130 vstrOptionsKey gOptionsHotkeyChanged section
-	Gui, 3:Add, Link, y+3 xs w130 gOptionsHotkeySpaceClicked, <a>%lOptionsSpacebar%</a>
+	Gui, 3:Add, Hotkey, yp x+10 w130 vstrOptionsKey gOptionsHotkeyChanged
 	GuiControl, , strOptionsKey, % strOptionsKey%intIndex%
 }
 if (intHotkeyType = 3)
-	Gui, 3:Add, DropDownList, % "y" . arrTopY + 50 . " x150 w200 vstrOptionsMouse gOptionsMouseChanged", % strMouseButtonsWithDefault%intIndex%
+{
+	Gui, 3:Add, Text, % "y" . arrTopY + 30 . " x150 w60", %lOptionsMouse%
+	Gui, 3:Add, DropDownList, yp x+10 w130 vstrOptionsMouse gOptionsMouseChanged, % strMouseButtonsWithDefault%intIndex%
+}
+if (intHotkeyType <> 1)
+{
+	Gui, 3:Add, Link, y+10 x150 gOptionsSelectNoneHotkeyClicked, <a>%lOptionsMouseNone%</a>
+	Gui, 3:Add, Link, yp x+10 w130 gOptionsHotkeySpaceClicked, <a>%lOptionsSpacebar%</a>
+}
 
 Gui, 3:Add, Button, % "x10 y" . arrTopY + 100 . " vbtnResetHotkey gButtonResetHotkey" . intIndex, %lGuiResetDefault%
 GuiCenterButtons(L(lOptionsChangeHotkeyTitle, strAppName, strAppVersion), 10, 5, 20, "btnResetHotkey")
@@ -7952,6 +7969,21 @@ Gui, 3:Add, Text
 GuiControl, Focus, btnChangeHotkeySave
 Gui, 3:Show, AutoSize Center
 Gui, 2:+Disabled
+
+return
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+OptionsSelectNoneHotkeyClicked:
+;------------------------------------------------------------
+
+GuiControl, , strOptionsKey, %lOptionsMouseNone%
+GuiControl, Choose, strOptionsMouse, %lOptionsMouseNone%
+GuiControl, , blnOptionsShift, 0
+GuiControl, , blnOptionsCtrl, 0
+GuiControl, , blnOptionsAlt, 0
+GuiControl, , blnOptionsWin, 0
 
 return
 ;------------------------------------------------------------
@@ -8051,14 +8083,15 @@ if StrLen(strHotkey)
 	}
 	else
 	{
+		; Order of modifiers important to keep modifiers labels in correct order
 		if (blnOptionsWin)
 			strHotkey := "#" . strHotkey
 		if (blnOptionsAlt)
 			strHotkey := "!" . strHotkey
-		if (blnOptionsShift)
-			strHotkey := "+" . strHotkey
 		if (blnOptionsCtrl)
 			strHotkey := "^" . strHotkey
+		if (blnOptionsShift)
+			strHotkey := "+" . strHotkey
 
 		if (strHotkey = "LButton")
 		{
@@ -8253,7 +8286,7 @@ Gui, 2:Font, s8 w600, Verdana
 Gui, 2:Add, Tab2, vintHelpTab w640 h350 AltSubmit, %A_Space%%lHelpTabGettingStarted% | %lHelpTabAddingFavorite% | %lHelpTabTitlesTipsAndTricks%%A_Space%
 
 ; Hotkeys: 1) PopupHotkeyMouse 2) PopupHotkeyNewMouse 3) PopupHotkeyKeyboard 4) PopupHotkeyNewKeyboard
-; 5) SettingsHotkey 6) FoldersInExplorerHotkey 7) GroupsHotkey 8) RecentsHotkey 9) ClipboardHotkey 10) PasteHotkey
+; 5) SettingsHotkey 6) FoldersInExplorerHotkey 7) GroupsHotkey 8) RecentsHotkey 9) ClipboardHotkey 10) CopyLocationHotkey
 Gui, 2:Font, s8 w400, Verdana
 Gui, 2:Tab, 1
 Gui, 2:Add, Link, w%intWidth%, % L(lHelpText1, Hotkey2Text(strModifiers1, strMouseButton1, strOptionsKey1), Hotkey2Text(strModifiers3, strMouseButton3, strOptionsKey3))

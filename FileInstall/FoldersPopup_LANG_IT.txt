@@ -1,9 +1,10 @@
 lAboutText1	~1~ ~2~ (~3~ bit)
-lAboutText2	~1~ è stato scritto da Jean Lalonde usando il linguaggio di programmazione`n<a href="http://ahkscript.org/">AutoHotkey</a>.`n`nTraduzione in Italiano: Riccardo Leone`nTraduzione in Tedesco: Edgar "Fast Edi" Hoffmann`nTraduzione in Francese: Jean Lalonde`nTraduzione in Olandese: Pieter Dejonghe`nTraduzione in Coreano: Om Il-Sung`nTraduzione in Svedese:Åke Engelbrektson`nSpanish translation: kiketrucker`nTraduzione in altre lingue: (se volete collaborare siete benvenuti)`nEnglish proof checking: (help welcomed)`n`nIcone realizzate da: <a href="http://www.visualpharm.com">Visual Pharm</a>`nProgramma di installazione: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> di jrsoftware.org`nAutoHotkey_L v1.1 (sorgenti): <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText2	~1~ è stato scritto da Jean Lalonde usando il linguaggio di programmazione`n<a href="http://ahkscript.org/">AutoHotkey</a>.`n`nTraduzione in Italiano: Riccardo Leone`nTraduzione in Tedesco: Edgar "Fast Edi" Hoffmann`nTraduzione in Francese: Jean Lalonde`nTraduzione in Olandese: Pieter Dejonghe`nTraduzione in Coreano: Om Il-Sung`nTraduzione in Svedese:Åke Engelbrektson`nSpanish translation: kiketrucker`nTraduzione Portoghese (BR): Igor Ruckert`nTraduzione in altre lingue: (se volete collaborare siete benvenuti)`nEnglish proof checking: (help welcomed)`n`nIcone realizzate da: <a href="http://www.visualpharm.com">Visual Pharm</a>`nProgramma di installazione: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> di jrsoftware.org`nAutoHotkey_L v1.1 (sorgenti): <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
 lAboutText4	Supporto:  <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	Crediti - ~1~ ~2~
 lAppTagline	Naviga come una scheggia tra le tue cartelle e i documenti più usati!
+lCopyLocationCopiedToClipboard	Path or URL copied to the Clipboard
 lDiagModeCaution	~1~ è in esecuzione in modalità diagnostica.`n`nLe informazioni sull'applicazione in esecuzione saranno raccolte nel file:`n~2~`n`nNulla verrà trasmesso senza il tuo consenso.`n`nVuoi mantenere attiva la modalità diagnostica?
 lDiagModeExit	~1~ ha raccolto le informazioni per il debug nel file ~2~.
 lDiagModeIntro	Invia questo file a: ahk@jeanlalonde.ca con una descrizione della situazione da diagnosticare.
@@ -159,7 +160,7 @@ lHelpText1	All'avvio, FoldersPopup aggiunge un icona nell'area notifiche e resta
 lHelpText2	Scegli "Impostazioni" per aprire la finestra delle Impostazioni di FoldersPopup dove puoi aggiungere al tuo menù CARTELLE, DOCUMENTI o LINK WEB preferiti. Puoi spostarli, rinominarli o eliminarli. Puoi anche aggiungere, spostare, rinominare o eliminare SOTTOMENU. E' possibile selezionarli poi dalla lista a discesa: "Menù per modifiche". Ricorda di cliccare "Salva" per salvare le modifiche.
 lHelpText3	Per AGGIUNGERE velocemente una nuova CARTELLA preferita al menù popup:`n1) Vai alle cartelle usate di frequente.`n2) Clicca il ~1~ (o premi [~2~]) e scegli "Aggiungi questa Cartella".`n3) Assegna alla cartella un nome breve, clicca "Aggiungi", e poi "Salva", nella finestra delle Impostazioni.
 lHelpText4	Per AGGIUNGERE un nuovo DOCUMENTO preferito o un LINK WEB al menù popup:`n1) Apri il menù di FoldersPopup e scegli "Impostazioni" (o da tastiera: [~1~]).`n2) Clicca il tasto "Aggiungi" e scegli l'opzione "Documento" o "Link (URL)".`n3) Dai al Preferito un nome breve, "Sfoglia" fino al documento o inserisci l'URL della pagina web, clicca "Aggiungi", e poi "Salva" nella finestra impostazioni.
-lHelpText5	- Nell'area notifiche, clicca col tasto destro sull'icona di FoldersPopup e contrassegna l'opzione "Esegui all'Avvio" per eseguire FoldersPopup automaticamente all'avvio di Windows.`n- Hai bisogno di una nuova finestra di Windows Explorer mentre stai lavorando in un'applicazione? Da qualunque finestra, col mouse clicca [~1~] (o da tastiera: [~2~]), o semplicemente clicca sull'icona di FoldersPopup nell'area notifiche, e scegli la cartella preferita che vuoi aprire.`n- Seleziona il menù "Cartelle recenti..." (o da tastiera: [~3~]) per mostrare un elenco aggiornato delle cartelle recentemente aperte.`n- Usa il menù "Cartelle Correnti" (o da tastiera: [~4~]) per aprire una delle cartelle già aperte in Windows Explorer, e "Gruppi di Cartelle" (o da tastiera: [~5~]) per salvare e richiamare un gruppo di cartelle.`n- Accedi alle cartelle, file o URL presenti negli Appunti di Windows dal menù (o da tastiera: [~6~]) o incolla il percorso di qualsiasi Preferito negli Appunti usando il menù "Incolla il Percorso del Preferito" (o da tastiera: [~7~]).`n- Configura i metodi per aprire il menù popup: scegli il tasto del mouse da usare o le combinazioni di tasti in "Impostazioni, Opzioni".`n- Inoltre, in "Opzioni": scegli la lingua preferita, la dimensione delle icone del menù, e i colori delle finestre. Seleziona le opzioni per visualizzare le cartelle recenti, aggiungere i numeri da usare come scorciatoia da tastiera per il menù delle cartelle o fissare una posizione dove si aprirà il menù popup.`n-Utenti di Directory Opus, per informazioni aggiuntive vedere <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/"> questa pagina</a>.`n-Utenti di Total Commander, per informazioni aggiuntive vedere <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/"> questa pagina</a>.
+lHelpText5	- Nell'area notifiche, clicca col tasto destro sull'icona di FoldersPopup e contrassegna l'opzione "Esegui all'Avvio" per eseguire FoldersPopup automaticamente all'avvio di Windows.`n- Hai bisogno di una nuova finestra di Windows Explorer mentre stai lavorando in un'applicazione? Da qualunque finestra, col mouse clicca [~1~] (o da tastiera: [~2~]), o semplicemente clicca sull'icona di FoldersPopup nell'area notifiche, e scegli la cartella preferita che vuoi aprire.`n- Seleziona il menù "Cartelle recenti..." (o da tastiera: [~3~]) per mostrare un elenco aggiornato delle cartelle recentemente aperte.`n- Usa il menù "Cartelle Correnti" (o da tastiera: [~4~]) per aprire una delle cartelle già aperte in Windows Explorer, e "Gruppi di Cartelle" (o da tastiera: [~5~]) per salvare e richiamare un gruppo di cartelle.`n- Access the files or URLs in your Clipboard from the "Clipboard" menu (or press [~6~]) or copy the path or URL of any favorite to the Clipboard using the "Copy a Favorite's Path or URL" menu (or press [~7~]).`n- Configura i metodi per aprire il menù popup: scegli il tasto del mouse da usare o le combinazioni di tasti in "Impostazioni, Opzioni".`n- Inoltre, in "Opzioni": scegli la lingua preferita, la dimensione delle icone del menù, e i colori delle finestre. Seleziona le opzioni per visualizzare le cartelle recenti, aggiungere i numeri da usare come scorciatoia da tastiera per il menù delle cartelle o fissare una posizione dove si aprirà il menù popup.`n-Utenti di Directory Opus, per informazioni aggiuntive vedere <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/"> questa pagina</a>.`n-Utenti di Total Commander, per informazioni aggiuntive vedere <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/"> questa pagina</a>.
 lHelpText6	Il supporto a FoldersPopup è disponibile su <a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
 lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware.
 lHelpTextLead	FoldersPopup ti consente di spostarti come una scheggia tra le cartelle, documenti e pagine web che usi più spesso!
@@ -177,6 +178,7 @@ lMenuCommonStartMenu	Menù Avvio (pubblico)
 lMenuCommonStartupMenu	Esecuzione Automatica (pubblico)
 lMenuControlPanel	Pannello di &Controllo
 lMenuCookies	Cookies
+lMenuCopyLocation	Copia il Percorso del Preferito
 lMenuDesktop	Desktop
 lMenuDialogNotSupported	Questa casella di dialogo non è ancora supportata
 lMenuDocuments	Documenti
@@ -198,7 +200,6 @@ lMenuMyComputer	&Mio Computer
 lMenuMyMusic	Musica
 lMenuMyVideo	Video
 lMenuNetworkNeighborhood	Rete di Wi&ndows
-lMenuPasteLocation	Incolla il percorso del Preferito
 lMenuPictures	Immagini
 lMenuProgramFiles	Programmi
 lMenuProgramsFolderStartMenu	Programmi (Menù Avvio)
@@ -232,11 +233,15 @@ lOopsWrongThirdPartyPath	Nome del file o percorso sbagliato per ~1~:`n~2~.`n`nCo
 lOopsZipFileError	Sembra che ~1~ sia stato eseguito direttamente da un archivio .ZIP .`n`nE' necessario dapprima estrarre il file ~1~ .EXE dall'archivio .ZIP in una cartella di tua scelta prima di eseguirlo.`n`n~1~ verrà chiuso.
 lOptionsAlt	Alt
 lOptionsArrDescriptions1	Scegli il tasto del MOUSE e la combinazione di modificatori da usare per aprire il menù popup in Windows Explorer o nelle caselle di dialogo. Per default, è il tasto centrale del mouse senza nessun tasto modificatore.
+lOptionsArrDescriptions10	Scegli la scorciatoia o la combinazione di tasti del mouse per aprire il menù di FoldersPopup: "Copia il Percorso del Preferito". Per default, è Shift+Control+V.
 lOptionsArrDescriptions2	Scegli il tasto del MOUSE e la combinazione di modificatori da usare per aprire il menù popup in QUALUNQUE finestra e spostarti alla cartella selezionata in una NUOVA finestra di Windows Explorer. Per default, è il tasto centrale del mouse tenendo premuto lo Shift.
 lOptionsArrDescriptions3	Scegli la scorciatoia da TASTIERA per aprire il menù popup nella finestra attiva di Windows Explorer o casella di dialogo attiva. Per default, è la combinazione Windows+A (la lettera "A" tenendo premuto il tasto Windows).
 lOptionsArrDescriptions4	Scegli la scorciatoia da TASTIERA per aprire il menù popup in QUALUNQUE finestra e spostarti alla cartella selezionata in una NUOVA finestra di Windows Explorer. Per default, è la combinazione Shift+Windows+A (la lettera "A" tenendo premuti i tasti Shift e Windows contemporaneamente).
-lOptionsArrDescriptions5	Scegli la scorciatoia o la combinazione di tasti del mouse per aprire la casella di dialogo "Impostazioni di FoldersPopup". Per default, è Shift+Control+S.
-lOptionsArrDescriptions8	Scegli la scorciatoia o la combinazione di tasti del mouse per aprire il menù "Cartelle Recenti" di FoldersPopup. Per default, è Shift+Control+R.
+lOptionsArrDescriptions5	Scegli la scorciatoia o la combinazione di tasti del mouse per aprire la casella di dialogo di FoldersPopup: "Impostazioni". Per default, è Shift+Control+S.
+lOptionsArrDescriptions6	Scegli la scorciatoia o la combinazione di tasti del mouse per aprire il menù di FoldersPopup: "Impostazioni". Per default, è Shift+Control+S.
+lOptionsArrDescriptions7	Scegli la scorciatoia o la combinazione di tasti del mouse per aprire il menù di FoldersPopup: "Gruppi di Cartelle". Per default, è Shift+Control+G.
+lOptionsArrDescriptions8	Scegli la scorciatoia o la combinazione di tasti del mouse per aprire il menù di FoldersPopup: "Cartelle Recenti". Per default, è Shift+Control+R.
+lOptionsArrDescriptions9	Scegli la scorciatoia o la combinazione di tasti del mouse per aprire il menù di FoldersPopup: "Appunti di Windows". Per default, è Shift+Control+C.
 lOptionsChangeHotkey	Cambia
 lOptionsChangeHotkeyTitle	Cambia scorciatoia - ~1~ ~2~
 lOptionsCheck4Update	Cerca Aggiornamenti
@@ -244,12 +249,12 @@ lOptionsCtrl	Control
 lOptionsCtrlShort	Ctrl
 lOptionsDirectoryOpusUseTabs	Usa i tab
 lOptionsDisplayClipboardMenu	Appunti di Windows
+lOptionsDisplayCopyLocationMenu	Copia il Percorso del Preferito
 lOptionsDisplayFoldersInExplorerMenu	Cartelle Correnti
 lOptionsDisplayGroupMenu	&Gruppi di Cartelle
 lOptionsDisplayIcons	Mostra &Icone nel Menù
 lOptionsDisplayMenus	Mostra i Menù:
 lOptionsDisplayMenuShortcuts	Mostra scorciatoie &numeriche nei Menù
-lOptionsDisplayPasteLocationMenu	Incolla il percorso del Preferito
 lOptionsDisplayRecentFolders	Cartelle R&ecenti
 lOptionsDisplaySpecialFolders	Cartelle S&peciali
 lOptionsDisplaySpecialMenusShortcuts	Mostra queste scorciatoie nel menù principale
@@ -258,7 +263,7 @@ lOptionsHotkeys	Altre scorciatoie
 lOptionsIconSize	Dimensione delle icone
 lOptionsKeyboard	Tastiera
 lOptionsLanguage	Lingua
-lOptionsLanguageLabels	Inglese|Francese|Tedesco|Olandese|Coreano|Svedese|Italiano|Spagnolo|Brazilian Portuguese
+lOptionsLanguageLabels	Inglese|Francese|Tedesco|Olandese|Coreano|Svedese|Italiano|Spagnolo|Portoghese (BR)
 lOptionsMenuActiveWindow	In alto a sinistra della finestra attiva
 lOptionsMenuFixPosition	In posizione prefissata
 lOptionsMenuNearMouse	Vicino al puntatore del mouse
@@ -272,9 +277,6 @@ lOptionsMouseNone	Nessuno
 lOptionsNoKeyOrMouseSpecified	Non è stato specificato alcun tasto (per il mouse o tastiera). La scorciatoia preesistente "~1~" non verrà modificata.
 lOptionsOpenMenuOnTaskbar	Apri il menù nella barra delle applicazioni
 lOptionsOtherOptions	Generale
-lOptionsPasteLocation	~1~ incolla il percorso del Preferito:
-lOptionsPasteLocationRadioClipboard	&Negli Appunti di Windows
-lOptionsPasteLocationRadioKeyboard	Nel punto di inserimento corrente da &tastiera
 lOptionsPopupFix	&Menu Popup in posizione prefissata
 lOptionsPopupFixPositionX	Posizione X:
 lOptionsPopupFixPositionY	Y:
@@ -294,20 +296,19 @@ lOptionsThirdPartyDetailFPconnect	Seleziona il file di programma (.exe) di FPcon
 lOptionsThirdPartyPrompt	File del programma:
 lOptionsThirdPartyTitle	~1~ utenti
 lOptionsThirdPartyTitleFPconnect	Utenti di altri file manager che usano FPconnect
-lOptionsTitles	Apri le cartelle, dal menù di FP, nell'Explorer corrente o Casella di dialogo attiva (mouse)|Apri le cartelle, dal menù di FP, in una nuova finestra di Explorer (mouse)|Apri le cartelle, dal menù di FP, nell'Explorer corrente o Casella di dialogo attiva (tastiera)|Apri le cartelle, dal menù di FP, in una nuova finestra di Explorer (tastiera)|Finestra Impostazioni|Menù delle Cartelle Correnti|Menù dei Gruppi|Menù delle Cartelle Recenti|Menù degli Appunti di Windows|Incolla il percorso
-lOptionsTitlesSub	Questo tasto del mouse apre il menù di FP su Windows Explorer, caselle di dialogo e sugli altri File Manager supportati.|Questa combinazione col mouse apre il menù di FP in un punto qualsiasi dello schermo.|Questa combinazione apre il menù di FP quando Windows Explorer, una casella di dialogo o uno dei File Manager supportati, è attivo/a.|Questa combinazione da tastiera apre il menù di FP in qualunque momento sia necessario all'utente.|(configurazione del menù di FP e delle opzioni)|(lista delle cartelle attualmente aperte in Explorer)|(lista dei gruppi di cartelle)|(lista delle Cartelle Recenti di Windows)|(lista di percorsi e URL presenti negli Appunti)|(incolla il percorso del preferito o dell'URL nel punto di inserimento corrente (cursore) o negli Appunti di Windows)
+lOptionsTitles	Apri le cartelle, dal menù di FP, nell'Explorer corrente o Casella di dialogo attiva (mouse)|Apri le cartelle, dal menù di FP, in una nuova finestra di Explorer (mouse)|Apri le cartelle, dal menù di FP, nell'Explorer corrente o Casella di dialogo attiva (tastiera)|Apri le cartelle, dal menù di FP, in una nuova finestra di Explorer (tastiera)|Finestra Impostazioni|Menù delle Cartelle Correnti|Menù dei Gruppi|Menù delle Cartelle Recenti|Menù degli Appunti di Windows|Copia il Percorso del Preferito
+lOptionsTitlesSub	Questo tasto del mouse apre il menù di FP su Windows Explorer, caselle di dialogo e sugli altri File Manager supportati.|Questa combinazione col mouse apre il menù di FP in un punto qualsiasi dello schermo.|Questa combinazione apre il menù di FP quando Windows Explorer, una casella di dialogo o uno dei File Manager supportati, è attivo/a.|Questa combinazione da tastiera apre il menù di FP in qualunque momento sia necessario all'utente.|(configurazione del menù di FP e delle opzioni)|(lista delle cartelle attualmente aperte in Explorer)|(lista dei gruppi di cartelle)|(lista delle Cartelle Recenti di Windows)|(lista di percorsi e URL presenti negli Appunti)|(copia il Percorso del Preferito o dell'indirizzo web (URL) negli Appunti di Windows)
 lOptionsTotalCommanderUseTabs	Usa i tab
 lOptionsTrayTip	All'avvio, &Mostra popup dall'area notifiche
 lOptionsTriggerFor	Per attivare:
 lOptionsWin	Windows
 lOptionsWinShort	Win
-lPasteLocationCopiedToClipboard	Percorso copiato negli Appunti di Windows.
 lPickIconButtonCustom	Personalizzato
 lPickIconButtonDefault	Default
 lPickIconDocumentPrompt	Selezionare un'icona a scelta o usare l'icona di default per questo tipo di documento?
 lPickIconNoLocation	Seleziona il preferito prima di scegliere un'icona.
 lPickIconTitle	Seleziona l'icona per ~1~ - ~2~
-lPopupMenuPasteTrayTip	Seleziona il Preferito da incollare.
+lPopupMenuCopyLocationTrayTip	Select the favorite to copy
 lReloadPrompt	~1~ cambiato in ~2~. Vuoi ricaricare ~3~ in ~2~ ora? Le modifiche non salvate al menù delle cartelle verranno perse.
 lReloadPromptDefaultHotkey	Scorciatoia riportata al valore di default. Questa modifica sarà effettiva solo dopo aver ricaricato ~1~.`n`nVuoi ricaricare ~1~ ora? Le modifiche non salvate al menù delle cartelle verranno perse.
 lTrayTipInstalledDetail	Per mostrare il menù ~1~, premi:`n`n~2~ / ~3~`nin Windows Explorer o in una "Casella di Dialogo"`n`n~4~ / ~5~`nper aprire una nuova finestra di Explorer
