@@ -9,9 +9,6 @@ lDiagModeExit	~1~ heeft informatie voor foutdiagnose verzameld in het bestand ~2
 lDiagModeIntro	Verstuur dit bestand naar ahk@jeanlalonde.ca met een beschrijving van de situatie die verder dient onderzocht te worden.
 lDiagModeSee	Wil je het diagnosebestand bekijken?
 lDialogAdd	Toevoegen
-lDialogAddDialogAlready	Dit dialoogvenster wordt reeds ondersteund.
-lDialogAddDialogPrompt	Voer de nieuwe naam voor het dialoogvenster in`n(of een deel van de naam):
-lDialogAddDialogTitle	Voeg nieuw dialoogvenster toe - ~1~ ~2~
 lDialogAddEditFavoriteTitle	~1~ Favoriet - ~2~ ~3~
 lDialogAddFileSelect	Selecteer het nieuwe document:
 lDialogAddFolderManuallyPrompt	Sorry, we kunnen de huidige map niet ontdekken in dit venstertype.`n`nWil je het handmatig toevoegen?
@@ -25,8 +22,6 @@ lDialogCancelButton	Annuleren
 lDialogCancelPrompt	Wijzigingen negeren?
 lDialogCancelTitle	Annuleren - ~1~ ~2~
 lDialogEdit	Bewerken
-lDialogEditDialogPrompt	Voer de nieuwe naam voor het dialoogvenster in`n(of een deel van de naam):
-lDialogEditDialogTitle	Bewerk dialoogvenster - ~1~ ~2~
 lDialogEndOfMenu	einde van het menu
 lDialogFavoriteDoesNotExistPrompt	De favoriet "~1~" bestaat niet of is niet beschikbaar.`n`nIndien deze favoriet zich op een netwerkschijf bevindt, probeer dan opnieuw na aanmelding op het netwerk.`n`nIndien een favoriet een link bevat naar een webpagina, kies dan de "Link (URL)" optie wanneer je de favoriet aanmaakt.
 lDialogFavoriteDoesNotExistTitle	Favorite does not exist - ~1~
@@ -60,7 +55,7 @@ lDialogGroupManageGroupsTitle	Groepen beheren - ~1~ ~2~
 lDialogGroupManageIntro	Met "Groepen" kan je jouw werkruimte bewaren en terug oproepen. Op deze manier kan je makkelijk omschakelen. "Groepen" onthouden de map, grootte, positie en status (normaal, geminimaliseerd of gemaximaliseerd) van de Windows Verkenner of de Directory Opus vensters. Total Commander wordt nog niet ondersteund.
 lDialogGroupManageManagingTitle	Groepen beheren
 lDialogGroupNew	Een nieuwe groep bewaren
-lDialogGroupRemoveTitle	Verwijder groep - ~1~
+lDialogGroupDeleteTitle	Verwijder groep - ~1~
 lDialogGroups	Groepen
 lDialogGroupSelect	Selecteer een groep
 lDialogGroupSelectError	Gelieve de groep te selecteren om ~1~.
@@ -109,7 +104,6 @@ lDonateThankyou	Dank-je-wel om eerlijk te zijn en freeware te steunen!
 lDonateTitle	Steun freeware! - ~1~ ~2~
 lGui2Close	Sluiten
 lGuiAbout	Over
-lGuiAddDialog	Toevoegen
 lGuiAddFavorite	Toevoegen
 lGuiCancel	&Annuleren
 lGuiClose	&Sluiten
@@ -137,16 +131,12 @@ lGuiGroupSaveShortName	Verkorte groepsnaam (voor menu)
 lGuiHelp	Hulp
 lGuiHotkeysHelp	Favorieten Snelkoppelingen Help
 lGuiHotkeysHelpText	Pijltje-naar-beneden: Selecteer de volgende favoriet`nPijltje-naar-boven: Selecteer de vorige favoriet`nCtrl-N: Voeg een nieuwe favoriet toe`nEnter: Wijzig de favoriet`n`nShift+Pijl naar boven of beneden: Selecteer meerdere favorieten`nCtrl-Click: Selecteer meerdere lossen favorieten`nCtrl-A: Selecteer alle favorieten`n`nCtrl+Pijltje-naar-beneden: Verplaats favorieten naar beneden`nCtrl+Pijltje-naar-boven: Verplaats favorieten naar boven`nDel: Verwijder favorieten`n`nCtrl+Pijltje-naar-rechts: Open submenu`nCtrl+Pijltje-naar-links: Open hoger liggende submenu
-lGuiLvDialogsHeader	Ondersteunde dialoogvensters`n(deel van de naam volstaat)
 lGuiLvFavoritesHeader	Naam|Locatie
 lGuiMove	Verplaatsen
-lGuiMoveFavoriteDown	Naar beneden
-lGuiMoveFavoriteUp	Naar boven
 lGuiOptions	Opties
 lGuiRemoveFavorite	Verwijderen
 lGuiResetDefault	Zet de standaard sneltoets terug
 lGuiSave	Bewaren
-lGuiSeparator	Se&parator
 lGuiSubmenuDropdownLabel	Te wijzigen menu:
 lGuiSubmenuLocation	>
 lGuiSubmenuSeparator	>
@@ -160,7 +150,6 @@ lHelpText3	Je kan snel nieuwe favoriete MAP toevoegen aan het popup menu:`n1) Ga
 lHelpText4	Om een nieuw favoriet DOCUMENT of WEBKOPPELING (ook wel WEBLINK genaamd) toe te voegen aan het popup menu:`n1) Open het FoldersPopup menu en kies "Instellingen" (of druk [~1~]).`n2) Klik op "Toevoegen" en kies vervolgens de optie "Document" of "Link (URL)".`n3) Geef de favoriet een korte naam, navigeer naar het document of voeg de URL van de webpagina toe en klik vervolgens op "Toevoegen". Uiteindelijk bewaar je alles in FoldersPopup door op de knop "Bewaren" te klikken in het instellingsvenster.
 lHelpText5	- Via rechtermuisklik op het FoldersPopup icoontje in de systeembalk kan je de optie "Uitvoeren bij opstarten" activeren om FoldersPopup automatisch te starten tijdens het opstarten van Windows.`n- Wil je een favoriete map openen in een nieuw Windows verkenner venster?  Druk dan op de [~1~] of gebruik de [~2~] toetsencombinatie. Je kan ook op het Folders Popup icoontje klikken in de System Tray en van daaruit jouw favoriete map selecteren.`n- Gebruik het "Recente mappen..." menu (of druk [~3~]) om een actueel overzicht te krijgen van de recent gebruikte Windows mappen.`n- Gebruik "Huidige Mappen" (of druk [~4~]) om een van de mappen te openen die al in een Verkenner venster geopend zijn. Gebruik "Mapgroepen" (of druk [~5~]) om groepen van mappen te bewaren of te herstellen.`n- Benader de mappen, bestanden of URLs op je Klembord vanuit het "Klembord" menu (of druk [~6~]) of plak de locatie van een favoriet op het Klembord door gebruik te maken van het "Plak favorietlocatie" menu (of druk [~7~]).`n- Stel je popup menu triggers in: kies muis knoppen naar jouw voorkeur of sneltoetsen in "Instellingen, Opties".`n- Eveneens in "Opties": kies de taal van jouw voorkeur, de mogelijkheid om ook recente mappen weer te geven, voeg numerieke sneltoetsen toe aan het mapmenu of prik het popup menu vast op een vaste positie.`n-Directory Opus gebruikers, raadpleeg <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/">deze pagina</a> voor bijkomende informatie.`n-Total Commander gebruikers, raadpleeg <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/">deze pagina</a> voor bijkomende informatie.
 lHelpText6	Ondersteuning voor FoldersPopup is beschikbaar via <a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
-lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware.
 lHelpTextLead	FoldersPopup laat je snel wisselen tussen de mappen, documenten en webpagina's die je vaak gebruikt!
 lHelpTitle	Hulp - ~1~ ~2~
 lMainMenuName	Hoofdmenu
@@ -177,7 +166,6 @@ lMenuCommonStartupMenu	Gemeenschappelijk Startup Menu
 lMenuControlPanel	&Configuratiescherm
 lMenuCookies	Cookies
 lMenuDesktop	Bureaublad
-lMenuDialogNotSupported	Dit type dialoogvenster wordt nog niet ondersteund
 lMenuDocuments	Documenten
 lMenuDownloads	Downloads
 lMenuExitFoldersPopup	Exit ~1~
@@ -187,7 +175,6 @@ lMenuFonts	Lettertypen
 lMenuFPMenu	~1~ ~2~
 lMenuGroup	Mapgroepen
 lMenuGroupAdd	toevoegen
-lMenuGroupLoad	Laad een groep
 lMenuGroupReplace	vervangen
 lMenuGroupSave	De huidige mappen als een groep bewaren
 lMenuHelp	Hulp
@@ -269,7 +256,6 @@ lOptionsMouseNone	Geen
 lOptionsNoKeyOrMouseSpecified	Geen toets of muisknop werd gespecifieerd. De bestaande "~1~" combinatie blijft ongewijzigd.
 lOptionsOpenMenuOnTaskbar	Open menu via de taakbalk
 lOptionsOtherOptions	Algemeen
-lOptionsPopupFix	Popup &Menu op een Vaste Positie
 lOptionsPopupFixPositionX	Positie X:
 lOptionsPopupFixPositionY	Y:
 lOptionsRecentFolders	R&ecente Mappen
@@ -295,13 +281,8 @@ lOptionsTrayTip	Toon &Startup Systeembalk Tip
 lOptionsTriggerFor	Trigger voor:
 lOptionsWin	Windows
 lOptionsWinShort	Win
-lPickIconButtonCustom	Aangepast
-lPickIconButtonDefault	Standaard
-lPickIconDocumentPrompt	Wil je een aangepast icoon gebruiken of liever het standaard icoon voor dit type document? 
 lPickIconNoLocation	Kies eerst een favoriet voordat je een icoon te kiest.
-lPickIconTitle	Selecteer ~1~ Icoon - ~2~
 lReloadPrompt	~1~ werd gewijzigd naar ~2~. Wil je ~3~ laden in het ~2~ nu? Niet bewaarde wijzigingen gaan verloren.
-lReloadPromptDefaultHotkey	Hotkey changed to default value. This change will be effective only after you reload ~1~.`n`nDo you want to reload ~1~ now? Unsaved changes to the folders menu will be lost.
 lReloadPromptDefaultHotkey	Standaard sneltoets werd terug gezet op de standaard waarde. Deze wijziging gaat pas in als je ~1~ opnieuw laadt. Wil je ~1~ nu opnieuw laden? Niet bewaarde wijzigingen aan het menu gaan dan verloren. 
 lTrayTipInstalledDetail	Om het ~1~ menu te tonen, druk:`n`n~2~ / ~3~`nin Windows Verkenner of in een dialoogvenster`n`n~4~ / ~5~`nom een nieuw Verkenner venster te openen
 lTrayTipinstalledTitle	~1~ ~2~ klaar!

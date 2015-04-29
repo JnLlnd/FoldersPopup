@@ -9,9 +9,6 @@ lDiagModeExit	~1~ gesammelte Diagnose-Informationen in Datei ~2~.
 lDiagModeIntro	Schicken Sie diese Datei an ahk@jeanlalonde.ca mit einer Beschreibung der Situation, welche die Diagnose ausgelöst hat.
 lDiagModeSee	Wollen Sie die Diagnosedatei sehen?
 lDialogAdd	Hinzufügen
-lDialogAddDialogAlready	Diese Dialogbox-Typ wird schon unterstützt.
-lDialogAddDialogPrompt	Geben Sie den neuen Namen für die Dialogbox an`n(oder einen Teil des Namens):
-lDialogAddDialogTitle	Dialogbox hinzufügen - ~1~ ~2~
 lDialogAddEditFavoriteTitle	~1~ Favoriten - ~2~ ~3~
 lDialogAddFileSelect	Neue Datei wählen:
 lDialogAddFolderManuallyPrompt	Entschuldigung, der aktuelle Ordner kann in diesem Fenstertyp nicht ermittelt werden.`n`nWollen Sie es jetzt von Hand hinzufügen?
@@ -25,8 +22,6 @@ lDialogCancelButton	Abbrechen
 lDialogCancelPrompt	Änderungen verwerfen?
 lDialogCancelTitle	Abbrechen - ~1~ ~2~
 lDialogEdit	Bearbeiten
-lDialogEditDialogPrompt	Geben Sie den neuen Namen für die Dialogbox ein`n(oder einen Teil des Namens):
-lDialogEditDialogTitle	Dialogbox bearbeiten - ~1~ ~2~
 lDialogEndOfMenu	Ende des Menüs
 lDialogFavoriteDoesNotExistPrompt	Der Favorit "~1~" existiert nicht oder ist nicht verfügbar.`n`nSollte sich dieser Favorit auf einem Netzlaufwerk befinden, versuchen Sie es nach erfolgter Authentifizierung nochmals.`n`nSollte dieser Favorit ein Link auf eine Webseite sein, wählen Sie die Option "Link (URL)" wenn Sie den Favoriten hinzufügen.
 lDialogFavoriteDoesNotExistTitle	Favorit existiert nicht - ~1~
@@ -60,7 +55,7 @@ lDialogGroupManageGroupsTitle	Gruppen - ~1~ ~2~ verwalten
 lDialogGroupManageIntro	Mittels "Gruppen" können Sie Ihre Arbeitsumgebung speichern und wieder laden, um effektiv zwischen Ihren Arbeitssitzungen hin- und herzuschalten. "Gruppen" speichern die Ordner, Größe, Position und Status (normal, minimiert oder maximiert) von Windows Explorer und Directory Opus Fenstern (Total Commander noch nicht unterstützt).
 lDialogGroupManageManagingTitle	Gruppen verwalten
 lDialogGroupNew	Neue Gruppe speichern
-lDialogGroupRemoveTitle	Gruppe - ~1~ löschen
+lDialogGroupDeleteTitle	Gruppe - ~1~ löschen
 lDialogGroups	Gruppen
 lDialogGroupSelect	Gruppe auswählen
 lDialogGroupSelectError	Bitte die Gruppe zum ~1~ auswählen.
@@ -109,7 +104,6 @@ lDonateThankyou	Vielen Dank für die Unterstützung von Freeware!
 lDonateTitle	Unterstützen Sie Freeware! - ~1~ ~2~
 lGui2Close	Schliessen
 lGuiAbout	Über
-lGuiAddDialog	Hinzufügen
 lGuiAddFavorite	Hinzufügen
 lGuiCancel	&Abbrechen
 lGuiClose	&Schliessen
@@ -137,16 +131,12 @@ lGuiGroupSaveShortName	Kurzname der Gruppe (für das Menü)
 lGuiHelp	Hilfe
 lGuiHotkeysHelp	Favoriten Shortcuts Hilfe
 lGuiHotkeysHelpText	Runter: Nächster Favorit`nRauf: Vorhergehender Favorit`nStrg-N: Neuen Favoriten hinzufügen`nEnter: Favorit bearbeiten`n`nShift-Rauf/Runter: Zusammenhängende Favoriten auswählen`nStrg-Click: Unzusammenhängende Favoriten auswählen`nStrg-A: Alle Favoriten auswählen`n`nStrg-Runter: Favorit(en) nach unten verschieben`nStrg-Hoch: Favorit(en) nach Oben verschieben`nEntf: Favorit(en) entfernen`n`nStrg-Rechts: Untermenü öffnen`nStrg-Links: Elternmenü öffnen
-lGuiLvDialogsHeader	Unterstützte Dialoge`n(Teile der Namen)
 lGuiLvFavoritesHeader	Name|Ort
 lGuiMove	Verschieben
-lGuiMoveFavoriteDown	Nach u&nten bewegen
-lGuiMoveFavoriteUp	Nach o&ben bewegen
 lGuiOptions	Optionen
 lGuiRemoveFavorite	Entfernen
 lGuiResetDefault	Zurücksetzen des Standard-Hotkeys
 lGuiSave	&Speichern
-lGuiSeparator	Se&parator
 lGuiSubmenuDropdownLabel	Zu bearbeitendes Menü:
 lGuiSubmenuLocation	>
 lGuiSubmenuSeparator	>
@@ -160,7 +150,6 @@ lHelpText3	Um schnell einen neuen ORDNER zum Popup-Menü HINZUZUFÜGEN:`n1) Wechse
 lHelpText4	Um dem Popup-Menü ein neues DOKUMENT oder eine WEBSEITE hinzuzufügen:`n1) Öffnen Sie das Folders Popup Menü und wählen "Einstellungen" (oder drücken [~1~]).`n2) Klicken Sie auf "Hinzufügen" und wählen die Option "Dokument" oder "Link (URL)".`n3) Vergeben Sie einen kurzen Namen, wechseln Sie zum Dokument oder geben Sie die URL ein, klicken "Hinzufügen", danach "Speichern" im Einstellungsdialog.
 lHelpText5	- Klicken Sie im Traymenü mit der rechten Maustaste auf das Symbol und aktivieren Sie "Beim Start ausführen" um FoldersPopup automatisch zu starten.`n- Benötigen Sie ein neues Explorerfenster während Sie in einer Anwendung arbeiten? Klicken Sie aus jedem Fenster heraus mit [~1~] (oder drücken [~2~]), oder klicken Sie einfach auf das Folders Popup Symbol im Systembereich und wählen Sie das gewünschte Verzeichnis.`n- Wählen Sie das "Kürzliche Ordner..." Menü (oder drücken [~3~]) um eine aktualisierte Liste der kürzlich verwendeten Ordner anzuzeigen.`n- Verwenden Sie das "Kürzlich verwendete Ordner" Menü (oder drücken [~4~]) um ein bereits geöffnetes Verzeichnis oder das "Ordnergruppen" Menü (oder drücken [~5~]) um Verzeichnisgruppen wiederherzustellen oder zu speichern.`n- Erreichen Sie Ordner, Dateien oder URLs in der Zwischenablage aus dem "Zwischenablage" Menü (oder drücken [~6~]) oder übertragen Sie die Position beliebiger Favoriten in die Zwischenablage mittels des "Position des Favoriten einfügen" Menüs (oder [~7~]).`n- Stellen Sie die Kurztasten des Popup-Menüs ein: Wählen Sie Ihre bevorzugten Maustasten oder Tastaturkürzel in "Einstellungen, Optionen".`n- Auch unter "Optionen": Wählen Sie die bevorzugte Sprache, Symbolgröße in den Menüs, Fensterfarben. Wählen Sie die Optionen für die Darstellung der Ordner, fügen Sie Tastaturkürzel auf dem numerischen Tastenfeld hinzu oder heften Sie das Popup Menü an eine bestimmte Stelle.`n-Nutzer von Directory Opus, siehe <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/">diese Webseite</a> für weitere Informationen.`n-Nutzer von Total Commander, siehe <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/">diese Webseite</a> für weitere Informationen.
 lHelpText6	Support für FoldersPopup gibt es auf`n<a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
-lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware!
 lHelpTextLead	FoldersPopup ermöglicht es Ihnen, schnell zwischen häufig benutzten Ordnern, Dokumenten und Webseiten zu wechseln!
 lHelpTitle	Hilfe - ~1~ ~2~
 lMainMenuName	Haupt
@@ -177,7 +166,6 @@ lMenuCommonStartupMenu	Common Startup Menu
 lMenuControlPanel	&Systemsteuerung
 lMenuCookies	Cookies
 lMenuDesktop	Desktop
-lMenuDialogNotSupported	Diese Dialogbox wird momentan noch nicht unterstützt
 lMenuDocuments	Dokumente
 lMenuDownloads	Downloads
 lMenuExitFoldersPopup	Beenden ~1~
@@ -187,7 +175,6 @@ lMenuFonts	Fonts
 lMenuFPMenu	~1~ ~2~
 lMenuGroup	Ordner Gruppen
 lMenuGroupAdd	hinzufügen
-lMenuGroupLoad	Gruppe laden
 lMenuGroupReplace	ersetzen
 lMenuGroupSave	Aktuelle Ordner als Gruppe speichern
 lMenuHelp	Hilfe
@@ -269,7 +256,6 @@ lOptionsMouseNone	Keine
 lOptionsNoKeyOrMouseSpecified	Kein Tastenkürzel oder Maustaste definiert. Der bestehende Hotkey ~1~ ist unverändert.
 lOptionsOpenMenuOnTaskbar	Menü in der Taskleiste öffnen
 lOptionsOtherOptions	Allgemein
-lOptionsPopupFix	Popup-&Menü an fester Position
 lOptionsPopupFixPositionX	Position X:
 lOptionsPopupFixPositionY	Y:
 lOptionsRecentFolders	Zuletzt verwendete Ordner
@@ -295,11 +281,7 @@ lOptionsTrayTip	Beim Start &Tray-Tip anzeigen
 lOptionsTriggerFor	Auslöser für:
 lOptionsWin	Windows
 lOptionsWinShort	Win
-lPickIconButtonCustom	Angepasst
-lPickIconButtonDefault	Standard
-lPickIconDocumentPrompt	Angepasstes oder Standard-Symbol für diese Art von Dokument verwenden?
 lPickIconNoLocation	Bitte zuerst einen Favoriten auswählen, bevor ein Icon gewählt wird.
-lPickIconTitle	Auswahl ~1~ Symbol - ~2~
 lReloadPrompt	~1~  wurde in ~2~ geändert. Wollen Sie jetzt ~3~ in ~2~ neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
 lReloadPromptDefaultHotkey	Schnelltaste auf Standard zurückgesetzt. Diese Änderung tritt erst durch erneutes Laden von ~1~ in Kraft.`n`nWollen Sie ~1~ jetzt neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
 lTrayTipInstalledDetail	Zur Anzeige des ~1~ Menüs`nim Windows Explorer oder einer Dialogbox`n~2~ oder ~3~ drücken.`n`n~4~ oder ~5~`num ein neues Explorer-Fenster zu öffnen.

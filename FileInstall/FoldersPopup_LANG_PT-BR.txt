@@ -9,9 +9,6 @@ lDiagModeExit	O ~1~ coletou informações de diagnóstico para o arquivo ~2~.
 lDiagModeIntro	Envie este arquivo para ahk@jeanlalonde.ca com uma descrição da situação que exige diagnóstico.
 lDiagModeSee	Deseja ver o arquivo de diagnóstico?
 lDialogAdd	Adicionar
-lDialogAddDialogAlready	Este tipo de caixa de diálogo já é suportado.
-lDialogAddDialogPrompt	Entre o nome da nova caixa de diálogo`n (ou parte do nome):
-lDialogAddDialogTitle	Adicionar Caixa de Diálogo - ~1~ ~2~
 lDialogAddEditFavoriteTitle	Favorito do ~1~ - ~2~ ~3~
 lDialogAddFileSelect	Escolha o novo documento:
 lDialogAddFolderManuallyPrompt	Desculpe, não detectamos a pasta atual neste tipo de janela.`n`nDeseja adicioná-la manualmente agora?
@@ -25,8 +22,6 @@ lDialogCancelButton	Cancelar
 lDialogCancelPrompt	Descartar alterações?
 lDialogCancelTitle	Cancelar - ~1~ ~2~
 lDialogEdit	Editar
-lDialogEditDialogPrompt	Entre o nome da nova caixa de diálogo`n(ou parte do nome):
-lDialogEditDialogTitle	Editar caixa de Diálogo - ~1~ ~2~
 lDialogEndOfMenu	final do menu
 lDialogFavoriteDoesNotExistPrompt	O favorito "~1~" não existe ou não está disponível.`n`nSe este favorito está em uma unidade de rede, tente novamente depois da autenticação de rede.`n`nSe o favorito for um link para uma página da web, selecione a opção "Link (URL)" ao adicionar o favorito.
 lDialogFavoriteDoesNotExistTitle	O favorito não existe - ~1~
@@ -61,7 +56,7 @@ lDialogGroupManageGroupsTitle	Gerenciar Grupos - ~1~ ~2~
 lDialogGroupManageIntro	Com "Grupos", você pode salvar e restaurar o seu espaço de trabalho para de maneira eficiente alternar entre suas sessões de trabalho. Os "Grupos" lembram da pasta, tamanho, posição e estado (normal, minimizado ou maximizado) das janelas do Windows Explorer e Directory Opus (Total Commander não suportado ainda).
 lDialogGroupManageManagingTitle	Gerenciar Grupos
 lDialogGroupNew	Salvar novo grupo
-lDialogGroupRemoveTitle	Excluir grupo - ~1~
+lDialogGroupDeleteTitle	Excluir grupo - ~1~
 lDialogGroups	Grupos
 lDialogGroupSelect	Selecione um grupo
 lDialogGroupSelectError	Por favor, selecione o grupo para ~1~.
@@ -110,7 +105,6 @@ lDonateThankyou	Obrigado por apoiar o freeware!
 lDonateTitle	Apoiar o freeware! - ~1~ ~2~
 lGui2Close	Fechar
 lGuiAbout	Sobre
-lGuiAddDialog	Adicionar
 lGuiAddFavorite	Adicionar
 lGuiCancel	&Cancelar
 lGuiClose	&Fechar
@@ -138,23 +132,18 @@ lGuiGroupSaveShortName	Nome curto do grupo (para o menu)
 lGuiHelp	Ajuda
 lGuiHotkeysHelp	Ajuda de Atalhos para Favoritos
 lGuiHotkeysHelpText	Seta para baixo: Selecionar próximo favorito`nSeta para cima: Selecionar o favorito anterior`nCtrl-N: Adicionar um novo favorito`nEnter: Editar favorito`n`nShift-Cima/Baixo: Selecionar favoritos adjacentes`nCtrl-Clique: Selecionar favoritos não-adjacentes`nCtrl-A: Selecionar todos os favoritos`n`nCtrl-Baixo: Mover favorito(s) para baixo`nCtrl-Cima: Mover favorito(s) para cima`nDel: Remover favorito(s)`n`nCtrl-Direita: Abrir submenu`nCtrl-Esquerda: Abrir submenu pai
-lGuiLvDialogsHeader	Caixas de Diálogo Suportadas`n(parte dos nomes é suficiente)" 
 lGuiLvFavoritesHeader	Nome|Local
 lGuiMove	Mover
-lGuiMoveFavoriteDown	Mover para &Baixo
-lGuiMoveFavoriteUp	Mover para &Cima
 lGuiOptions	Opções
 lGuiRemoveFavorite	Remover
 lGuiResetDefault	Redefinir tecla de atalho padrão
 lGuiSave	&Salvar
-lGuiSeparator	Se&parador
 lGuiSubmenuDropdownLabel	Menu para editar:
 lGuiSubmenuLocation	>
 lGuiSubmenuSeparator	>
 lGuiTitle	Configurações - ~1~ ~2~
 lHelpTabAddingFavorite	Adicionando Favorito
 lHelpTabGettingStarted	Começando
-lHelpTabTitles	Getting Started|Adicionando Favorito|Dicas e truques
 lHelpTabTitlesTipsAndTricks	Dicas e Truques
 lHelpText1	Ao iniciar, o FoldersPopup adiciona um ícone na área de notificação e aguarda suas ordens. Quando você precisar alterar a pasta atual no Windows Explorer ou em uma caixa de diálogo de arquivo, basta clicar no [~1~] ou pressione [~2~] e, no menu popup, selecione a pasta desejada. O FoldersPopup irá levá-lo lá instantaneamente! Ou use-o para abrir rapidamente um documento ou página da web favorita.
 lHelpText2	Escolha "Configurações" para abrir as configurações do FoldersPopup onde você pode adicionar PASTAS, DOCUMENTOS ou LINKS DA WEB favoritos em seu menu. Você pode mover, renomear ou excluir. Você também pode adicionar, mover, renomear ou excluir SUBMENUS. Escolha o "Menu para editar:" na lista suspensa. Clique "Salvar" salvar suas alterações.
@@ -162,7 +151,6 @@ lHelpText3	Para ADICIONAR rapidamente uma nova PASTA favorita ao menu popup:`n1)
 lHelpText4	Para adicionar um novo DOCUMENTO ou LINK DA WEB favorito ao menu popup:`n1) Abra o menu do Folders Popup e escolha "Configurações" (ou pressione [~1~]).`n2) Clique no botão "Adicionar" e escolha a opção "Documento" ou "Link (URL).`n3) Dê um nome curto ao favorito, "Procure" o documento ou entre a URL da página web, clique "Adicionar", e então "Salvar" na janela de configurações.
 lHelpText5	No menu da área de notificação, dê um clique com o botão direito no ícone do Folders Popup e marque a opção "Executar na Inicialização" para iniciar o FoldersPopup automaticamente ao iniciar.`n- Precisa abrir uma nova janela de arquivos do Explorer enquanto trabalha em um aplicativo? De qualquer janela, clique [~1~] (ou pressione ~2~), ou simplesmente clique no ícone do FoldersPopup na Área de Notificação, e escolha sua pasta favorita.`n-Escolha o menu "Pastas Recentes..." (ou pressione [~3~]) para exibir uma lista atualizada das pastas recentes do Windows.`n- Use o menu "Pastas Atuais" ([~4~]) para abrir uma das pastas já abertas em uma janela do Explorer ou o menu "Grupos de Pastas" (ou pressione [~5~]) para salvar e restaurar grupos de pastas.`n- Acesse os arquivos ou URLs na sua área de transferência pelo menu "Área de Transferência" (ou pressione [~6~]) ou copie o caminho ou URL de qualquer favorito usando o menu "Copiar Caminho ou URL do Favorito" (ou pressione [~7~]).`n- Configure seus disparadores de menu popup: escolha os botões preferidos do mouse ou atalhos de teclado em "Configurações, Opções".`n- Também em "Opções": escolha seu idioma preferido, tamanho de ícones, cores das janelas. Selecione as opções para exibir pastas recentes, adicione atalhos numéricos do teclado ao menu de pastas ou fixe o menu popup em uma posição fixa.`n-Usuários do Directory Opus, vejam <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/">esta página</a> para informações adicionais.`n-Usuários do Total Commander, vejam <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/">esta página</a> para informações adicionais.
 lHelpText6	O suporte para o FoldersPopup está disponível em <a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
-lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware.
 lHelpTextLead	O FoldersPopup lhe permite mover rapidamente entre suas pastas, documentos e páginas da web mais usadas com frequência!
 lHelpTitle	Ajuda - ~1~ ~2~
 lMainMenuName	Principal
@@ -179,7 +167,6 @@ lMenuCommonStartupMenu	Menu Inicializar Comum
 lMenuControlPanel	Painel de &Controle
 lMenuCookies	Cookies
 lMenuDesktop	Área de Trabalho
-lMenuDialogNotSupported	Este tipo de caixa de diálogo não é suportado ainda
 lMenuDocuments	D&ocumentos
 lMenuDownloads	Downloads
 lMenuExitFoldersPopup	Sair do ~1~
@@ -189,7 +176,6 @@ lMenuFonts	Fontes
 lMenuFPMenu	~1~ ~2~
 lMenuGroup	Grupos de Pastas
 lMenuGroupAdd	adicionar
-lMenuGroupLoad	Carregar um grupo
 lMenuGroupReplace	substituir
 lMenuGroupSave	Salvar Pastas Atuais como Grupo
 lMenuHelp	Ajuda
@@ -210,8 +196,6 @@ lMenuRecentFolders	Pastas Recentes
 lMenuRecentItems	Itens Recentes
 lMenuRecycleBin	Lixei&ra
 lMenuRefreshRecent	Atualizando menu de pastas Recente
-lMenuReservedShortcuts	" ; "FGRCSA" ; "SCGRBFA
-lMenuReservedShortcutsDonate	U
 lMenuRunAtStartup	Executa&r na Inicialização
 lMenuSeparator	----------------
 lMenuSettings	Configurações do ~1~
@@ -279,7 +263,6 @@ lOptionsMouseNone	Nenhum
 lOptionsNoKeyOrMouseSpecified	Nenhuma Tecla ou Botão do Mouse especificado. A tecla de atalho "~1~" existente não foi alterada.
 lOptionsOpenMenuOnTaskbar	Abrir menu na barra de tarefas
 lOptionsOtherOptions	Geral
-lOptionsPopupFix	&Menu Popup em Posição Fixa
 lOptionsPopupFixPositionX	Posição X:
 lOptionsPopupFixPositionY	Y:
 lOptionsRecentFolders	Pastas Recen&tes
@@ -306,11 +289,7 @@ lOptionsTriggerFor	Disparador para:
 lOptionsWin	Windows
 lOptionsWinShort	Win
 lCopyLocationCopiedToClipboard	Caminho ou URL copiado para Área de Transferência
-lPickIconButtonCustom	Personalizado
-lPickIconButtonDefault	Padrão
-lPickIconDocumentPrompt	Selecionar ícone personalizado ou usar o ícone padrão para este tipo de documento?
 lPickIconNoLocation	Selecione primeiro um favorito antes de escolher um ícone.
-lPickIconTitle	Selecionar Ícone de ~1~ - ~2~
 lPopupMenuCopyLocationTrayTip	Selecione o favorito para copiar
 lReloadPrompt	~1~ foi alterado para ~2~. Deseja reiniciar ~3~ em ~2~ agora? Alterações não salvas no menu de pastas serão perdidas.
 lReloadPromptDefaultHotkey	A tecla de atalho foi alterada para o valor padrão. Esta alteração será aplicada somente após reiniciar o ~1~.`n`nDeseja reiniciar o ~1~ agora? Alterações não salvas no menu de pastas serão perdidas.

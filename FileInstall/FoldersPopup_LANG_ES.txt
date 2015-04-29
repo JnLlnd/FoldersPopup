@@ -10,9 +10,6 @@ lDiagModeExit	~1~ tiene información recopilada para fines de diagnóstico en el a
 lDiagModeIntro	Enviar este fichero a ahk@jeanlalonde.ca con una descripción de la situación que requiere un diagnóstico.
 lDiagModeSee	Quiere consultar el fichero de diagnóstico?
 lDialogAdd	Añadir
-lDialogAddDialogAlready	Este tipo de diálogo ya está soportado.
-lDialogAddDialogPrompt	Escriba el nombre de una nueva caja de diálogo`n(o una parte del nombre):
-lDialogAddDialogTitle	Añadir caja de diálogo - ~1~ ~2~
 lDialogAddEditFavoriteTitle	~1~ un favorito - ~2~ ~3~
 lDialogAddFileSelect	elegir un nuevo documento:
 lDialogAddFolderManuallyPrompt	Lo sentimos, no podemos detectar automáticamente la carpeta actual en este tipo de ventana.`n`nQuiere añadir este fichero manualmente?
@@ -26,8 +23,6 @@ lDialogCancelButton	Anular
 lDialogCancelPrompt	Anular los cambios?
 lDialogCancelTitle	Anular - ~1~ ~2~
 lDialogEdit	Modificar
-lDialogEditDialogPrompt	Escriba el nuevo nombre de la caja de diálogo`n(o una parte del nombre):
-lDialogEditDialogTitle	Modificar Caja de diálogo - ~1~ ~2~
 lDialogEndOfMenu	fin del menú
 lDialogFavoriteDoesNotExistPrompt	Favorito "~1~" no existe o no está disponible.`n`nSi este favorito está en una unidad de red, por favor inténtalo de nuevo después de la autenticación de red.`n`nSi uno de los favoritos es un enlace a una página web, elegir la opción "Link (URL)" Cuando se agrega un favorito.
 lDialogFavoriteDoesNotExistTitle	Favorito no encontrado - ~1~
@@ -49,6 +44,7 @@ lDialogFolderShortName	Nombre corto de la carpeta (para los menús)
 lDialogGroupDelete	Suprimir
 lDialogGroupDeleteError	suprimir
 lDialogGroupDeletePrompt	Suprimir el grupo "~1~"?
+lDialogGroupDeleteTitle	Suprimir groupe - ~1~
 lDialogGroupEdit	Modificar
 lDialogGroupEditError	modificar
 lDialogGroupLoad	Restaurar
@@ -108,7 +104,6 @@ lDonateThankyou	Gracias por esta señal de aprecio!
 lDonateTitle	Apoyar este programa gratuito! - ~1~ ~2~
 lGui2Close	Cerrar
 lGuiAbout	Acerca de
-lGuiAddDialog	Añadir
 lGuiAddFavorite	Añadir
 lGuiCancel	Anular
 lGuiClose	Cerrar
@@ -136,16 +131,12 @@ lGuiGroupSaveShortName	Nombre del grupo (para los menús)
 lGuiHelp	Ayuda
 lGuiHotkeysHelp	Ayuda con atajos favoritos
 lGuiHotkeysHelpText	Flecha Hacia Abajo: Seleccionar los próximos favoritos`nFlecha Hacia arriba: Sleccionar los favoritos anteriores`nCtrl-N: Añadir nuevo favorito`nEntrada: Modificar un favorito`n`nMay-Arriba/Abajo: Seleccionar favoritos contiguos`nCtrl-Clic: Seleccionar favoritos no-contiguos`nCtrl-A: Seleccionar todos los favoritos`n`nCtrl-Bas: Mueva uno o más marcadores abajo`nCtrl-Haut: Mueva uno o más marcadores arriba`nSuppr: Suprimir uno o más favoritos`n`nCtrl-Droite: Abrir un sub-menú`nCtrl-Gauche: Abra el submenú con este menú
-lGuiLvDialogsHeader	Diálogos compatibles`n(parte del nombre es suficiente)
 lGuiLvFavoritesHeader	Nombre|Ubicación
 lGuiMove	Mover
-lGuiMoveFavoriteDown	Abajo
-lGuiMoveFavoriteUp	Arriba
 lGuiOptions	Opciones
 lGuiRemoveFavorite	Suprimir
 lGuiResetDefault	Restaurar el lanzador por defecto
 lGuiSave	Registrar
-lGuiSeparator	Separación
 lGuiSubmenuDropdownLabel	Menú a modificar:
 lGuiSubmenuLocation	>
 lGuiSubmenuSeparator	>
@@ -159,7 +150,6 @@ lHelpText3	Para añadir rápidamente una CARPETA a su menú:`n1) Vaya a una carpeta
 lHelpText4	Para añadir a su menú un DOCUMENTO o un LINK WEB:`n1) Abra el menú de Folders Popup y elija"Parámetros" (o pulse sobre [~1~]).`n2) Clique en el botón "Añadir" y elija la opción "Documento" o  "Link (URL)".`n3) Introduzca un nombre corto para este favorito, indique la ubicación del documento (botón "Examinar") o la dirección URL del link, clique sobre "Añadir" y "Guardar" en la ventana de parámetros.
 lHelpText5	- En la zona de Notificaciones clique sobre el icono de Folders Popup con el botón derecho y seleccione "Ejecutar al Inicio" para lanzar FoldersPopup al inicio de Windows.`n- Necesita abrir un archivo mientras está trabajando en una aplicación? Desde cualquier ventana, clique en [~1~] (o pulse sobre [~2~]) o tambien puede clicar en el icono de Folders Popup en la barra de Notifications, y despues elija su carpeta favorita.`n- Elija el menú "Ubicaciones recientes..." (o pulse sobre [~3~]) para ver una versión actualizada de los archivos recientes en Windows.`n-Utilice el menú "Carpetas en el Explorador" (o pulse sobre [~4~]) para abrir un archivo ya existente en la ventana del explorador de archivos o el menú "Grupos de carpetas" (o pulse sobre [~5~]) para guardar y restaurar grupos de carpetas.`n- Abra las carpetas, archivos o URLs cuya dirección está en su Portapapeles con el menú "Portapapeles" (o clique sobre [~6~]) o copia la ubicación de un favorito en el Portapapeles con el menú "Copiar ubicación de un favorito" (o clique sobre [~7~]).`n- Elija las combinaciones de botón del ratón y de atajos de teclado que abren el menú emergente en los  "Parámetros, Opciones".`n- Tambien en "Opciones": elija su idioma, el tamaño de iconos del menú, los coores de las ventanas. Elija para mostrar el menú Ubicaciones recientes, los atajos de teclado numérico o fijar el menú emergente en una posición de su elección.`n-Usuarios de Directory Opus, consultar <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/">esta página</a> (en inglés) para instrucciones adicionales.`n-Usuarios de Total Commander, consultar <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/">esta página</a> (en inglés) para más instrucciones.
 lHelpText6	El soporte de FoldersPopup esta disponible en <a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
-lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware.
 lHelpTextLead	Con FoldersPopup, podrá navegar de un vistazo por sus archivos, páginas web y documentos favoritos!
 lHelpTitle	Ayuda - ~1~ ~2~
 lMainMenuName	Principal
@@ -177,7 +167,6 @@ lMenuControlPanel	Panel de configuración
 lMenuCookies	Cookies
 lMenuCopyLocation	Copiar ubicación de un favorito
 lMenuDesktop	Oficina
-lMenuDialogNotSupported	Este tipo de diálogo aún no es compatible
 lMenuDocuments	Documentos
 lMenuDownloads	Descarga
 lMenuExitFoldersPopup	Cerrar ~1~
@@ -187,8 +176,6 @@ lMenuFonts	Fuentes
 lMenuFPMenu	~2~ ~1~
 lMenuGroup	Grupos de carpetas
 lMenuGroupAdd	añadir
-lMenuGroupDOpus	Listas Directory Opus y
-lMenuGroupLoad	Abrir un grupo
 lMenuGroupReplace	Sustituir
 lMenuGroupSave	Guardar archivos en el Explorador de un grupo
 lMenuHelp	Ayuda
@@ -216,7 +203,6 @@ lMenuStartMenu	Menú de Inicio
 lMenuStartup	Inicio
 lMenuSuspendHotkeys	Suspender atajos de teclado (Hotkeys)
 lMenuSystemCertificates	Certificados de Sistema
-lMenuTemplates	Modelos
 lMenuTemplates	Modelos
 lMenuTemporaryFiles	Ficheros temporales
 lMenuUpdate	Compruebe Actualización
@@ -276,7 +262,6 @@ lOptionsMouseNone	Ninguno
 lOptionsNoKeyOrMouseSpecified	No se ha seleccionado ningún botón del teclado o el ratón. La selección actual ~1~ no tiene cambios.
 lOptionsOpenMenuOnTaskbar	Abrir el menú en la barra de tareas
 lOptionsOtherOptions	General
-lOptionsPopupFix	Menú popup en una posición fija
 lOptionsPopupFixPositionX	Posición X:
 lOptionsPopupFixPositionY	Y:
 lOptionsRecentFolders	Ubicaciones recientes
@@ -302,11 +287,7 @@ lOptionsTrayTip	Mostrar notificación al inicio
 lOptionsTriggerFor	Lanzador para:
 lOptionsWin	Windows
 lOptionsWinShort	Win
-lPickIconButtonCustom	Personalizada
-lPickIconButtonDefault	Por defecto
-lPickIconDocumentPrompt	Quiere elegir un icono personalizado o el icono por defecto para este tipo de documento?
 lPickIconNoLocation	Por favor, primero elegir un favorito antes de seleccionar un icono.
-lPickIconTitle	Selección del Icono de ~1~ - ~2~
 lPopupMenuCopyLocationTrayTip	Elija el favorito a copiar
 lReloadPrompt	Cambio ~1~ guardado: ~2~. Desea reiniciar ~3~ en ~2~ ahora? Se perderán los cambios no guardados en el menú de carpetas.
 lReloadPromptDefaultHotkey	Se ha establecido el valor predeterminado para este lanzador. Esta será efectiva después de relanzar ~1~.`n`nQuiere relanzar ~1~ ahora? Se perderán los cambios no guardados en el menú de carpetas.

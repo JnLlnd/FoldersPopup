@@ -10,9 +10,6 @@ lDiagModeExit	~1~ ha raccolto le informazioni per il debug nel file ~2~.
 lDiagModeIntro	Invia questo file a: ahk@jeanlalonde.ca con una descrizione della situazione da diagnosticare.
 lDiagModeSee	Vuoi visualizzare il file con le informazioni per il debug?
 lDialogAdd	Aggiungi
-lDialogAddDialogAlready	Questo tipo di Casella di Dialogo è già supportata.
-lDialogAddDialogPrompt	Inserisci il nome della nuova Casella di Dialogo`n(o parte del nome):
-lDialogAddDialogTitle	Aggiungi la Casella di Dialogo - ~1~ ~2~
 lDialogAddEditFavoriteTitle	~1~ Preferito - ~2~ ~3~
 lDialogAddFileSelect	Scegli il nuovo Documento:
 lDialogAddFolderManuallyPrompt	Mi spiace, non riesco a trovare la cartella attuale in questo tipo di finestra.`n`nVuoi aggiungerla manualmente adesso?
@@ -26,8 +23,6 @@ lDialogCancelButton	Annulla
 lDialogCancelPrompt	Vuoi scartare le modifiche?
 lDialogCancelTitle	Annulla - ~1~ ~2~
 lDialogEdit	Modifica
-lDialogEditDialogPrompt	Inserisci il nome della nuova Casella di Dialogo`n(o parte del nome):
-lDialogEditDialogTitle	Modifica la Casella di Dialogo - ~1~ ~2~
 lDialogEndOfMenu	fine del menù
 lDialogFavoriteDoesNotExistPrompt	Il Preferito "~1~" non esiste oppure non è disponibile.`n`nSe questo Preferito si trova su un disco di rete, si prega di riprovare dopo l'autenticazione di rete.`n`nSe il Preferito è un link ad una pagina web, seleziona l'opzione "Link (URL)" quando aggiungi il Preferito.
 lDialogFavoriteDoesNotExistTitle	Il Preferito non esiste - ~1~
@@ -62,7 +57,7 @@ lDialogGroupManageGroupsTitle	Gestione Gruppi - ~1~ ~2~
 lDialogGroupManageIntro	Con "Gruppi" puoi salvare e ripristinare il tuo spazio di lavoro per spostarti agevolmente tra le tue sessioni di lavoro. "Gruppi" memorizza cartella, dimensione, posizione e stato (normale, minimizzato o massimizzato) delle finestre di Windows Explorer e Directory Opus (Total Commander non ancora supportato).
 lDialogGroupManageManagingTitle	Gestione Gruppi
 lDialogGroupNew	Salva un nuovo Gruppo
-lDialogGroupRemoveTitle	Elimina Gruppo - ~1~
+lDialogGroupDeleteTitle	Elimina Gruppo - ~1~
 lDialogGroups	Gruppi
 lDialogGroupSelect	Seleziona un Gruppo
 lDialogGroupSelectError	Per favore, seleziona il Gruppo da ~1~.
@@ -111,7 +106,6 @@ lDonateThankyou	Grazie di supportare il freeware!
 lDonateTitle	Supporta il freeware! - ~1~ ~2~
 lGui2Close	Chiudi
 lGuiAbout	Crediti
-lGuiAddDialog	Aggiungi
 lGuiAddFavorite	Aggiungi
 lGuiCancel	&Annulla
 lGuiClose	&Chiudi
@@ -139,16 +133,12 @@ lGuiGroupSaveShortName	Nome breve del gruppo (voce menù)
 lGuiHelp	Aiuto
 lGuiHotkeysHelp	Organizzazione Preferiti (scorciatoie)
 lGuiHotkeysHelpText	Freccia-Su: Seleziona il Preferito precedente`nFreccia-Giù: Seleziona il Preferito successivo`nCtrl+N: Aggiungi un nuovo Preferito`nInvio: Modifica il Preferito evidenziato`n`nShift+Su/Giù: Seleziona Preferiti contigui`nCtrl+ClickSinistro: Seleziona Preferiti non contigui`nCtrl+A: Seleziona tutti i Preferiti`n`nCtrl+Su: Sposta in su il Preferito(i)`nCtrl+Giù: Sposta in giù il Preferito(i)`nCanc: Elimina il Preferito(i)`n`nCtrl+Sinistra: Risali nel sottomenù superiore`nCtrl+Destra: Scendi nel sottomenù inferiore
-lGuiLvDialogsHeader	Caselle di Dialogo supportate`n(sono ammessi anche nomi incompleti) 
 lGuiLvFavoritesHeader	Nome|Destinazione
 lGuiMove	Sposta
-lGuiMoveFavoriteDown	Sposta S&otto
-lGuiMoveFavoriteUp	Sposta &Sopra
 lGuiOptions	Opzioni
 lGuiRemoveFavorite	Elimina
 lGuiResetDefault	Ripristina hotkey predefinito
 lGuiSave	&Salva
-lGuiSeparator	Se&paratore
 lGuiSubmenuDropdownLabel	Menù da modificare:
 lGuiSubmenuLocation	>
 lGuiSubmenuSeparator	>
@@ -162,7 +152,6 @@ lHelpText3	Per AGGIUNGERE velocemente una nuova CARTELLA preferita al menù popup
 lHelpText4	Per AGGIUNGERE un nuovo DOCUMENTO preferito o un LINK WEB al menù popup:`n1) Apri il menù di FoldersPopup e scegli "Impostazioni" (o da tastiera: [~1~]).`n2) Clicca il tasto "Aggiungi" e scegli l'opzione "Documento" o "Link (URL)".`n3) Dai al Preferito un nome breve, "Sfoglia" fino al documento o inserisci l'URL della pagina web, clicca "Aggiungi", e poi "Salva" nella finestra impostazioni.
 lHelpText5	- Nell'area notifiche, clicca col tasto destro sull'icona di FoldersPopup e contrassegna l'opzione "Esegui all'Avvio" per eseguire FoldersPopup automaticamente all'avvio di Windows.`n- Hai bisogno di una nuova finestra di Windows Explorer mentre stai lavorando in un'applicazione? Da qualunque finestra, col mouse clicca [~1~] (o da tastiera: [~2~]), o semplicemente clicca sull'icona di FoldersPopup nell'area notifiche, e scegli la cartella preferita che vuoi aprire.`n- Seleziona il menù "Cartelle recenti..." (o da tastiera: [~3~]) per mostrare un elenco aggiornato delle cartelle recentemente aperte.`n- Usa il menù "Cartelle Correnti" (o da tastiera: [~4~]) per aprire una delle cartelle già aperte in Windows Explorer, e "Gruppi di Cartelle" (o da tastiera: [~5~]) per salvare e richiamare un gruppo di cartelle.`n- Access the files or URLs in your Clipboard from the "Clipboard" menu (or press [~6~]) or copy the path or URL of any favorite to the Clipboard using the "Copy a Favorite's Path or URL" menu (or press [~7~]).`n- Configura i metodi per aprire il menù popup: scegli il tasto del mouse da usare o le combinazioni di tasti in "Impostazioni, Opzioni".`n- Inoltre, in "Opzioni": scegli la lingua preferita, la dimensione delle icone del menù, e i colori delle finestre. Seleziona le opzioni per visualizzare le cartelle recenti, aggiungere i numeri da usare come scorciatoia da tastiera per il menù delle cartelle o fissare una posizione dove si aprirà il menù popup.`n-Utenti di Directory Opus, per informazioni aggiuntive vedere <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/"> questa pagina</a>.`n-Utenti di Total Commander, per informazioni aggiuntive vedere <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/"> questa pagina</a>.
 lHelpText6	Il supporto a FoldersPopup è disponibile su <a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
-lHelpText7	~1~ Jean Lalonde 2013-2014. Freeware.
 lHelpTextLead	FoldersPopup ti consente di spostarti come una scheggia tra le cartelle, documenti e pagine web che usi più spesso!
 lHelpTitle	Aiuto - ~1~ ~2~
 lMainMenuName	Principale
@@ -180,7 +169,6 @@ lMenuControlPanel	Pannello di &Controllo
 lMenuCookies	Cookies
 lMenuCopyLocation	Copia il Percorso del Preferito
 lMenuDesktop	Desktop
-lMenuDialogNotSupported	Questa casella di dialogo non è ancora supportata
 lMenuDocuments	Documenti
 lMenuDownloads	Download
 lMenuExitFoldersPopup	Esci da ~1~
@@ -190,7 +178,6 @@ lMenuFonts	Font di caratteri
 lMenuFPMenu	~1~ ~2~
 lMenuGroup	Gruppi di Cartelle
 lMenuGroupAdd	aggiungi
-lMenuGroupLoad	Apri un gruppo
 lMenuGroupReplace	sostituisci
 lMenuGroupSave	Salva le Cartelle correnti come Gruppo
 lMenuHelp	Aiuto
@@ -270,14 +257,12 @@ lOptionsMenuNearMouse	Vicino al puntatore del mouse
 lOptionsMenuPositionPrompt	Apri il menù popup:
 lOptionsMouse	Mouse
 lOptionsMouseAndKeyboard	Menù scorciatoie
-lOptionsMouseButtonsText	Tasto Sinistro del Mouse|Tasto Centrale del Mouse|Tasto Destro del Mouse|Tasto Speciale 1 del Mouse|Tasto Speciale 2|Rotellina in su|Rotellina in giù|Rotellina a sinistra|Rotellina a destra|
 lOptionsMouseButtonsText	Tasto Sinistro|Tasto Centrale|Tasto Destro|Tasto Speciale 1|Tasto Speciale 2|Rotellina SU|Rotellina GIU'|Rotellina a Sinistra|Rotellina a Destra|
 lOptionsMouseCheckLButton	Non è possibile assegnare il "Tasto Sinistro del Mouse" da solo, senza modificatore.
 lOptionsMouseNone	Nessuno
 lOptionsNoKeyOrMouseSpecified	Non è stato specificato alcun tasto (per il mouse o tastiera). La scorciatoia preesistente "~1~" non verrà modificata.
 lOptionsOpenMenuOnTaskbar	Apri il menù nella barra delle applicazioni
 lOptionsOtherOptions	Generale
-lOptionsPopupFix	&Menu Popup in posizione prefissata
 lOptionsPopupFixPositionX	Posizione X:
 lOptionsPopupFixPositionY	Y:
 lOptionsRecentFolders	Cartelle Recen&ti
@@ -303,11 +288,7 @@ lOptionsTrayTip	All'avvio, &Mostra popup dall'area notifiche
 lOptionsTriggerFor	Per attivare:
 lOptionsWin	Windows
 lOptionsWinShort	Win
-lPickIconButtonCustom	Personalizzato
-lPickIconButtonDefault	Default
-lPickIconDocumentPrompt	Selezionare un'icona a scelta o usare l'icona di default per questo tipo di documento?
 lPickIconNoLocation	Seleziona il preferito prima di scegliere un'icona.
-lPickIconTitle	Seleziona l'icona per ~1~ - ~2~
 lPopupMenuCopyLocationTrayTip	Select the favorite to copy
 lReloadPrompt	~1~ cambiato in ~2~. Vuoi ricaricare ~3~ in ~2~ ora? Le modifiche non salvate al menù delle cartelle verranno perse.
 lReloadPromptDefaultHotkey	Scorciatoia riportata al valore di default. Questa modifica sarà effettiva solo dopo aver ricaricato ~1~.`n`nVuoi ricaricare ~1~ ora? Le modifiche non salvate al menù delle cartelle verranno perse.

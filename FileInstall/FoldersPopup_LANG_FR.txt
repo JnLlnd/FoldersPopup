@@ -9,9 +9,6 @@ lDiagModeExit	~1~ a colligé des renseignements à des fins de diagnostique dans l
 lDiagModeIntro	Envoyez ce fichier à ahk@jeanlalonde.ca avec une description de la situation nécessitant un diasnostique.
 lDiagModeSee	Voulez-vous consulter le fichier de diagnostique?
 lDialogAdd	Ajouter
-lDialogAddDialogAlready	Ce type de boîte de dialogue est déjà pris en charge.
-lDialogAddDialogPrompt	Entrez le nom de la nouvelle boîte de dialogue`n(ou une partie du nom):
-lDialogAddDialogTitle	Ajouter Boîte de dialogue - ~1~ ~2~
 lDialogAddEditFavoriteTitle	~1~ un favori - ~2~ ~3~
 lDialogAddFileSelect	Choisir un nouveau document:
 lDialogAddFolderManuallyPrompt	Désolé, nous ne pouvons détecter automatiquement le dossier actif dans ce type de fenêtre.`n`nVoulez-vous ajouter ce dossier manuellement?
@@ -25,8 +22,6 @@ lDialogCancelButton	Annuler
 lDialogCancelPrompt	Annuler les changements?
 lDialogCancelTitle	Annuler - ~1~ ~2~
 lDialogEdit	Modifier
-lDialogEditDialogPrompt	Entrez le nouveau nom de la boîte de dialogue`n(ou une partie du nom):
-lDialogEditDialogTitle	Modifier Boîte de dialogue - ~1~ ~2~
 lDialogEndOfMenu	fin du menu
 lDialogFavoriteDoesNotExistPrompt	Le favori "~1~" n'existe pas ou n'est pas disponible.`n`nSi ce favori réside sur un lecteur réseau, veuillez essayer à nouveau après l'authentification réseau.`n`nSi un favori est un lien vers une page web, choisissez l'option "Lien (URL)" lorsque vous ajoutez le favori.
 lDialogFavoriteDoesNotExistTitle	Favori introuvable - ~1~
@@ -48,6 +43,7 @@ lDialogFolderShortName	Nom court du dossier (pour les menus)
 lDialogGroupDelete	Supprimer
 lDialogGroupDeleteError	supprimer
 lDialogGroupDeletePrompt	Supprimer le groupe "~1~"?
+lDialogGroupDeleteTitle	Supprimer un groupe - ~1~
 lDialogGroupEdit	Modifier
 lDialogGroupEditError	modifier
 lDialogGroupLoad	Restaurer
@@ -107,7 +103,6 @@ lDonateThankyou	Merci pour cette marque d'appréciation!
 lDonateTitle	Soutenez ce gratuiciel! - ~1~ ~2~
 lGui2Close	Fermer
 lGuiAbout	À propos
-lGuiAddDialog	Ajouter
 lGuiAddFavorite	Ajouter
 lGuiCancel	Annuler
 lGuiClose	Fermer
@@ -135,16 +130,12 @@ lGuiGroupSaveShortName	Nom du groupe (pour les menus)
 lGuiHelp	Aide
 lGuiHotkeysHelp	Aide sur les raccourcis des favoris
 lGuiHotkeysHelpText	Flèche Bas: Sélectioner le prochain favoris`nFlèche Haut: Sélectioner le favoris précédent`nCtrl-N: Ajouter un nouveau favoris`nEntrée: Modifier un favoris`n`nMaj-Haut/Bas: Sélectionner des favoris contigus`nCtrl-Clic: Sélectionner des favoris non-contigus`nCtrl-A: Sélectionner tous les favoris`n`nCtrl-Bas: Déplacer un ou des favoris vers le bas`nCtrl-Haut: Déplacer un ou des favoris vers le haut`nSuppr: Supprimer un ou des favoris`n`nCtrl-Droite: Ouvrir un sous-menu`nCtrl-Gauche: Ouvrir le sous-menu contenant ce menu
-lGuiLvDialogsHeader	Boîtes de dialogue prises en charge`n(une partie du nom suffit)
 lGuiLvFavoritesHeader	Nom|Emplacement
 lGuiMove	Déplacer
-lGuiMoveFavoriteDown	En bas
-lGuiMoveFavoriteUp	En haut
 lGuiOptions	Options
 lGuiRemoveFavorite	Supprimer
 lGuiResetDefault	Restaurer le déclencheur par défaut
 lGuiSave	Enregistrer
-lGuiSeparator	Séparation
 lGuiSubmenuDropdownLabel	Menu à modifier:
 lGuiSubmenuLocation	>
 lGuiSubmenuSeparator	>
@@ -158,7 +149,6 @@ lHelpText3	Pour ajouter rapidement un DOSSIER à votre menu:`n1) Allez dans un do
 lHelpText4	Pour ajouter à votre menu un DOCUMENTS ou un LIEN WEB:`n1) Ouvrez le menu de Folders Popup et choisissez "Paramètres" (ou appuyez sur [~1~]).`n2) Cliquez sur le bouton "Ajouter" et choisissez l'option "Document" ou "Lien (URL)".`n3) Attribuez un nom court à ce favori, indiquez l'emplacement du document (bouton "Parcourir") ou l'adresse URL du lien, cliquez sur "Ajouter" et "Enregistrer" dans la fenêtre des paramètres.
 lHelpText5	- Dans la zone de Notifications, cliquez sur l'icône de Folders Popup avec le bouton de droite et sélectionnez "Exécuter au démarrage" pour lancer FoldersPopup au lancement de Windows.`n- Besoin d'ouvrir un dossier alors que vous travaillez dans une application? De n'importe quelle fenêtre, cliquez sur ~1~ (ou appuyez sur [~2~]) ou encore cliquez sur l'icône de Folders Popup dans la zone de Notifications, puis choisissez votre dossier favori.`n- Choisissez le menu "Emplacements récents..." (ou appuyez sur [~3~]) pour afficher une version à jour des dossiers récents de Windows.`n-Utilisez le menu "Dossiers dans l'Explorateur" (ou appuyez sur [~4~]) pour ouvrir un dossier déjà présent dans une fenêtre de l'Explorateur de fichiers ou le menu "Groupes de dossiers" (ou appuyez sur [~5~]) pour enregistrer et restaurer des groupes de dossiers.`n- Ouvrez les dossiers, fichiers ou URLs dont l'adresse est dans votre Presse-papiers avec le menu "Presse-papiers" (ou appuyez sur [~6~]) ou copiez l'emplacement d'un favori dans le Presse-papiers avec le menu "Copier l'emplacement d'un favori" (ou appuyez sur [~7~]).`n- Choisissez les combinaisons de bouton de la souris et de touches du clavier qui ouvrent le menu popup dans les  "Paramètres, Options".`n- Aussi dans les "Options": choisissez votre langue d'utilisation, la taille des icônes de menu, les couleurs des fenêtres. Décidez d'afficher le menu des Emplacements récents, les raccourcis clavier numériques ou fixez le menu popup à une position de votre choix.`n-Utilisateurs de Directory Opus, consultez <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/">cette page</a> (en anglais) pour des renseignements additionnels.`n-Utilisateurs de Total Commander, consultez <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/">cette page</a> (en anglais) pour plus de renseignements.
 lHelpText6	Le soutien sur FoldersPopup est disponible à <a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
-lHelpText7	~1~ Jean Lalonde 2013-2014. Gratuiciel.
 lHelpTextLead	Avec FoldersPopup, navigez en un clin d'oeil parmi vos dossiers, pages web et documents favoris!
 lHelpTitle	Aide - ~1~ ~2~
 lMainMenuName	Principal
@@ -175,7 +165,6 @@ lMenuCommonStartupMenu	Démarrage (commun)
 lMenuControlPanel	Panneau de configuration
 lMenuCookies	Cookies
 lMenuDesktop	Bureau
-lMenuDialogNotSupported	Ce type de boîte de dialogue n'est pas encore pris en charge
 lMenuDocuments	Documents
 lMenuDownloads	Téléchargements
 lMenuExitFoldersPopup	Quitter ~1~
@@ -185,8 +174,6 @@ lMenuFonts	Polices
 lMenuFPMenu	~2~ ~1~
 lMenuGroup	Groupes de dossiers
 lMenuGroupAdd	ajouter
-lMenuGroupDOpus	Listes Directory Opus et
-lMenuGroupLoad	Ouvrir un groupe
 lMenuGroupReplace	remplacer
 lMenuGroupSave	Enregistrer les Dossiers dans l'Explorateur dans un groupe
 lMenuHelp	Aide
@@ -215,7 +202,6 @@ lMenuStartMenu	Menu Démarrer
 lMenuStartup	Démarrage
 lMenuSuspendHotkeys	Suspendre les déclencheurs (Hotkeys)
 lMenuSystemCertificates	Certificats système
-lMenuTemplates	Modèles
 lMenuTemplates	Modèles
 lMenuTemporaryFiles	Fichiers temporaires
 lMenuUpdate	Vérifier la mise à jour
@@ -275,10 +261,6 @@ lOptionsMouseNone	Aucun
 lOptionsNoKeyOrMouseSpecified	Aucune touche du clavier ou bouton de la souris n'a été sélectionné. La sélection actuelle ~1~ est inchangée.
 lOptionsOpenMenuOnTaskbar	Ouvrir le menu sur la barre des tâches
 lOptionsOtherOptions	Général
-lOptionsCopyLocation	Copier l'emplacement d'un favori:
-lOptionsCopyLocationRadioClipboard	Dans le Presse-papiers
-lOptionsCopyLocationRadioKeyboard	Au point d'insertion du clavier
-lOptionsPopupFix	Menu popup à une position fixe
 lOptionsPopupFixPositionX	Position X:
 lOptionsPopupFixPositionY	Y:
 lOptionsRecentFolders	Emplacements récents
@@ -305,11 +287,7 @@ lOptionsTriggerFor	Déclencheur pour:
 lOptionsWin	Windows
 lOptionsWinShort	Win
 lCopyLocationCopiedToClipboard	Emplacement copié dans le Presse-papiers
-lPickIconButtonCustom	Personnalisé
-lPickIconButtonDefault	Par défaut
-lPickIconDocumentPrompt	Voulez-vous choisir une icône personnalisée ou l'icône par défaut pour ce type de document?
 lPickIconNoLocation	Veuillez d'abord choisisr un favori avant de sélectionner une icône.
-lPickIconTitle	Selection Icône de ~1~ - ~2~
 lPopupMenuCopyLocationTrayTip	Choisissez le favori à copier
 lReloadPrompt	Changement de ~1~ enregistré: ~2~. Voulez-vous relancer ~3~ en ~2~ maintenant? Les changements non sauvegardés dans le menu des dossiers seront perdus.
 lReloadPromptDefaultHotkey	La valeur par défaut pour ce déclencheur a été rétablie. Ceci ne sera effectif qu'après la relance de ~1~.`n`nVoulez-vous relancer ~1~ maintenant? Les changements non sauvegardés dans le menu des dossiers seront perdus.
