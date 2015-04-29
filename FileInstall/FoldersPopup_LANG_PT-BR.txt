@@ -260,7 +260,6 @@ lOptionsMouseAndKeyboard	Teclas de atalho do menu
 lOptionsMouseButtonsText	Botão Esquerdo do Mouse|Botão do Meio do Mouse|Botão Direito do Mouse|Botão Especial do Mouse 1|Botão Especial do Mouse 2|Roda para Cima|Roda para Baixo|Roda para Esquerda|Roda para Direita|
 lOptionsMouseCheckLButton	Você não pode atribuir o "Botão Esquerdo do Mouse" sem modificador.
 lOptionsMouseNone	Nenhum
-lOptionsNoKeyOrMouseSpecified	Nenhuma Tecla ou Botão do Mouse especificado. A tecla de atalho "~1~" existente não foi alterada.
 lOptionsOpenMenuOnTaskbar	Abrir menu na barra de tarefas
 lOptionsOtherOptions	Geral
 lOptionsPopupFixPositionX	Posição X:

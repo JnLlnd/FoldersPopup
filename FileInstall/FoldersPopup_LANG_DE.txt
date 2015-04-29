@@ -253,7 +253,6 @@ lOptionsMouseAndKeyboard	Menü Hotkeys
 lOptionsMouseButtonsText	Linke Maustaste|Mittlere Maustaste|Rechte Maustaste|Spezielle Maustaste 1|Spezielle Maustaste 2|Mausrad hoch|Mausrad runter|Wheel Left|Wheel Right|
 lOptionsMouseCheckLButton	Die linke Maustaste kann nicht ohne Zusatztaste definiert werden.
 lOptionsMouseNone	Keine
-lOptionsNoKeyOrMouseSpecified	Kein Tastenkürzel oder Maustaste definiert. Der bestehende Hotkey ~1~ ist unverändert.
 lOptionsOpenMenuOnTaskbar	Menü in der Taskleiste öffnen
 lOptionsOtherOptions	Allgemein
 lOptionsPopupFixPositionX	Position X:

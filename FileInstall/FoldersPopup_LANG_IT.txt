@@ -260,7 +260,6 @@ lOptionsMouseAndKeyboard	Menù scorciatoie
 lOptionsMouseButtonsText	Tasto Sinistro|Tasto Centrale|Tasto Destro|Tasto Speciale 1|Tasto Speciale 2|Rotellina SU|Rotellina GIU'|Rotellina a Sinistra|Rotellina a Destra|
 lOptionsMouseCheckLButton	Non è possibile assegnare il "Tasto Sinistro del Mouse" da solo, senza modificatore.
 lOptionsMouseNone	Nessuno
-lOptionsNoKeyOrMouseSpecified	Non è stato specificato alcun tasto (per il mouse o tastiera). La scorciatoia preesistente "~1~" non verrà modificata.
 lOptionsOpenMenuOnTaskbar	Apri il menù nella barra delle applicazioni
 lOptionsOtherOptions	Generale
 lOptionsPopupFixPositionX	Posizione X:

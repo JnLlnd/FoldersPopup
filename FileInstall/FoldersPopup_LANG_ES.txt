@@ -259,7 +259,6 @@ lOptionsMouseAndKeyboard	Lanzadores de menú
 lOptionsMouseButtonsText	Botón izquierdo del ratón|Botón central del ratón|Botón derecho del ratón|Botón especial 1 del ratón|Botón especial 2 del ratón|Mover hacia arriba|Mover hacia abajo|Mover a la izquierda|Mover a la derecha|
 lOptionsMouseCheckLButton	No se puede asignar el "botón izquierdo del ratón" con ninguna tecla modificadora.
 lOptionsMouseNone	Ninguno
-lOptionsNoKeyOrMouseSpecified	No se ha seleccionado ningún botón del teclado o el ratón. La selección actual ~1~ no tiene cambios.
 lOptionsOpenMenuOnTaskbar	Abrir el menú en la barra de tareas
 lOptionsOtherOptions	General
 lOptionsPopupFixPositionX	Posición X:

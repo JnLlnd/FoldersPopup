@@ -253,7 +253,6 @@ lOptionsMouseAndKeyboard	Menu sneltoetsen
 lOptionsMouseButtonsText	Linkermuisknop|Middenste muisknop|Rechtermuisknop|Speciale muisknop 1|Speciale muisknop 2|Muiswiel omhoog|Muiswiel omlaag|Muiswiel links|Muiswiel rechts|
 lOptionsMouseCheckLButton	Je kan de linkermuisknop niet toewijzen zonder een extra speciale toets erbij.
 lOptionsMouseNone	Geen
-lOptionsNoKeyOrMouseSpecified	Geen toets of muisknop werd gespecifieerd. De bestaande "~1~" combinatie blijft ongewijzigd.
 lOptionsOpenMenuOnTaskbar	Open menu via de taakbalk
 lOptionsOtherOptions	Algemeen
 lOptionsPopupFixPositionX	Positie X:

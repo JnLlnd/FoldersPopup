@@ -17,6 +17,8 @@ Todo:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 5.0.9.8 (2015-04-??)
+	
 	Version: 5.0.9.7 (2015-04-27)
 	* fix a bug with relative paths being combined wrongly when the location in an URL
 	* in change hotkey dialog box, make the selection of no hotkey (None) more obvious
@@ -786,7 +788,7 @@ Todo:
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 5.0.9.7 beta
+;@Ahk2Exe-SetVersion 5.0.9.8 beta
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -834,7 +836,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "5.0.9.7" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "5.0.9.8" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 
@@ -944,7 +946,6 @@ DllCall("CreateMutex", "uint", 0, "int", false, "str", strAppName . "Mutex")
 
 return
 
-#Include %A_ScriptDir%\FoldersPopup_LANG.ahk
 
 /*
 REMOVED IN v4.2.1 BECAUSE OF A SIDE EFFECT IN XL 2010
@@ -955,6 +956,16 @@ If A_EventInfo
   ClipboardAllBK := ClipboardAll
 return
 */
+
+
+;========================================================================================================================
+; END OF INITIALIZATION
+;========================================================================================================================
+
+
+;========================================================================================================================
+; HOTKEYS
+;========================================================================================================================
 
 ; Gui Hotkeys
 #If WinActive("ahk_id " . strAppHwnd)
@@ -1013,6 +1024,15 @@ return
 ; END OF INITIALIZATION
 ;========================================================================================================================
 
+
+;-----------------------------------------------------------
+InitLanguageVariables:
+;-----------------------------------------------------------
+
+#Include %A_ScriptDir%\FoldersPopup_LANG.ahk
+
+return
+;-----------------------------------------------------------
 
 
 ;-----------------------------------------------------------
@@ -1246,8 +1266,6 @@ IniRead, strSettingsPosition, %strIniFile%, Global, SettingsPosition, -1 ; cente
 StringSplit, arrSettingsPosition, strSettingsPosition, |
 
 IniRead, blnDonor, %strIniFile%, Global, Donor, 0 ; Please, be fair. Don't cheat with this.
-if !(blnDonor)
-	lMenuReservedShortcuts := lMenuReservedShortcuts . lMenuReservedShortcutsDonate
 
 IniRead, strDirectoryOpusPath, %strIniFile%, Global, DirectoryOpusPath, %A_Space% ; empty string if not found
 IniRead, blnDirectoryOpusUseTabs, %strIniFile%, Global, DirectoryOpusUseTabs, 1 ; use tabs by default
@@ -2359,7 +2377,7 @@ objLocationUrlByName := Object()
 
 for intIndex, objFolderInExplorer in objFoldersInExplorers
 {
-	strMenuName := (blnDisplayMenuShortcuts and (intShortcutFoldersInExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutFoldersInExplorer, false) . " " : "") . objFolderInExplorer.Name
+	strMenuName := (blnDisplayMenuShortcuts and (intShortcutFoldersInExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutFoldersInExplorer) . " " : "") . objFolderInExplorer.Name
 	objLocationUrlByName.Insert(strMenuName, objFolderInExplorer.LocationURL) ; can include the numeric shortcut
 	AddMenuIcon("menuFoldersInExplorer", strMenuName, "OpenFolderInExplorer", "Folder")
 }
@@ -2603,7 +2621,7 @@ intShortcut := 0
 Loop, Parse, strGroups, |
 {
 	IniRead, blnReplaceWhenRestoringThisGroup, %striniFile%, Group-%A_LoopField%, ReplaceWhenRestoringThisGroup, %A_Space% ; empty if not found
-	strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "")
+	strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut) . " " : "")
 		. A_LoopField . " (" . (blnReplaceWhenRestoringThisGroup ? lMenuGroupReplace : lMenuGroupAdd) . ")"
 	AddMenuIcon("menuGroups", strMenuName, "GroupLoad", "lMenuGroup")
 }
@@ -2701,7 +2719,7 @@ Loop, parse, strDirList, `n
 	intRecentFoldersIndex := intRecentFoldersIndex + 1
 	objRecentFolders.Insert(intRecentFoldersIndex, strOutTarget)
 	
-	strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, false) . " " : "") . strOutTarget
+	strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut) . " " : "") . strOutTarget
 	AddMenuIcon("menuRecentFolders", strMenuName, "OpenRecentFolder", "Folder")
 
 	if (intRecentFoldersIndex >= intRecentFolders)
@@ -2773,7 +2791,7 @@ Loop, parse, Clipboard, `n, `r%A_Space%%A_Tab%/?:*`"><|
 		}
 		blnClipboardMenuEnable := 1
 
-		strMenuName := (blnDisplayMenuShortcuts and (intShortcutFoldersInExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutClipboardMenu, false) . " " : "") . strClipboardLine
+		strMenuName := (blnDisplayMenuShortcuts and (intShortcutFoldersInExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutClipboardMenu) . " " : "") . strClipboardLine
 		if (blnDisplayIcons)
 			if LocationIsDocument(strClipboardLineExpanded)
 			{
@@ -2806,7 +2824,7 @@ Loop, parse, strURLsInClipboard, `n
 	}
 	blnClipboardMenuEnable := 1
 
-	strMenuName := (blnDisplayMenuShortcuts and (intShortcutFoldersInExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutClipboardMenu, false) . " " : "") . A_LoopField
+	strMenuName := (blnDisplayMenuShortcuts and (intShortcutFoldersInExplorer <= 35) ? "&" . NextMenuShortcut(intShortcutClipboardMenu) . " " : "") . A_LoopField
 	if StrLen(strMenuName) < 260 ; skip too long URLs
 	{
 		Menu, menuClipboard, Add, %strMenuName%, OpenClipboard
@@ -3014,7 +3032,7 @@ BuildOneMenu(strMenu)
 			if (blnUseColors)
 				Try Menu, %strSubMenuParent%, Color, %strMenuBackgroundColor% ; Try because this can fail if submenu is empty
 			
-			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = lMainMenuName)) . " " : "") . strSubMenuDisplayName
+			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut) . " " : "") . strSubMenuDisplayName
 			Try Menu, %strSubMenuParent%, Add, %strMenuName%, % ":" . strSubMenuFullName
 			catch e ; when menu is empty
 			{
@@ -3058,7 +3076,7 @@ BuildOneMenu(strMenu)
 		else ; this is a favorite (folder, document, application or URL)
 		{
 			strSubMenuDisplayName := arrThisMenu[A_Index].FavoriteName
-			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut, (strMenu = lMainMenuName)) . " " : "")
+			strMenuName := (blnDisplayMenuShortcuts and (intShortcut <= 35) ? "&" . NextMenuShortcut(intShortcut) . " " : "")
 				. strSubMenuDisplayName
 			Menu, % arrThisMenu[A_Index].MenuName, Add, %strMenuName%, OpenFavorite
 
@@ -3095,17 +3113,14 @@ BuildOneMenu(strMenu)
 
 
 ;------------------------------------------------------------
-NextMenuShortcut(ByRef intShortcut, blnMainMenu)
+NextMenuShortcut(ByRef intShortcut)
 ;------------------------------------------------------------
 {
 	if (intShortcut < 10)
 		strShortcut := intShortcut ; 0 .. 9
 	else
-	{
-		while (blnMainMenu and InStr(lMenuReservedShortcuts, Chr(intShortcut + 55)))
-			intShortcut := intShortcut + 1
 		strShortcut := Chr(intShortcut + 55) ; Chr(10 + 55) = "A" .. Chr(35 + 55) = "Z"
-	}
+	
 	intShortcut := intShortcut + 1
 	return strShortcut
 }
@@ -7985,6 +8000,8 @@ GuiControl, , blnOptionsCtrl, 0
 GuiControl, , blnOptionsAlt, 0
 GuiControl, , blnOptionsWin, 0
 
+strModifiers%intIndex% := "" ; intIndex comes from N in ButtonOptionsChangeHotkeyN label
+
 return
 ;------------------------------------------------------------
 
@@ -8074,37 +8091,36 @@ else
 	strMouseButton%intIndex% := "" ;  empty mouse button text
 
 strHotkey := Trim(strOptionsKey . strOptionsMouse)
+if !StrLen(strHotkey)
+	strHotkey := "None"
 
-if StrLen(strHotkey)
-	if (strHotkey = "None") ; do not compare with lOptionsMouseNone because it is translated
-	{
-		Hotkey, % "$" . arrHotkeys%intIndex%, Off, UseErrorLevel ; UseErrorLevel in case we had an invalid key name in the ini file
-		IniWrite, None, %strIniFile%, Global, % arrIniVarNames%intIndex% ; do not write lOptionsMouseNone because it is translated
-	}
-	else
-	{
-		; Order of modifiers important to keep modifiers labels in correct order
-		if (blnOptionsWin)
-			strHotkey := "#" . strHotkey
-		if (blnOptionsAlt)
-			strHotkey := "!" . strHotkey
-		if (blnOptionsCtrl)
-			strHotkey := "^" . strHotkey
-		if (blnOptionsShift)
-			strHotkey := "+" . strHotkey
-
-		if (strHotkey = "LButton")
-		{
-			Oops(lOptionsMouseCheckLButton)
-			Gosub, 3GuiClose
-			return
-		}
-
-		Hotkey, % "$" . arrHotkeys%intIndex%, Off, UseErrorLevel ; UseErrorLevel in case we had an invalid key name in the ini file
-		IniWrite, %strHotkey%, %strIniFile%, Global, % arrIniVarNames%intIndex%
-	}
+if (strHotkey = "None") ; do not compare with lOptionsMouseNone because it is translated
+{
+	Hotkey, % "$" . arrHotkeys%intIndex%, Off, UseErrorLevel ; UseErrorLevel in case we had an invalid key name in the ini file
+	IniWrite, None, %strIniFile%, Global, % arrIniVarNames%intIndex% ; do not write lOptionsMouseNone because it is translated
+}
 else
-	Oops(L(lOptionsNoKeyOrMouseSpecified, arrIniVarNames%intIndex%))
+{
+	; Order of modifiers important to keep modifiers labels in correct order
+	if (blnOptionsWin)
+		strHotkey := "#" . strHotkey
+	if (blnOptionsAlt)
+		strHotkey := "!" . strHotkey
+	if (blnOptionsCtrl)
+		strHotkey := "^" . strHotkey
+	if (blnOptionsShift)
+		strHotkey := "+" . strHotkey
+
+	if (strHotkey = "LButton")
+	{
+		Oops(lOptionsMouseCheckLButton)
+		Gosub, 3GuiClose
+		return
+	}
+
+	Hotkey, % "$" . arrHotkeys%intIndex%, Off, UseErrorLevel ; UseErrorLevel in case we had an invalid key name in the ini file
+	IniWrite, %strHotkey%, %strIniFile%, Global, % arrIniVarNames%intIndex%
+}
 
 Gosub, LoadIniHotkeys ; reload ini variables and reset hotkeys
 
