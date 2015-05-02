@@ -185,6 +185,7 @@ lMenuHistory	Cronologia
 lMenuMenu	Menù
 lMenuMyComputer	&Mio Computer
 lMenuMyMusic	Musica
+lMenuMySystemMenu	Le Mie Cartelle Speciali
 lMenuMyVideo	Video
 lMenuNetworkNeighborhood	Rete di Wi&ndows
 lMenuPictures	Immagini

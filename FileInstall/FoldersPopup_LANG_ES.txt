@@ -1,5 +1,5 @@
 lAboutText1	~1~ ~2~ (~3~ bits)
-lAboutText2	~1~ ha sido desarrollado por Jean Lalonde`nsobre la plataforma <a href="http://ahkscript.org/">AutoHotkey</a>.`n`ntraducción al español: kiketrucker`nTraducción al Francés: Jean Lalonde`nTraducción al alemán: Edgar ""Fast Edi"" Hoffmann`nTraducción al holandés: Pieter Dejonghe`nTraducción al coreano: Om Il-Sung`nTraducción al sueco: Åke Engelbrektson`nTraducción al italiano: Riccardo Leone`nRevisión del ingles: (bienvenida la ayuda)`n`nIconos por: <a href="http://www.visualpharm.com">Visual Pharm</a>`nInstalador: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> por jrsoftware.org`nSources AutoHotkey_L v1.1: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText2	~1~ ha sido desarrollado por Jean Lalonde`nsobre la plataforma <a href="http://ahkscript.org/">AutoHotkey</a>.`n`nTraducción al español: kiketrucker`nTraducción al Francés: Jean Lalonde`nTraducción al alemán: Edgar ""Fast Edi"" Hoffmann`nTraducción al holandés: Pieter Dejonghe`nTraducción al coreano: Om Il-Sung`nTraducción al sueco: Åke Engelbrektson`nTraducción al italiano: Riccardo Leone`nTraducción al portugués brasileño: Igor Ruckert`nRevisión del ingles: (bienvenida la ayuda)`n`nIconos por: <a href="http://www.visualpharm.com">Visual Pharm</a>`nInstalador: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> por jrsoftware.org`nSources AutoHotkey_L v1.1: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Gratuiciel.
 lAboutText4	Soporte en línea: <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	Acerca de - ~1~ ~2~
@@ -249,7 +249,7 @@ lOptionsHotkeys	Otros lanzadores
 lOptionsIconSize	Tamaño de iconos del menú
 lOptionsKeyboard	Teclado
 lOptionsLanguage	Idioma
-lOptionsLanguageLabels	Inglés|Francés|Alemán|Holandés|Coreano|Sueco|Italiano|Español|Brazilian Portuguese
+lOptionsLanguageLabels	Inglés|Francés|Alemán|Holandés|Coreano|Sueco|Italiano|Español|Portugués brasileño
 lOptionsMenuActiveWindow	En la ventana activa
 lOptionsMenuFixPosition	En una posición fija
 lOptionsMenuNearMouse	Cerca del puntero del ratón
