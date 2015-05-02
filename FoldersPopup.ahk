@@ -1,8 +1,3 @@
-/*
-Bug:
-
-Todo:
-*/
 ;===============================================
 /*
 	FoldersPopup
@@ -17,7 +12,10 @@ Todo:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 5.0.9.8 (2015-04-??)
+	Version: 5.0.9.8 (2015-05-02)
+	* fix bug causing error when trying to show icon in Clipboard menu when icons are not allowed
+	* fix bug with None in change hotkey dialog box
+	* updates of language files
 	
 	Version: 5.0.9.7 (2015-04-27)
 	* fix a bug with relative paths being combined wrongly when the location in an URL
@@ -2828,7 +2826,8 @@ Loop, parse, strURLsInClipboard, `n
 	if StrLen(strMenuName) < 260 ; skip too long URLs
 	{
 		Menu, menuClipboard, Add, %strMenuName%, OpenClipboard
-		Menu, menuClipboard, Icon, %strMenuName%, %strThisIconFile%, %intThisIconIndex%, %intIconSize%
+		if (blnDisplayIcon)
+			Menu, menuClipboard, Icon, %strMenuName%, %strThisIconFile%, %intThisIconIndex%, %intIconSize%
 	}
 }
 
