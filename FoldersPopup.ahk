@@ -12,7 +12,8 @@
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 5.0.9.9 (2015-05-??)
+	Version: 5.0.9.9 (2015-05-06)
+	* Enable keyboard shortcuts even if Current folders, Groups of Folders and Clipboard menus are disabled
 	* Dutch language update
 
 	Version: 5.0.9.8 (2015-05-02)
@@ -2588,9 +2589,6 @@ NameIsInObject(strName, obj)
 FoldersInExplorerMenuShortcut:
 ;------------------------------------------------------------
 
-if !(blnDisplayFoldersInExplorerMenu)
-	return
-
 blnCopyLocation := false
 
 blnNewWindow := !CanOpenFavorite("", strTargetWinId, strTargetClass, strTargetControl)
@@ -2638,9 +2636,6 @@ return
 ;------------------------------------------------------------
 GroupsMenuShortcut:
 ;------------------------------------------------------------
-
-if !(blnDisplayGroupMenu)
-	return
 
 blnCopyLocation := false
 
@@ -2904,9 +2899,6 @@ return
 ;------------------------------------------------------------
 ClipboardMenuShortcut:
 ;------------------------------------------------------------
-
-if !(blnDisplayClipboardMenu)
-    return
 
 blnCopyLocation := false
 
@@ -3326,8 +3318,7 @@ if (blnDisplaySpecialFolders) and (A_OSVersion = "WIN_XP")
 			, %lMenuRecycleBin%
 	}
 
-if (blnDisplayFoldersInExplorerMenu)
-	Gosub, BuildFoldersInExplorerMenu
+Gosub, BuildFoldersInExplorerMenu ; build anyway for keyboard shortcut
 
 if (blnDisplayFoldersInExplorerMenu)
 {
@@ -3346,9 +3337,10 @@ if (blnDisplayGroupMenu)
 		, % BuildSpecialMenuItemName(7, lMenuGroup)
 }
 
+Gosub, RefreshClipboardMenu ; refresh anyway for keyboard shortcut
+
 if (blnDisplayClipboardMenu)
 {
-	Gosub, RefreshClipboardMenu
 	Menu, %lMainMenuName%
 		, % (blnClipboardMenuEnable ? "Enable" : "Disable")
 		, %  BuildSpecialMenuItemName(9, lMenuClipboard)
