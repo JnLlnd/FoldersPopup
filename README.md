@@ -13,6 +13,62 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### Version: 5.1 (2015-05-06)
+* See beta versions v5.0.9 to 5.0.9.0
+	
+### Version: 5.0.9.9 (2015-05-06)
+* Enable keyboard shortcuts even if Current folders, Groups of Folders and Clipboard menus are disabled
+* Dutch language update
+
+### Version: 5.0.9.8 (2015-05-02)
+* fix bug causing error when trying to show icon in Clipboard menu when icons are not allowed
+* fix bug with None in change hotkey dialog box
+* updates of language files
+	
+### Version: 5.0.9.7 (2015-04-27)
+* fix a bug with relative paths being combined wrongly when the location in an URL
+* in change hotkey dialog box, make the selection of no hotkey (None) more obvious
+* preserve standard order of modifiers in hotkey labels when changing hotkey
+* updates of language files
+	
+### Version: 5.0.9.5/6 (2015-04-24)
+* simplified implementation of the copy location to clipboard feature; English language adapted
+* addition of the Brazilian Portuguese language !
+* update to Spanish language file
+	
+### Version: 5.0.9.4 (2015-04-23)
+* fix bug when adding folders using the drag-and-drop technique, these favorites being considered as application favorites
+* re-wording of the language around the "Paste Location" feature to "Copy location"
+* expand the relative path in favorite location, based on the current working directory, making the change folder support relative paths
+* adjustments to all translation language files
+	
+### Version: 5.0.9.3 (2015-04-15)
+* sort URLs in Clipboard menu
+* Spanish, Dutch and French text updates
+* help text updates, addition of help text about Clipboard and Paste Favorite's Location menus
+* display current customized shortcuts in Help text (English only for now)
+* support comments starting with ";" in language files
+* support comments at end of lines after ";" in language files
+
+### Version: 5.0.9.2 (2015-04-11)
+* addition of spanish language
+* fix Change hotkey description text for hotkeys 3 to 6
+* Add English description text in Change hotkey for hotkeys 7 to 10
+* fix buttons centering bug in Option GUI
+* fix text layout in Change hotkey GUI
+	
+### Version: 5.0.9.1 (2015-04-10)
+* merge changes in v5.0.1
+	
+### Version: 5.0.9 (2015-04-05)
+* new Paste Favorite's Location in the main menu
+* new shortcut (default Shift-Windows-V) to open the Paste Location menu
+* new radio button options for paste location destination in Options tab 1
+* paste favorite's location to keyboard or clipboard, according to destination selected in Options
+* new checkbox option in Options tab 1 to display or not the Paste Favorite's Location menu
+* add tray tip when showing the Paste Favorite's Location
+* disable Groups, Settings, Add this folder and Support freeware menus when showing Paste menu
+
 ### Version: 5.0.1 (2015-04-10)
 * change default hotkeys for Current Folders (+^f), Groups of Folders (+^g), Recent Folders (+^r), Clipboard (+^c) and Settings (+^s) for Windows 8.1 compatibility
 * fix bug with special folders Pictures and Favorites (Internet) when user change these folders default location
