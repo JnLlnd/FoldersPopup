@@ -49,7 +49,7 @@ lDialogGroupEditError	modificare
 lDialogGroupLoad	Apri
 lDialogGroupLoadError	aprire
 lDialogGroupLoadErrorLoading	Errore nell'apertura delle finestre del Gruppo:`n`n"~1~"
-lDialogGroupManageAbout	A proposito dei Gruppi
+lDialogGroupManageAbout	Gruppi di Cartelle
 lDialogGroupManageCannotSave	Avviso: Non c'è nessuna cartella aperta per formare un nuovo Gruppo. Apri almeno una finestra di Windows Explorer o Directory Opus e riprova a salvare il nuovo gruppo.
 lDialogGroupManageCreatingPrompt	Per creare un Gruppo, puoi cliccare il tasto qui sotto: "~1~", oppure puoi selezionare in qualunque momento il menù: "~2~".
 lDialogGroupManageCreatingTitle	Crea un Gruppo di cartelle
@@ -73,7 +73,7 @@ lDialogRemoveMultipleFavorites	Vuoi davvero eliminare ~1~ preferiti / sottomenù?
 lDialogSave	Salva
 lDialogSelectItemToEdit	Per favore, seleziona la voce da modificare.
 lDialogSelectItemToRemove	Per favore, seleziona la voce da eliminare.
-lDialogSpecialLabel	Special Folder
+lDialogSpecialLabel	Cartella Speciale
 lDialogSubmenuLabel	Sottomenù
 lDialogSubmenuNameEmpty	Il nome del sottomenù non può essere vuoto. Si prega di inserire un nome.
 lDialogSubmenuParentMenu	Scegli il menù in cui inserirlo
