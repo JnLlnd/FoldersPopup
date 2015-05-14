@@ -12,6 +12,9 @@
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 5.1.0.1 (2015-??-??)
+	* test for group load error
+	
 	Version: 5.1 (2015-05-06)
 	* See beta versions v5.0.9 to 5.0.9.0
 	
@@ -793,7 +796,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 5.1
+;@Ahk2Exe-SetVersion 5.1.0.1 beta
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -841,8 +844,8 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "5.1" ; "major.minor.bugs" or "major.minor.beta.release"
-global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
+global strCurrentVersion := "5.1.0.1" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 
 global str32or64 := A_PtrSize * 8
@@ -4570,26 +4573,43 @@ while, intExplorer := WindowOfType("EX") ; returns the index of the first Explor
 		WinActivate, ahk_id %strNewWindowId%
 	else ; then we create a new Explorer with this LocationURL
 	{
-		strExplorerIDsBefore := GetExplorersIDs() ;  get a list of existing Explorer windows before launching this new Explorer
-		DiagGroupLoad("strExplorerIDsBefore", strExplorerIDsBefore)
-		Run, % "explorer.exe """ . strExplorerLocationOrClassId . """",
-			, % (objIniExplorersInGroup[intExplorer].MinMax = -1 ? "Min" : (objIniExplorersInGroup[intExplorer].MinMax = 1 ? "Max" : ""))
 		Loop
 		{
-			if (A_Index > 25)
+			if (A_Index > 1)
+				Tooltip, %intActualWindowInIni% %lGuiGroupOf% %intTotalWindowsInIni% (take %A_Index%)
+			if (A_Index > 3)
 			{
-				Oops(lDialogGroupLoadErrorLoading, strExplorerLocationOrClassId)
 				blnGroupLoadError := True
 				blnGroupLoadExplorerError := True
 				Break
 			}
-			Sleep, 200
-			strExplorerIDsAfter := GetExplorersIDs() ;  get an updated list of existing Explorer windows
-			DiagGroupLoad("strExplorerIDsAfter take " . A_Index, strExplorerIDsAfter)
-			strNewWindowId := GetNewExplorer(strExplorerIDsBefore, strExplorerIDsAfter) ; check if we have a new Explorer window
-			DiagGroupLoad("strNewWindowId", strNewWindowId)
-			If StrLen(strNewWindowId)
-				Break ; if we have a new window, WinMove it
+			strExplorerIDsBefore := GetExplorersIDs() ;  get a list of existing Explorer windows before launching this new Explorer
+			DiagGroupLoad("strExplorerIDsBefore", strExplorerIDsBefore)
+			DiagGroupLoad("GroupLoadRun Take", A_Index)
+			
+			Run, % "explorer.exe """ . strExplorerLocationOrClassId . """",
+				, % (objIniExplorersInGroup[intExplorer].MinMax = -1 ? "Min" : (objIniExplorersInGroup[intExplorer].MinMax = 1 ? "Max" : ""))
+				
+			Loop
+			{
+				if (A_Index > 10)
+				{
+					Oops(lDialogGroupLoadErrorLoading, strExplorerLocationOrClassId)
+					blnGroupLoadError := True
+					blnGroupLoadExplorerError := True
+					Break
+				}
+				Sleep, 500 ; was 200 before v5.1.0.1 beta
+				strExplorerIDsAfter := GetExplorersIDs() ;  get an updated list of existing Explorer windows
+				DiagGroupLoad("strExplorerIDsAfter Take " . A_Index, strExplorerIDsAfter)
+				strNewWindowId := GetNewExplorer(strExplorerIDsBefore, strExplorerIDsAfter) ; check if we have a new Explorer window
+				DiagGroupLoad("strNewWindowId", strNewWindowId)
+				blnGroupLoadWindowIdFound := StrLen(strNewWindowId)
+				if (blnGroupLoadWindowIdFound)
+					Break ; if we have a new window, exit loops 1, 2 and WinMove it
+			}
+			if (blnGroupLoadWindowIdFound)
+				Break ; if we have a new window, exit loop 2 and WinMove it
 		}
 	}
 	
@@ -4699,9 +4719,12 @@ Tooltip ; clear tooltip
 
 objIniExplorersInGroup :=
 
-if (blnGroupLoadExplorerError)
+if (blnGroupLoadExplorerError) or 1 ; #### FORE BETA TEST CREATE REPORT ANYWAY
 {
-	MsgBox, 20, %strAppName% Group Load Diagnostic, Following the error you encountered, do you want to copy DIAGNOSTIC info to your clipboard and send it to HELP the developer?
+	if !(blnGroupLoadExplorerError) ; #### FORE BETA TEST CREATE REPORT ANYWAY
+		MsgBox, 20, %strAppName% Group Load Diagnostic BETA VERSION, THERE WAS NO ERROR but, please, copy DIAGNOSTIC info to your clipboard and send it to HELP the developer. OK? ; ####
+	else ; ####
+		MsgBox, 20, %strAppName% Group Load Diagnostic, Following the error you encountered, do you want to copy DIAGNOSTIC info to your clipboard and send it to HELP the developer?
 	IfMsgBox, Yes
 	{
 		Clipboard := strGroupLoadDiag
@@ -4875,7 +4898,8 @@ GetExplorersIDs()
 ;------------------------------------------------------------
 {
 	strExplorerIDs := ""
-	for objExplorer in ComObjCreate("Shell.Application").Windows
+	objShell := ComObjCreate("Shell.Application")
+	for objExplorer in objShell.Windows
 	{
 		strType := ""
 		try strType := objExplorer.Type ; Gets the type name of the contained document object. "Document HTML" for IE windows. Should be empty for file Explorer windows.
@@ -4884,6 +4908,8 @@ GetExplorersIDs()
 		if !StrLen(strType) and StrLen(strWindowID) ; strType must be empty and strWindowID must not be empty
 			strExplorerIDs := strExplorerIDs . objExplorer.HWND . "|"
 	}
+	objExplorer := "" ; release object
+	objShell := "" ; release object
 	return strExplorerIDs
 }
 ;------------------------------------------------------------
