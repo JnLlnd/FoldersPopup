@@ -12,8 +12,9 @@
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 5.1.0.1 (2015-??-??)
-	* test for group load error
+	Version: 5.1.1 (2015-07-21)
+	* fix a bug for FPconnect users preventing the middle-mouse-button click to be recognized by FPconnected file manager (see: http://blog.rolandtoth.hu/post/106133423662/fpconnect-for-folderspopup-windows)
+	* improve group load error handling
 	
 	Version: 5.1 (2015-05-06)
 	* See beta versions v5.0.9 to 5.0.9.0
@@ -796,7 +797,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 5.1.0.1 beta
+;@Ahk2Exe-SetVersion 5.1.1
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -844,8 +845,8 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "5.1.0.1" ; "major.minor.bugs" or "major.minor.beta.release"
-global strCurrentBranch := "beta" ; "prod" or "beta", always lowercase for filename
+global strCurrentVersion := "5.1.1" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 
 global str32or64 := A_PtrSize * 8
@@ -3581,7 +3582,7 @@ WindowIsFPconnect(strWinId)
 	global strFPconnectAppPathFilename
 	global strFPconnectTargetPathFilename
 
-	if !StrLen(strTargetClass) or (strTargetWinId = 0)
+	if (strTargetWinId = 0)
 		return false
 	
     intPID := 0
@@ -4599,7 +4600,7 @@ while, intExplorer := WindowOfType("EX") ; returns the index of the first Explor
 					blnGroupLoadExplorerError := True
 					Break
 				}
-				Sleep, 500 ; was 200 before v5.1.0.1 beta
+				Sleep, 500 ; was 200 before v5.1.1
 				strExplorerIDsAfter := GetExplorersIDs() ;  get an updated list of existing Explorer windows
 				DiagGroupLoad("strExplorerIDsAfter Take " . A_Index, strExplorerIDsAfter)
 				strNewWindowId := GetNewExplorer(strExplorerIDsBefore, strExplorerIDsAfter) ; check if we have a new Explorer window
@@ -4719,12 +4720,9 @@ Tooltip ; clear tooltip
 
 objIniExplorersInGroup :=
 
-if (blnGroupLoadExplorerError) or 1 ; #### FORE BETA TEST CREATE REPORT ANYWAY
+if (blnGroupLoadExplorerError)
 {
-	if !(blnGroupLoadExplorerError) ; #### FORE BETA TEST CREATE REPORT ANYWAY
-		MsgBox, 20, %strAppName% Group Load Diagnostic BETA VERSION, THERE WAS NO ERROR but, please, copy DIAGNOSTIC info to your clipboard and send it to HELP the developer. OK? ; ####
-	else ; ####
-		MsgBox, 20, %strAppName% Group Load Diagnostic, Following the error you encountered, do you want to copy DIAGNOSTIC info to your clipboard and send it to HELP the developer?
+	MsgBox, 20, %strAppName% Group Load Diagnostic, Following the error you encountered, do you want to copy DIAGNOSTIC info to your clipboard and send it to HELP the developer?
 	IfMsgBox, Yes
 	{
 		Clipboard := strGroupLoadDiag
