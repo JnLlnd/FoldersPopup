@@ -223,8 +223,8 @@ lOptionsArrDescriptions1	Escolha a combinação de botões e modificadores do MOUSE
 lOptionsArrDescriptions2	Escolha a combinação de botões e modificadores do MOUSE que irá abrir o menu popup em QUALQUER janela e levará para a pasta selecionada em uma NOVA janela do Windows Explorer. O padrão é o botão do meio do mouse enquanto a tecla Shift é pressionada.
 lOptionsArrDescriptions3	Escolha a combinação de teclas de atalho do TECLADO que irá abrir o menu popup na janela ativa do Windows Explorer ou caixa de diálogo de arquivo. O padrão é Windows+A  (a letra "A" enquanto a tecla Windows é pressionada).
 lOptionsArrDescriptions4	Escolha a combinação de teclas de atalho do TECLADO que irá abrir o menu popup em QUALQUER janela e levará até a pasta selecionada em uma nova janela do Windows Explorer. O padrão é Shift+Windows+A  (a letra "A" enquanto as teclas Shift e Control são pressionadas).
-lOptionsArrDescriptions5	Escolha a combinação de teclas ou botões do mouse que abrirão o menu "Pastas Recentes". O padrão é Shift+Control+R.
-lOptionsArrDescriptions6	Escolha a combinação de teclas ou botões do mouse que abrirão a caixa de diálogo "Configurações". O padrão é Shift+Control+S.
+lOptionsArrDescriptions5	Escolha a combinação de teclas ou botões do mouse que abrirão a caixa de diálogo "Configurações". O padrão é Shift+Control+S.
+lOptionsArrDescriptions6	Escolha a combinação de teclas ou botões do mouse que abrirão a caixa de diálogo "Pastas Atuais". O padrão é Shift+Control+F.
 lOptionsArrDescriptions7	Escolha a combinação de teclas ou botões do mouse que abrirão o menu "Grupos de Pastas". O padrão é Shift+Control+G.
 lOptionsArrDescriptions8	Escolha a combinação de teclas ou botões do mouse que abrirão o menu "Pastas Recentes". O padrão é Shift+Control+R.
 lOptionsArrDescriptions9	Escolha a combinação de teclas ou botões do mouse que abrirão o menu "Área de Transferência". O padrão é Shift+Control+C.

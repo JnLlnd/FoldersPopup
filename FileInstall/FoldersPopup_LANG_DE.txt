@@ -221,8 +221,12 @@ lOptionsArrDescriptions1	Wählen Sie die MAUStaste und die Kombitasten, welche da
 lOptionsArrDescriptions2	Wählen Sie die MAUStaste und die Kombitasten, welche das FoldersPopup Menü in JEDEM Fenster öffnet und zum gewählten Ordner in einem NEUEN Explorer-Fenster navigiert. Standardmäßig ist dies die mittlere Maustaste mit gedrückter Shift-Taste.
 lOptionsArrDescriptions3	Wählen Sie die TASTENkombination, welche das popup menü im Windows Explorer oder Dateidialogboxen aufruft. Standardmäßig ist dies Windows+A (Taste A, während die Windows-Taste gdrückt wird).
 lOptionsArrDescriptions4	Wählen Sie die TASTENkombination, welche das popup menu Menü in JEDEM Fenster öffnet und zum gewählten Ordner in einem NEUEN Explorer-Fenster navigiert. Standardmäßig ist dies Shift+Windows+A (Tasten Shift und "A", während die Windows-Taste gedrückt wird).
-lOptionsArrDescriptions8	Wählen Sie die Schnelltaste oder Maustastenkombination, welche das FoldersPopup Menü "Kürzlich verwendete Ordner" öffnet. Standardmäßig ist dies Shift+Control+R.
 lOptionsArrDescriptions5	Wählen Sie die Tastenkombination oder Maustasten-Kombination, welche den FoldersPopup Einstellungsdialog aufruft. Standardmäßig ist dies Shift+Control+S.
+lOptionsArrDescriptions6	Wählen Sie die Schnelltaste oder Maustastenkombination, welche das FoldersPopup Menü "Ordner im Explorer" öffnet. Standardmäßig ist dies Shift+Control+F.
+lOptionsArrDescriptions7	Wählen Sie die Schnelltaste oder Maustastenkombination, welche das FoldersPopup Menü "Gruppen" öffnet. Standardmäßig ist dies Shift+Control+G.
+lOptionsArrDescriptions8	Wählen Sie die Schnelltaste oder Maustastenkombination, welche das FoldersPopup Menü "Kürzlich verwendete Ordner" öffnet. Standardmäßig ist dies Shift+Control+R.
+lOptionsArrDescriptions9	Wählen Sie die Schnelltaste oder Maustastenkombination, welche das FoldersPopup Menü "Zwischenablage" öffnet. Standardmäßig ist dies Shift+Control+C.
+lOptionsArrDescriptions10	Wählen Sie die Schnelltaste oder Maustastenkombination, welche das FoldersPopup Menü "Copy a Favorite's Path or URL" öffnet. Standardmäßig ist dies Shift+Control+V.
 lOptionsChangeHotkey	Ändern
 lOptionsChangeHotkeyTitle	Tastenkürzel ändern - ~1~ ~2~
 lOptionsCheck4Update	Nach Update suchen

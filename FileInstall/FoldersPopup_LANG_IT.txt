@@ -226,7 +226,7 @@ lOptionsArrDescriptions2	Scegli il tasto del MOUSE e la combinazione di modifica
 lOptionsArrDescriptions3	Scegli la scorciatoia da TASTIERA per aprire il menù popup nella finestra attiva di Windows Explorer o casella di dialogo attiva. Per default, è la combinazione Windows+A (la lettera "A" tenendo premuto il tasto Windows).
 lOptionsArrDescriptions4	Scegli la scorciatoia da TASTIERA per aprire il menù popup in QUALUNQUE finestra e spostarti alla cartella selezionata in una NUOVA finestra di Windows Explorer. Per default, è la combinazione Shift+Windows+A (la lettera "A" tenendo premuti i tasti Shift e Windows contemporaneamente).
 lOptionsArrDescriptions5	Scegli la scorciatoia o la combinazione di tasti del mouse per aprire la casella di dialogo di FoldersPopup: "Impostazioni". Per default, è Shift+Control+S.
-lOptionsArrDescriptions6	Scegli la scorciatoia o la combinazione di tasti del mouse per aprire il menù di FoldersPopup: "Impostazioni". Per default, è Shift+Control+S.
+lOptionsArrDescriptions6	Scegli la scorciatoia o la combinazione di tasti del mouse per aprire il menù di FoldersPopup: "Cartelle Correnti". Per default, è Shift+Control+F.
 lOptionsArrDescriptions7	Scegli la scorciatoia o la combinazione di tasti del mouse per aprire il menù di FoldersPopup: "Gruppi di Cartelle". Per default, è Shift+Control+G.
 lOptionsArrDescriptions8	Scegli la scorciatoia o la combinazione di tasti del mouse per aprire il menù di FoldersPopup: "Cartelle Recenti". Per default, è Shift+Control+R.
 lOptionsArrDescriptions9	Scegli la scorciatoia o la combinazione di tasti del mouse per aprire il menù di FoldersPopup: "Appunti di Windows". Per default, è Shift+Control+C.

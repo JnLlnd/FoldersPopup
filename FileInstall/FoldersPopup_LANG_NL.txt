@@ -224,8 +224,8 @@ lOptionsArrDescriptions10	Kies een sneltoets of een muisknop combinatie die het 
 lOptionsArrDescriptions2	Kies de combinatie van MUISknop en speciale toetsen (CTRL/ALT/SHIFT/WIN) die het popup menu voor mappen opent in elk willekeurig venster en die navigeert naar de geselecteerde map in een NIEUW venster van Windows Verkenner. Standaard is dit de middenste muisknop terwijl de Shift toets wordt ingedrukt.
 lOptionsArrDescriptions3	Kies de TOETSENBORD sneltoets combinatie die er voor zorgt dat het popup menu voor mappen opent in Windows Verkenner of in bestandsdialoogvensters. Standaard is dit de Windows+A combinatie (de letter "A" terwijl de Windows toets wordt ingedrukt).
 lOptionsArrDescriptions4	Kies de TOETSENBORD sneltoets combinatie die er voor zorgt dat het popup menu voor mappen opent in elk willekeurig venster en die navigeert naar de geselecteerde map in een NIEUW venster van Windows Verkenner. Standaard is dit de Shift+Windows+A combinatie (de letter "A" terwijl de Shift toets en de Windows toets worden ingedrukt).
-lOptionsArrDescriptions5	Kies de sneltoets of muisknop combinatie die er voor zorgt dat de FoldersPopup instellingen geopend worden. Standaard is dit de toetsencombinatie Shift+Control+S.
-lOptionsArrDescriptions6	Kies een sneltoets of een muisknop combinatie die de "Instellingen" dialoogvenster opent. Standaard is dit Shift+Control+S.
+lOptionsArrDescriptions5	Kies een sneltoets of een muisknop combinatie die de "Instellingen" dialoogvenster opent. Standaard is dit de toetsencombinatie Shift+Control+S.
+lOptionsArrDescriptions6	Kies een sneltoets of een muisknop combinatie die de "Huidige Mappen" dialoogvenster opent. Standaard is dit de toetsencombinatie Shift+Control+F.
 lOptionsArrDescriptions7	Kies een sneltoets of een muisknop combinatie die het "Mapgroepen" menu opent. Standaard is dit Shift+Control+G.
 lOptionsArrDescriptions8	Kies een sneltoets of een muisknop combinatie die het "Recente Mappen" menu dient te openen. Standaard is dit Shift+Control+R.
 lOptionsArrDescriptions9	Kies een sneltoets of een muisknop combinatie die het "Klembord" menu opent. Standaard is dit  Shift+Control+C.
