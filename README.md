@@ -13,6 +13,14 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### Version: 5.1.2 (2015-08-28)
+* fix description label errors when changing a hotkey in "Options, Other hotkeys"
+* when the Explorer extension Clover is installed, support folder navigation in the current tab instead of opening a new tab
+
+### Version: 5.1.1 (2015-07-21)
+* fix a bug for FPconnect users preventing the middle-mouse-button click to be recognized by FPconnected file manager (see: http://blog.rolandtoth.hu/post/106133423662/fpconnect-for-folderspopup-windows)
+* improve group load error handling
+
 ### Version: 5.1 (2015-05-06)
 * See beta versions v5.0.9 to 5.0.9.0
 	
