@@ -12,6 +12,10 @@
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 5.1.2 (2015-08-28)
+	* fix description label errors when changing a hotkey in "Options, Other hotkeys"
+	* when the Explorer extension Clover is installed, support folder navigation in the current tab instead of opening a new tab
+	
 	Version: 5.1.1 (2015-07-21)
 	* fix a bug for FPconnect users preventing the middle-mouse-button click to be recognized by FPconnected file manager (see: http://blog.rolandtoth.hu/post/106133423662/fpconnect-for-folderspopup-windows)
 	* improve group load error handling
@@ -797,7 +801,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 5.1.1
+;@Ahk2Exe-SetVersion 5.1.2
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -845,7 +849,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "5.1.1" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "5.1.2" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 
@@ -5006,7 +5010,7 @@ http://msdn.microsoft.com/en-us/library/aa752094
 			if varPath is integer ; ShellSpecialFolderConstant
 				ComObjCreate("Shell.Application").Explore(varPath)
 			else
-				Run, Explorer "%varPath%"
+				SendInput, {F4}{Esc}{Raw}%varPath%`n ; was Run, Explorer "%varPath%"
 	}
 	else
 		; Workaround for the hash (aka Sharp / "#") bug in Shell.Application - occurs only when navigating in the current Explorer window
