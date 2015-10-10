@@ -12,6 +12,9 @@
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
+	Version: 5.1.3 (2015-08-28)
+	* disabled collecting group load diagnostic data
+
 	Version: 5.1.2 (2015-08-28)
 	* fix description label errors when changing a hotkey in "Options, Other hotkeys"
 	* when the Explorer extension Clover is installed, support folder navigation in the current tab instead of opening a new tab
@@ -801,7 +804,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
-;@Ahk2Exe-SetVersion 5.1.2
+;@Ahk2Exe-SetVersion 5.1.3
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -849,7 +852,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "5.1.2" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "5.1.3" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 
@@ -4724,6 +4727,7 @@ Tooltip ; clear tooltip
 
 objIniExplorersInGroup :=
 
+/*
 if (blnGroupLoadExplorerError)
 {
 	MsgBox, 20, %strAppName% Group Load Diagnostic, Following the error you encountered, do you want to copy DIAGNOSTIC info to your clipboard and send it to HELP the developer?
@@ -4733,6 +4737,7 @@ if (blnGroupLoadExplorerError)
 		MsgBox, 0, %strAppName% Group Load Diagnostic, Paste your CLIPBOARD in an EMAIL and send it to the address indicated in the first line of the info.`n`nThank you!
 	}
 }
+*/
 strGroupLoadDiag := ""
 
 return
