@@ -1,3 +1,7 @@
+/*
+Todo:
+- if InStr("WIN_7|WIN_VISTA|WIN_2003|WIN_XP|WIN_2000", A_OSVersion), offer update only if new version smaller than 6.
+*/
 ;===============================================
 /*
 	FoldersPopup
@@ -14,6 +18,10 @@
 
 	Version: 5.1.3 (2015-08-28)
 	* disabled collecting group load diagnostic data
+	* shorten application description in executable file for Windows 10 display
+	* shorten notification tray tip texts for better display on Windows 10
+	* add a short delay after tray tip in notification zone for Windows 10 compatibility
+	* add option to disable sound on some tray tips
 
 	Version: 5.1.2 (2015-08-28)
 	* fix description label errors when changing a hotkey in "Options, Other hotkeys"
@@ -803,7 +811,7 @@
 ; Note: prefix comma with `
 
 ;@Ahk2Exe-SetName FoldersPopup
-;@Ahk2Exe-SetDescription Folders Popup (freeware) - Move like a breeze between your frequently used folders and documents!
+;@Ahk2Exe-SetDescription Folders Popup (freeware)
 ;@Ahk2Exe-SetVersion 5.1.3
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
@@ -923,13 +931,17 @@ IfExist, %A_Startup%\%strAppName%.lnk ; update the shortcut in case the exe file
 }
 
 if (blnDisplayTrayTip)
-	TrayTip, % L(lTrayTipInstalledTitle, strAppName, strAppVersion)
+{
+	TrayTip, % L(lTrayTipInstalledTitle, strAppName)
 		, % L(lTrayTipInstalledDetail, strAppName
 			, Hotkey2Text(strModifiers1, strMouseButton1, strOptionsKey1)
 			, Hotkey2Text(strModifiers3, strMouseButton3, strOptionsKey3)
 			, Hotkey2Text(strModifiers2, strMouseButton2, strOptionsKey2)
 			, Hotkey2Text(strModifiers4, strMouseButton4, strOptionsKey4))
+			; ~4~ and ~5~ not used in new EN text but keep them for compatibility with untranslated texts
 		, , 17 ; 1 info icon + 16 no sound)
+	Sleep, 20 ; tip from Lexikos for Windows 10 "Just sleep for any amount of time after each call to TrayTip" (http://ahkscript.org/boards/viewtopic.php?p=50389&sid=29b33964c05f6a937794f88b6ac924c0#p50389)
+}
 
 blnMenuReady := true
 
@@ -1142,7 +1154,7 @@ else if (A_OSVersion = "WIN_VISTA")
 				. "|259|259|123|55|103|177|240|87|153|1"
 				. "|39|97|261"
 }
-else
+else if (A_OSVersion = "WIN_7")
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres"
@@ -1154,6 +1166,19 @@ else
 				. "|113|110|217|208|298|29|1|4"
 				. "|297|46|176|55|104|179|240|87|153|1"
 				. "|39|304|261"
+}
+else ; Windows 8.1 (not tested), 10 (tested) and more (not tested)
+{
+	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
+				. "|imageres|imageres|imageres|imageres|shell32|imageres"
+				. "|imageres|imageres|imageres|imageres|shell32|imageres|shell32|shell32"
+				. "|shell32|shell32|imageres|shell32|imageres|imageres|shell32|shell32|shell32|winver"
+				. "|shell32|shell32|shell32"
+	strIconsIndex := "106|189|68|105|115|23|50"
+				. "|113|176|204|203|99|176"
+				. "|113|110|225|209|300|29|1|4"
+				. "|299|46|176|55|104|179|240|87|153|1"
+				. "|39|324|261"
 }
 
 StringSplit, arrIconsFile, strIconsFile, |
@@ -1699,9 +1724,10 @@ InitSpecialFolderObject("{ED7BA470-8E54-465E-825C-99712043E01C}", "", -1, "", ""
 InitSpecialFolderObject("{323CA680-C24D-4099-B94D-446DD2D7249E}", "", -1, "", "favorites", ""
 	, "Favorites", "" ; Favoris (<> Favorites (Internet))
 	, "CLS", "CLS", "CLS", "NEW", "DOA", "NEW", "NEW")
-InitSpecialFolderObject("{3080F90E-D7AD-11D9-BD98-0000947B0257}", "", -1, "", "", ""
-	, "Flip 3D", "" ; Pas de traduction
-	, "CLS", "CLS", "NEW", "NEW", "NEW", "NEW", "NEW")
+if (GetOsVersion() <> "WIN_10")
+	InitSpecialFolderObject("{3080F90E-D7AD-11D9-BD98-0000947B0257}", "", -1, "", "", ""
+		, "Flip 3D", "" ; Pas de traduction
+		, "CLS", "CLS", "NEW", "NEW", "NEW", "NEW", "NEW")
 InitSpecialFolderObject("{6DFD7C5C-2451-11d3-A299-00C04F8EF6AF}", "", -1, "", "", ""
 	, "Folder Options", "" ; Options des dossiers
 	, "CLS", "CLS", "NEW", "NEW", "NEW", "NEW", "NEW")
@@ -1712,9 +1738,9 @@ if (A_OSVersion = "WIN_7") ; Performance Information and Tool not available on W
 InitSpecialFolderObject("{35786D3C-B075-49b9-88DD-029876E11C01}", "", -1, "", "", ""
 	, "Portable Devices", "" ; Appareils mobiles
 	, "CLS", "CLS", "NEW", "NEW", "NEW", "NEW", "NEW")
-InitSpecialFolderObject("{7be9d83c-a729-4d97-b5a7-1b7313c39e0a}", "", -1, "A_Programs", "programs", ""
+InitSpecialFolderObject(A_Programs, "", -1, "A_Programs", "programs", "" ; CLSID was "{7be9d83c-a729-4d97-b5a7-1b7313c39e0a}" but not working under Win 10
 	, lMenuProgramsFolderStartMenu, "" ; Menu Démarrer / Programmes (Menu Start/Programs)
-	, "CLS", "CLS", "NEW", "AHK", "DOA", "AHK", "AHK")
+	, "CLS", "CLS", "CLS", "CLS", "DOA", "AHK", "AHK")
 InitSpecialFolderObject("{22877a6d-37a1-461a-91b0-dbda5aaebc99}", "", -1, "", "", ""
 	, "Recent Places", "" ; Emplacements récents
 	, "CLS", "CLS", "NEW", "NEW", "NEW", "NEW", "NEW")
@@ -1748,7 +1774,7 @@ RegRead, strMyPicturesPath, HKEY_CURRENT_USER, Software\Microsoft\Windows\Curren
 InitSpecialFolderObject(strMyPicturesPath, "", 39, "", "mypictures", ""
 	, lMenuPictures, "lMenuPictures"
 	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
-RegRead, strException, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, Favorites
+RegRead, strException, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, Favorites ; Favorites (Internet)
 InitSpecialFolderObject(strException, "", -1, "", "", ""
 	, lMenuFavoritesInternet, "Favorites"
 	, "CLS", "CLS", "CLS", "CLS", "CLS", "CLS", "CLS")
@@ -1768,9 +1794,14 @@ InitSpecialFolderObject("%APPDATA%", "", -1, "A_AppData", "appdata", ""
 InitSpecialFolderObject("%APPDATA%\Microsoft\Windows\Recent", "", -1, "", "recent", ""
 	, lMenuRecentItems, "menuRecentFolders"
 	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
-InitSpecialFolderObject("%APPDATA%\Microsoft\Windows\Cookies", "", -1, "", "cookies", ""
-	, lMenuCookies, "Folder"
-	, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
+if (GetOsVersion() = "WIN_10")
+	InitSpecialFolderObject("%LocalAppData%\Packages\Microsoft.MicrosoftEdge_8wekyb3d8bbwe\AC\MicrosoftEdge\Cookies", "", -1, "", "cookies", ""
+		, lMenuCookies, "Folder"
+		, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
+else
+	InitSpecialFolderObject("%APPDATA%\Microsoft\Windows\Cookies", "", -1, "", "cookies", ""
+		, lMenuCookies, "Folder"
+		, "CLS", "CLS", "CLS", "CLS", "DOA", "CLS", "CLS")
 InitSpecialFolderObject("%APPDATA%\Microsoft\Internet Explorer\Quick Launch", "", -1, "", "", ""
 	, lMenuQuickLaunch, "Folder"
 	, "CLS", "CLS", "CLS", "CLS", "CLS", "CLS", "CLS")
@@ -2615,7 +2646,10 @@ if (intExplorersIndex) ; there are Folders in Explorer menu
 	Menu, menuFoldersInExplorer, Show, %intMenuPosX%, %intMenuPosY%
 }
 else
-	TrayTip, % L(lTrayTipNoFoldersInExplorerMenuTitle, strAppName), %lTrayTipNoFoldersInExplorerMenuDetail%, , 2
+{
+	TrayTip, % L(lTrayTipNoFoldersInExplorerMenuTitle, strAppName), %lTrayTipNoFoldersInExplorerMenuDetail%, , 18
+	Sleep, 20 ; tip from Lexikos for Windows 10 "Just sleep for any amount of time after each call to TrayTip" (http://ahkscript.org/boards/viewtopic.php?p=50389&sid=29b33964c05f6a937794f88b6ac924c0#p50389)
+}
 
 return
 ;------------------------------------------------------------
@@ -2926,7 +2960,10 @@ if (blnClipboardMenuEnable)
     Menu, menuClipboard, Show, %intMenuPosX%, %intMenuPosY%
 }
 else
-    TrayTip, % L(lTrayTipNoClipboardMenuTitle, strAppName), %lTrayTipNoClipboardMenuDetail%, , 2
+{
+    TrayTip, % L(lTrayTipNoClipboardMenuTitle, strAppName), %lTrayTipNoClipboardMenuDetail%, , 18
+	Sleep, 20 ; tip from Lexikos for Windows 10 "Just sleep for any amount of time after each call to TrayTip" (http://ahkscript.org/boards/viewtopic.php?p=50389&sid=29b33964c05f6a937794f88b6ac924c0#p50389)
+}
 
 return
 ;------------------------------------------------------------
@@ -2938,8 +2975,11 @@ BuildMainMenuWithStatus:
 ;------------------------------------------------------------
 
 if (A_ThisLabel = "BuildMainMenuWithStatus")
-	TrayTip, % L(lTrayTipWorkingTitle, strAppName, strAppVersion)
-		, %lTrayTipWorkingDetail%, , 1
+{
+	TrayTip, % L(lTrayTipWorkingTitle, strAppName)
+		, %lTrayTipWorkingDetail%, , 17
+	Sleep, 20 ; tip from Lexikos for Windows 10 "Just sleep for any amount of time after each call to TrayTip" (http://ahkscript.org/boards/viewtopic.php?p=50389&sid=29b33964c05f6a937794f88b6ac924c0#p50389)
+}
 
 objMenuColumnBreaks := Object()
 blnMainIsFirstColumn := True
@@ -2995,8 +3035,11 @@ if !(blnDonor)
 }
 
 if (A_ThisLabel = "BuildMainMenuWithStatus")
-	TrayTip, % L(lTrayTipInstalledTitle, strAppName, strAppVersion)
-		, %lTrayTipWorkingDetailFinished%, , 1
+{
+	TrayTip, % L(lTrayTipInstalledTitle, strAppName)
+		, %lTrayTipWorkingDetailFinished%, , 17
+	Sleep, 20 ; tip from Lexikos for Windows 10 "Just sleep for any amount of time after each call to TrayTip" (http://ahkscript.org/boards/viewtopic.php?p=50389&sid=29b33964c05f6a937794f88b6ac924c0#p50389)
+}
 
 return
 ;------------------------------------------------------------
@@ -3254,7 +3297,10 @@ if !(blnMenuReady)
 
 blnCopyLocation := (A_ThisLabel = "PopupMenuCopyLocation")
 if (blnCopyLocation)
-	TrayTip, %strAppName%, %lPopupMenuCopyLocationTrayTip%
+{
+	TrayTip, %strAppName%, %lPopupMenuCopyLocationTrayTip%, , 17
+	Sleep, 20 ; tip from Lexikos for Windows 10 "Just sleep for any amount of time after each call to TrayTip" (http://ahkscript.org/boards/viewtopic.php?p=50389&sid=29b33964c05f6a937794f88b6ac924c0#p50389)
+}
 
 blnMouse := InStr(A_ThisLabel, "Mouse")
 blnNewWindow := InStr(A_ThisLabel, "New") ; used in SetMenuPosition and BuildFoldersInExplorerMenu
@@ -3557,7 +3603,10 @@ WindowIsTreeview(strWinId)
 	WinGet, strControlsList, ControlList, ahk_id %strWinId%
 	blnIsTreeView := InStr(strControlsList, "SysTreeView321") and InStr(strControlsList, "SHBrowseForFolder")
 	if (blnIsTreeView)
-		TrayTip, %lWindowIsTreeviewTitle%, % L(lWindowIsTreeviewText, strAppName), , 2
+	{
+		TrayTip, %lWindowIsTreeviewTitle%, % L(lWindowIsTreeviewText, strAppName), , 18
+		Sleep, 20 ; tip from Lexikos for Windows 10 "Just sleep for any amount of time after each call to TrayTip" (http://ahkscript.org/boards/viewtopic.php?p=50389&sid=29b33964c05f6a937794f88b6ac924c0#p50389)
+	}
 	
 	return blnIsTreeView
 }
@@ -3955,7 +4004,8 @@ CopyLocation:
 ;------------------------------------------------------------
 
 Clipboard := strLocation
-TrayTip, %strAppName%, %lCopyLocationCopiedToClipboard%, 1
+TrayTip, %strAppName%, %lCopyLocationCopiedToClipboard%, , 17
+Sleep, 20 ; tip from Lexikos for Windows 10 "Just sleep for any amount of time after each call to TrayTip" (http://ahkscript.org/boards/viewtopic.php?p=50389&sid=29b33964c05f6a937794f88b6ac924c0#p50389)
 
 return
 ;------------------------------------------------------------
@@ -8860,6 +8910,18 @@ Url2Var(strUrl)
 	objWebRequest.Send()
 
 	Return objWebRequest.ResponseText()
+}
+;------------------------------------------------------------
+
+
+;------------------------------------------------------------
+GetOSVersion()
+;------------------------------------------------------------
+{
+	if (GetOSVersionInfo().MajorVersion = 10)
+		return "WIN_10"
+	else
+		return A_OSVersion
 }
 ;------------------------------------------------------------
 
