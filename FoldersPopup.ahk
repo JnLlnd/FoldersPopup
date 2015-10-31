@@ -22,6 +22,7 @@ Todo:
 	* shorten notification tray tip texts for better display on Windows 10
 	* add a short delay after tray tip in notification zone for Windows 10 compatibility
 	* add option to disable sound on some tray tips
+	* update special folders initialization for Windows 10
 
 	Version: 5.1.2 (2015-08-28)
 	* fix description label errors when changing a hotkey in "Options, Other hotkeys"
