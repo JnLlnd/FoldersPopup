@@ -293,14 +293,14 @@ lPopupMenuCopyLocationTrayTip	Select the favorite to copy
 lReloadPrompt	~1~ cambiato in ~2~. Vuoi ricaricare ~3~ in ~2~ ora? Le modifiche non salvate al menù delle cartelle verranno perse.
 lReloadPromptDefaultHotkey	Scorciatoia riportata al valore di default. Questa modifica sarà effettiva solo dopo aver ricaricato ~1~.`n`nVuoi ricaricare ~1~ ora? Le modifiche non salvate al menù delle cartelle verranno perse.
 lTrayTipInstalledDetail	Per mostrare il menù ~1~, premi:`n`n~2~ / ~3~`nin Windows Explorer o in una "Casella di Dialogo"`n`n~4~ / ~5~`nper aprire una nuova finestra di Explorer
-lTrayTipInstalledTitle	~1~ ~2~ è pronto!
+lTrayTipInstalledTitle	~1~ è pronto!
 lTrayTipNoClipboardMenuDetail	Al momento non è presente alcuna cartella, documento, applicazione o URL nel Menù degli Appunti di Windows.
 lTrayTipNoClipboardMenuTitle	~1~ - Menù degli Appunti di Windows
 lTrayTipNoFoldersInExplorerMenuDetail	Al momento non c'è nessuna cartella da mostrare nel menù delle Cartelle Correnti.
 lTrayTipNoFoldersInExplorerMenuTitle	Cartelle Correnti
 lTrayTipWorkingDetail	Menù in costruzione...
 lTrayTipWorkingDetailFinished	Il menù è stato aggiornato.
-lTrayTipWorkingTitle	~1~ ~2~ in esecuzione...
+lTrayTipWorkingTitle	~1~ in esecuzione...
 lUpdateButtonRemind	Ricordamelo più tardi
 lUpdateError	C'è stato un errore nell'accesso al numero di versione più recente. Ricerca aggiornamenti interrotta.
 lUpdatePrompt	Aggiornare ~1~ dalla v~2~ alla v~3~?

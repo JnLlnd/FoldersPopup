@@ -288,14 +288,14 @@ lPickIconNoLocation	Bitte zuerst einen Favoriten auswählen, bevor ein Icon gewäh
 lReloadPrompt	~1~  wurde in ~2~ geändert. Wollen Sie jetzt ~3~ in ~2~ neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
 lReloadPromptDefaultHotkey	Schnelltaste auf Standard zurückgesetzt. Diese Änderung tritt erst durch erneutes Laden von ~1~ in Kraft.`n`nWollen Sie ~1~ jetzt neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
 lTrayTipInstalledDetail	Zur Anzeige des ~1~ Menüs`nim Windows Explorer oder einer Dialogbox`n~2~ oder ~3~ drücken.`n`n~4~ oder ~5~`num ein neues Explorer-Fenster zu öffnen.
-lTrayTipinstalledTitle	~1~ ~2~ bereit!
+lTrayTipinstalledTitle	~1~ bereit!
 lTrayTipNoClipboardMenuDetail	Es gibt zur Zeit keine Ordner, Dokumente, Anwendungen oder URLs im Zwischenablage-Menü
 lTrayTipNoClipboardMenuTitle	~1~ - Zwischenablage-Menü
 lTrayTipNoFoldersInExplorerMenuDetail	Es gibt zur Zeit keinen anzeigbaren Ordner im aktuellen Folders-Menü
 lTrayTipNoFoldersInExplorerMenuTitle	Aktuelle Ordner
 lTrayTipWorkingDetail	Erzeuge Menüs
 lTrayTipWorkingDetailFinished	Das Menü wurde aktualisiert.
-lTrayTipWorkingTitle	~1~ ~2~ arbeite...
+lTrayTipWorkingTitle	~1~ arbeite...
 lUpdateButtonRemind	Erinnere mich
 lUpdateError	Beim Zugriff auf die letzte Versionsnummer trat ein Fehler auf. Prüfe auf unterbrochene Updates.
 lUpdatePrompt	Update ~1~ von v~2~ auf v~3~?

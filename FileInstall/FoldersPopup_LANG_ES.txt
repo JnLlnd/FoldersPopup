@@ -291,14 +291,14 @@ lPopupMenuCopyLocationTrayTip	Elija el favorito a copiar
 lReloadPrompt	Cambio ~1~ guardado: ~2~. Desea reiniciar ~3~ en ~2~ ahora? Se perderán los cambios no guardados en el menú de carpetas.
 lReloadPromptDefaultHotkey	Se ha establecido el valor predeterminado para este lanzador. Esta será efectiva después de relanzar ~1~.`n`nQuiere relanzar ~1~ ahora? Se perderán los cambios no guardados en el menú de carpetas.
 lTrayTipInstalledDetail	Para marcar el menú de ~1~, clicar sobre:`n`n~2~ / ~3~`nen un explorador de archivos o en una caja de diálogo`n`n~4~ / ~5~`npara abrir un nuevo Explorador
-lTrayTipinstalledTitle	~1~ ~2~ Listo!
+lTrayTipinstalledTitle	~1~ Listo!
 lTrayTipNoClipboardMenuDetail	No hay ninguna carpeta, documento, aplicación o dirección web (URL) en el Portapapeles
 lTrayTipNoClipboardMenuTitle	~1~ - Menú del Portapapeles
 lTrayTipNoFoldersInExplorerMenuDetail	No hay archivo abierto para mostrar en el menú de carpetas en el Explorador
 lTrayTipNoFoldersInExplorerMenuTitle	Carpetas en el explorador
 lTrayTipWorkingDetail	Preparación de los menús
 lTrayTipWorkingDetailFinished	El menú ha sido actualizado.
-lTrayTipWorkingTitle	~1~ ~2~ en preparación...
+lTrayTipWorkingTitle	~1~ en preparación...
 lUpdateButtonRemind	Recordarme
 lUpdateError	Se produjo un error al verificar el número de la última versión. La verificación de la actualización se ha interrumpido.
 lUpdatePrompt	Actualizar ~1~ de la versión v~2~ à la versión v~3~?

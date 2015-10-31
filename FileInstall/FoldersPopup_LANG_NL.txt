@@ -298,8 +298,8 @@ lTrayTipNoFoldersInExplorerMenuDetail	Geen map beschikbaar om te tonen in het me
 lTrayTipNoFoldersInExplorerMenuTitle	Huidige mappen
 lTrayTipWorkingDetail	Menus aan het opbouwen
 lTrayTipWorkingDetailFinished	Het menu is bijgewerkt.
-lTrayTipWorkingTitle	~1~ ~2~ opbouwen...
-lTrayTipinstalledTitle	~1~ ~2~ klaar!
+lTrayTipWorkingTitle	~1~ opbouwen...
+lTrayTipinstalledTitle	~1~ klaar!
 lUpdateButtonRemind	Herinner me
 lUpdateError	Een fout trad op bij het controleren van het versienummer. De controle voor een update wordt stopgezet.
 lUpdatePrompt	Update ~1~ van v~2~ naar v~3~?

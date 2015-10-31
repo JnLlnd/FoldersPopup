@@ -293,14 +293,14 @@ lPopupMenuCopyLocationTrayTip	Selecione o favorito para copiar
 lReloadPrompt	~1~ foi alterado para ~2~. Deseja reiniciar ~3~ em ~2~ agora? Alterações não salvas no menu de pastas serão perdidas.
 lReloadPromptDefaultHotkey	A tecla de atalho foi alterada para o valor padrão. Esta alteração será aplicada somente após reiniciar o ~1~.`n`nDeseja reiniciar o ~1~ agora? Alterações não salvas no menu de pastas serão perdidas.
 lTrayTipInstalledDetail	Para exibir o menu ~1~, pressione:`n`n~2~ / ~3~`nno Windows Explorer ou em uma caixa de Diálogo`n`n~4~ / ~5~`npara abrir uma nova janela do Explorer
-lTrayTipInstalledTitle	~1~ ~2~ pronto!
+lTrayTipInstalledTitle	~1~ pronto!
 lTrayTipNoClipboardMenuDetail	Não há no momento nenhuma pasta, documento, aplicativo ou URL no menu da Área de Transferência
 lTrayTipNoClipboardMenuTitle	~1~ - Menu da Área de Transferência
 lTrayTipNoFoldersInExplorerMenuDetail	Atualmente não há nenhuma pasta para exibir no menu Pastas Atuais
 lTrayTipNoFoldersInExplorerMenuTitle	~1~ - Pastas atuais
 lTrayTipWorkingDetail	Criando menus
 lTrayTipWorkingDetailFinished	O menu foi atualizado.
-lTrayTipWorkingTitle	~1~ ~2~ trabalhando...
+lTrayTipWorkingTitle	~1~ trabalhando...
 lUpdateButtonRemind	Lembrar
 lUpdateError	Ocorreu um erro ao acessar o número da última versão. Verificação de atualização interrompida.
 lUpdatePrompt	Atualizar o ~1~ da v~2~ para v~3~?
