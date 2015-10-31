@@ -1,7 +1,3 @@
-/*
-Todo:
-- if InStr("WIN_7|WIN_VISTA|WIN_2003|WIN_XP|WIN_2000", A_OSVersion), offer update only if new version smaller than 6.
-*/
 ;===============================================
 /*
 	FoldersPopup
@@ -16,13 +12,14 @@ Todo:
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 5.1.3 (2015-08-28)
+	Version: 5.1.3 (2015-??-??)
 	* disabled collecting group load diagnostic data
 	* shorten application description in executable file for Windows 10 display
 	* shorten notification tray tip texts for better display on Windows 10
 	* add a short delay after tray tip in notification zone for Windows 10 compatibility
 	* add option to disable sound on some tray tips
 	* update special folders initialization for Windows 10
+	* check for updates prompt for download v6+ only if OS is Win7+, if v6+ prompt for ugrade to Quick Access Popup
 
 	Version: 5.1.2 (2015-08-28)
 	* fix description label errors when changing a hotkey in "Options, Other hotkeys"
@@ -2104,6 +2101,7 @@ if !FileExist(strDiagFile)
 	Diag("A_WorkingDir", A_WorkingDir)
 	Diag("A_AhkVersion", A_AhkVersion)
 	Diag("A_OSVersion", A_OSVersion)
+	Diag("GetOsVersion()", GetOsVersion())
 	Diag("A_Is64bitOS", A_Is64bitOS)
 	Diag("A_Language", A_Language)
 	Diag("A_IsAdmin", A_IsAdmin)
@@ -4576,6 +4574,7 @@ DiagGroupLoad("A_ScriptFullPath", A_ScriptFullPath)
 DiagGroupLoad("A_WorkingDir", A_WorkingDir)
 DiagGroupLoad("A_AhkVersion", A_AhkVersion)
 DiagGroupLoad("A_OSVersion", A_OSVersion)
+DiagGroupLoad("GetOsVersion()", GetOsVersion())
 DiagGroupLoad("A_Is64bitOS", A_Is64bitOS)
 DiagGroupLoad("A_Language", A_Language)
 DiagGroupLoad("A_IsAdmin", A_IsAdmin)
@@ -5448,7 +5447,7 @@ if (A_ThisMenuItem <> lMenuUpdate)
 {
 	if Time2Donate(intStartups, blnDonor)
 	{
-		MsgBox, 36, % l(lDonateCheckTitle, intStartups, strAppName), % l(lDonateCheckPrompt, strAppName, intStartups)
+		MsgBox, 36, % L(lDonateCheckTitle, intStartups, strAppName), % L(lDonateCheckPrompt, strAppName, intStartups)
 		IfMsgBox, Yes
 			Gosub, GuiDonate
 	}
@@ -5459,7 +5458,7 @@ blnSetup := (FileExist(A_ScriptDir . "\_do_not_remove_or_rename.txt") = "" ? 0 :
 
 strLatestVersions := Url2Var(strUrlCheck4Update
 	. "?v=" . strCurrentVersion
-	. "&os=" . A_OSVersion
+	. "&os=" . GetOsVersion() ; A_OSVersion
 	. "&is64=" . A_Is64bitOS
     . "&setup=" . (blnSetup)
 				+ (2 * (blnDonor ? 1 : 0))
@@ -5507,12 +5506,14 @@ Gui, 1:+OwnDialogs
 
 if (strLatestUsedBeta <> "0.0")
 {
-	if FirstVsSecondIs(strLatestVersionBeta, strCurrentVersion) = 1
+	if (FirstVsSecondIs(strLatestVersionBeta, strCurrentVersion) = 1) ; latest beta more recent than current
+		and ((FirstVsSecondIs("6.0.0", strLatestVersionBeta) = 1) or !InStr("WIN_VISTA|WIN_2003|WIN_XP|WIN_2000", A_OSVersion)) ; latest beta under 6.0.0 or OS Win_7+
 	{
 		SetTimer, Check4UpdateChangeButtonNames, 50
 
-		MsgBox, 3, % l(lUpdateTitle, strAppName) ; do not add BETA to keep buttons rename working
-			, % l(lUpdatePromptBeta, strAppName, strCurrentVersion, strLatestVersionBeta)
+		strThisAppName := (FirstVsSecondIs("6.0.0", strLatestVersionBeta) = 1 ? strAppName : "Quick Access Popup")
+		MsgBox, 3, % L(lUpdateTitle, strThisAppName) ; do not add BETA to keep buttons rename working
+			, % L(lUpdatePromptBeta, strThisAppName, strCurrentVersion, strLatestVersionBeta)
 		IfMsgBox, Yes
 			Run, %strBetaLandingPage%
 		IfMsgBox, Cancel ; Remind me
@@ -5520,7 +5521,7 @@ if (strLatestUsedBeta <> "0.0")
 		IfMsgBox, No
 		{
 			IniWrite, %strLatestVersionBeta%, %strIniFile%, Global, LatestVersionSkippedBeta
-			MsgBox, 4, % l(lUpdateTitle, strAppName . " BETA"), %lUpdatePromptBetaContinue%
+			MsgBox, 4, % L(lUpdateTitle, strAppName . " BETA"), %lUpdatePromptBetaContinue%
 			IfMsgBox, No
 				IniWrite, 0.0, %strIniFile%, Global, LastVersionUsedBeta
 		}
@@ -5530,12 +5531,14 @@ if (strLatestUsedBeta <> "0.0")
 if (FirstVsSecondIs(strLatestSkippedProd, strLatestVersionProd) >= 0 and (A_ThisMenuItem <> lMenuUpdate))
 	return
 
-if FirstVsSecondIs(strLatestVersionProd, strCurrentVersion) = 1
+if (FirstVsSecondIs(strLatestVersionProd, strCurrentVersion) = 1) ; latest prod more recent than current
+	and ((FirstVsSecondIs("6.0.0", strLatestVersionProd) = 1) or !InStr("WIN_VISTA|WIN_2003|WIN_XP|WIN_2000", A_OSVersion)) ; latest prod under 6.0.0 or OS Win7+
 {
 	SetTimer, Check4UpdateChangeButtonNames, 50
 
-	MsgBox, 3, % l(lUpdateTitle, strAppName)
-		, % l(lUpdatePrompt, strAppName, strCurrentVersion, strLatestVersionProd)
+	strThisAppName := (FirstVsSecondIs("6.0.0", strLatestVersionProd) = 1 ? strAppName : "Quick Access Popup")
+	MsgBox, 3, % L(lUpdateTitle, strThisAppName)
+		, % L(lUpdatePrompt, strThisAppName, strCurrentVersion, strLatestVersionProd)
 	IfMsgBox, Yes
 		Run, %strAppLandingPage%
 	IfMsgBox, No
@@ -5545,7 +5548,8 @@ if FirstVsSecondIs(strLatestVersionProd, strCurrentVersion) = 1
 }
 else if (A_ThisMenuItem = lMenuUpdate)
 {
-	MsgBox, 4, % l(lUpdateTitle, strAppName), % l(lUpdateYouHaveLatest, strAppVersion, strAppName)
+	strThisAppName := strAppName ; requires to keep buttons rename working 
+	MsgBox, 4, % L(lUpdateTitle, strThisAppName), % L(lUpdateYouHaveLatest, strAppVersion, strThisAppName)
 	IfMsgBox, Yes
 	{
 		if (blnDiagMode)
@@ -5588,7 +5592,7 @@ FirstVsSecondIs(strFirstVersion, strSecondVersion)
 Check4UpdateChangeButtonNames:
 ;------------------------------------------------------------
 
-IfWinNotExist, % l(lUpdateTitle, strAppName)
+IfWinNotExist, % L(lUpdateTitle, strThisAppName)
     return  ; Keep waiting.
 SetTimer, Check4UpdateChangeButtonNames, Off
 WinActivate 
