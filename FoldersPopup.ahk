@@ -12,14 +12,17 @@
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 5.1.3 (2015-??-??)
-	* disabled collecting group load diagnostic data
+	Version: 5.2 (2015-11-15)
+	* update special folders initialization for Windows 10
+	* adjust menu icons to Windows 10 icon files
 	* shorten application description in executable file for Windows 10 display
 	* shorten notification tray tip texts for better display on Windows 10
 	* add a short delay after tray tip in notification zone for Windows 10 compatibility
 	* add option to disable sound on some tray tips
-	* update special folders initialization for Windows 10
+	* fix bug with favorite application parameters, letting user enclose parameters with double-quotes only if required
+	* disabled collecting group load diagnostic data
 	* check for updates prompt for download v6+ only if OS is Win7+, if v6+ prompt for ugrade to Quick Access Popup
+	* German and French language updates
 
 	Version: 5.1.2 (2015-08-28)
 	* fix description label errors when changing a hotkey in "Options, Other hotkeys"
@@ -810,7 +813,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware)
-;@Ahk2Exe-SetVersion 5.1.3
+;@Ahk2Exe-SetVersion 5.2
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -858,7 +861,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "5.1.3" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "5.2" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 
@@ -1165,7 +1168,7 @@ else if (A_OSVersion = "WIN_7")
 				. "|297|46|176|55|104|179|240|87|153|1"
 				. "|39|304|261"
 }
-else ; Windows 8.1 (not tested), 10 (tested) and more (not tested)
+else ; Windows 8.1 / 10 (tested and more (not tested)
 {
 	strIconsFile := "imageres|imageres|imageres|imageres|imageres|imageres|imageres"
 				. "|imageres|imageres|imageres|imageres|shell32|imageres"
@@ -1173,8 +1176,8 @@ else ; Windows 8.1 (not tested), 10 (tested) and more (not tested)
 				. "|shell32|shell32|imageres|shell32|imageres|imageres|shell32|shell32|shell32|winver"
 				. "|shell32|shell32|shell32"
 	strIconsIndex := "106|189|68|105|115|23|50"
-				. "|113|176|204|203|99|176"
-				. "|113|110|225|209|300|29|1|4"
+				. "|113|176|204|204|99|176"
+				. "|113|110|307|209|300|29|1|4"
 				. "|299|46|176|55|104|179|240|87|153|1"
 				. "|39|324|261"
 }
@@ -3778,7 +3781,13 @@ if (strFavoriteType = "D" or strFavoriteType = "U") ; this is a document or an U
 
 if (strFavoriteType = "A") ; this is an application
 {
-	Run, % strLocation . (StrLen(strAppArguments) ? " """ . EnvVars(strAppArguments) . """" : ""), % EnvVars(strAppWorkingDir) ; double-quotes required around strAppArguments, no dbl-quotes for strAppWorkingDir
+	; in 5.2 double-quotes were added arount parameters - bad practice
+	; was: Run, % strLocation . (StrLen(strAppArguments) ? " """ . EnvVars(strAppArguments) . """" : ""), % EnvVars(strAppWorkingDir) ; double-quotes required around strAppArguments, no dbl-quotes for strAppWorkingDir
+
+	; No double-quotes around strAppArguments (let user add double-quotes if/when required), no dbl-quotes for strAppWorkingDir
+	; From AHK doc: To pass parameters, add them immediately after the program or document name. If a parameter contains spaces, it is safest to enclose it in double quotes (even though it may work without them in some cases).
+	; Also: Double-quotes are required if there are more than one parameter (ex.: [ "/a" "/b" ] is OK instead of [ "/a /b" ] or [ /a /b ]
+	Run, % strLocation . (StrLen(strAppArguments) ? " " . EnvVars(strAppArguments) : ""), % EnvVars(strAppWorkingDir)
 	return
 }
 
@@ -6870,6 +6879,7 @@ else
 
 Gui, 2:Add, Text, x10 w300 vlblArguments, %lDialogArgumentsLabel%
 Gui, 2:Add, Edit, x10 w300 Limit250 vstrAppArguments, %strAppArguments%
+Gui, 2:Add, Text, x10 w300 y+1 vlblArgumentsHelp, %lDialogArgumentsLabelHelp%
 Gui, 2:Add, Text, x10 w300 vlblWorkingDir, %lDialogWorkingDirLabel%
 Gui, 2:Add, Edit, x10 w300 Limit250 vstrAppWorkingDir, %strAppWorkingDir%
 Gui, 2:Add, Button, x+10 yp vbtnSelectWorkingDir gButtonSelectWorkingDir, %lDialogBrowseButton%
@@ -6997,6 +7007,7 @@ GuiControl, % "2:" . (blnRadioSubmenu or blnRadioSpecial ? "Hide" : "Show"), str
 GuiControl, % "2:" . (blnRadioSubmenu or blnRadioSpecial or blnRadioURL ? "Hide" : "Show"), btnSelectFolderLocation
 GuiControl, % "2:" . (blnRadioApplication ? "Show" : "Hide"), lblArguments
 GuiControl, % "2:" . (blnRadioApplication ? "Show" : "Hide"), strAppArguments
+GuiControl, % "2:" . (blnRadioApplication ? "Show" : "Hide"), lblArgumentsHelp
 GuiControl, % "2:" . (blnRadioApplication ? "Show" : "Hide"), lblWorkingDir
 GuiControl, % "2:" . (blnRadioApplication ? "Show" : "Hide"), strAppWorkingDir
 GuiControl, % "2:" . (blnRadioApplication ? "Show" : "Hide"), btnSelectWorkingDir
@@ -8384,7 +8395,7 @@ Gui, 2:Font, s10 w400, Verdana
 Gui, 2:Add, Link, x10 w%intWidth%, %lHelpTextLead%
 
 Gui, 2:Font, s8 w600, Verdana
-Gui, 2:Add, Tab2, vintHelpTab w640 h350 AltSubmit, %A_Space%%lHelpTabGettingStarted% | %lHelpTabAddingFavorite% | %lHelpTabTitlesTipsAndTricks%%A_Space%
+Gui, 2:Add, Tab2, vintHelpTab w640 h400 AltSubmit, %A_Space%%lHelpTabGettingStarted% | %lHelpTabAddingFavorite% | %lHelpTabTitlesTipsAndTricks%%A_Space%
 
 ; Hotkeys: 1) PopupHotkeyMouse 2) PopupHotkeyNewMouse 3) PopupHotkeyKeyboard 4) PopupHotkeyNewKeyboard
 ; 5) SettingsHotkey 6) FoldersInExplorerHotkey 7) GroupsHotkey 8) RecentsHotkey 9) ClipboardHotkey 10) CopyLocationHotkey

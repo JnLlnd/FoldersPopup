@@ -13,6 +13,18 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
+### Version: 5.2 (2015-11-15)
+* update special folders initialization for Windows 10
+* adjust menu icons to Windows 10 icon files
+* shorten application description in executable file for Windows 10 display
+* shorten notification tray tip texts for better display on Windows 10
+* add a short delay after tray tip in notification zone for Windows 10 compatibility
+* add option to disable sound on some tray tips
+* fix bug with favorite application parameters, letting user enclose parameters with double-quotes only if required
+* disabled collecting group load diagnostic data
+* check for updates prompt for download v6+ only if OS is Win7+, if v6+ prompt for ugrade to Quick Access Popup
+* German and French language updates
+
 ### Version: 5.1.2 (2015-08-28)
 * fix description label errors when changing a hotkey in "Options, Other hotkeys"
 * when the Explorer extension Clover is installed, support folder navigation in the current tab instead of opening a new tab
