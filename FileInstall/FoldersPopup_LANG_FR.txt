@@ -291,7 +291,7 @@ lPickIconNoLocation	Veuillez d'abord choisisr un favori avant de sélectionner un
 lPopupMenuCopyLocationTrayTip	Choisissez le favori à copier
 lReloadPrompt	Changement de ~1~ enregistré: ~2~. Voulez-vous relancer ~3~ en ~2~ maintenant? Les changements non sauvegardés dans le menu des dossiers seront perdus.
 lReloadPromptDefaultHotkey	La valeur par défaut pour ce déclencheur a été rétablie. Ceci ne sera effectif qu'après la relance de ~1~.`n`nVoulez-vous relancer ~1~ maintenant? Les changements non sauvegardés dans le menu des dossiers seront perdus.
-lTrayTipInstalledDetail	Appuyez sur ~2~ ou ~3~ pour afficher le menu de ~1~
+lTrayTipInstalledDetail	Appuyez: ~2~ ou ~3~ pour afficher le menu
 lTrayTipinstalledTitle	~1~ est prêt!
 lTrayTipNoClipboardMenuDetail	Il n'y a aucun dossier, document, application ou adresse web (URL) dans le Presse-papiers
 lTrayTipNoClipboardMenuTitle	~1~ - Menu du Presse-papiers
@@ -307,5 +307,5 @@ lUpdatePromptBeta	Il y a une nouvelle version BETA de ~1~.`n`nMettre à jour ~1~ 
 lUpdatePromptBetaContinue	Désirez-vous toujours être informé des futures versions beta?
 lUpdateTitle	Mettre à jour ~1~?
 lUpdateYouHaveLatest	Vous avez la version la plus récente: ~1~.`n`nVisiter la page web de ~2~ quand même?
-lWindowIsTreeviewText	Désolé... À cause d'une limitation de Windows, ce type de boîte de dialogue (TreeView) n'est pas compatible avec ~1~ pour le moment.
+lWindowIsTreeviewText	À cause d'une limitation de Windows.
 lWindowIsTreeviewTitle	Boîte de dialogue incompatible
