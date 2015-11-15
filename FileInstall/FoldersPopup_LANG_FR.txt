@@ -17,6 +17,7 @@ lDialogAddFolderSelect	Choisir ou créer un nouveau dossier:
 lDialogApplicationLabel	Application
 lDialogApplicationShortName	Nom de l'application (pour les menus)
 lDialogArgumentsLabel	Paramètres
+lDialogArgumentsLabelHelp	(inclure chaque paramètre entre guillemets si nécessaire)
 lDialogBrowseButton	Parcourir
 lDialogCancelButton	Annuler
 lDialogCancelPrompt	Annuler les changements?

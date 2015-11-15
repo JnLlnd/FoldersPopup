@@ -1,9 +1,10 @@
 lAboutText1	~1~ ~2~ (~3~ bits)
-lAboutText2	~1~ wird entwickelt von Jean Lalonde unter`nVerwendung der <a href="http://ahkscript.org/">AutoHotkey</a> Programmiersprache.`n`nDeutsche Übersetzung: Edgar "Fast Edi" Hoffmann`nFranzösische Übersetzung: Jean Lalonde`nHolländische Übersetzung: Pieter Dejonghe`Koreanisch Übersetzung: Om Il-Sung`nSchwedisch Übersetzung: Åke Engelbrektson`nItalienische Übersetzung: Riccardo Leone`nSpanish translation: kiketrucker`nEnglische Gegenleser: (Hilfe willkommen)`n`nIcons von: <a href="http://www.visualpharm.com">Visual Pharm</a>`nProgramm installieren: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> von jrsoftware.org`nAutoHotkey_L v1.1 Sourcen: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
+lAboutText2	~1~ wird entwickelt von Jean Lalonde unter`nVerwendung der <a href="http://ahkscript.org/">AutoHotkey</a> Programmiersprache.`n`nDeutsche Übersetzung: Edgar "Fast Edi" Hoffmann`nFranzösische Übersetzung: Jean Lalonde`nHolländische Übersetzung: Pieter Dejonghe`Koreanisch Übersetzung: Om Il-Sung`nSchwedisch Übersetzung: Åke Engelbrektson`nItalienische Übersetzung: Riccardo Leone`nSpanish translation: kiketrucker`nBrasilianisch/Portugiesische Übersetzung: Igor Ruckert`nEnglische Gegenleser: (Hilfe willkommen)`n`nIcons von: <a href="http://www.visualpharm.com">Visual Pharm</a>`nProgramm installieren: <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> von jrsoftware.org`nAutoHotkey_L v1.1 Sourcen: <a href="https://github.com/JnLlnd/FoldersPopup">GitHub</a>
 lAboutText3	~1~ Jean Lalonde 2013-2014. Freeware.
 lAboutText4	Support unter <a href="http://code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca</a>
 lAboutTitle	Über - ~1~ ~2~
 lAppTagline	Eine schnelle Möglichkeit des Wechsels zwischen Dokumenten und Verzeichnissen!
+lCopyLocationCopiedToClipboard	Pfad oder URL in Zwischenablage kopiert
 lDiagModeCaution	~1~ läuft im Diagnose-Modus.`n`nInformationen über die Anwendungsausführung werden in der Datei:`n~2~`n gesammelt`nEs wird nichts ohne Ihr Einverständnis versendet.`n`nWollen Sie den Diagnose-Modus beibehalten?
 lDiagModeExit	~1~ gesammelte Diagnose-Informationen in Datei ~2~.
 lDiagModeIntro	Schicken Sie diese Datei an ahk@jeanlalonde.ca mit einer Beschreibung der Situation, welche die Diagnose ausgelöst hat.
@@ -148,7 +149,7 @@ lHelpText1	Beim Start fügt FoldersPopup ein Symbol im System Tray ein und erwart
 lHelpText2	Wählen Sie "Einstellungen" um das Einstellungsfenster zu öffnen, wo Sie favorisierte ORDNER, DOKUMENTE oder WEBSEITEN zum Menü hinzufügen können. Sie können diese verschieben, umbenennen oder löschen. Sie können ebenfalls UNTERMENÜS hinzufügen, verschieben oder löschen. Wählen Sie hierzu "Zu bearbeitendes Menü:" in der Dropdown-Auswahl. Klicken Sie auf "Speichern" um die Änderungen zu sichern.
 lHelpText3	Um schnell einen neuen ORDNER zum Popup-Menü HINZUZUFÜGEN:`n1) Wechseln Sie in einen oft benötigten Ordner.`n2) Klicken Sie mit der Maus [~1~] (oder drücken [~2~]) und wählen "Diesen Ordner hinzufügen".`n3) Vergeben Sie einen kurzen Namen, klicken Sie "Hinzufügen", danach "Speichern" im Einstellungsdialog.
 lHelpText4	Um dem Popup-Menü ein neues DOKUMENT oder eine WEBSEITE hinzuzufügen:`n1) Öffnen Sie das Folders Popup Menü und wählen "Einstellungen" (oder drücken [~1~]).`n2) Klicken Sie auf "Hinzufügen" und wählen die Option "Dokument" oder "Link (URL)".`n3) Vergeben Sie einen kurzen Namen, wechseln Sie zum Dokument oder geben Sie die URL ein, klicken "Hinzufügen", danach "Speichern" im Einstellungsdialog.
-lHelpText5	- Klicken Sie im Traymenü mit der rechten Maustaste auf das Symbol und aktivieren Sie "Beim Start ausführen" um FoldersPopup automatisch zu starten.`n- Benötigen Sie ein neues Explorerfenster während Sie in einer Anwendung arbeiten? Klicken Sie aus jedem Fenster heraus mit [~1~] (oder drücken [~2~]), oder klicken Sie einfach auf das Folders Popup Symbol im Systembereich und wählen Sie das gewünschte Verzeichnis.`n- Wählen Sie das "Kürzliche Ordner..." Menü (oder drücken [~3~]) um eine aktualisierte Liste der kürzlich verwendeten Ordner anzuzeigen.`n- Verwenden Sie das "Kürzlich verwendete Ordner" Menü (oder drücken [~4~]) um ein bereits geöffnetes Verzeichnis oder das "Ordnergruppen" Menü (oder drücken [~5~]) um Verzeichnisgruppen wiederherzustellen oder zu speichern.`n- Erreichen Sie Ordner, Dateien oder URLs in der Zwischenablage aus dem "Zwischenablage" Menü (oder drücken [~6~]) oder übertragen Sie die Position beliebiger Favoriten in die Zwischenablage mittels des "Position des Favoriten einfügen" Menüs (oder [~7~]).`n- Stellen Sie die Kurztasten des Popup-Menüs ein: Wählen Sie Ihre bevorzugten Maustasten oder Tastaturkürzel in "Einstellungen, Optionen".`n- Auch unter "Optionen": Wählen Sie die bevorzugte Sprache, Symbolgröße in den Menüs, Fensterfarben. Wählen Sie die Optionen für die Darstellung der Ordner, fügen Sie Tastaturkürzel auf dem numerischen Tastenfeld hinzu oder heften Sie das Popup Menü an eine bestimmte Stelle.`n-Nutzer von Directory Opus, siehe <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/">diese Webseite</a> für weitere Informationen.`n-Nutzer von Total Commander, siehe <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/">diese Webseite</a> für weitere Informationen.
+lHelpText5	- Klicken Sie im Traymenü mit der rechten Maustaste auf das Symbol und aktivieren Sie "Beim Start ausführen" um FoldersPopup automatisch zu starten.`n- Benötigen Sie ein neues Explorerfenster während Sie in einer Anwendung arbeiten? Klicken Sie aus jedem Fenster heraus mit [~1~] (oder drücken [~2~]), oder klicken Sie einfach auf das Folders Popup Symbol im Systembereich und wählen Sie das gewünschte Verzeichnis.`n- Wählen Sie das "Kürzliche Ordner..." Menü (oder drücken [~3~]) um eine aktualisierte Liste der kürzlich verwendeten Ordner anzuzeigen.`n- Verwenden Sie das "Kürzlich verwendete Ordner" Menü (oder drücken [~4~]) um ein bereits geöffnetes Verzeichnis oder das "Ordnergruppen" Menü (oder drücken [~5~]) um Verzeichnisgruppen wiederherzustellen oder zu speichern.`n- Zugriff auf Dateien oder URLs in der Zwischenablage aus dem Menü "Zwischenablage" (oder über [~6~]) oder kopieren des Pfades oder der URL jedes Favoriten in die Zwischenablage mittels des Menüs "Kopieren eines favorisierten Pfades oder URL" Menüs (oder über [~7~]).`n- Stellen Sie die Kurztasten des Popup-Menüs ein: Wählen Sie Ihre bevorzugten Maustasten oder Tastaturkürzel in "Einstellungen, Optionen".`n- Auch unter "Optionen": Wählen Sie die bevorzugte Sprache, Symbolgröße in den Menüs, Fensterfarben. Wählen Sie die Optionen für die Darstellung der Ordner, fügen Sie Tastaturkürzel auf dem numerischen Tastenfeld hinzu oder heften Sie das Popup Menü an eine bestimmte Stelle.`n-Nutzer von Directory Opus, siehe <a href="http://code.jeanlalonde.ca/using-folderspopup-with-directory-opus/">diese Webseite</a> für weitere Informationen.`n-Nutzer von Total Commander, siehe <a href="http://code.jeanlalonde.ca/using-folderspopup-with-total-commander/">diese Webseite</a> für weitere Informationen.
 lHelpText6	Support für FoldersPopup gibt es auf`n<a href="http://www.code.jeanlalonde.ca/folderspopup">www.code.jeanlalonde.ca/folderspopup</a>.
 lHelpTextLead	FoldersPopup ermöglicht es Ihnen, schnell zwischen häufig benutzten Ordnern, Dokumenten und Webseiten zu wechseln!
 lHelpTitle	Hilfe - ~1~ ~2~
@@ -165,6 +166,7 @@ lMenuCommonStartMenu	Common Startmenü
 lMenuCommonStartupMenu	Common Startup Menu
 lMenuControlPanel	&Systemsteuerung
 lMenuCookies	Cookies
+lMenuCopyLocation	Kopieren eines Pfades oder einer URL
 lMenuDesktop	Desktop
 lMenuDocuments	Dokumente
 lMenuDownloads	Downloads
@@ -221,12 +223,12 @@ lOptionsArrDescriptions1	Wählen Sie die MAUStaste und die Kombitasten, welche da
 lOptionsArrDescriptions2	Wählen Sie die MAUStaste und die Kombitasten, welche das FoldersPopup Menü in JEDEM Fenster öffnet und zum gewählten Ordner in einem NEUEN Explorer-Fenster navigiert. Standardmäßig ist dies die mittlere Maustaste mit gedrückter Shift-Taste.
 lOptionsArrDescriptions3	Wählen Sie die TASTENkombination, welche das popup menü im Windows Explorer oder Dateidialogboxen aufruft. Standardmäßig ist dies Windows+A (Taste A, während die Windows-Taste gdrückt wird).
 lOptionsArrDescriptions4	Wählen Sie die TASTENkombination, welche das popup menu Menü in JEDEM Fenster öffnet und zum gewählten Ordner in einem NEUEN Explorer-Fenster navigiert. Standardmäßig ist dies Shift+Windows+A (Tasten Shift und "A", während die Windows-Taste gedrückt wird).
-lOptionsArrDescriptions5	Wählen Sie die Tastenkombination oder Maustasten-Kombination, welche den FoldersPopup Einstellungsdialog aufruft. Standardmäßig ist dies Shift+Control+S.
+lOptionsArrDescriptions5	Wählen Sie die Tastenkombination oder Maustasten-Kombination für den Einstellungsdialog. Standardmäßig ist dies Shift+Strg+S.
 lOptionsArrDescriptions6	Wählen Sie die Schnelltaste oder Maustastenkombination, welche das FoldersPopup Menü "Ordner im Explorer" öffnet. Standardmäßig ist dies Shift+Control+F.
-lOptionsArrDescriptions7	Wählen Sie die Schnelltaste oder Maustastenkombination, welche das FoldersPopup Menü "Gruppen" öffnet. Standardmäßig ist dies Shift+Control+G.
-lOptionsArrDescriptions8	Wählen Sie die Schnelltaste oder Maustastenkombination, welche das FoldersPopup Menü "Kürzlich verwendete Ordner" öffnet. Standardmäßig ist dies Shift+Control+R.
-lOptionsArrDescriptions9	Wählen Sie die Schnelltaste oder Maustastenkombination, welche das FoldersPopup Menü "Zwischenablage" öffnet. Standardmäßig ist dies Shift+Control+C.
-lOptionsArrDescriptions10	Wählen Sie die Schnelltaste oder Maustastenkombination, welche das FoldersPopup Menü "Copy a Favorite's Path or URL" öffnet. Standardmäßig ist dies Shift+Control+V.
+lOptionsArrDescriptions7	Wählen Sie die Tastenkombination oder Maustasten-Kombination für das "Ordnergruppen" Menü. Standardmäßig ist dies Shift+Strg+G.
+lOptionsArrDescriptions8	Wählen Sie die Schnelltaste oder Maustastenkombination, welche das FoldersPopup Menü "Kürzlich verwendete Ordner" öffnet. Standardmäßig ist dies Shift+Strg+R.
+lOptionsArrDescriptions9	Wählen Sie die Tastenkombination oder Maustasten-Kombination für das "Zwischenablage" Menü. Standardmäßig ist dies Shift+Strg+C.
+lOptionsArrDescriptions10	Wählen Sie die Tastenkombination oder Maustasten-Kombination für das "Favoriten kopieren" Menü. Standardmäßig ist dies Shift+Strg+V.
 lOptionsChangeHotkey	Ändern
 lOptionsChangeHotkeyTitle	Tastenkürzel ändern - ~1~ ~2~
 lOptionsCheck4Update	Nach Update suchen
@@ -234,6 +236,7 @@ lOptionsCtrl	Steuerung
 lOptionsCtrlShort	Strg
 lOptionsDirectoryOpusUseTabs	Verwende Registerkarten
 lOptionsDisplayClipboardMenu	Zwischenablage
+lOptionsDisplayCopyLocationMenu	Kopieren eines Pfades oder einer URL
 lOptionsDisplayFoldersInExplorerMenu	Ordner im Explorer
 lOptionsDisplayGroupMenu	Gruppe der Ordnermenüs
 lOptionsDisplayIcons	Zeige Icons im Menü
@@ -277,14 +280,15 @@ lOptionsThirdPartyDetailFPconnect	Wählen Sie die ausführbare Datei von FPconnect
 lOptionsThirdPartyPrompt	Programmdatei:
 lOptionsThirdPartyTitle	~1~ Benutzer
 lOptionsThirdPartyTitleFPconnect	Andere Benutzer weiterer Dateimanager, die FPconnect verwenden
-lOptionsTitles	Maustaste für FP Menü um Ordner in aktuellem Explorerfenster oder Dialogbox zu öffnen|Maustaste für FP Menü um Ordner in einem neuen Explorerfenster zu öffnen|Tastaturkürzel für FP Menü um Ordner in aktuellem Explorerfenster oder Dialogbox zu öffnen|Tastaturkürzel für FP Menü um Ordner in einem neuen Explorerfenster zu öffnen|Einstellungsfenster|Aktueller Ordner Menü|Gruppen-Menü|Kürzliche Ordner Menü|Zwischenablage-Menü|Position einfügen
-lOptionsTitlesSub	Diese Maustaste kann das Menü über Windows Explorer, unterstützte Dateimanager von Drittanbietern und Dialogboxen anzeigen.|Diese Maustaste zeigt das Menü überall anzeigen.|Diese Kurztaste zeigt das Menü im Windows Explorer, unterstützten Dateimanagern von Drittanbietern und Dialogboxen an.|Dieses Tastenkürzel zeigt das Menü jederzeit.|(Menü-Einstellungen und Optionen)|(Liste der aktuell im Explorer geöffneten Ordner)|(Liste der Ordnergruppen)|(Liste der Windows häufigen Orte)|(Liste der Pfade und URLs in der Zwischenablage)|(Pfad oder URL des Fovoriten an Tastatur oder Zwischenablage einfügen)
+lOptionsTitles	Maustaste für FP Menü um Ordner in aktuellem Explorerfenster oder Dialogbox zu öffnen|Maustaste für FP Menü um Ordner in einem neuen Explorerfenster zu öffnen|Tastaturkürzel für FP Menü um Ordner in aktuellem Explorerfenster oder Dialogbox zu öffnen|Tastaturkürzel für FP Menü um Ordner in einem neuen Explorerfenster zu öffnen|Einstellungsfenster|Aktueller Ordner Menü|Gruppen-Menü|Kürzliche Ordner Menü|Zwischenablage-Menü|Kopiere favorisierten Pfad oder einer URL
+lOptionsTitlesSub	Diese Maustaste kann das Menü über Windows Explorer, unterstützte Dateimanager von Drittanbietern und Dialogboxen anzeigen.|Diese Maustaste zeigt das Menü überall anzeigen.|Diese Kurztaste zeigt das Menü im Windows Explorer, unterstützten Dateimanagern von Drittanbietern und Dialogboxen an.|Dieses Tastenkürzel zeigt das Menü jederzeit.|(Menü-Einstellungen und Optionen)|(Liste der aktuell im Explorer geöffneten Ordner)|(Liste der Ordnergruppen)|(Liste der Windows häufigen Orte)|(Liste der Pfade und URLs in der Zwischenablage)|(kopiert deinen favorisierten Pfad oder eine URL in die Zwischenablage)
 lOptionsTotalCommanderUseTabs	Verwende Registerkarten
 lOptionsTrayTip	Beim Start &Tray-Tip anzeigen
 lOptionsTriggerFor	Auslöser für:
 lOptionsWin	Windows
 lOptionsWinShort	Win
 lPickIconNoLocation	Bitte zuerst einen Favoriten auswählen, bevor ein Icon gewählt wird.
+lPopupMenuCopyLocationTrayTip	Zu kopierenden Favoriten auswählen
 lReloadPrompt	~1~  wurde in ~2~ geändert. Wollen Sie jetzt ~3~ in ~2~ neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
 lReloadPromptDefaultHotkey	Schnelltaste auf Standard zurückgesetzt. Diese Änderung tritt erst durch erneutes Laden von ~1~ in Kraft.`n`nWollen Sie ~1~ jetzt neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
 lTrayTipInstalledDetail	Zur Anzeige des ~1~ Menüs`nim Windows Explorer oder einer Dialogbox`n~2~ oder ~3~ drücken.`n`n~4~ oder ~5~`num ein neues Explorer-Fenster zu öffnen.
