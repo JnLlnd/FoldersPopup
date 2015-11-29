@@ -13,7 +13,11 @@ Thanks to LearningOne for sharing his code and to others who helped in [this thr
 
 ## History
 
-### Version: 5.2 (2015-11-15)
+### Version: 5.2.2 (2015-11-29)
+* Italian and French language updates
+* Fix an error in link for setup file in v5.2.1
+
+### Version: 5.2.1 (2015-11-15)
 * update special folders initialization for Windows 10
 * adjust menu icons to Windows 10 icon files
 * shorten application description in executable file for Windows 10 display

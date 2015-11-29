@@ -12,7 +12,11 @@
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 5.2 (2015-11-15)
+	Version: 5.2.2 (2015-11-29)
+	* Italian and French language updates
+	* Fix an error in link for setup file in v5.2.1
+	
+	Version: 5.2.1 (2015-11-15)
 	* update special folders initialization for Windows 10
 	* adjust menu icons to Windows 10 icon files
 	* shorten application description in executable file for Windows 10 display
@@ -813,7 +817,7 @@
 
 ;@Ahk2Exe-SetName FoldersPopup
 ;@Ahk2Exe-SetDescription Folders Popup (freeware)
-;@Ahk2Exe-SetVersion 5.2
+;@Ahk2Exe-SetVersion 5.2.2
 ;@Ahk2Exe-SetOrigFilename FoldersPopup.exe
 
 
@@ -861,7 +865,7 @@ Gosub, InitFileInstall
 Gosub, InitLanguageVariables
 
 global strAppName := "FoldersPopup"
-global strCurrentVersion := "5.2" ; "major.minor.bugs" or "major.minor.beta.release"
+global strCurrentVersion := "5.2.2" ; "major.minor.bugs" or "major.minor.beta.release"
 global strCurrentBranch := "prod" ; "prod" or "beta", always lowercase for filename
 global strAppVersion := "v" . strCurrentVersion . (strCurrentBranch = "beta" ? " " . strCurrentBranch : "")
 

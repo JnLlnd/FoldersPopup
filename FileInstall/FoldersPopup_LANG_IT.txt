@@ -18,6 +18,7 @@ lDialogAddFolderSelect	Scegli o crea una nuova Cartella:
 lDialogApplicationLabel	Applicazione
 lDialogApplicationShortName	Nome dell'applicazione (per il menù)
 lDialogArgumentsLabel	Parametri
+lDialogArgumentsLabelHelp	(se richiesto, racchiudi ciascun parametro tra doppi apici)
 lDialogBrowseButton	Sfoglia
 lDialogCancelButton	Annulla
 lDialogCancelPrompt	Vuoi scartare le modifiche?
@@ -292,7 +293,7 @@ lPickIconNoLocation	Seleziona il preferito prima di scegliere un'icona.
 lPopupMenuCopyLocationTrayTip	Select the favorite to copy
 lReloadPrompt	~1~ cambiato in ~2~. Vuoi ricaricare ~3~ in ~2~ ora? Le modifiche non salvate al menù delle cartelle verranno perse.
 lReloadPromptDefaultHotkey	Scorciatoia riportata al valore di default. Questa modifica sarà effettiva solo dopo aver ricaricato ~1~.`n`nVuoi ricaricare ~1~ ora? Le modifiche non salvate al menù delle cartelle verranno perse.
-lTrayTipInstalledDetail	Per mostrare il menù ~1~, premi:`n`n~2~ / ~3~`nin Windows Explorer o in una "Casella di Dialogo"`n`n~4~ / ~5~`nper aprire una nuova finestra di Explorer
+lTrayTipInstalledDetail	Premi: ~2~ or ~3~ per aprire il menù ~1~
 lTrayTipInstalledTitle	~1~ è pronto!
 lTrayTipNoClipboardMenuDetail	Al momento non è presente alcuna cartella, documento, applicazione o URL nel Menù degli Appunti di Windows.
 lTrayTipNoClipboardMenuTitle	~1~ - Menù degli Appunti di Windows
@@ -308,5 +309,5 @@ lUpdatePromptBeta	C'è una nuova versione BETA ~1~.`n`nVuoi aggiornare ~1~ dalla 
 lUpdatePromptBetaContinue	Vuoi continuare ad essere informato di future versioni beta?
 lUpdateTitle	Aggiornare ~1~?
 lUpdateYouHaveLatest	Hai la versione più recente: ~1~.`n`nVuoi visitare la pagina web ~2~ ugualmente?
-lWindowIsTreeviewText	Mi spiace... A causa di una limitazione di  Windows, questo tipo di casella di dialogo (con vista ad albero) non è attualmente supportata da ~1~.
+lWindowIsTreeviewText	a causa di una limitazione di Microsoft Windows.
 lWindowIsTreeviewTitle	Casella di Dialogo con vista ad albero non supportata
