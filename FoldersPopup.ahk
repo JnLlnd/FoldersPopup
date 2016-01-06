@@ -12,7 +12,8 @@
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 5.2.3 (2015-??-??)
+	Version: 5.2.3 (2016-??-??)
+	* Sweeden anbd German language files update
 
 	Version: 5.2.2 (2015-11-29)
 	* Italian and French language updates

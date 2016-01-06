@@ -18,6 +18,7 @@ lDialogAddFolderSelect	Auswählen oder Erstellen des neuen Ordners:
 lDialogApplicationLabel	Anwendung
 lDialogApplicationShortName	Anwendungsname (für Menü)
 lDialogArgumentsLabel	Parameter
+lDialogArgumentsLabelHelp	(falls nötig, setzen Sie jeden Parameter in Anführungszeichen)
 lDialogBrowseButton	Durchsuchen
 lDialogCancelButton	Abbrechen
 lDialogCancelPrompt	Änderungen verwerfen?
@@ -291,7 +292,7 @@ lPickIconNoLocation	Bitte zuerst einen Favoriten auswählen, bevor ein Icon gewäh
 lPopupMenuCopyLocationTrayTip	Zu kopierenden Favoriten auswählen
 lReloadPrompt	~1~  wurde in ~2~ geändert. Wollen Sie jetzt ~3~ in ~2~ neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
 lReloadPromptDefaultHotkey	Schnelltaste auf Standard zurückgesetzt. Diese Änderung tritt erst durch erneutes Laden von ~1~ in Kraft.`n`nWollen Sie ~1~ jetzt neu laden? Ungespeicherte Änderungen am Ordnermenü gehen verloren.
-lTrayTipInstalledDetail	Zur Anzeige des ~1~ Menüs`nim Windows Explorer oder einer Dialogbox`n~2~ oder ~3~ drücken.`n`n~4~ oder ~5~`num ein neues Explorer-Fenster zu öffnen.
+lTrayTipInstalledDetail	~2~ oder ~3~ zur Anzeige des ~1~ Menüs drücken
 lTrayTipinstalledTitle	~1~ bereit!
 lTrayTipNoClipboardMenuDetail	Es gibt zur Zeit keine Ordner, Dokumente, Anwendungen oder URLs im Zwischenablage-Menü
 lTrayTipNoClipboardMenuTitle	~1~ - Zwischenablage-Menü
@@ -307,5 +308,5 @@ lUpdatePromptBeta	Es gibt eine neue ~1~ BETA-Version.`n`nUpdate ~1~ von v~2~ auf
 lUpdatePromptBetaContinue	Wollen Sie weiterhin über zukünftige Beta-Versionen informiert werden?
 lUpdateTitle	Update ~1~?
 lUpdateYouHaveLatest	Sie verwenden die aktuellste Version: ~1~.`n`nTrotzdem die ~2~ Webseite besuchen?
-lWindowIsTreeviewText	Entschuldigung... Aufgrund einer Beschränkung von Windows wird diese Art Dialogbox (Baumstruktur) momentan nicht von ~1~ unterstützt.
+lWindowIsTreeviewText	Wegen einer Einschränkung durch Windows.
 lWindowIsTreeviewTitle	Baumstruktur-Dialogbox nicht unterstützt
