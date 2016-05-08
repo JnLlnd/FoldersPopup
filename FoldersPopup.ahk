@@ -12,8 +12,12 @@
 	http://www.autohotkey.com/board/topic/13392-folder-menu-a-popup-menu-to-quickly-change-your-folders/
 
 
-	Version: 5.2.3 (2016-??-??)
-	* Sweeden anbd German language files update
+	Version: 5.2.3 (2016-05-08)
+	* display clearer message when prompting for upgrade from FoldersPopup to Quick Access Popup (prompt displayed only for new QAP releases with new features)
+	* add the auto-detection of .ahk and .vbs extensions when user add a favorite using drag-and-drop to the Settings window
+	* stop launching Directory Opus when refreshing the list of open folders in listers if Directory Opus is not running
+	* Sweeden and German language files update
+	* new runtime v1.1.23.5 from AHK
 
 	Version: 5.2.2 (2015-11-29)
 	* Italian and French language updates
@@ -3720,7 +3724,7 @@ else if (A_ThisLabel = "OpenClipboard")
 	{
 		strLocation :=  EnvVars(strLocation)
 		SplitPath, strLocation, , , strExtension
-		if StrLen(strExtension) and InStr("exe.com.bat", strExtension)
+		if StrLen(strExtension) and InStr("exe.com.bat.vbs.ahk", strExtension)
 		{
 			strFavoriteType := "A" ; application
 			strAppArguments := "" ; make sure it is empty from previous calls
@@ -5527,9 +5531,8 @@ if (strLatestUsedBeta <> "0.0")
 	{
 		SetTimer, Check4UpdateChangeButtonNames, 50
 
-		strThisAppName := (FirstVsSecondIs("6.0.0", strLatestVersionBeta) = 1 ? strAppName : "Quick Access Popup")
-		MsgBox, 3, % L(lUpdateTitle, strThisAppName) ; do not add BETA to keep buttons rename working
-			, % L(lUpdatePromptBeta, strThisAppName, strCurrentVersion, strLatestVersionBeta)
+		MsgBox, 3, % L(lUpdateTitle, strAppName) ; do not add BETA to keep buttons rename working
+			, % L(lUpdatePromptBeta, strAppName, strCurrentVersion, strLatestVersionBeta)
 		IfMsgBox, Yes
 			Run, %strBetaLandingPage%
 		IfMsgBox, Cancel ; Remind me
@@ -5550,11 +5553,17 @@ if (FirstVsSecondIs(strLatestSkippedProd, strLatestVersionProd) >= 0 and (A_This
 if (FirstVsSecondIs(strLatestVersionProd, strCurrentVersion) = 1) ; latest prod more recent than current
 	and ((FirstVsSecondIs("6.0.0", strLatestVersionProd) = 1) or !InStr("WIN_VISTA|WIN_2003|WIN_XP|WIN_2000", A_OSVersion)) ; latest prod under 6.0.0 or OS Win7+
 {
+	if FirstVsSecondIs("6.0.0", strLatestVersionProd) = 1 ; this is FoldersPopup update
+		strThisUpdatePrompt := L(lUpdatePrompt, strAppName, strCurrentVersion, strLatestVersionProd)
+	else ; this is a Quick Access Popup update
+		if (A_OSVersion = "WIN_XP")
+			return
+		else
+			strThisUpdatePrompt := L(lUpdatePromptQAP, strAppName, strCurrentVersion, strLatestVersionProd, "Quick Access Popup")
+	
 	SetTimer, Check4UpdateChangeButtonNames, 50
-
-	strThisAppName := (FirstVsSecondIs("6.0.0", strLatestVersionProd) = 1 ? strAppName : "Quick Access Popup")
-	MsgBox, 3, % L(lUpdateTitle, strThisAppName)
-		, % L(lUpdatePrompt, strThisAppName, strCurrentVersion, strLatestVersionProd)
+	MsgBox, 3, % L(lUpdateTitle, strAppName), %strThisUpdatePrompt%
+	
 	IfMsgBox, Yes
 		Run, %strAppLandingPage%
 	IfMsgBox, No
@@ -5608,7 +5617,7 @@ FirstVsSecondIs(strFirstVersion, strSecondVersion)
 Check4UpdateChangeButtonNames:
 ;------------------------------------------------------------
 
-IfWinNotExist, % L(lUpdateTitle, strThisAppName)
+IfWinNotExist, % L(lUpdateTitle, strAppName)
     return  ; Keep waiting.
 SetTimer, Check4UpdateChangeButtonNames, Off
 WinActivate 
@@ -6806,7 +6815,7 @@ else
 	else if (A_ThisLabel = "GuiAddFromDropFiles")
 	{
 		SplitPath, strCurrentLocation, , , strExtension
-		if StrLen(strExtension) and InStr("exe|com|bat", strExtension)
+		if StrLen(strExtension) and InStr("exe|com|bat|vbs|ahk", strExtension)
 		{
 			blnRadioApplication := true
 			blnRadioFile := false
@@ -8503,6 +8512,13 @@ RunDOpusRt(strCommand, strLocation := "", strParam := "")
 	global strDirectoryOpusRtPath
 	global strDirectoryOpusPath
 
+	if (strCommand = "/info")
+	{
+		Process, Exist, dopus.exe
+		; abort if DOpus.exe is not running
+		if !(ErrorLevel)
+			return
+	}
 	if FileExist(strDirectoryOpusRtPath)
 		Run, % """" . strDirectoryOpusRtPath . """ " . strCommand . " """ . strLocation . """" . strParam
 }
