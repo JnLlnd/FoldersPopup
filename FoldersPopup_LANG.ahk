@@ -307,6 +307,7 @@ global lUpdateError := "An error occurred while accessing the latest version num
 global lUpdatePrompt := "Update ~1~ from v~2~ to v~3~?"
 global lUpdatePromptBeta := "There is a new ~1~ BETA version.`n`nUpdate ~1~ from v~2~ to v~3~?"
 global lUpdatePromptBetaContinue := "Do you still want to to be informed of future beta versions?"
+global lUpdatePromptQAP := "There is a new version of ~4~ (next generation of ~1~).`n`nDo you want to upgrade from ~1~ v~2~ to ~4~ v~3~?"
 global lUpdateTitle := "Update ~1~?"
 global lUpdateYouHaveLatest := "You have the latest version: ~1~.`n`nVisit the ~2~ web page anyway?"
 global lWindowIsTreeviewText := "Because of a Windows limitation."
